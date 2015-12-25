@@ -2,6 +2,7 @@
 
 // external dependencies
 import murmur from 'murmur-hash-js';
+import Cereal from 'cereal';
 
 import {
     Buffer
@@ -24,8 +25,7 @@ import {
 
 import {
     forEach,
-    forIn,
-    stringify
+    forIn
 } from './functions';
 
 const hashString = (obj: any) : number => {
@@ -67,10 +67,10 @@ const hashObject = (obj: any) : number => {
     if (isArray(obj) || isObject(obj)) {
         const objWithFunctionsHashed: Array|Object = hashFunctionInObject(obj);
 
-        return hashString(stringify(objWithFunctionsHashed));
+        return hashString(Cereal.stringify(objWithFunctionsHashed));
     }
 
-    return hashString(stringify(obj));
+    return hashString(Cereal.stringify(obj));
 };
 
 export {hashObject as hashObject};

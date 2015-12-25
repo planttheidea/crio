@@ -9,6 +9,10 @@ import {
     isObject
 } from './checkers';
 
+const isCrioCollection = (obj: any) : boolean => {
+    return obj instanceof CrioCollection;
+};
+
 /**
  * Returns true if object passed is CrioList
  *
@@ -16,7 +20,7 @@ import {
  * @returns {boolean}
  */
 const isCrioList = (obj: any) : boolean => {
-    return obj instanceof CrioCollection && isArray(obj.object);
+    return isCrioCollection(obj) && isArray(obj.object);
 };
 
 /**
@@ -26,7 +30,7 @@ const isCrioList = (obj: any) : boolean => {
  * @returns {boolean}
  */
 const isCrioMap = (obj: any) : boolean => {
-    return obj instanceof CrioCollection && isObject(obj.object);
+    return isCrioCollection(obj) && isObject(obj.object);
 };
 
 /**
@@ -44,11 +48,13 @@ const isSameCrio = (obj1: CrioCollection, obj2: CrioCollection) : boolean => {
     return false;
 };
 
+export {isCrioCollection as isCrioCollection};
 export {isCrioList as isCrioList};
 export {isCrioMap as isCrioMap};
 export {isSameCrio as isSameCrio};
 
 export default {
+    isCrioCollection,
     isCrioList,
     isCrioMap,
     isSameCrio

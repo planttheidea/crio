@@ -121,9 +121,11 @@ import crio from '../src/index';
 
 let crio1 = crio([]);
 
-console.log(crio1);
-
 crio1 = crio1.push(1,2,3,4,5);
+const crio1Clone = crio([1,2,3,4,5]);
+
+console.log(crio1);
+console.log(crio1Clone);
 
 const crio6 = crio1.setIn([0], 10);
 
@@ -142,12 +144,37 @@ crio1 = crio1.splice(0);
 
 console.log(crio1);
 
-//const crio4 = crio({});
-//
-//console.log(crio4);
-//
-//console.log(crio.isList(crio1));
-//console.log(crio.isMap(crio4));
+const crioArray = crio1.merge(['testMerge']);
+
+console.log(crioArray);
+
+const crio4 = crio({
+    simple:'test',
+    deeper:{
+        prevent:'overwrite'
+    }
+});
+
+console.log(crio4);
+
+const crio12 = crio4.merge({
+    simple:'merge',
+    deeper:{
+        complex:'merge'
+    }
+});
+
+console.log(crio12);
+
+const crioCircular = crio12.merge({
+    circular:crio12
+});
+
+console.log(crioCircular);
+
+console.log(crioCircular.merge({
+    circular:crioCircular
+}));
 
 
 class App extends React.Component {

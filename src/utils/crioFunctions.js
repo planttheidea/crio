@@ -7,12 +7,12 @@ import CrioCollection from './../CrioCollection';
 
 import {
     isArray,
-    isObject
+    isObject,
+    isUndefined
 } from './checkers';
 
 import {
-    isCrioList,
-    isCrioMap,
+    isCrioCollection,
     isSameCrio
 } from './crioCheckers';
 
@@ -56,7 +56,7 @@ const cloneObject = (originalObj: any) : any => {
     };
 
     const cloneObj = (obj) => {
-        const cleanObj = isCrioList(obj) || isCrioMap(obj) ? obj.object : obj;
+        const cleanObj = isCrioCollection(obj) ? obj.object : obj;
 
         let base: Array = [];
 
@@ -121,6 +121,75 @@ const cloneObject = (originalObj: any) : any => {
     return cloneObj(originalObj);
 };
 
+const getThawedObject = (obj: any) : any => {
+    return isCrioCollection(obj) ? obj.thaw() : obj;
+};
+
+/**
+ * Deeply merge objects or arrays
+ *
+ * @param target<any>
+ * @param sources<Array>
+ * @returns {*}
+ */
+const mergeObject = (target: any, ...sources: Array) => {
+    target = getThawedObject(target);
+
+    const isTargetArr = isArray(target);
+    const isTargetObj = isObject(target);
+
+    if (!isTargetArr && !isTargetObj) {
+        return sources[sources.length - 1];
+    }
+
+    let dest: Array|Object = isTargetArr ? [] : {};
+
+    forEach(sources, (source) => {
+        const realSource = getThawedObject(source);
+
+        if (isArray(realSource)) {
+            target = target || [];
+            dest = dest.concat(target);
+
+            forEach(realSource, (item, i) => {
+                const realItem =  getThawedObject(item);
+
+                if (isUndefined(dest[i])) {
+                    dest[i] = realItem;
+                } else if (isObject(realItem)) {
+                    dest[i] = mergeObject(target[i], realItem);
+                } else {
+                    if (target.indexOf(realItem) === -1) {
+                        dest.push(realItem);
+                    }
+                }
+            });
+        } else {
+            target = target || {};
+
+            forOwn(target, (value, key) => {
+                dest[key] = getThawedObject(value);
+            });
+
+            forOwn(realSource, (value, key) => {
+                const realValue = getThawedObject(value);
+
+                if (isObject(realValue)) {
+                    dest[key] = mergeObject(target[key], realValue);
+                }
+
+                if (!isObject(realValue) || !realValue) {
+                    dest[key] = realValue;
+                } else if (!target[key]) {
+                    dest[key] = realValue;
+                }
+            });
+        }
+    });
+
+    return dest;
+};
+
 /**
  * Accepts any parameter, and if it is a Crio then return a cloned and unfrozen item
  *
@@ -128,7 +197,7 @@ const cloneObject = (originalObj: any) : any => {
  * @returns {*}
  */
 const thawCrio = (obj: any) : any => {
-    if (isCrioList(obj) || isCrioMap(obj)) {
+    if (isCrioCollection(obj)) {
         return cloneObject(obj.object);
     }
 
@@ -140,7 +209,7 @@ const thawCrio = (obj: any) : any => {
 };
 
 const coalesceCrioValue = (Crio: CrioCollection, obj: any) => {
-    if (isArray(obj) || (isObject(obj) && !isCrioList(obj) && !isCrioMap(obj))) {
+    if (isArray(obj) || (isObject(obj) && !isCrioCollection(obj))) {
         return getCrioInstance(Crio, createNewCrio(obj));
     }
 
@@ -150,11 +219,13 @@ const coalesceCrioValue = (Crio: CrioCollection, obj: any) => {
 export {cloneObject as cloneObject};
 export {coalesceCrioValue as coalesceCrioValue};
 export {getCrioInstance as getCrioInstance};
+export {mergeObject as merge};
 export {thawCrio as thaw};
 
 export default {
     cloneObject,
     coalesceCrioValue,
     getCrioInstance,
+    merge: mergeObject,
     thaw: thawCrio
 };

@@ -1,10 +1,9 @@
 {
     "plugins":[
-        "transform-decorators-legacy",
         ["typecheck", {
-			"disable":{
-				"production":true
-			}
+            "disable": {
+                "production": true
+            }
         }]
     ],
     "presets":[

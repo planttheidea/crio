@@ -18,6 +18,7 @@ import {
 import {
     coalesceCrioValue,
     getCrioInstance,
+    merge,
     thaw
 } from './utils/crioFunctions';
 
@@ -126,6 +127,20 @@ class CrioCollection {
      */
     keys() {
         return Object.keys(this.object);
+    }
+
+    /**
+     * Accepts any number of parameters and merges them into a new object / array
+     *
+     * @param sources<Array>
+     * @returns {CrioCollection}
+     */
+    merge(...sources: Array) : CrioCollection {
+        const mergedObject = merge(this.thaw(), ...sources);
+
+        console.log(mergedObject);
+
+        return getCrioInstance(this, createNewCrio(mergedObject));
     }
 
     /**

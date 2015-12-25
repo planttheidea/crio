@@ -5,9 +5,8 @@
   },
   "dependencies": {
     "buffer": "^3.5.5",
-    "murmur-hash": "^1.0.0",
-    "murmur-hash-js": "^1.0.0",
-    "murmurhash-native": "^1.0.1"
+    "cereal": "^0.2.3",
+    "murmur-hash-js": "^1.0.0"
   },
   "description": "Immutable JS ojbects with a natural API",
   "devDependencies": {
@@ -15,7 +14,6 @@
     "babel-cli": "^6.3.17",
     "babel-eslint": "^5.0.0-beta6",
     "babel-loader": "^6.2.0",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-typecheck": "^3.5.1",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
@@ -44,8 +42,8 @@
     "url": "git+https://github.com/planttheidea/pietra.git"
   },
   "scripts": {
-    "build": "./node_modules/webpack/bin/webpack.js --progress --colors",
-    "build-minified": "./node_modules/webpack/bin/webpack.js --progress --colors --config=webpack.config.minified.js",
+    "build": "NODE_ENV=development ./node_modules/webpack/bin/webpack.js --progress --colors",
+    "build-minified": "NODE_ENV=production ./node_modules/webpack/bin/webpack.js --progress --colors --config=webpack.config.minified.js",
     "compile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/",
     "dist": "npm run compile && npm run build && npm run build-minified",
     "test": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --colors --config=webpack.config.test.js"

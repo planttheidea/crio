@@ -83,11 +83,11 @@ var crio =
 	
 	var _CrioList2 = _interopRequireDefault(_CrioList);
 	
-	var _CrioMap = __webpack_require__(19);
+	var _CrioMap = __webpack_require__(21);
 	
 	var _CrioMap2 = _interopRequireDefault(_CrioMap);
 	
-	var _deepFreeze = __webpack_require__(20);
+	var _deepFreeze = __webpack_require__(22);
 	
 	var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
 	
@@ -998,6 +998,39 @@ var crio =
 	        }
 	
 	        /**
+	         * Accepts any number of parameters and merges them into a new object / array
+	         *
+	         * @param sources<Array>
+	         * @returns {CrioCollection}
+	         */
+	
+	    }, {
+	        key: 'merge',
+	        value: function merge() {
+	            for (var _len2 = arguments.length, sources = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	                sources[_key2] = arguments[_key2];
+	            }
+	
+	            function _ref3(_id3) {
+	                if (!(_id3 instanceof CrioCollection)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
+	                }
+	
+	                return _id3;
+	            }
+	
+	            if (!Array.isArray(sources)) {
+	                throw new TypeError('Value of argument "sources" violates contract, expected Array got ' + (sources === null ? 'null' : (typeof sources === 'undefined' ? 'undefined' : _typeof(sources)) === 'object' && sources.constructor ? sources.constructor.name || '[Unknown Object]' : typeof sources === 'undefined' ? 'undefined' : _typeof(sources)));
+	            }
+	
+	            var mergedObject = _crioFunctions.merge.apply(undefined, [this.thaw()].concat(sources));
+	
+	            console.log(mergedObject);
+	
+	            return _ref3((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(mergedObject)));
+	        }
+	
+	        /**
 	         * Based on values in this.object, sets the values called out by key and returns a new CrioList.
 	         * If key is a string or number, then the value where the property / index is equal to key is updated
 	         * to value. If key is an object, then each property in the object will set the equivalent property
@@ -1056,12 +1089,12 @@ var crio =
 	            var keys = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	            var value = arguments[1];
 	
-	            function _ref3(_id3) {
-	                if (!(_id3 instanceof CrioCollection)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
+	            function _ref4(_id4) {
+	                if (!(_id4 instanceof CrioCollection)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id4 === null ? 'null' : (typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)) === 'object' && _id4.constructor ? _id4.constructor.name || '[Unknown Object]' : typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)));
 	                }
 	
-	                return _id3;
+	                return _id4;
 	            }
 	
 	            if (!Array.isArray(keys)) {
@@ -1084,7 +1117,7 @@ var crio =
 	                deepNewObject[key] = index === keys.length - 1 ? value : {};
 	            });
 	
-	            return _ref3(!isValidKeyset ? undefined : (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(_extends({}, this.thaw(), deepNewObject))));
+	            return _ref4(!isValidKeyset ? undefined : (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(_extends({}, this.thaw(), deepNewObject))));
 	        }
 	
 	        /**
@@ -1096,15 +1129,15 @@ var crio =
 	    }, {
 	        key: 'thaw',
 	        value: function thaw() {
-	            function _ref4(_id4) {
-	                if (!(Array.isArray(_id4) || _id4 instanceof Object)) {
-	                    throw new TypeError('Function return value violates contract, expected Array | Object got ' + (_id4 === null ? 'null' : (typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)) === 'object' && _id4.constructor ? _id4.constructor.name || '[Unknown Object]' : typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)));
+	            function _ref5(_id5) {
+	                if (!(Array.isArray(_id5) || _id5 instanceof Object)) {
+	                    throw new TypeError('Function return value violates contract, expected Array | Object got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
 	                }
 	
-	                return _id4;
+	                return _id5;
 	            }
 	
-	            return _ref4((0, _crioFunctions.thaw)(this.object));
+	            return _ref5((0, _crioFunctions.thaw)(this.object));
 	        }
 	
 	        /**
@@ -1116,15 +1149,15 @@ var crio =
 	    }, {
 	        key: 'toLocaleString',
 	        value: function toLocaleString() {
-	            function _ref5(_id5) {
-	                if (!(typeof _id5 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
+	            function _ref6(_id6) {
+	                if (!(typeof _id6 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
 	                }
 	
-	                return _id5;
+	                return _id6;
 	            }
 	
-	            return _ref5(this.object.toLocaleString());
+	            return _ref6(this.object.toLocaleString());
 	        }
 	
 	        /**
@@ -1136,15 +1169,15 @@ var crio =
 	    }, {
 	        key: 'toString',
 	        value: function toString() {
-	            function _ref6(_id6) {
-	                if (!(typeof _id6 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
+	            function _ref7(_id7) {
+	                if (!(typeof _id7 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
 	                }
 	
-	                return _id6;
+	                return _id7;
 	            }
 	
-	            return _ref6(this.object.toString());
+	            return _ref7(this.object.toString());
 	        }
 	
 	        /**
@@ -1184,7 +1217,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.isValueless = exports.isUndefined = exports.isString = exports.isNumber = exports.isNull = exports.isNAN = exports.isObject = exports.isFunction = exports.isDate = exports.isBoolean = exports.isArray = undefined;
+	exports.isValueless = exports.isUndefined = exports.isString = exports.isNumber = exports.isNull = exports.isNAN = exports.isObject = exports.isFunction = exports.isArray = undefined;
 	
 	var _toString = __webpack_require__(6);
 	
@@ -1204,26 +1237,6 @@ var crio =
 	 */
 	var isArray = function isArray(obj) {
 	    return _toString2.default.call(obj) === '[object Array]';
-	};
-	
-	/**
-	 * Returns true if object passed is boolean
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	var isBoolean = function isBoolean(obj) {
-	    return obj === true || obj === false;
-	};
-	
-	/**
-	 * Returns true if object passed is date object
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	var isDate = function isDate(obj) {
-	    return _toString2.default.call(obj) === '[object Date]';
 	};
 	
 	/**
@@ -1263,15 +1276,15 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isNAN = function isNAN(obj) {
-	    function _ref7(_id7) {
-	        if (!(typeof _id7 === 'boolean')) {
-	            throw new TypeError('Function return value violates contract, expected bool got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
+	    function _ref5(_id5) {
+	        if (!(typeof _id5 === 'boolean')) {
+	            throw new TypeError('Function return value violates contract, expected bool got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
 	        }
 	
-	        return _id7;
+	        return _id5;
 	    }
 	
-	    return _ref7(obj !== obj);
+	    return _ref5(obj !== obj);
 	};
 	
 	/**
@@ -1282,10 +1295,6 @@ var crio =
 	 */
 	var isNumber = function isNumber(obj) {
 	    return !isNAN(obj) && _toString2.default.call(obj) === '[object Number]';
-	};
-	
-	var isValueless = function isValueless(obj) {
-	    return isNull(obj) || isUndefined(obj);
 	};
 	
 	/**
@@ -1308,9 +1317,17 @@ var crio =
 	    return obj === void 0;
 	};
 	
+	/**
+	 * Returns true if object passed is either null or undefined
+	 *
+	 * @param obj
+	 * @returns {boolean}
+	 */
+	var isValueless = function isValueless(obj) {
+	    return isNull(obj) || isUndefined(obj);
+	};
+	
 	exports.isArray = isArray;
-	exports.isBoolean = isBoolean;
-	exports.isDate = isDate;
 	exports.isFunction = isFunction;
 	exports.isObject = isObject;
 	exports.isNAN = isNAN;
@@ -1321,8 +1338,6 @@ var crio =
 	exports.isValueless = isValueless;
 	exports.default = {
 	    isArray: isArray,
-	    isBoolean: isBoolean,
-	    isDate: isDate,
 	    isFunction: isFunction,
 	    isObject: isObject,
 	    isNAN: isNAN,
@@ -1353,7 +1368,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.isSameCrio = exports.isCrioMap = exports.isCrioList = undefined;
+	exports.isSameCrio = exports.isCrioMap = exports.isCrioList = exports.isCrioCollection = undefined;
 	
 	var _CrioCollection = __webpack_require__(4);
 	
@@ -1369,6 +1384,10 @@ var crio =
 	
 	// local partial imports
 	
+	var isCrioCollection = function isCrioCollection(obj) {
+	    return obj instanceof _CrioCollection2.default;
+	};
+	
 	/**
 	 * Returns true if object passed is CrioList
 	 *
@@ -1376,7 +1395,7 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isCrioList = function isCrioList(obj) {
-	    return obj instanceof _CrioCollection2.default && (0, _checkers.isArray)(obj.object);
+	    return isCrioCollection(obj) && (0, _checkers.isArray)(obj.object);
 	};
 	
 	/**
@@ -1386,7 +1405,7 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isCrioMap = function isCrioMap(obj) {
-	    return obj instanceof _CrioCollection2.default && (0, _checkers.isObject)(obj.object);
+	    return isCrioCollection(obj) && (0, _checkers.isObject)(obj.object);
 	};
 	
 	/**
@@ -1412,10 +1431,12 @@ var crio =
 	    return false;
 	};
 	
+	exports.isCrioCollection = isCrioCollection;
 	exports.isCrioList = isCrioList;
 	exports.isCrioMap = isCrioMap;
 	exports.isSameCrio = isSameCrio;
 	exports.default = {
+	    isCrioCollection: isCrioCollection,
 	    isCrioList: isCrioList,
 	    isCrioMap: isCrioMap,
 	    isSameCrio: isSameCrio
@@ -1430,7 +1451,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.thaw = exports.getCrioInstance = exports.coalesceCrioValue = exports.cloneObject = undefined;
+	exports.thaw = exports.merge = exports.getCrioInstance = exports.coalesceCrioValue = exports.cloneObject = undefined;
 	
 	var _createNewCrio = __webpack_require__(2);
 	
@@ -1493,7 +1514,7 @@ var crio =
 	    };
 	
 	    var cloneObj = function cloneObj(obj) {
-	        var cleanObj = (0, _crioCheckers.isCrioList)(obj) || (0, _crioCheckers.isCrioMap)(obj) ? obj.object : obj;
+	        var cleanObj = (0, _crioCheckers.isCrioCollection)(obj) ? obj.object : obj;
 	
 	        var base = [];
 	
@@ -1570,6 +1591,91 @@ var crio =
 	    return cloneObj(originalObj);
 	};
 	
+	var getThawedObject = function getThawedObject(obj) {
+	    return (0, _crioCheckers.isCrioCollection)(obj) ? obj.thaw() : obj;
+	};
+	
+	/**
+	 * Deeply merge objects or arrays
+	 *
+	 * @param target<any>
+	 * @param sources<Array>
+	 * @returns {*}
+	 */
+	var mergeObject = function mergeObject(target) {
+	    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        sources[_key - 1] = arguments[_key];
+	    }
+	
+	    if (!Array.isArray(sources)) {
+	        throw new TypeError('Value of argument "sources" violates contract, expected Array got ' + (sources === null ? 'null' : (typeof sources === 'undefined' ? 'undefined' : _typeof(sources)) === 'object' && sources.constructor ? sources.constructor.name || '[Unknown Object]' : typeof sources === 'undefined' ? 'undefined' : _typeof(sources)));
+	    }
+	
+	    target = getThawedObject(target);
+	
+	    var isTargetArr = (0, _checkers.isArray)(target);
+	    var isTargetObj = (0, _checkers.isObject)(target);
+	
+	    if (!isTargetArr && !isTargetObj) {
+	        return sources[sources.length - 1];
+	    }
+	
+	    var dest = isTargetArr ? [] : {};
+	
+	    if (!(Array.isArray(dest) || dest instanceof Object)) {
+	        throw new TypeError('Value of variable "dest" violates contract, expected Array | Object got ' + (dest === null ? 'null' : (typeof dest === 'undefined' ? 'undefined' : _typeof(dest)) === 'object' && dest.constructor ? dest.constructor.name || '[Unknown Object]' : typeof dest === 'undefined' ? 'undefined' : _typeof(dest)));
+	    }
+	
+	    (0, _functions.forEach)(sources, function (source) {
+	        var realSource = getThawedObject(source);
+	
+	        if ((0, _checkers.isArray)(realSource)) {
+	            target = target || [];
+	            dest = dest.concat(target);
+	
+	            if (!(Array.isArray(dest) || dest instanceof Object)) {
+	                throw new TypeError('Value of variable "dest" violates contract, expected Array | Object got ' + (dest === null ? 'null' : (typeof dest === 'undefined' ? 'undefined' : _typeof(dest)) === 'object' && dest.constructor ? dest.constructor.name || '[Unknown Object]' : typeof dest === 'undefined' ? 'undefined' : _typeof(dest)));
+	            }
+	
+	            (0, _functions.forEach)(realSource, function (item, i) {
+	                var realItem = getThawedObject(item);
+	
+	                if ((0, _checkers.isUndefined)(dest[i])) {
+	                    dest[i] = realItem;
+	                } else if ((0, _checkers.isObject)(realItem)) {
+	                    dest[i] = mergeObject(target[i], realItem);
+	                } else {
+	                    if (target.indexOf(realItem) === -1) {
+	                        dest.push(realItem);
+	                    }
+	                }
+	            });
+	        } else {
+	            target = target || {};
+	
+	            (0, _functions.forOwn)(target, function (value, key) {
+	                dest[key] = getThawedObject(value);
+	            });
+	
+	            (0, _functions.forOwn)(realSource, function (value, key) {
+	                var realValue = getThawedObject(value);
+	
+	                if ((0, _checkers.isObject)(realValue)) {
+	                    dest[key] = mergeObject(target[key], realValue);
+	                }
+	
+	                if (!(0, _checkers.isObject)(realValue) || !realValue) {
+	                    dest[key] = realValue;
+	                } else if (!target[key]) {
+	                    dest[key] = realValue;
+	                }
+	            });
+	        }
+	    });
+	
+	    return dest;
+	};
+	
 	/**
 	 * Accepts any parameter, and if it is a Crio then return a cloned and unfrozen item
 	 *
@@ -1577,7 +1683,7 @@ var crio =
 	 * @returns {*}
 	 */
 	var thawCrio = function thawCrio(obj) {
-	    if ((0, _crioCheckers.isCrioList)(obj) || (0, _crioCheckers.isCrioMap)(obj)) {
+	    if ((0, _crioCheckers.isCrioCollection)(obj)) {
 	        return cloneObject(obj.object);
 	    }
 	
@@ -1593,7 +1699,7 @@ var crio =
 	        throw new TypeError('Value of argument "Crio" violates contract, expected CrioCollection got ' + (Crio === null ? 'null' : (typeof Crio === 'undefined' ? 'undefined' : _typeof(Crio)) === 'object' && Crio.constructor ? Crio.constructor.name || '[Unknown Object]' : typeof Crio === 'undefined' ? 'undefined' : _typeof(Crio)));
 	    }
 	
-	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) && !(0, _crioCheckers.isCrioList)(obj) && !(0, _crioCheckers.isCrioMap)(obj)) {
+	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) && !(0, _crioCheckers.isCrioCollection)(obj)) {
 	        return getCrioInstance(Crio, (0, _createNewCrio2.default)(obj));
 	    }
 	
@@ -1603,11 +1709,13 @@ var crio =
 	exports.cloneObject = cloneObject;
 	exports.coalesceCrioValue = coalesceCrioValue;
 	exports.getCrioInstance = getCrioInstance;
+	exports.merge = mergeObject;
 	exports.thaw = thawCrio;
 	exports.default = {
 	    cloneObject: cloneObject,
 	    coalesceCrioValue: coalesceCrioValue,
 	    getCrioInstance: getCrioInstance,
+	    merge: mergeObject,
 	    thaw: thawCrio
 	};
 
@@ -1620,7 +1728,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.stringify = exports.splice = exports.forOwn = exports.forIn = exports.forEachRight = exports.forEach = undefined;
+	exports.splice = exports.forOwn = exports.forIn = exports.forEachRight = exports.forEach = undefined;
 	
 	var _checkers = __webpack_require__(5);
 	
@@ -1629,30 +1737,6 @@ var crio =
 	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 	
 	// local partial imports
-	
-	/**
-	 * Modified from Dojo's implementation, this is a helper function to escape sequences for non-visual
-	 * characters, double quotes, and backslashes, where they are surrounded with double quotes to form
-	 * a valid string literal
-	 *
-	 * @param str<String>
-	 * @returns escapedString<String>
-	 */
-	var escapeString = function escapeString(str) {
-	    function _ref(_id) {
-	        if (!(typeof _id === 'string')) {
-	            throw new TypeError('Function return value violates contract, expected string got ' + (_id === null ? 'null' : (typeof _id === 'undefined' ? 'undefined' : _typeof(_id)) === 'object' && _id.constructor ? _id.constructor.name || '[Unknown Object]' : typeof _id === 'undefined' ? 'undefined' : _typeof(_id)));
-	        }
-	
-	        return _id;
-	    }
-	
-	    if (!(typeof str === 'string')) {
-	        throw new TypeError('Value of argument "str" violates contract, expected string got ' + (str === null ? 'null' : (typeof str === 'undefined' ? 'undefined' : _typeof(str)) === 'object' && str.constructor ? str.constructor.name || '[Unknown Object]' : typeof str === 'undefined' ? 'undefined' : _typeof(str)));
-	    }
-	
-	    return _ref(('"' + str.replace(/(["\\])/g, '\\$1') + '"').replace(/[\f]/g, '\\f').replace(/[\b]/g, '\\b').replace(/[\n]/g, '\\n').replace(/[\t]/g, '\\t').replace(/[\r]/g, '\\r'));
-	};
 	
 	/**
 	 * Loops over array, executing each function
@@ -1891,157 +1975,17 @@ var crio =
 	    return [].concat(_toConsumableArray(obj.slice(0, index)), _toConsumableArray(obj.slice(index + 1)));
 	};
 	
-	/**
-	 * Modified from Dojo's implementation, this function will convert anything into JSON, meaning
-	 * circular references will be coalesced
-	 *
-	 * @param obj<Any>
-	 * @param replacer<String[optional]>
-	 * @param spacer<String[optional]>
-	 * @returns json<String>
-	 */
-	var circularStringify = function circularStringify(obj, replacer, spacer) {
-	    if ((0, _checkers.isString)(replacer)) {
-	        spacer = replacer;
-	        replacer = null;
-	    }
-	
-	    function stringify(objectToStringify) {
-	        var indent = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-	        var key = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
-	
-	        if ((0, _checkers.isFunction)(replacer)) {
-	            objectToStringify = replacer(key, objectToStringify);
-	        }
-	
-	        var val = undefined;
-	
-	        if ((0, _checkers.isNumber)(objectToStringify)) {
-	            return isFinite(objectToStringify) ? objectToStringify + '' : 'null';
-	        }
-	
-	        if ((0, _checkers.isBoolean)(objectToStringify)) {
-	            return objectToStringify + '';
-	        }
-	
-	        if ((0, _checkers.isNull)(objectToStringify)) {
-	            return 'null';
-	        }
-	
-	        if ((0, _checkers.isString)(objectToStringify)) {
-	            return escapeString(objectToStringify);
-	        }
-	
-	        if ((0, _checkers.isFunction)(objectToStringify) || (0, _checkers.isUndefined)(objectToStringify)) {
-	            return void 0; // undefined
-	        }
-	
-	        // short-circuit for objects that support 'json' serialization
-	        // if they return 'self' then just pass-through...
-	        if ((0, _checkers.isFunction)(objectToStringify.toJSON)) {
-	            return stringify(objectToStringify.toJSON(key), indent, key);
-	        }
-	
-	        if ((0, _checkers.isDate)(objectToStringify)) {
-	            return '\'{FullYear}-{Month+}-{Date}T{Hours}:{Minutes}:{Seconds}Z\''.replace(/\{(\w+)(\+)?\}/g, function (t, prop, plus) {
-	                var num = objectToStringify['getUTC' + prop]() + (plus ? 1 : 0);
-	
-	                return num < 10 ? '0' + num : num;
-	            });
-	        }
-	
-	        if (objectToStringify.valueOf() !== objectToStringify) {
-	            // primitive wrapper, try again unwrapped:
-	            return stringify(objectToStringify.valueOf(), indent, key);
-	        }
-	
-	        var nextIndent = spacer ? indent + spacer : '';
-	        /* we used to test for DOM nodes and throw, but FF serializes them as {}, so cross-browser consistency is probably not efficiently attainable */
-	
-	        var sep = spacer ? ' ' : '';
-	        var newLine = spacer ? '\n' : '';
-	
-	        // array
-	        if ((0, _checkers.isArray)(objectToStringify)) {
-	            var itl = objectToStringify.length;
-	
-	            if (!(typeof itl === 'number')) {
-	                throw new TypeError('Value of variable "itl" violates contract, expected number got ' + (itl === null ? 'null' : (typeof itl === 'undefined' ? 'undefined' : _typeof(itl)) === 'object' && itl.constructor ? itl.constructor.name || '[Unknown Object]' : typeof itl === 'undefined' ? 'undefined' : _typeof(itl)));
-	            }
-	
-	            var res = [];
-	
-	            for (key = 0; key < itl; key++) {
-	                var _obj = objectToStringify[key];
-	
-	                val = stringify(_obj, nextIndent, key);
-	
-	                if (!(0, _checkers.isString)(val)) {
-	                    val = 'null';
-	                }
-	
-	                res.push(newLine + nextIndent + val);
-	            }
-	
-	            return '[' + res.join(',') + newLine + indent + ']';
-	        }
-	
-	        // generic object code path
-	        var output = [];
-	
-	        for (key in objectToStringify) {
-	            var keyStr = undefined;
-	
-	            if (!(keyStr == null || typeof keyStr === 'string')) {
-	                throw new TypeError('Value of variable "keyStr" violates contract, expected ?string got ' + (keyStr === null ? 'null' : (typeof keyStr === 'undefined' ? 'undefined' : _typeof(keyStr)) === 'object' && keyStr.constructor ? keyStr.constructor.name || '[Unknown Object]' : typeof keyStr === 'undefined' ? 'undefined' : _typeof(keyStr)));
-	            }
-	
-	            if (objectToStringify.hasOwnProperty(key)) {
-	                if ((0, _checkers.isNumber)(key)) {
-	                    keyStr = '\'' + key + '\'';
-	
-	                    if (!(keyStr == null || typeof keyStr === 'string')) {
-	                        throw new TypeError('Value of variable "keyStr" violates contract, expected ?string got ' + (keyStr === null ? 'null' : (typeof keyStr === 'undefined' ? 'undefined' : _typeof(keyStr)) === 'object' && keyStr.constructor ? keyStr.constructor.name || '[Unknown Object]' : typeof keyStr === 'undefined' ? 'undefined' : _typeof(keyStr)));
-	                    }
-	                } else if ((0, _checkers.isString)(key)) {
-	                    keyStr = escapeString(key);
-	                } else {
-	                    // skip non-string or number keys
-	                    continue;
-	                }
-	
-	                val = stringify(objectToStringify[key], nextIndent, key);
-	
-	                if (!(0, _checkers.isString)(val)) {
-	                    // skip non-serializable values
-	                    continue;
-	                }
-	
-	                // At this point, the most non-IE browsers don't get in this branch
-	                // (they have native JSON), so push is definitely the way to
-	                output.push(newLine + nextIndent + keyStr + ':' + sep + val);
-	            }
-	        }
-	
-	        return '{' + output.join(',') + newLine + indent + '}'; // String
-	    }
-	
-	    return stringify(obj, '', '');
-	};
-	
 	exports.forEach = forEach;
 	exports.forEachRight = forEachRight;
 	exports.forIn = forIn;
 	exports.forOwn = forOwn;
 	exports.splice = immutableSplice;
-	exports.stringify = circularStringify;
 	exports.default = {
 	    forEach: forEach,
 	    forEachRight: forEachRight,
 	    forIn: forIn,
 	    forOwn: forOwn,
-	    splice: immutableSplice,
-	    stringify: circularStringify
+	    splice: immutableSplice
 	};
 
 /***/ },
@@ -2093,6 +2037,10 @@ var crio =
 	var _murmurHashJs = __webpack_require__(12);
 	
 	var _murmurHashJs2 = _interopRequireDefault(_murmurHashJs);
+	
+	var _cereal = __webpack_require__(19);
+	
+	var _cereal2 = _interopRequireDefault(_cereal);
 	
 	var _buffer = __webpack_require__(14);
 	
@@ -2184,10 +2132,10 @@ var crio =
 	            throw new TypeError('Value of variable "objWithFunctionsHashed" violates contract, expected Array | Object got ' + (objWithFunctionsHashed === null ? 'null' : (typeof objWithFunctionsHashed === 'undefined' ? 'undefined' : _typeof(objWithFunctionsHashed)) === 'object' && objWithFunctionsHashed.constructor ? objWithFunctionsHashed.constructor.name || '[Unknown Object]' : typeof objWithFunctionsHashed === 'undefined' ? 'undefined' : _typeof(objWithFunctionsHashed)));
 	        }
 	
-	        return hashString((0, _functions.stringify)(objWithFunctionsHashed));
+	        return hashString(_cereal2.default.stringify(objWithFunctionsHashed));
 	    }
 	
-	    return hashString((0, _functions.stringify)(obj));
+	    return hashString(_cereal2.default.stringify(obj));
 	};
 	
 	exports.hashObject = hashObject;
@@ -4124,6 +4072,174 @@ var crio =
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(20);
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*global exports */
+	/*jslint browser: true, devel: true */
+	
+	var Cereal;
+	
+	(function (window) {
+	    'use strict';
+	
+	    var util, cereal;
+	
+	    util = (function () {
+	        return {
+	            isPrimitive: function (obj) {
+	                return obj !== Object(obj);
+	            }
+	        };
+	    }());
+	
+	    (function () {
+	        var undef  = 0,
+	            nu     = 1,
+	            prim   = 2,
+	            object = 3,
+	            array  = 4,
+	            ref    = 5,
+	            jsonify, dejsonify, generateEncodeWork, generateDecodeWork;
+	
+	        generateEncodeWork = function (obj, target) {
+	            var worklist = [], names = Object.keys(obj),
+	                i, name, item;
+	            for (i = 0; i < names.length; i += 1) {
+	                name = names[i];
+	                target[name] = [];
+	                worklist.push([target[name], obj[name]]);
+	            }
+	            return worklist;
+	        };
+	
+	        jsonify = function (obj) {
+	            var root = [], seen = [], seenIdx = 0, worklist = [[root, obj]],
+	                item, target, refIdx;
+	
+	            while (worklist.length > 0) {
+	                item = worklist.shift();
+	                target = item[0];
+	                obj = item[1];
+	                if (undefined === obj) {
+	                    target[0] = undef;
+	                } else if (null === obj) {
+	                    target[0] = nu;
+	                } else if (util.isPrimitive(obj)) {
+	                    target[0] = prim;
+	                    target[1] = obj;
+	                } else {
+	                    refIdx = seen.lastIndexOf(obj);
+	                    if (refIdx === -1) {
+	                        refIdx = seenIdx;
+	                        seenIdx += 1;
+	                        seen[refIdx] = obj; // store orig obj, not result of obj.cerealise
+	                        target[1] = refIdx;
+	                        target[2] = {}; // always use an object to placate JSON itself
+	                        if ('cerealise' in obj && typeof obj.cerealise === 'function') {
+	                            obj = obj.cerealise();
+	                        }
+	                        if (Object.prototype.toString.apply(obj) === '[object Array]') {
+	                            target[0] = array;
+	                        } else {
+	                            target[0] = object;
+	                        }
+	                        worklist = (generateEncodeWork(obj, target[2])).concat(worklist);
+	                    } else {
+	                        target[0] = ref;
+	                        target[1] = refIdx;
+	                    }
+	                }
+	            }
+	
+	            return root;
+	        };
+	
+	        generateDecodeWork = function (obj, target) {
+	            var worklist = [], names = Object.keys(obj),
+	                i, name;
+	            for (i = 0; i < names.length; i += 1) {
+	                name = names[i];
+	                obj[name].unshift(name);
+	                obj[name].unshift(target);
+	                worklist.push(obj[name]);
+	            }
+	            return worklist;
+	        };
+	
+	        dejsonify = function (obj) {
+	            var root = {}, seen = [], worklist = [obj],
+	                item, target, field;
+	            obj.unshift('value');
+	            obj.unshift(root);
+	
+	            while (worklist.length > 0) {
+	                item = worklist.shift();
+	                target = item[0];
+	                field = item[1];
+	                switch (item[2]) {
+	                case undef:
+	                    target[field] = undefined;
+	                    break;
+	                case nu:
+	                    target[field] = null;
+	                    break;
+	                case prim:
+	                    target[field] = item[3];
+	                    break;
+	                case object:
+	                    target[field] = {};
+	                    seen[item[3]] = target[field];
+	                    worklist = (generateDecodeWork(item[4], target[field])).concat(worklist);
+	                    break;
+	                case array:
+	                    target[field] = [];
+	                    seen[item[3]] = target[field];
+	                    worklist = (generateDecodeWork(item[4], target[field])).concat(worklist);
+	                    break;
+	                case ref:
+	                    target[field] = seen[item[3]];
+	                    if (target[field] === undefined) {
+	                        throw "Decoding error";
+	                    }
+	                    break;
+	                default:
+	                    throw "Decoding error";
+	                }
+	            }
+	
+	            return root.value;
+	        };
+	
+	        cereal = {
+	            stringify: function (obj) {
+	                return JSON.stringify(jsonify(obj));
+	            },
+	
+	            parse: function (str) {
+	                return dejsonify(JSON.parse(str));
+	            }
+	        };
+	    }());
+	
+	    if (false) {
+	        Cereal = cereal;
+	    } else {
+	        exports.stringify = cereal.stringify;
+	        exports.parse = cereal.parse;
+	    }
+	
+	}(this));
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4343,7 +4459,7 @@ var crio =
 	exports.default = CrioMap;
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

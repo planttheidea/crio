@@ -14,26 +14,6 @@ const isArray = (obj: any) : boolean => {
 };
 
 /**
- * Returns true if object passed is boolean
- *
- * @param obj<Any>
- * @returns {boolean}
- */
-const isBoolean = (obj: any) : boolean => {
-    return obj === true || obj === false;
-};
-
-/**
- * Returns true if object passed is date object
- *
- * @param obj<Any>
- * @returns {boolean}
- */
-const isDate = (obj: any) : boolean => {
-    return toString.call(obj) === '[object Date]';
-};
-
-/**
  * Returns true if object passed is function
  *
  * @param obj<Any>
@@ -83,10 +63,6 @@ const isNumber = (obj: any) : boolean => {
     return !isNAN(obj) && toString.call(obj) === '[object Number]';
 };
 
-const isValueless = (obj) => {
-    return isNull(obj) || isUndefined(obj);
-};
-
 /**
  * Returns true if object passed is string
  *
@@ -107,9 +83,17 @@ const isUndefined = (obj: any) : boolean => {
     return obj === void 0;
 };
 
+/**
+ * Returns true if object passed is either null or undefined
+ *
+ * @param obj
+ * @returns {boolean}
+ */
+const isValueless = (obj) => {
+    return isNull(obj) || isUndefined(obj);
+};
+
 export {isArray as isArray};
-export {isBoolean as isBoolean};
-export {isDate as isDate};
 export {isFunction as isFunction};
 export {isObject as isObject};
 export {isNAN as isNAN};
@@ -121,8 +105,6 @@ export {isValueless as isValueless};
 
 export default {
     isArray,
-    isBoolean,
-    isDate,
     isFunction,
     isObject,
     isNAN,
