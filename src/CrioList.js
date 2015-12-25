@@ -8,6 +8,7 @@ import CrioCollection from './CrioCollection';
 
 // local partial imports
 import {
+    isArray,
     isValueless
 } from './utils/checkers';
 
@@ -199,6 +200,11 @@ class CrioList extends CrioCollection {
     map(callback: Function, thisArg: ?Object) : CrioList {
         const values = this.thaw().map(callback, thisArg);
 
+        if (!isArray(values)) {
+            throw new Error('You cannot change the type of object when mapping. If you want to do this, ' +
+                'you can use the .mutate() method.');
+        }
+
         return getCrioInstance(this, createNewCrioList(values));
     }
 
@@ -329,6 +335,23 @@ class CrioList extends CrioCollection {
         });
 
         return getCrioInstance(this, createNewCrioList(newValue));
+    }
+
+    /**
+     * Converts CrioList into CrioMap
+     *
+     * @returns {any}
+     */
+    toMap() : CrioCollection {
+        return this.mutate((mutableList) => {
+            let map = {};
+
+            forEach(mutableList, (value, index) => {
+                map[index] = value;
+            });
+
+            return map;
+        });
     }
 
     /**

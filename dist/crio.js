@@ -624,6 +624,10 @@ var crio =
 	
 	            var values = this.thaw().map(callback, thisArg);
 	
+	            if (!(0, _checkers.isArray)(values)) {
+	                throw new Error('You cannot change the type of object when mapping. If you want to do this, ' + 'you can use the .mutate() method.');
+	            }
+	
 	            return _ref12((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(values)));
 	        }
 	
@@ -649,7 +653,7 @@ var crio =
 	    }, {
 	        key: 'push',
 	        value: function push() {
-	            var _ref25;
+	            var _ref26;
 	
 	            for (var _len2 = arguments.length, values = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 	                values[_key2] = arguments[_key2];
@@ -667,7 +671,7 @@ var crio =
 	                throw new TypeError('Value of argument "values" violates contract, expected Array got ' + (values === null ? 'null' : (typeof values === 'undefined' ? 'undefined' : _typeof(values)) === 'object' && values.constructor ? values.constructor.name || '[Unknown Object]' : typeof values === 'undefined' ? 'undefined' : _typeof(values)));
 	            }
 	
-	            var newValues = (_ref25 = [].concat(_toConsumableArray(this.object))).concat.apply(_ref25, values);
+	            var newValues = (_ref26 = [].concat(_toConsumableArray(this.object))).concat.apply(_ref26, values);
 	
 	            return _ref14((0, _createNewCrio.createNewCrioList)(newValues));
 	        }
@@ -891,6 +895,34 @@ var crio =
 	        }
 	
 	        /**
+	         * Converts CrioList into CrioMap
+	         *
+	         * @returns {any}
+	         */
+	
+	    }, {
+	        key: 'toMap',
+	        value: function toMap() {
+	            function _ref23(_id23) {
+	                if (!(_id23 instanceof _CrioCollection3.default)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id23 === null ? 'null' : (typeof _id23 === 'undefined' ? 'undefined' : _typeof(_id23)) === 'object' && _id23.constructor ? _id23.constructor.name || '[Unknown Object]' : typeof _id23 === 'undefined' ? 'undefined' : _typeof(_id23)));
+	                }
+	
+	                return _id23;
+	            }
+	
+	            return _ref23(this.mutate(function (mutableList) {
+	                var map = {};
+	
+	                (0, _functions.forEach)(mutableList, function (value, index) {
+	                    map[index] = value;
+	                });
+	
+	                return map;
+	            }));
+	        }
+	
+	        /**
 	         * Returns CrioList with only unique items in original CrioList
 	         *
 	         * @returns {CrioList}
@@ -899,12 +931,12 @@ var crio =
 	    }, {
 	        key: 'unique',
 	        value: function unique() {
-	            function _ref23(_id23) {
-	                if (!(_id23 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id23 === null ? 'null' : (typeof _id23 === 'undefined' ? 'undefined' : _typeof(_id23)) === 'object' && _id23.constructor ? _id23.constructor.name || '[Unknown Object]' : typeof _id23 === 'undefined' ? 'undefined' : _typeof(_id23)));
+	            function _ref24(_id24) {
+	                if (!(_id24 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id24 === null ? 'null' : (typeof _id24 === 'undefined' ? 'undefined' : _typeof(_id24)) === 'object' && _id24.constructor ? _id24.constructor.name || '[Unknown Object]' : typeof _id24 === 'undefined' ? 'undefined' : _typeof(_id24)));
 	                }
 	
-	                return _id23;
+	                return _id24;
 	            }
 	
 	            var uniqueList = [];
@@ -915,7 +947,7 @@ var crio =
 	                }
 	            });
 	
-	            return _ref23((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(uniqueList)));
+	            return _ref24((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(uniqueList)));
 	        }
 	
 	        /**
@@ -928,27 +960,27 @@ var crio =
 	    }, {
 	        key: 'unshift',
 	        value: function unshift() {
-	            var _ref26;
+	            var _ref27;
 	
 	            for (var _len4 = arguments.length, values = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
 	                values[_key4] = arguments[_key4];
 	            }
 	
-	            function _ref24(_id24) {
-	                if (!(_id24 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id24 === null ? 'null' : (typeof _id24 === 'undefined' ? 'undefined' : _typeof(_id24)) === 'object' && _id24.constructor ? _id24.constructor.name || '[Unknown Object]' : typeof _id24 === 'undefined' ? 'undefined' : _typeof(_id24)));
+	            function _ref25(_id25) {
+	                if (!(_id25 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id25 === null ? 'null' : (typeof _id25 === 'undefined' ? 'undefined' : _typeof(_id25)) === 'object' && _id25.constructor ? _id25.constructor.name || '[Unknown Object]' : typeof _id25 === 'undefined' ? 'undefined' : _typeof(_id25)));
 	                }
 	
-	                return _id24;
+	                return _id25;
 	            }
 	
 	            if (!Array.isArray(values)) {
 	                throw new TypeError('Value of argument "values" violates contract, expected Array got ' + (values === null ? 'null' : (typeof values === 'undefined' ? 'undefined' : _typeof(values)) === 'object' && values.constructor ? values.constructor.name || '[Unknown Object]' : typeof values === 'undefined' ? 'undefined' : _typeof(values)));
 	            }
 	
-	            var newValues = (_ref26 = [].concat(values)).concat.apply(_ref26, _toConsumableArray(this.object));
+	            var newValues = (_ref27 = [].concat(values)).concat.apply(_ref27, _toConsumableArray(this.object));
 	
-	            return _ref24((0, _createNewCrio.createNewCrioList)(newValues));
+	            return _ref25((0, _createNewCrio.createNewCrioList)(newValues));
 	        }
 	    }]);
 	
@@ -4469,6 +4501,8 @@ var crio =
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4577,6 +4611,63 @@ var crio =
 	            }
 	
 	            return _ref2(this.object.hasOwnProperty(prop));
+	        }
+	
+	        /**
+	         * Converts CrioMap to a CrioList, where each item is a key:value object from the original map
+	         *
+	         * @returns {CrioCollection}
+	         */
+	
+	    }, {
+	        key: 'toCollection',
+	        value: function toCollection() {
+	            function _ref3(_id3) {
+	                if (!(_id3 instanceof _CrioCollection3.default)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
+	                }
+	
+	                return _id3;
+	            }
+	
+	            return _ref3(this.mutate(function (mutableObject) {
+	                var collection = [];
+	
+	                (0, _functions.forIn)(mutableObject, function (value, key) {
+	                    collection.push(_defineProperty({}, key, value));
+	                });
+	
+	                return collection;
+	            }));
+	        }
+	
+	        /**
+	         * Converts CrioMap to a CrioList, where each item is a value from the key:value pairs
+	         * in the original map
+	         *
+	         * @returns {CrioCollection}
+	         */
+	
+	    }, {
+	        key: 'toList',
+	        value: function toList() {
+	            function _ref4(_id4) {
+	                if (!(_id4 instanceof _CrioCollection3.default)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id4 === null ? 'null' : (typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)) === 'object' && _id4.constructor ? _id4.constructor.name || '[Unknown Object]' : typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)));
+	                }
+	
+	                return _id4;
+	            }
+	
+	            return _ref4(this.mutate(function (mutableObject) {
+	                var list = [];
+	
+	                (0, _functions.forIn)(mutableObject, function (value) {
+	                    list.push(value);
+	                });
+	
+	                return list;
+	            }));
 	        }
 	    }]);
 	

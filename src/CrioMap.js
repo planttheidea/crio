@@ -64,6 +64,43 @@ class CrioMap extends CrioCollection {
     has(prop: any) : boolean {
         return this.object.hasOwnProperty(prop);
     }
+
+    /**
+     * Converts CrioMap to a CrioList, where each item is a key:value object from the original map
+     *
+     * @returns {CrioCollection}
+     */
+    toCollection() : CrioCollection {
+        return this.mutate((mutableObject) => {
+            let collection = [];
+
+            forIn(mutableObject, (value, key) => {
+                collection.push({
+                    [key]:value
+                });
+            });
+
+            return collection;
+        });
+    }
+
+    /**
+     * Converts CrioMap to a CrioList, where each item is a value from the key:value pairs
+     * in the original map
+     *
+     * @returns {CrioCollection}
+     */
+    toList() : CrioCollection {
+        return this.mutate((mutableObject) => {
+            let list = [];
+
+            forIn(mutableObject, (value) => {
+                list.push(value);
+            });
+
+            return list;
+        });
+    }
 }
 
 export default CrioMap;

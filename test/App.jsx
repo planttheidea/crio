@@ -210,6 +210,14 @@ const mutatedCrio = filledCrio.mutate((mutable) => {
 console.log(mutatedCrio);
 console.log(filledCrio);
 
+const mappedFilledCrio = filledCrio.toMap();
+
+const collectionedCrio = mappedFilledCrio.toCollection();
+const listedCrio = mappedFilledCrio.toList();
+
+console.log(mappedFilledCrio);
+console.log(collectionedCrio);
+console.log(listedCrio);
 
 class App extends React.Component {
     displayName = 'App';
