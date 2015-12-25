@@ -1,7 +1,9 @@
 
 
 // local imports
-import createNewCrio from './utils/createNewCrio';
+import {
+    createNewCrio
+} from './utils/createNewCrio';
 
 // local partial imports
 import {
@@ -35,6 +37,10 @@ import {
 import {
     hashObject
 } from './utils/hash';
+
+const isValidKey = (obj: any, index: number, length: number) : boolean => {
+    return !isUndefined(obj) && index < length - 1;
+};
 
 class CrioCollection {
     constructor(obj) {
@@ -107,23 +113,38 @@ class CrioCollection {
      * @returns {Array|Object}
      */
     getIn(keys = []) {
-        let retValue = this.thaw();
+        let retValue = this.thaw(),
+            foundKeyMatch = true;
 
-        forEach(keys, (key) => {
-            retValue = retValue[key];
-
-            if (isUndefined(retValue)) {
+        forEach(keys, (key, index) => {
+            if (!isValidKey(retValue[key], index, keys.length)) {
+                foundKeyMatch = false;
                 return false;
             }
+
+            retValue = retValue[key];
         });
 
-        return coalesceCrioValue(this, retValue);
+        if (foundKeyMatch) {
+            return coalesceCrioValue(this, retValue);
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Returns true if size is 0
+     *
+     * @returns {boolean}
+     */
+    isEmpty() : boolean {
+        return this.size === 0
     }
 
     /**
      * Retrieves an array of the keys for this.object
      *
-     * @returns keys<Array>
+     * @returns {Array}
      */
     keys() {
         return Object.keys(this.object);
@@ -137,8 +158,6 @@ class CrioCollection {
      */
     merge(...sources: Array) : CrioCollection {
         const mergedObject = merge(this.thaw(), ...sources);
-
-        console.log(mergedObject);
 
         return getCrioInstance(this, createNewCrio(mergedObject));
     }
@@ -183,27 +202,32 @@ class CrioCollection {
      * @param value<any>
      * @returns {Object}
      */
-    setIn(keys: Array = [], value: any) : CrioCollection {
+    setIn(keys: Array = [], value: any) : ?CrioCollection {
         if (isUndefined(value)) {
             throw new TypeError('You need to pass in a value to apply for the key.');
         }
 
-        let deepNewObject: Object = {},
-            isValidKeyset = true;
+        let foundKeyMatch = true,
+            checkObj = this.thaw();
 
         forEach(keys, (key, index) => {
-            if (isUndefined(this.object[key])) {
-                isValidKeyset = false;
+            if (!isValidKey(checkObj[key], index, keys.length)) {
+                foundKeyMatch = false;
                 return false;
             }
 
-            deepNewObject[key] = index === keys.length - 1 ? value : {};
+            if (index === keys.length - 1) {
+                checkObj[key] = value;
+            } else {
+                checkObj = checkObj[key];
+            }
         });
 
-        return !isValidKeyset ? undefined : getCrioInstance(this, createNewCrio({
-            ...this.thaw(),
-            ...deepNewObject
-        }));
+        if (foundKeyMatch) {
+            return getCrioInstance(this, createNewCrio(checkObj));
+        }
+
+        return undefined;
     }
 
     /**
@@ -238,9 +262,9 @@ class CrioCollection {
      * are plucked from the top-level mapping and returned as an array. In all other cases, this.object itself
      * is returned. In all scenarios, mutable is returned to the object.
      *
-     * @returns {*}
+     * @returns {Array}
      */
-    values() {
+    values() : Array {
         const thawedObject = this.thaw();
 
         let valueArray: Array = [];

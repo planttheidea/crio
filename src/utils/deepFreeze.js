@@ -1,7 +1,9 @@
 
 
 // local imports
-import createNewCrio from './createNewCrio';
+import {
+    createNewCrio
+} from './createNewCrio';
 
 // local partial imports
 import {

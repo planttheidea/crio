@@ -2,7 +2,9 @@
 
 
 // local imports
-import createNewCrio from './createNewCrio';
+import {
+    createNewCrio
+} from './createNewCrio';
 import CrioCollection from './../CrioCollection';
 
 import {

@@ -176,6 +176,29 @@ console.log(crioCircular.merge({
     circular:crioCircular
 }));
 
+const crioValues = crio12.values();
+
+console.log(crioValues);
+
+const dupCrio = crio.list.of(1,2,2,2,3,4,5,5,5,5,5,4,4,3,3,2,1,1,3,2,4);
+
+console.log(dupCrio);
+
+const uniqCrio = dupCrio.unique();
+
+console.log(uniqCrio);
+
+const sortedCrio = dupCrio.sort();
+
+console.log(sortedCrio);
+
+const filledCrio = dupCrio.fill('a', 4, 7);
+
+console.log(filledCrio);
+
+console.log(filledCrio.first());
+console.log(filledCrio.last());
+
 
 class App extends React.Component {
     displayName = 'App';

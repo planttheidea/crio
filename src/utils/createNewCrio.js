@@ -20,6 +20,14 @@ import {
     cloneObject
 } from './crioFunctions';
 
+const createNewCrioList = (obj: Object) : CrioList => {
+    return Object.seal(new CrioList(obj));
+};
+
+const createNewCrioMap = (obj: Object) : CrioMap => {
+    return Object.seal(new CrioMap(obj));
+};
+
 /**
  * Creates new Crio from passed object
  *
@@ -30,11 +38,11 @@ const createNewCrio = (obj: any) : CrioList|CrioMap => {
     const frozenObj = deepFreeze(obj);
 
     if (isArray(obj)) {
-        return new CrioList(frozenObj);
+        return createNewCrioList(frozenObj);
     }
 
     if (isObject(obj)) {
-        return new CrioMap(frozenObj);
+        return createNewCrioMap(frozenObj);
     }
 
     throw new TypeError('Cannot create a Crio for standard objects, such as Strings, Numbers, Dates, etc. They ' +
@@ -64,6 +72,13 @@ createNewCrio.isFrozen = (obj: any) : boolean => {
 createNewCrio.isList = isCrioList;
 createNewCrio.isMap = isCrioMap;
 
+createNewCrio.list = createNewCrioList;
+createNewCrio.list.of = (...items) => {
+    return createNewCrioList(deepFreeze(items));
+};
+
+createNewCrio.map = createNewCrioMap;
+
 /**
  * Returns mutable copy of the object that was Crio
  *
@@ -83,5 +98,11 @@ createNewCrio.thaw = (obj: any) : any => {
 };
 
 export {createNewCrio as createNewCrio};
+export {createNewCrioList as createNewCrioList};
+export {createNewCrioMap as createNewCrioMap};
 
-export default createNewCrio;
+export default {
+    createNewCrio,
+    createNewCrioList,
+    createNewCrioMap
+};

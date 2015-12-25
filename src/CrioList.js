@@ -1,7 +1,9 @@
 
 
 // local imports
-import createNewCrio from './utils/createNewCrio';
+import {
+    createNewCrioList
+} from './utils/createNewCrio';
 import CrioCollection from './CrioCollection';
 
 // local partial imports
@@ -17,13 +19,13 @@ import {
 import {
     forEach,
     forEachRight,
-    splice,
-    thaw
+    splice
 } from './utils/functions';
 
 class CrioList extends CrioCollection {
     constructor(obj) {
-        super(obj);
+        // this converts array-like objects to actual arrays
+        super(Array.prototype.slice.call(obj));
     }
 
     /**
@@ -38,6 +40,24 @@ class CrioList extends CrioCollection {
     }
 
     /**
+     * Returns new CrioList with items at indices starting at start and prior to end replaced with fillValue
+     *
+     * @param fillValue
+     * @param start
+     * @param end
+     * @returns {CrioCollection}
+     */
+    fill(fillValue: any, start: number = 0, end: number = this.size) : CrioList {
+        let filledArray: Array = [];
+
+        forEach(this.object, (value, index) => {
+            filledArray[index] = index >= start && index < end ? fillValue : value;
+        });
+
+        return getCrioInstance(this, createNewCrioList(filledArray));
+    }
+
+    /**
      * Executes standard filter function (as filter returns new array)
      *
      * @param callback<Function>
@@ -47,7 +67,7 @@ class CrioList extends CrioCollection {
     filter(callback: Function, ...args: Array) : CrioList {
         const values = this.thaw().filter(callback, ...args);
 
-        return getCrioInstance(this, createNewCrio(values));
+        return getCrioInstance(this, createNewCrioList(values));
     }
 
     /**
@@ -62,7 +82,7 @@ class CrioList extends CrioCollection {
 
         forEach(this.thaw(), (value, index, arr) => {
             if (callback.call(thisArg, value, index, arr)) {
-                match = getCrioInstance(this, createNewCrio(value));
+                match = getCrioInstance(this, createNewCrioList(value));
                 return false;
             }
         });
@@ -91,13 +111,23 @@ class CrioList extends CrioCollection {
     }
 
     /**
+     * Returns mutable first item in the object
+     *
+     * @returns {CrioCollection}
+     */
+    first() : any {
+        return this.thaw()[0];
+    }
+
+    /**
      * Executes forEach over values stored in this.object
      *
      * @param fn<Function>
      * @param thisArg<Object[optional]>
+     * @returns {CrioList}
      */
     forEach(fn: Function, thisArg: ?Object) {
-        forEach(thaw(this), fn, thisArg);
+        forEach(this.thaw(), fn, thisArg);
 
         return this;
     }
@@ -137,6 +167,15 @@ class CrioList extends CrioCollection {
     }
 
     /**
+     * Returns mutable last item in the CrioList
+     *
+     * @returns {*}
+     */
+    last() : any {
+        return this.thaw()[this.object.length - 1];
+    }
+
+    /**
      * Same as .indexOf(), except returns last item in array that matches instead of first
      *
      * @param value<Any>
@@ -160,7 +199,7 @@ class CrioList extends CrioCollection {
     map(callback: Function, thisArg: ?Object) : CrioList {
         const values = this.thaw().map(callback, thisArg);
 
-        return getCrioInstance(this, createNewCrio(values));
+        return getCrioInstance(this, createNewCrioList(values));
     }
 
     /**
@@ -181,7 +220,7 @@ class CrioList extends CrioCollection {
     push(...values: Array) : CrioList {
         let newValues = [...this.object].concat(...values);
 
-        return createNewCrio(newValues);
+        return createNewCrioList(newValues);
     }
 
     /**
@@ -222,7 +261,7 @@ class CrioList extends CrioCollection {
             reversedArray.push(value);
         });
 
-        return getCrioInstance(this, createNewCrio(reversedArray));
+        return getCrioInstance(this, createNewCrioList(reversedArray));
     }
 
     /**
@@ -245,7 +284,7 @@ class CrioList extends CrioCollection {
     slice(begin: number, end: ?number) : CrioList {
         const slicedArray = this.thaw().slice(begin, end);
 
-        return getCrioInstance(this, createNewCrio(slicedArray));
+        return getCrioInstance(this, createNewCrioList(slicedArray));
     }
 
     /**
@@ -268,7 +307,7 @@ class CrioList extends CrioCollection {
     sort(fn: ?Function) : CrioList {
         const sortedObject = this.thaw().sort(fn);
 
-        return getCrioInstance(this, createNewCrio(sortedObject));
+        return getCrioInstance(this, createNewCrioList(sortedObject));
     }
 
     /**
@@ -280,7 +319,7 @@ class CrioList extends CrioCollection {
      */
     splice(...keys: Array) : CrioList {
         if (keys.length === 0) {
-            return createNewCrio();
+            return createNewCrioList();
         }
 
         let newValue: Array = [...this.object];
@@ -289,7 +328,24 @@ class CrioList extends CrioCollection {
             newValue = splice(this.object, index);
         });
 
-        return getCrioInstance(this, createNewCrio(newValue));
+        return getCrioInstance(this, createNewCrioList(newValue));
+    }
+
+    /**
+     * Returns CrioList with only unique items in original CrioList
+     *
+     * @returns {CrioList}
+     */
+    unique() : CrioList {
+        let uniqueList: Array = [];
+
+        this.forEach((value) => {
+            if (uniqueList.indexOf(value) === -1) {
+                uniqueList.push(value);
+            }
+        });
+
+        return getCrioInstance(this, createNewCrioList(uniqueList));
     }
 
     /**
@@ -301,7 +357,7 @@ class CrioList extends CrioCollection {
     unshift(...values: Array) : CrioList {
         let newValues = [...values].concat(...this.object);
 
-        return createNewCrio(newValues);
+        return createNewCrioList(newValues);
     }
 }
 

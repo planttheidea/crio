@@ -1,7 +1,9 @@
 
 
 // local imports
-import createNewCrio from './utils/createNewCrio';
+import {
+    createNewCrioMap
+} from './utils/createNewCrio';
 import CrioCollection from './CrioCollection';
 
 // local partial imports
@@ -11,8 +13,7 @@ import {
 
 import {
     forEach,
-    forIn,
-    forOwn
+    forIn
 } from './utils/functions';
 
 class CrioMap extends CrioCollection {
@@ -29,7 +30,7 @@ class CrioMap extends CrioCollection {
      */
     delete(...keys: Array) : CrioMap {
         if (keys.length === 0) {
-            return createNewCrio();
+            return createNewCrioMap();
         }
 
         let newValue: Object = this.thaw();
@@ -38,7 +39,7 @@ class CrioMap extends CrioCollection {
             delete newValue[key];
         });
 
-        return getCrioInstance(this, createNewCrio(newValue));
+        return getCrioInstance(this, createNewCrioMap(newValue));
     }
 
     /**
@@ -46,21 +47,10 @@ class CrioMap extends CrioCollection {
      *
      * @param fn<Function>
      * @param thisArg<Object[optional]>
+     * @returns {CrioMap}
      */
-    forIn(fn: Function, thisArg: ?Object) {
+    forEach(fn: Function, thisArg: ?Object) {
         forIn(this.thaw(), fn, thisArg);
-
-        return this;
-    }
-
-    /**
-     * Executes loop over own properties (including non-enumerables) to get values stored in this.object
-     *
-     * @param fn<Function>
-     * @param thisArg<Object[optional]>
-     */
-    forOwn(fn: Function, thisArg: ?Object) {
-        forOwn(this.thaw(), fn, thisArg);
 
         return this;
     }
@@ -71,37 +61,8 @@ class CrioMap extends CrioCollection {
      * @param prop<any>
      * @returns {boolean}
      */
-    hasOwnProperty(prop: any) : boolean {
+    has(prop: any) : boolean {
         return this.object.hasOwnProperty(prop);
-    }
-
-    /**
-     * Alias for Object.prototype.isPrototypeOf
-     *
-     * @param obj<any>
-     * @returns {boolean}
-     */
-    isPrototypeOf(obj: Object) : boolean {
-        return this.object.isPrototypeOf(obj);
-    }
-
-    /**
-     * Alias for Object.prototype.propertyIsEnumerable
-     *
-     * @param prop<any>
-     * @returns {boolean}
-     */
-    propertyIsEnumerable(prop: any) : boolean {
-        return this.object.propertyIsEnumerable(prop);
-    }
-
-    /**
-     * Alias of Object.prototype.valueOf
-     *
-     * @returns {string}
-     */
-    valueOf() {
-        return this.object.valueOf();
     }
 }
 
