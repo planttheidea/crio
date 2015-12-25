@@ -198,6 +198,17 @@ console.log(filledCrio);
 
 console.log(filledCrio.first());
 console.log(filledCrio.last());
+console.log(filledCrio.get(4));
+console.log(filledCrio.get(4, 6, 9, 15, 50));
+
+const mutatedCrio = filledCrio.mutate((mutable) => {
+    mutable = 'blah';
+
+    return mutable;
+});
+
+console.log(mutatedCrio);
+console.log(filledCrio);
 
 
 class App extends React.Component {

@@ -9,6 +9,7 @@ import CrioCollection from './../CrioCollection';
 
 import {
     isArray,
+    isConvertibleToCrio,
     isObject,
     isUndefined
 } from './checkers';
@@ -211,7 +212,7 @@ const thawCrio = (obj: any) : any => {
 };
 
 const coalesceCrioValue = (Crio: CrioCollection, obj: any) => {
-    if (isArray(obj) || (isObject(obj) && !isCrioCollection(obj))) {
+    if (isConvertibleToCrio(obj) && !isCrioCollection(obj)) {
         return getCrioInstance(Crio, createNewCrio(obj));
     }
 

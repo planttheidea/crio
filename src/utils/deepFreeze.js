@@ -7,8 +7,7 @@ import {
 
 // local partial imports
 import {
-    isArray,
-    isObject
+    isConvertibleToCrio
 } from './checkers';
 
 import {
@@ -21,7 +20,7 @@ const deepFreeze = (obj: any) : any => {
     forEach(propNames, (name) => {
         let value: any = obj[name];
 
-        if (isArray(value) || isObject(value)) {
+        if (isConvertibleToCrio(value)) {
             obj[name] = createNewCrio(value);
         }
     });

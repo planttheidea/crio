@@ -8,6 +8,7 @@ import {
 // local partial imports
 import {
     isArray,
+    isConvertibleToCrio,
     isObject,
     isUndefined,
     isValueless
@@ -83,31 +84,39 @@ class CrioCollection {
 
     /**
      * Based on key(s) passed, retrieves value(s) associated. If multiple keys are passed,
-     * a map of key:value pairs are returned, otherwise only the value is returned.
+     * a CrioMap of key:value pairs are returned, otherwise the value itself is returned. If the value
+     * is an array or object, then it is returned as a CrioList or CrioMap to allow for chaining.
      *
      * @param keys<Array>
      * @returns {*}
      */
     get(...keys: Array) : any {
         if (keys.length === 0) {
-            return this.object;
+            return this;
         }
 
         if (keys.length === 1) {
-            return coalesceCrioValue(this, this.object[keys[0]]);
+            const value = this.object[keys[0]];
+
+            if (isConvertibleToCrio(value)) {
+                return coalesceCrioValue(this, createNewCrio(this.object[keys[0]]));
+            }
+
+            return value;
         }
 
-        let keyMap = {};
+        let keyMap = createNewCrio({});
 
         forEach(keys, (key) => {
-            keyMap[key] = coalesceCrioValue(this, this.object[key]);
+            keyMap = keyMap.set(key, this.object[key]);
         });
 
-        return keyMap;
+        return coalesceCrioValue(this, keyMap);
     }
 
     /**
-     * Returns value of deeply nested item in this.object based on keys array
+     * Returns value of deeply nested item in this.object based on keys array. if value is an
+     * array or object, then a CrioList or CrioMap is returned to allow for chaining.
      *
      * @param keys
      * @returns {Array|Object}
@@ -126,7 +135,11 @@ class CrioCollection {
         });
 
         if (foundKeyMatch) {
-            return coalesceCrioValue(this, retValue);
+            if (isConvertibleToCrio(retValue)) {
+                return coalesceCrioValue(this, createNewCrio(retValue));
+            }
+
+            return retValue;
         }
 
         return undefined;
@@ -163,6 +176,25 @@ class CrioCollection {
     }
 
     /**
+     * Accepts a function which will receive single parameter of a thawed Crio object. This allows
+     * working with the object in a standard mutable way, and whatever you return in the function will
+     * be either be converted back to a CrioCollection (if array or object) or simply returned.
+     *
+     * @param callback<Function>
+     * @returns {any}
+     */
+    mutate(callback: Function) : any {
+        const thawedObject = this.thaw();
+        const mutatedThis = callback(thawedObject) || thawedObject;
+
+        if (isConvertibleToCrio(mutatedThis)) {
+            return getCrioInstance(this, createNewCrio(mutatedThis));
+        }
+
+        return mutatedThis;
+    }
+
+    /**
      * Based on values in this.object, sets the values called out by key and returns a new CrioList.
      * If key is a string or number, then the value where the property / index is equal to key is updated
      * to value. If key is an object, then each property in the object will set the equivalent property
@@ -177,12 +209,7 @@ class CrioCollection {
             throw new TypeError('The set method requires a key.');
         }
 
-        if (!isObject(key) && isUndefined(value)) {
-            throw new TypeError('If you are going to use the single-key implementation of this method, ' +
-                'you need to pass in a value to assign.');
-        }
-
-        let newValue: Array = this.thaw();
+        let newValue: Object|Array = this.thaw();
 
         if (isObject(key)) {
             forIn(key, (value, index) => {

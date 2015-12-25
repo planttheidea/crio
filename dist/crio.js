@@ -150,7 +150,7 @@ var crio =
 	        return createNewCrioMap(frozenObj);
 	    }
 	
-	    throw new TypeError('Cannot create a Crio for standard objects, such as Strings, Numbers, Dates, etc. They ' + 'are already immutable!');
+	    return obj;
 	};
 	
 	/**
@@ -1067,7 +1067,8 @@ var crio =
 	
 	        /**
 	         * Based on key(s) passed, retrieves value(s) associated. If multiple keys are passed,
-	         * a map of key:value pairs are returned, otherwise only the value is returned.
+	         * a CrioMap of key:value pairs are returned, otherwise the value itself is returned. If the value
+	         * is an array or object, then it is returned as a CrioList or CrioMap to allow for chaining.
 	         *
 	         * @param keys<Array>
 	         * @returns {*}
@@ -1087,24 +1088,31 @@ var crio =
 	            }
 	
 	            if (keys.length === 0) {
-	                return this.object;
+	                return this;
 	            }
 	
 	            if (keys.length === 1) {
-	                return (0, _crioFunctions.coalesceCrioValue)(this, this.object[keys[0]]);
+	                var value = this.object[keys[0]];
+	
+	                if ((0, _checkers.isConvertibleToCrio)(value)) {
+	                    return (0, _crioFunctions.coalesceCrioValue)(this, (0, _createNewCrio.createNewCrio)(this.object[keys[0]]));
+	                }
+	
+	                return value;
 	            }
 	
-	            var keyMap = {};
+	            var keyMap = (0, _createNewCrio.createNewCrio)({});
 	
 	            (0, _functions.forEach)(keys, function (key) {
-	                keyMap[key] = (0, _crioFunctions.coalesceCrioValue)(_this, _this.object[key]);
+	                keyMap = keyMap.set(key, _this.object[key]);
 	            });
 	
-	            return keyMap;
+	            return (0, _crioFunctions.coalesceCrioValue)(this, keyMap);
 	        }
 	
 	        /**
-	         * Returns value of deeply nested item in this.object based on keys array
+	         * Returns value of deeply nested item in this.object based on keys array. if value is an
+	         * array or object, then a CrioList or CrioMap is returned to allow for chaining.
 	         *
 	         * @param keys
 	         * @returns {Array|Object}
@@ -1128,7 +1136,11 @@ var crio =
 	            });
 	
 	            if (foundKeyMatch) {
-	                return (0, _crioFunctions.coalesceCrioValue)(this, retValue);
+	                if ((0, _checkers.isConvertibleToCrio)(retValue)) {
+	                    return (0, _crioFunctions.coalesceCrioValue)(this, (0, _createNewCrio.createNewCrio)(retValue));
+	                }
+	
+	                return retValue;
 	            }
 	
 	            return undefined;
@@ -1190,6 +1202,32 @@ var crio =
 	        }
 	
 	        /**
+	         * Accepts a function which will receive single parameter of a thawed Crio object. This allows
+	         * working with the object in a standard mutable way, and whatever you return in the function will
+	         * be either be converted back to a CrioCollection (if array or object) or simply returned.
+	         *
+	         * @param callback<Function>
+	         * @returns {any}
+	         */
+	
+	    }, {
+	        key: 'mutate',
+	        value: function mutate(callback) {
+	            if (!(typeof callback === 'function')) {
+	                throw new TypeError('Value of argument "callback" violates contract, expected Function got ' + (callback === null ? 'null' : (typeof callback === 'undefined' ? 'undefined' : _typeof(callback)) === 'object' && callback.constructor ? callback.constructor.name || '[Unknown Object]' : typeof callback === 'undefined' ? 'undefined' : _typeof(callback)));
+	            }
+	
+	            var thawedObject = this.thaw();
+	            var mutatedThis = callback(thawedObject) || thawedObject;
+	
+	            if ((0, _checkers.isConvertibleToCrio)(mutatedThis)) {
+	                return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(mutatedThis));
+	            }
+	
+	            return mutatedThis;
+	        }
+	
+	        /**
 	         * Based on values in this.object, sets the values called out by key and returns a new CrioList.
 	         * If key is a string or number, then the value where the property / index is equal to key is updated
 	         * to value. If key is an object, then each property in the object will set the equivalent property
@@ -1211,14 +1249,10 @@ var crio =
 	                throw new TypeError('The set method requires a key.');
 	            }
 	
-	            if (!(0, _checkers.isObject)(key) && (0, _checkers.isUndefined)(value)) {
-	                throw new TypeError('If you are going to use the single-key implementation of this method, ' + 'you need to pass in a value to assign.');
-	            }
-	
 	            var newValue = this.thaw();
 	
-	            if (!Array.isArray(newValue)) {
-	                throw new TypeError('Value of variable "newValue" violates contract, expected Array got ' + (newValue === null ? 'null' : (typeof newValue === 'undefined' ? 'undefined' : _typeof(newValue)) === 'object' && newValue.constructor ? newValue.constructor.name || '[Unknown Object]' : typeof newValue === 'undefined' ? 'undefined' : _typeof(newValue)));
+	            if (!(newValue instanceof Object || Array.isArray(newValue))) {
+	                throw new TypeError('Value of variable "newValue" violates contract, expected Object | Array got ' + (newValue === null ? 'null' : (typeof newValue === 'undefined' ? 'undefined' : _typeof(newValue)) === 'object' && newValue.constructor ? newValue.constructor.name || '[Unknown Object]' : typeof newValue === 'undefined' ? 'undefined' : _typeof(newValue)));
 	            }
 	
 	            if ((0, _checkers.isObject)(key)) {
@@ -1246,12 +1280,12 @@ var crio =
 	            var keys = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	            var value = arguments[1];
 	
-	            function _ref6(_id6) {
-	                if (!(_id6 == null || _id6 instanceof CrioCollection)) {
-	                    throw new TypeError('Function return value violates contract, expected ?CrioCollection got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
+	            function _ref7(_id7) {
+	                if (!(_id7 == null || _id7 instanceof CrioCollection)) {
+	                    throw new TypeError('Function return value violates contract, expected ?CrioCollection got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
 	                }
 	
-	                return _id6;
+	                return _id7;
 	            }
 	
 	            if (!Array.isArray(keys)) {
@@ -1279,10 +1313,10 @@ var crio =
 	            });
 	
 	            if (foundKeyMatch) {
-	                return _ref6((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(checkObj)));
+	                return _ref7((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(checkObj)));
 	            }
 	
-	            return _ref6(undefined);
+	            return _ref7(undefined);
 	        }
 	
 	        /**
@@ -1294,15 +1328,15 @@ var crio =
 	    }, {
 	        key: 'thaw',
 	        value: function thaw() {
-	            function _ref7(_id7) {
-	                if (!(Array.isArray(_id7) || _id7 instanceof Object)) {
-	                    throw new TypeError('Function return value violates contract, expected Array | Object got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
+	            function _ref8(_id8) {
+	                if (!(Array.isArray(_id8) || _id8 instanceof Object)) {
+	                    throw new TypeError('Function return value violates contract, expected Array | Object got ' + (_id8 === null ? 'null' : (typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)) === 'object' && _id8.constructor ? _id8.constructor.name || '[Unknown Object]' : typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)));
 	                }
 	
-	                return _id7;
+	                return _id8;
 	            }
 	
-	            return _ref7((0, _crioFunctions.thaw)(this.object));
+	            return _ref8((0, _crioFunctions.thaw)(this.object));
 	        }
 	
 	        /**
@@ -1314,15 +1348,15 @@ var crio =
 	    }, {
 	        key: 'toLocaleString',
 	        value: function toLocaleString() {
-	            function _ref8(_id8) {
-	                if (!(typeof _id8 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id8 === null ? 'null' : (typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)) === 'object' && _id8.constructor ? _id8.constructor.name || '[Unknown Object]' : typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)));
+	            function _ref9(_id9) {
+	                if (!(typeof _id9 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id9 === null ? 'null' : (typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)) === 'object' && _id9.constructor ? _id9.constructor.name || '[Unknown Object]' : typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)));
 	                }
 	
-	                return _id8;
+	                return _id9;
 	            }
 	
-	            return _ref8(this.object.toLocaleString());
+	            return _ref9(this.object.toLocaleString());
 	        }
 	
 	        /**
@@ -1334,15 +1368,15 @@ var crio =
 	    }, {
 	        key: 'toString',
 	        value: function toString() {
-	            function _ref9(_id9) {
-	                if (!(typeof _id9 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id9 === null ? 'null' : (typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)) === 'object' && _id9.constructor ? _id9.constructor.name || '[Unknown Object]' : typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)));
+	            function _ref10(_id10) {
+	                if (!(typeof _id10 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id10 === null ? 'null' : (typeof _id10 === 'undefined' ? 'undefined' : _typeof(_id10)) === 'object' && _id10.constructor ? _id10.constructor.name || '[Unknown Object]' : typeof _id10 === 'undefined' ? 'undefined' : _typeof(_id10)));
 	                }
 	
-	                return _id9;
+	                return _id10;
 	            }
 	
-	            return _ref9(this.object.toString());
+	            return _ref10(this.object.toString());
 	        }
 	
 	        /**
@@ -1382,7 +1416,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.isValueless = exports.isUndefined = exports.isString = exports.isNumber = exports.isNull = exports.isNAN = exports.isObject = exports.isFunction = exports.isArray = undefined;
+	exports.isValueless = exports.isUndefined = exports.isString = exports.isNumber = exports.isNull = exports.isNAN = exports.isObject = exports.isFunction = exports.isConvertibleToCrio = exports.isArray = undefined;
 	
 	var _toString = __webpack_require__(6);
 	
@@ -1425,6 +1459,16 @@ var crio =
 	};
 	
 	/**
+	 * Returns true if object passed is either an array or object
+	 *
+	 * @param obj<any>
+	 * @returns {boolean}
+	 */
+	var isConvertibleToCrio = function isConvertibleToCrio(obj) {
+	    return isArray(obj) || isObject(obj);
+	};
+	
+	/**
 	 * Returns true if object passed is null
 	 *
 	 * @param obj<Any>
@@ -1441,15 +1485,15 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isNAN = function isNAN(obj) {
-	    function _ref5(_id5) {
-	        if (!(typeof _id5 === 'boolean')) {
-	            throw new TypeError('Function return value violates contract, expected bool got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
+	    function _ref6(_id6) {
+	        if (!(typeof _id6 === 'boolean')) {
+	            throw new TypeError('Function return value violates contract, expected bool got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
 	        }
 	
-	        return _id5;
+	        return _id6;
 	    }
 	
-	    return _ref5(obj !== obj);
+	    return _ref6(obj !== obj);
 	};
 	
 	/**
@@ -1493,6 +1537,7 @@ var crio =
 	};
 	
 	exports.isArray = isArray;
+	exports.isConvertibleToCrio = isConvertibleToCrio;
 	exports.isFunction = isFunction;
 	exports.isObject = isObject;
 	exports.isNAN = isNAN;
@@ -1503,6 +1548,7 @@ var crio =
 	exports.isValueless = isValueless;
 	exports.default = {
 	    isArray: isArray,
+	    isConvertibleToCrio: isConvertibleToCrio,
 	    isFunction: isFunction,
 	    isObject: isObject,
 	    isNAN: isNAN,
@@ -1862,7 +1908,7 @@ var crio =
 	        throw new TypeError('Value of argument "Crio" violates contract, expected CrioCollection got ' + (Crio === null ? 'null' : (typeof Crio === 'undefined' ? 'undefined' : _typeof(Crio)) === 'object' && Crio.constructor ? Crio.constructor.name || '[Unknown Object]' : typeof Crio === 'undefined' ? 'undefined' : _typeof(Crio)));
 	    }
 	
-	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) && !(0, _crioCheckers.isCrioCollection)(obj)) {
+	    if ((0, _checkers.isConvertibleToCrio)(obj) && !(0, _crioCheckers.isCrioCollection)(obj)) {
 	        return getCrioInstance(Crio, (0, _createNewCrio.createNewCrio)(obj));
 	    }
 	
@@ -2269,7 +2315,7 @@ var crio =
 	    }
 	
 	    loopFunction(obj, function (value, key) {
-	        if ((0, _checkers.isArray)(value) || (0, _checkers.isObject)(value)) {
+	        if ((0, _checkers.isConvertibleToCrio)(value)) {
 	            cleanObj[key] = hashFunctionInObject(value);
 	        } else if ((0, _checkers.isFunction)(value)) {
 	            cleanObj[key] = value.toString();
@@ -2288,7 +2334,7 @@ var crio =
 	    }
 	
 	    // if its an array, check if a function exists in there
-	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj)) {
+	    if ((0, _checkers.isConvertibleToCrio)(obj)) {
 	        var objWithFunctionsHashed = hashFunctionInObject(obj);
 	
 	        if (!(Array.isArray(objWithFunctionsHashed) || objWithFunctionsHashed instanceof Object)) {
@@ -4571,7 +4617,7 @@ var crio =
 	    (0, _functions.forEach)(propNames, function (name) {
 	        var value = obj[name];
 	
-	        if ((0, _checkers.isArray)(value) || (0, _checkers.isObject)(value)) {
+	        if ((0, _checkers.isConvertibleToCrio)(value)) {
 	            obj[name] = (0, _createNewCrio.createNewCrio)(value);
 	        }
 	    });

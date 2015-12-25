@@ -34,6 +34,16 @@ const isObject = (obj: any) : boolean => {
 };
 
 /**
+ * Returns true if object passed is either an array or object
+ *
+ * @param obj<any>
+ * @returns {boolean}
+ */
+const isConvertibleToCrio = (obj: any) : boolean => {
+    return isArray(obj) || isObject(obj);
+};
+
+/**
  * Returns true if object passed is null
  *
  * @param obj<Any>
@@ -94,6 +104,7 @@ const isValueless = (obj) => {
 };
 
 export {isArray as isArray};
+export {isConvertibleToCrio as isConvertibleToCrio};
 export {isFunction as isFunction};
 export {isObject as isObject};
 export {isNAN as isNAN};
@@ -105,6 +116,7 @@ export {isValueless as isValueless};
 
 export default {
     isArray,
+    isConvertibleToCrio,
     isFunction,
     isObject,
     isNAN,

@@ -14,11 +14,11 @@ import toString from './toString';
 // local partial imports
 import {
     isArray,
+    isConvertibleToCrio,
     isFunction,
     isNAN,
     isNull,
     isNumber,
-    isObject,
     isString,
     isUndefined
 } from './checkers';
@@ -44,7 +44,7 @@ const hashFunctionInObject = (obj: Array|Object) : Array|Object => {
     let cleanObj: Array|Object = isArray(obj) ? [] : {};
 
     loopFunction(obj, (value, key) => {
-        if (isArray(value) || isObject(value)) {
+        if (isConvertibleToCrio(value)) {
             cleanObj[key] = hashFunctionInObject(value);
         } else if (isFunction(value)) {
             cleanObj[key] = value.toString();
@@ -64,7 +64,7 @@ const hashObject = (obj: any) : number => {
     }
 
     // if its an array, check if a function exists in there
-    if (isArray(obj) || isObject(obj)) {
+    if (isConvertibleToCrio(obj)) {
         const objWithFunctionsHashed: Array|Object = hashFunctionInObject(obj);
 
         return hashString(Cereal.stringify(objWithFunctionsHashed));

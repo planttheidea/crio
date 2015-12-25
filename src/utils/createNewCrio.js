@@ -34,7 +34,7 @@ const createNewCrioMap = (obj: Object) : CrioMap => {
  * @param obj<Array|Object>
  * @returns {Array|Object}
  */
-const createNewCrio = (obj: any) : CrioList|CrioMap => {
+const createNewCrio = (obj: any) : any => {
     const frozenObj = deepFreeze(obj);
 
     if (isArray(obj)) {
@@ -45,8 +45,7 @@ const createNewCrio = (obj: any) : CrioList|CrioMap => {
         return createNewCrioMap(frozenObj);
     }
 
-    throw new TypeError('Cannot create a Crio for standard objects, such as Strings, Numbers, Dates, etc. They ' +
-        'are already immutable!');
+    return obj;
 };
 
 /**
