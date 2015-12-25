@@ -53,19 +53,15 @@ var crio =
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-
+	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
-
+	
 	var _createNewCrio = __webpack_require__(2);
-
-	var _createNewCrio2 = _interopRequireDefault(_createNewCrio);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _createNewCrio2.default;
-
+	
+	exports.default = _createNewCrio.createNewCrio;
+	
 	// local imports
 
 /***/ },
@@ -77,7 +73,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.createNewCrio = undefined;
+	exports.createNewCrioMap = exports.createNewCrioList = exports.createNewCrio = undefined;
 	
 	var _CrioList = __webpack_require__(3);
 	
@@ -105,6 +101,38 @@ var crio =
 	
 	// local partial imports
 	
+	var createNewCrioList = function createNewCrioList(obj) {
+	    function _ref(_id) {
+	        if (!(_id instanceof _CrioList2.default)) {
+	            throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id === null ? 'null' : (typeof _id === 'undefined' ? 'undefined' : _typeof(_id)) === 'object' && _id.constructor ? _id.constructor.name || '[Unknown Object]' : typeof _id === 'undefined' ? 'undefined' : _typeof(_id)));
+	        }
+	
+	        return _id;
+	    }
+	
+	    if (!(obj instanceof Object)) {
+	        throw new TypeError('Value of argument "obj" violates contract, expected Object got ' + (obj === null ? 'null' : (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.constructor ? obj.constructor.name || '[Unknown Object]' : typeof obj === 'undefined' ? 'undefined' : _typeof(obj)));
+	    }
+	
+	    return _ref(Object.seal(new _CrioList2.default(obj)));
+	};
+	
+	var createNewCrioMap = function createNewCrioMap(obj) {
+	    function _ref2(_id2) {
+	        if (!(_id2 instanceof _CrioMap2.default)) {
+	            throw new TypeError('Function return value violates contract, expected CrioMap got ' + (_id2 === null ? 'null' : (typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)) === 'object' && _id2.constructor ? _id2.constructor.name || '[Unknown Object]' : typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)));
+	        }
+	
+	        return _id2;
+	    }
+	
+	    if (!(obj instanceof Object)) {
+	        throw new TypeError('Value of argument "obj" violates contract, expected Object got ' + (obj === null ? 'null' : (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.constructor ? obj.constructor.name || '[Unknown Object]' : typeof obj === 'undefined' ? 'undefined' : _typeof(obj)));
+	    }
+	
+	    return _ref2(Object.seal(new _CrioMap2.default(obj)));
+	};
+	
 	/**
 	 * Creates new Crio from passed object
 	 *
@@ -115,11 +143,11 @@ var crio =
 	    var frozenObj = (0, _deepFreeze2.default)(obj);
 	
 	    if ((0, _checkers.isArray)(obj)) {
-	        return new _CrioList2.default(frozenObj);
+	        return createNewCrioList(frozenObj);
 	    }
 	
 	    if ((0, _checkers.isObject)(obj)) {
-	        return new _CrioMap2.default(frozenObj);
+	        return createNewCrioMap(frozenObj);
 	    }
 	
 	    throw new TypeError('Cannot create a Crio for standard objects, such as Strings, Numbers, Dates, etc. They ' + 'are already immutable!');
@@ -142,19 +170,30 @@ var crio =
 	 * @returns {boolean}
 	 */
 	createNewCrio.isFrozen = function (obj) {
-	    function _ref3(_id3) {
-	        if (!(typeof _id3 === 'boolean')) {
-	            throw new TypeError('Function return value violates contract, expected bool got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
+	    function _ref5(_id5) {
+	        if (!(typeof _id5 === 'boolean')) {
+	            throw new TypeError('Function return value violates contract, expected bool got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
 	        }
 	
-	        return _id3;
+	        return _id5;
 	    }
 	
-	    return _ref3(Object.isFrozen(obj));
+	    return _ref5(Object.isFrozen(obj));
 	};
 	
 	createNewCrio.isList = _crioCheckers.isCrioList;
 	createNewCrio.isMap = _crioCheckers.isCrioMap;
+	
+	createNewCrio.list = createNewCrioList;
+	createNewCrio.list.of = function () {
+	    for (var _len = arguments.length, items = Array(_len), _key = 0; _key < _len; _key++) {
+	        items[_key] = arguments[_key];
+	    }
+	
+	    return createNewCrioList((0, _deepFreeze2.default)(items));
+	};
+	
+	createNewCrio.map = createNewCrioMap;
 	
 	/**
 	 * Returns mutable copy of the object that was Crio
@@ -175,7 +214,13 @@ var crio =
 	};
 	
 	exports.createNewCrio = createNewCrio;
-	exports.default = createNewCrio;
+	exports.createNewCrioList = createNewCrioList;
+	exports.createNewCrioMap = createNewCrioMap;
+	exports.default = {
+	    createNewCrio: createNewCrio,
+	    createNewCrioList: createNewCrioList,
+	    createNewCrioMap: createNewCrioMap
+	};
 
 /***/ },
 /* 3 */
@@ -190,8 +235,6 @@ var crio =
 	});
 	
 	var _createNewCrio = __webpack_require__(2);
-	
-	var _createNewCrio2 = _interopRequireDefault(_createNewCrio);
 	
 	var _CrioCollection2 = __webpack_require__(4);
 	
@@ -225,7 +268,8 @@ var crio =
 	    function CrioList(obj) {
 	        _classCallCheck(this, CrioList);
 	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CrioList).call(this, obj));
+	        // this converts array-like objects to actual arrays
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CrioList).call(this, Array.prototype.slice.call(obj)));
 	    }
 	
 	    /**
@@ -259,6 +303,46 @@ var crio =
 	        }
 	
 	        /**
+	         * Returns new CrioList with items at indices starting at start and prior to end replaced with fillValue
+	         *
+	         * @param fillValue
+	         * @param start
+	         * @param end
+	         * @returns {CrioCollection}
+	         */
+	
+	    }, {
+	        key: 'fill',
+	        value: function fill(fillValue) {
+	            var start = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+	            var end = arguments.length <= 2 || arguments[2] === undefined ? this.size : arguments[2];
+	
+	            function _ref2(_id2) {
+	                if (!(_id2 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id2 === null ? 'null' : (typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)) === 'object' && _id2.constructor ? _id2.constructor.name || '[Unknown Object]' : typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)));
+	                }
+	
+	                return _id2;
+	            }
+	
+	            if (!(typeof start === 'number')) {
+	                throw new TypeError('Value of argument "start" violates contract, expected number got ' + (start === null ? 'null' : (typeof start === 'undefined' ? 'undefined' : _typeof(start)) === 'object' && start.constructor ? start.constructor.name || '[Unknown Object]' : typeof start === 'undefined' ? 'undefined' : _typeof(start)));
+	            }
+	
+	            if (!(typeof end === 'number')) {
+	                throw new TypeError('Value of argument "end" violates contract, expected number got ' + (end === null ? 'null' : (typeof end === 'undefined' ? 'undefined' : _typeof(end)) === 'object' && end.constructor ? end.constructor.name || '[Unknown Object]' : typeof end === 'undefined' ? 'undefined' : _typeof(end)));
+	            }
+	
+	            var filledArray = [];
+	
+	            (0, _functions.forEach)(this.object, function (value, index) {
+	                filledArray[index] = index >= start && index < end ? fillValue : value;
+	            });
+	
+	            return _ref2((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(filledArray)));
+	        }
+	
+	        /**
 	         * Executes standard filter function (as filter returns new array)
 	         *
 	         * @param callback<Function>
@@ -275,12 +359,12 @@ var crio =
 	                args[_key - 1] = arguments[_key];
 	            }
 	
-	            function _ref2(_id2) {
-	                if (!(_id2 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id2 === null ? 'null' : (typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)) === 'object' && _id2.constructor ? _id2.constructor.name || '[Unknown Object]' : typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)));
+	            function _ref3(_id3) {
+	                if (!(_id3 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
 	                }
 	
-	                return _id2;
+	                return _id3;
 	            }
 	
 	            if (!(typeof callback === 'function')) {
@@ -293,7 +377,7 @@ var crio =
 	
 	            var values = (_thaw = this.thaw()).filter.apply(_thaw, [callback].concat(args));
 	
-	            return _ref2((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(values)));
+	            return _ref3((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(values)));
 	        }
 	
 	        /**
@@ -321,7 +405,7 @@ var crio =
 	
 	            (0, _functions.forEach)(this.thaw(), function (value, index, arr) {
 	                if (callback.call(thisArg, value, index, arr)) {
-	                    match = (0, _crioFunctions.getCrioInstance)(_this2, (0, _createNewCrio2.default)(value));
+	                    match = (0, _crioFunctions.getCrioInstance)(_this2, (0, _createNewCrio.createNewCrioList)(value));
 	                    return false;
 	                }
 	            });
@@ -366,10 +450,23 @@ var crio =
 	        }
 	
 	        /**
+	         * Returns mutable first item in the object
+	         *
+	         * @returns {CrioCollection}
+	         */
+	
+	    }, {
+	        key: 'first',
+	        value: function first() {
+	            return this.thaw()[0];
+	        }
+	
+	        /**
 	         * Executes forEach over values stored in this.object
 	         *
 	         * @param fn<Function>
 	         * @param thisArg<Object[optional]>
+	         * @returns {CrioList}
 	         */
 	
 	    }, {
@@ -383,7 +480,7 @@ var crio =
 	                throw new TypeError('Value of argument "thisArg" violates contract, expected ?Object got ' + (thisArg === null ? 'null' : (typeof thisArg === 'undefined' ? 'undefined' : _typeof(thisArg)) === 'object' && thisArg.constructor ? thisArg.constructor.name || '[Unknown Object]' : typeof thisArg === 'undefined' ? 'undefined' : _typeof(thisArg)));
 	            }
 	
-	            (0, _functions.forEach)((0, _functions.thaw)(this), fn, thisArg);
+	            (0, _functions.forEach)(this.thaw(), fn, thisArg);
 	
 	            return this;
 	        }
@@ -398,15 +495,15 @@ var crio =
 	    }, {
 	        key: 'includes',
 	        value: function includes(value) {
-	            function _ref5(_id5) {
-	                if (!(typeof _id5 === 'boolean')) {
-	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
+	            function _ref7(_id7) {
+	                if (!(typeof _id7 === 'boolean')) {
+	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
 	                }
 	
-	                return _id5;
+	                return _id7;
 	            }
 	
-	            return _ref5(this.indexOf(value) !== -1);
+	            return _ref7(this.indexOf(value) !== -1);
 	        }
 	
 	        /**
@@ -419,19 +516,19 @@ var crio =
 	    }, {
 	        key: 'indexOf',
 	        value: function indexOf(value) {
-	            function _ref6(_id6) {
-	                if (!(typeof _id6 === 'number')) {
-	                    throw new TypeError('Function return value violates contract, expected number got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
+	            function _ref8(_id8) {
+	                if (!(typeof _id8 === 'number')) {
+	                    throw new TypeError('Function return value violates contract, expected number got ' + (_id8 === null ? 'null' : (typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)) === 'object' && _id8.constructor ? _id8.constructor.name || '[Unknown Object]' : typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)));
 	                }
 	
-	                return _id6;
+	                return _id8;
 	            }
 	
 	            if ((0, _checkers.isValueless)(value)) {
 	                return -1;
 	            }
 	
-	            return _ref6(this.object.indexOf(value));
+	            return _ref8(this.object.indexOf(value));
 	        }
 	
 	        /**
@@ -446,19 +543,31 @@ var crio =
 	        value: function join() {
 	            var joiner = arguments.length <= 0 || arguments[0] === undefined ? ',' : arguments[0];
 	
-	            function _ref7(_id7) {
-	                if (!(typeof _id7 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
+	            function _ref9(_id9) {
+	                if (!(typeof _id9 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id9 === null ? 'null' : (typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)) === 'object' && _id9.constructor ? _id9.constructor.name || '[Unknown Object]' : typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)));
 	                }
 	
-	                return _id7;
+	                return _id9;
 	            }
 	
 	            if (!(typeof joiner === 'string')) {
 	                throw new TypeError('Value of argument "joiner" violates contract, expected string got ' + (joiner === null ? 'null' : (typeof joiner === 'undefined' ? 'undefined' : _typeof(joiner)) === 'object' && joiner.constructor ? joiner.constructor.name || '[Unknown Object]' : typeof joiner === 'undefined' ? 'undefined' : _typeof(joiner)));
 	            }
 	
-	            return _ref7(this.object.join(joiner));
+	            return _ref9(this.object.join(joiner));
+	        }
+	
+	        /**
+	         * Returns mutable last item in the CrioList
+	         *
+	         * @returns {*}
+	         */
+	
+	    }, {
+	        key: 'last',
+	        value: function last() {
+	            return this.thaw()[this.object.length - 1];
 	        }
 	
 	        /**
@@ -471,19 +580,19 @@ var crio =
 	    }, {
 	        key: 'lastIndexOf',
 	        value: function lastIndexOf(value) {
-	            function _ref8(_id8) {
-	                if (!(typeof _id8 === 'number')) {
-	                    throw new TypeError('Function return value violates contract, expected number got ' + (_id8 === null ? 'null' : (typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)) === 'object' && _id8.constructor ? _id8.constructor.name || '[Unknown Object]' : typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)));
+	            function _ref11(_id11) {
+	                if (!(typeof _id11 === 'number')) {
+	                    throw new TypeError('Function return value violates contract, expected number got ' + (_id11 === null ? 'null' : (typeof _id11 === 'undefined' ? 'undefined' : _typeof(_id11)) === 'object' && _id11.constructor ? _id11.constructor.name || '[Unknown Object]' : typeof _id11 === 'undefined' ? 'undefined' : _typeof(_id11)));
 	                }
 	
-	                return _id8;
+	                return _id11;
 	            }
 	
 	            if ((0, _checkers.isValueless)(value)) {
 	                return -1;
 	            }
 	
-	            return _ref8(this.object.lastIndexOf(value));
+	            return _ref11(this.object.lastIndexOf(value));
 	        }
 	
 	        /**
@@ -497,12 +606,12 @@ var crio =
 	    }, {
 	        key: 'map',
 	        value: function map(callback, thisArg) {
-	            function _ref9(_id9) {
-	                if (!(_id9 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id9 === null ? 'null' : (typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)) === 'object' && _id9.constructor ? _id9.constructor.name || '[Unknown Object]' : typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)));
+	            function _ref12(_id12) {
+	                if (!(_id12 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id12 === null ? 'null' : (typeof _id12 === 'undefined' ? 'undefined' : _typeof(_id12)) === 'object' && _id12.constructor ? _id12.constructor.name || '[Unknown Object]' : typeof _id12 === 'undefined' ? 'undefined' : _typeof(_id12)));
 	                }
 	
-	                return _id9;
+	                return _id12;
 	            }
 	
 	            if (!(typeof callback === 'function')) {
@@ -515,7 +624,7 @@ var crio =
 	
 	            var values = this.thaw().map(callback, thisArg);
 	
-	            return _ref9((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(values)));
+	            return _ref12((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(values)));
 	        }
 	
 	        /**
@@ -540,27 +649,27 @@ var crio =
 	    }, {
 	        key: 'push',
 	        value: function push() {
-	            var _ref21;
+	            var _ref25;
 	
 	            for (var _len2 = arguments.length, values = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 	                values[_key2] = arguments[_key2];
 	            }
 	
-	            function _ref11(_id11) {
-	                if (!(_id11 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id11 === null ? 'null' : (typeof _id11 === 'undefined' ? 'undefined' : _typeof(_id11)) === 'object' && _id11.constructor ? _id11.constructor.name || '[Unknown Object]' : typeof _id11 === 'undefined' ? 'undefined' : _typeof(_id11)));
+	            function _ref14(_id14) {
+	                if (!(_id14 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id14 === null ? 'null' : (typeof _id14 === 'undefined' ? 'undefined' : _typeof(_id14)) === 'object' && _id14.constructor ? _id14.constructor.name || '[Unknown Object]' : typeof _id14 === 'undefined' ? 'undefined' : _typeof(_id14)));
 	                }
 	
-	                return _id11;
+	                return _id14;
 	            }
 	
 	            if (!Array.isArray(values)) {
 	                throw new TypeError('Value of argument "values" violates contract, expected Array got ' + (values === null ? 'null' : (typeof values === 'undefined' ? 'undefined' : _typeof(values)) === 'object' && values.constructor ? values.constructor.name || '[Unknown Object]' : typeof values === 'undefined' ? 'undefined' : _typeof(values)));
 	            }
 	
-	            var newValues = (_ref21 = [].concat(_toConsumableArray(this.object))).concat.apply(_ref21, values);
+	            var newValues = (_ref25 = [].concat(_toConsumableArray(this.object))).concat.apply(_ref25, values);
 	
-	            return _ref11((0, _createNewCrio2.default)(newValues));
+	            return _ref14((0, _createNewCrio.createNewCrioList)(newValues));
 	        }
 	
 	        /**
@@ -616,12 +725,12 @@ var crio =
 	    }, {
 	        key: 'reverse',
 	        value: function reverse() {
-	            function _ref14(_id14) {
-	                if (!(_id14 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id14 === null ? 'null' : (typeof _id14 === 'undefined' ? 'undefined' : _typeof(_id14)) === 'object' && _id14.constructor ? _id14.constructor.name || '[Unknown Object]' : typeof _id14 === 'undefined' ? 'undefined' : _typeof(_id14)));
+	            function _ref17(_id17) {
+	                if (!(_id17 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id17 === null ? 'null' : (typeof _id17 === 'undefined' ? 'undefined' : _typeof(_id17)) === 'object' && _id17.constructor ? _id17.constructor.name || '[Unknown Object]' : typeof _id17 === 'undefined' ? 'undefined' : _typeof(_id17)));
 	                }
 	
-	                return _id14;
+	                return _id17;
 	            }
 	
 	            var reversedArray = [];
@@ -630,7 +739,7 @@ var crio =
 	                reversedArray.push(value);
 	            });
 	
-	            return _ref14((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(reversedArray)));
+	            return _ref17((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(reversedArray)));
 	        }
 	
 	        /**
@@ -657,12 +766,12 @@ var crio =
 	    }, {
 	        key: 'slice',
 	        value: function slice(begin, end) {
-	            function _ref16(_id16) {
-	                if (!(_id16 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id16 === null ? 'null' : (typeof _id16 === 'undefined' ? 'undefined' : _typeof(_id16)) === 'object' && _id16.constructor ? _id16.constructor.name || '[Unknown Object]' : typeof _id16 === 'undefined' ? 'undefined' : _typeof(_id16)));
+	            function _ref19(_id19) {
+	                if (!(_id19 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id19 === null ? 'null' : (typeof _id19 === 'undefined' ? 'undefined' : _typeof(_id19)) === 'object' && _id19.constructor ? _id19.constructor.name || '[Unknown Object]' : typeof _id19 === 'undefined' ? 'undefined' : _typeof(_id19)));
 	                }
 	
-	                return _id16;
+	                return _id19;
 	            }
 	
 	            if (!(typeof begin === 'number')) {
@@ -675,7 +784,7 @@ var crio =
 	
 	            var slicedArray = this.thaw().slice(begin, end);
 	
-	            return _ref16((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(slicedArray)));
+	            return _ref19((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(slicedArray)));
 	        }
 	
 	        /**
@@ -689,12 +798,12 @@ var crio =
 	    }, {
 	        key: 'some',
 	        value: function some(callback, thisArg) {
-	            function _ref17(_id17) {
-	                if (!(typeof _id17 === 'boolean')) {
-	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id17 === null ? 'null' : (typeof _id17 === 'undefined' ? 'undefined' : _typeof(_id17)) === 'object' && _id17.constructor ? _id17.constructor.name || '[Unknown Object]' : typeof _id17 === 'undefined' ? 'undefined' : _typeof(_id17)));
+	            function _ref20(_id20) {
+	                if (!(typeof _id20 === 'boolean')) {
+	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id20 === null ? 'null' : (typeof _id20 === 'undefined' ? 'undefined' : _typeof(_id20)) === 'object' && _id20.constructor ? _id20.constructor.name || '[Unknown Object]' : typeof _id20 === 'undefined' ? 'undefined' : _typeof(_id20)));
 	                }
 	
-	                return _id17;
+	                return _id20;
 	            }
 	
 	            if (!(typeof callback === 'function')) {
@@ -705,7 +814,7 @@ var crio =
 	                throw new TypeError('Value of argument "thisArg" violates contract, expected ?Object got ' + (thisArg === null ? 'null' : (typeof thisArg === 'undefined' ? 'undefined' : _typeof(thisArg)) === 'object' && thisArg.constructor ? thisArg.constructor.name || '[Unknown Object]' : typeof thisArg === 'undefined' ? 'undefined' : _typeof(thisArg)));
 	            }
 	
-	            return _ref17(this.thaw().some.call(thisArg, callback));
+	            return _ref20(this.thaw().some.call(thisArg, callback));
 	        }
 	
 	        /**
@@ -718,12 +827,12 @@ var crio =
 	    }, {
 	        key: 'sort',
 	        value: function sort(fn) {
-	            function _ref18(_id18) {
-	                if (!(_id18 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id18 === null ? 'null' : (typeof _id18 === 'undefined' ? 'undefined' : _typeof(_id18)) === 'object' && _id18.constructor ? _id18.constructor.name || '[Unknown Object]' : typeof _id18 === 'undefined' ? 'undefined' : _typeof(_id18)));
+	            function _ref21(_id21) {
+	                if (!(_id21 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id21 === null ? 'null' : (typeof _id21 === 'undefined' ? 'undefined' : _typeof(_id21)) === 'object' && _id21.constructor ? _id21.constructor.name || '[Unknown Object]' : typeof _id21 === 'undefined' ? 'undefined' : _typeof(_id21)));
 	                }
 	
-	                return _id18;
+	                return _id21;
 	            }
 	
 	            if (!(fn == null || typeof fn === 'function')) {
@@ -732,7 +841,7 @@ var crio =
 	
 	            var sortedObject = this.thaw().sort(fn);
 	
-	            return _ref18((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(sortedObject)));
+	            return _ref21((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(sortedObject)));
 	        }
 	
 	        /**
@@ -752,12 +861,12 @@ var crio =
 	                keys[_key3] = arguments[_key3];
 	            }
 	
-	            function _ref19(_id19) {
-	                if (!(_id19 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id19 === null ? 'null' : (typeof _id19 === 'undefined' ? 'undefined' : _typeof(_id19)) === 'object' && _id19.constructor ? _id19.constructor.name || '[Unknown Object]' : typeof _id19 === 'undefined' ? 'undefined' : _typeof(_id19)));
+	            function _ref22(_id22) {
+	                if (!(_id22 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id22 === null ? 'null' : (typeof _id22 === 'undefined' ? 'undefined' : _typeof(_id22)) === 'object' && _id22.constructor ? _id22.constructor.name || '[Unknown Object]' : typeof _id22 === 'undefined' ? 'undefined' : _typeof(_id22)));
 	                }
 	
-	                return _id19;
+	                return _id22;
 	            }
 	
 	            if (!Array.isArray(keys)) {
@@ -765,7 +874,7 @@ var crio =
 	            }
 	
 	            if (keys.length === 0) {
-	                return _ref19((0, _createNewCrio2.default)());
+	                return _ref22((0, _createNewCrio.createNewCrioList)());
 	            }
 	
 	            var newValue = [].concat(_toConsumableArray(this.object));
@@ -778,7 +887,35 @@ var crio =
 	                }
 	            });
 	
-	            return _ref19((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(newValue)));
+	            return _ref22((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(newValue)));
+	        }
+	
+	        /**
+	         * Returns CrioList with only unique items in original CrioList
+	         *
+	         * @returns {CrioList}
+	         */
+	
+	    }, {
+	        key: 'unique',
+	        value: function unique() {
+	            function _ref23(_id23) {
+	                if (!(_id23 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id23 === null ? 'null' : (typeof _id23 === 'undefined' ? 'undefined' : _typeof(_id23)) === 'object' && _id23.constructor ? _id23.constructor.name || '[Unknown Object]' : typeof _id23 === 'undefined' ? 'undefined' : _typeof(_id23)));
+	                }
+	
+	                return _id23;
+	            }
+	
+	            var uniqueList = [];
+	
+	            this.forEach(function (value) {
+	                if (uniqueList.indexOf(value) === -1) {
+	                    uniqueList.push(value);
+	                }
+	            });
+	
+	            return _ref23((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(uniqueList)));
 	        }
 	
 	        /**
@@ -791,27 +928,27 @@ var crio =
 	    }, {
 	        key: 'unshift',
 	        value: function unshift() {
-	            var _ref22;
+	            var _ref26;
 	
 	            for (var _len4 = arguments.length, values = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
 	                values[_key4] = arguments[_key4];
 	            }
 	
-	            function _ref20(_id20) {
-	                if (!(_id20 instanceof CrioList)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id20 === null ? 'null' : (typeof _id20 === 'undefined' ? 'undefined' : _typeof(_id20)) === 'object' && _id20.constructor ? _id20.constructor.name || '[Unknown Object]' : typeof _id20 === 'undefined' ? 'undefined' : _typeof(_id20)));
+	            function _ref24(_id24) {
+	                if (!(_id24 instanceof CrioList)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioList got ' + (_id24 === null ? 'null' : (typeof _id24 === 'undefined' ? 'undefined' : _typeof(_id24)) === 'object' && _id24.constructor ? _id24.constructor.name || '[Unknown Object]' : typeof _id24 === 'undefined' ? 'undefined' : _typeof(_id24)));
 	                }
 	
-	                return _id20;
+	                return _id24;
 	            }
 	
 	            if (!Array.isArray(values)) {
 	                throw new TypeError('Value of argument "values" violates contract, expected Array got ' + (values === null ? 'null' : (typeof values === 'undefined' ? 'undefined' : _typeof(values)) === 'object' && values.constructor ? values.constructor.name || '[Unknown Object]' : typeof values === 'undefined' ? 'undefined' : _typeof(values)));
 	            }
 	
-	            var newValues = (_ref22 = [].concat(values)).concat.apply(_ref22, _toConsumableArray(this.object));
+	            var newValues = (_ref26 = [].concat(values)).concat.apply(_ref26, _toConsumableArray(this.object));
 	
-	            return _ref20((0, _createNewCrio2.default)(newValues));
+	            return _ref24((0, _createNewCrio.createNewCrioList)(newValues));
 	        }
 	    }]);
 	
@@ -826,21 +963,13 @@ var crio =
 
 	'use strict';
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	// local imports
-	
-	// local partial imports
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
 	var _createNewCrio = __webpack_require__(2);
-	
-	var _createNewCrio2 = _interopRequireDefault(_createNewCrio);
 	
 	var _checkers = __webpack_require__(5);
 	
@@ -854,11 +983,25 @@ var crio =
 	
 	var _hash = __webpack_require__(11);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	// local imports
+	
+	// local partial imports
+	
+	var isValidKey = function isValidKey(obj, index, length) {
+	    if (!(typeof index === 'number')) {
+	        throw new TypeError('Value of argument "index" violates contract, expected number got ' + (index === null ? 'null' : (typeof index === 'undefined' ? 'undefined' : _typeof(index)) === 'object' && index.constructor ? index.constructor.name || '[Unknown Object]' : typeof index === 'undefined' ? 'undefined' : _typeof(index)));
+	    }
+	
+	    if (!(typeof length === 'number')) {
+	        throw new TypeError('Value of argument "length" violates contract, expected number got ' + (length === null ? 'null' : (typeof length === 'undefined' ? 'undefined' : _typeof(length)) === 'object' && length.constructor ? length.constructor.name || '[Unknown Object]' : typeof length === 'undefined' ? 'undefined' : _typeof(length)));
+	    }
+	
+	    return !(0, _checkers.isUndefined)(obj) && index < length - 1;
+	};
 	
 	var CrioCollection = (function () {
 	    function CrioCollection(obj) {
@@ -878,15 +1021,15 @@ var crio =
 	    _createClass(CrioCollection, [{
 	        key: 'clear',
 	        value: function clear() {
-	            function _ref(_id) {
-	                if (!(_id instanceof CrioCollection)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id === null ? 'null' : (typeof _id === 'undefined' ? 'undefined' : _typeof(_id)) === 'object' && _id.constructor ? _id.constructor.name || '[Unknown Object]' : typeof _id === 'undefined' ? 'undefined' : _typeof(_id)));
+	            function _ref2(_id2) {
+	                if (!(_id2 instanceof CrioCollection)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id2 === null ? 'null' : (typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)) === 'object' && _id2.constructor ? _id2.constructor.name || '[Unknown Object]' : typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)));
 	                }
 	
-	                return _id;
+	                return _id2;
 	            }
 	
-	            return _ref((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)((0, _checkers.isArray)(this.object) ? [] : {})));
+	            return _ref2((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)((0, _checkers.isArray)(this.object) ? [] : {})));
 	        }
 	
 	        /**
@@ -972,23 +1115,41 @@ var crio =
 	        value: function getIn() {
 	            var keys = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	
-	            var retValue = this.thaw();
+	            var retValue = this.thaw(),
+	                foundKeyMatch = true;
 	
-	            (0, _functions.forEach)(keys, function (key) {
-	                retValue = retValue[key];
-	
-	                if ((0, _checkers.isUndefined)(retValue)) {
+	            (0, _functions.forEach)(keys, function (key, index) {
+	                if (!isValidKey(retValue[key], index, keys.length)) {
+	                    foundKeyMatch = false;
 	                    return false;
 	                }
+	
+	                retValue = retValue[key];
 	            });
 	
-	            return (0, _crioFunctions.coalesceCrioValue)(this, retValue);
+	            if (foundKeyMatch) {
+	                return (0, _crioFunctions.coalesceCrioValue)(this, retValue);
+	            }
+	
+	            return undefined;
+	        }
+	
+	        /**
+	         * Returns true if size is 0
+	         *
+	         * @returns {boolean}
+	         */
+	
+	    }, {
+	        key: 'isEmpty',
+	        value: function isEmpty() {
+	            return this.size === 0;
 	        }
 	
 	        /**
 	         * Retrieves an array of the keys for this.object
 	         *
-	         * @returns keys<Array>
+	         * @returns {Array}
 	         */
 	
 	    }, {
@@ -1011,12 +1172,12 @@ var crio =
 	                sources[_key2] = arguments[_key2];
 	            }
 	
-	            function _ref3(_id3) {
-	                if (!(_id3 instanceof CrioCollection)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
+	            function _ref5(_id5) {
+	                if (!(_id5 instanceof CrioCollection)) {
+	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
 	                }
 	
-	                return _id3;
+	                return _id5;
 	            }
 	
 	            if (!Array.isArray(sources)) {
@@ -1025,9 +1186,7 @@ var crio =
 	
 	            var mergedObject = _crioFunctions.merge.apply(undefined, [this.thaw()].concat(sources));
 	
-	            console.log(mergedObject);
-	
-	            return _ref3((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(mergedObject)));
+	            return _ref5((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(mergedObject)));
 	        }
 	
 	        /**
@@ -1070,7 +1229,7 @@ var crio =
 	                newValue[key] = value;
 	            }
 	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(newValue));
+	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(newValue));
 	        }
 	
 	        /**
@@ -1084,17 +1243,15 @@ var crio =
 	    }, {
 	        key: 'setIn',
 	        value: function setIn() {
-	            var _this2 = this;
-	
 	            var keys = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 	            var value = arguments[1];
 	
-	            function _ref4(_id4) {
-	                if (!(_id4 instanceof CrioCollection)) {
-	                    throw new TypeError('Function return value violates contract, expected CrioCollection got ' + (_id4 === null ? 'null' : (typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)) === 'object' && _id4.constructor ? _id4.constructor.name || '[Unknown Object]' : typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)));
+	            function _ref6(_id6) {
+	                if (!(_id6 == null || _id6 instanceof CrioCollection)) {
+	                    throw new TypeError('Function return value violates contract, expected ?CrioCollection got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
 	                }
 	
-	                return _id4;
+	                return _id6;
 	            }
 	
 	            if (!Array.isArray(keys)) {
@@ -1105,19 +1262,27 @@ var crio =
 	                throw new TypeError('You need to pass in a value to apply for the key.');
 	            }
 	
-	            var deepNewObject = {},
-	                isValidKeyset = true;
+	            var foundKeyMatch = true,
+	                checkObj = this.thaw();
 	
 	            (0, _functions.forEach)(keys, function (key, index) {
-	                if ((0, _checkers.isUndefined)(_this2.object[key])) {
-	                    isValidKeyset = false;
+	                if (!isValidKey(checkObj[key], index, keys.length)) {
+	                    foundKeyMatch = false;
 	                    return false;
 	                }
 	
-	                deepNewObject[key] = index === keys.length - 1 ? value : {};
+	                if (index === keys.length - 1) {
+	                    checkObj[key] = value;
+	                } else {
+	                    checkObj = checkObj[key];
+	                }
 	            });
 	
-	            return _ref4(!isValidKeyset ? undefined : (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(_extends({}, this.thaw(), deepNewObject))));
+	            if (foundKeyMatch) {
+	                return _ref6((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(checkObj)));
+	            }
+	
+	            return _ref6(undefined);
 	        }
 	
 	        /**
@@ -1129,15 +1294,15 @@ var crio =
 	    }, {
 	        key: 'thaw',
 	        value: function thaw() {
-	            function _ref5(_id5) {
-	                if (!(Array.isArray(_id5) || _id5 instanceof Object)) {
-	                    throw new TypeError('Function return value violates contract, expected Array | Object got ' + (_id5 === null ? 'null' : (typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)) === 'object' && _id5.constructor ? _id5.constructor.name || '[Unknown Object]' : typeof _id5 === 'undefined' ? 'undefined' : _typeof(_id5)));
+	            function _ref7(_id7) {
+	                if (!(Array.isArray(_id7) || _id7 instanceof Object)) {
+	                    throw new TypeError('Function return value violates contract, expected Array | Object got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
 	                }
 	
-	                return _id5;
+	                return _id7;
 	            }
 	
-	            return _ref5((0, _crioFunctions.thaw)(this.object));
+	            return _ref7((0, _crioFunctions.thaw)(this.object));
 	        }
 	
 	        /**
@@ -1149,15 +1314,15 @@ var crio =
 	    }, {
 	        key: 'toLocaleString',
 	        value: function toLocaleString() {
-	            function _ref6(_id6) {
-	                if (!(typeof _id6 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id6 === null ? 'null' : (typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)) === 'object' && _id6.constructor ? _id6.constructor.name || '[Unknown Object]' : typeof _id6 === 'undefined' ? 'undefined' : _typeof(_id6)));
+	            function _ref8(_id8) {
+	                if (!(typeof _id8 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id8 === null ? 'null' : (typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)) === 'object' && _id8.constructor ? _id8.constructor.name || '[Unknown Object]' : typeof _id8 === 'undefined' ? 'undefined' : _typeof(_id8)));
 	                }
 	
-	                return _id6;
+	                return _id8;
 	            }
 	
-	            return _ref6(this.object.toLocaleString());
+	            return _ref8(this.object.toLocaleString());
 	        }
 	
 	        /**
@@ -1169,15 +1334,15 @@ var crio =
 	    }, {
 	        key: 'toString',
 	        value: function toString() {
-	            function _ref7(_id7) {
-	                if (!(typeof _id7 === 'string')) {
-	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id7 === null ? 'null' : (typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)) === 'object' && _id7.constructor ? _id7.constructor.name || '[Unknown Object]' : typeof _id7 === 'undefined' ? 'undefined' : _typeof(_id7)));
+	            function _ref9(_id9) {
+	                if (!(typeof _id9 === 'string')) {
+	                    throw new TypeError('Function return value violates contract, expected string got ' + (_id9 === null ? 'null' : (typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)) === 'object' && _id9.constructor ? _id9.constructor.name || '[Unknown Object]' : typeof _id9 === 'undefined' ? 'undefined' : _typeof(_id9)));
 	                }
 	
-	                return _id7;
+	                return _id9;
 	            }
 	
-	            return _ref7(this.object.toString());
+	            return _ref9(this.object.toString());
 	        }
 	
 	        /**
@@ -1185,7 +1350,7 @@ var crio =
 	         * are plucked from the top-level mapping and returned as an array. In all other cases, this.object itself
 	         * is returned. In all scenarios, mutable is returned to the object.
 	         *
-	         * @returns {*}
+	         * @returns {Array}
 	         */
 	
 	    }, {
@@ -1455,8 +1620,6 @@ var crio =
 	
 	var _createNewCrio = __webpack_require__(2);
 	
-	var _createNewCrio2 = _interopRequireDefault(_createNewCrio);
-	
 	var _CrioCollection = __webpack_require__(4);
 	
 	var _CrioCollection2 = _interopRequireDefault(_CrioCollection);
@@ -1700,7 +1863,7 @@ var crio =
 	    }
 	
 	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) && !(0, _crioCheckers.isCrioCollection)(obj)) {
-	        return getCrioInstance(Crio, (0, _createNewCrio2.default)(obj));
+	        return getCrioInstance(Crio, (0, _createNewCrio.createNewCrio)(obj));
 	    }
 	
 	    return obj;
@@ -4250,8 +4413,6 @@ var crio =
 	
 	var _createNewCrio = __webpack_require__(2);
 	
-	var _createNewCrio2 = _interopRequireDefault(_createNewCrio);
-	
 	var _CrioCollection2 = __webpack_require__(4);
 	
 	var _CrioCollection3 = _interopRequireDefault(_CrioCollection2);
@@ -4311,7 +4472,7 @@ var crio =
 	            }
 	
 	            if (keys.length === 0) {
-	                return _ref((0, _createNewCrio2.default)());
+	                return _ref((0, _createNewCrio.createNewCrioMap)());
 	            }
 	
 	            var newValue = this.thaw();
@@ -4324,7 +4485,7 @@ var crio =
 	                delete newValue[key];
 	            });
 	
-	            return _ref((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio2.default)(newValue)));
+	            return _ref((0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioMap)(newValue)));
 	        }
 	
 	        /**
@@ -4332,11 +4493,12 @@ var crio =
 	         *
 	         * @param fn<Function>
 	         * @param thisArg<Object[optional]>
+	         * @returns {CrioMap}
 	         */
 	
 	    }, {
-	        key: 'forIn',
-	        value: function forIn(fn, thisArg) {
+	        key: 'forEach',
+	        value: function forEach(fn, thisArg) {
 	            if (!(typeof fn === 'function')) {
 	                throw new TypeError('Value of argument "fn" violates contract, expected Function got ' + (fn === null ? 'null' : (typeof fn === 'undefined' ? 'undefined' : _typeof(fn)) === 'object' && fn.constructor ? fn.constructor.name || '[Unknown Object]' : typeof fn === 'undefined' ? 'undefined' : _typeof(fn)));
 	            }
@@ -4351,29 +4513,6 @@ var crio =
 	        }
 	
 	        /**
-	         * Executes loop over own properties (including non-enumerables) to get values stored in this.object
-	         *
-	         * @param fn<Function>
-	         * @param thisArg<Object[optional]>
-	         */
-	
-	    }, {
-	        key: 'forOwn',
-	        value: function forOwn(fn, thisArg) {
-	            if (!(typeof fn === 'function')) {
-	                throw new TypeError('Value of argument "fn" violates contract, expected Function got ' + (fn === null ? 'null' : (typeof fn === 'undefined' ? 'undefined' : _typeof(fn)) === 'object' && fn.constructor ? fn.constructor.name || '[Unknown Object]' : typeof fn === 'undefined' ? 'undefined' : _typeof(fn)));
-	            }
-	
-	            if (!(thisArg == null || thisArg instanceof Object)) {
-	                throw new TypeError('Value of argument "thisArg" violates contract, expected ?Object got ' + (thisArg === null ? 'null' : (typeof thisArg === 'undefined' ? 'undefined' : _typeof(thisArg)) === 'object' && thisArg.constructor ? thisArg.constructor.name || '[Unknown Object]' : typeof thisArg === 'undefined' ? 'undefined' : _typeof(thisArg)));
-	            }
-	
-	            (0, _functions.forOwn)(this.thaw(), fn, thisArg);
-	
-	            return this;
-	        }
-	
-	        /**
 	         * Alias for Object.prototype.hasOwnProperty
 	         *
 	         * @param prop<any>
@@ -4381,8 +4520,8 @@ var crio =
 	         */
 	
 	    }, {
-	        key: 'hasOwnProperty',
-	        value: function hasOwnProperty(prop) {
+	        key: 'has',
+	        value: function has(prop) {
 	            function _ref2(_id2) {
 	                if (!(typeof _id2 === 'boolean')) {
 	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id2 === null ? 'null' : (typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)) === 'object' && _id2.constructor ? _id2.constructor.name || '[Unknown Object]' : typeof _id2 === 'undefined' ? 'undefined' : _typeof(_id2)));
@@ -4392,64 +4531,6 @@ var crio =
 	            }
 	
 	            return _ref2(this.object.hasOwnProperty(prop));
-	        }
-	
-	        /**
-	         * Alias for Object.prototype.isPrototypeOf
-	         *
-	         * @param obj<any>
-	         * @returns {boolean}
-	         */
-	
-	    }, {
-	        key: 'isPrototypeOf',
-	        value: function isPrototypeOf(obj) {
-	            function _ref3(_id3) {
-	                if (!(typeof _id3 === 'boolean')) {
-	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id3 === null ? 'null' : (typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)) === 'object' && _id3.constructor ? _id3.constructor.name || '[Unknown Object]' : typeof _id3 === 'undefined' ? 'undefined' : _typeof(_id3)));
-	                }
-	
-	                return _id3;
-	            }
-	
-	            if (!(obj instanceof Object)) {
-	                throw new TypeError('Value of argument "obj" violates contract, expected Object got ' + (obj === null ? 'null' : (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.constructor ? obj.constructor.name || '[Unknown Object]' : typeof obj === 'undefined' ? 'undefined' : _typeof(obj)));
-	            }
-	
-	            return _ref3(this.object.isPrototypeOf(obj));
-	        }
-	
-	        /**
-	         * Alias for Object.prototype.propertyIsEnumerable
-	         *
-	         * @param prop<any>
-	         * @returns {boolean}
-	         */
-	
-	    }, {
-	        key: 'propertyIsEnumerable',
-	        value: function propertyIsEnumerable(prop) {
-	            function _ref4(_id4) {
-	                if (!(typeof _id4 === 'boolean')) {
-	                    throw new TypeError('Function return value violates contract, expected bool got ' + (_id4 === null ? 'null' : (typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)) === 'object' && _id4.constructor ? _id4.constructor.name || '[Unknown Object]' : typeof _id4 === 'undefined' ? 'undefined' : _typeof(_id4)));
-	                }
-	
-	                return _id4;
-	            }
-	
-	            return _ref4(this.object.propertyIsEnumerable(prop));
-	        }
-	
-	        /**
-	         * Alias of Object.prototype.valueOf
-	         *
-	         * @returns {string}
-	         */
-	
-	    }, {
-	        key: 'valueOf',
-	        value: function valueOf() {
-	            return this.object.valueOf();
 	        }
 	    }]);
 	
@@ -4470,13 +4551,9 @@ var crio =
 	
 	var _createNewCrio = __webpack_require__(2);
 	
-	var _createNewCrio2 = _interopRequireDefault(_createNewCrio);
-	
 	var _checkers = __webpack_require__(5);
 	
 	var _functions = __webpack_require__(9);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 	
@@ -4495,7 +4572,7 @@ var crio =
 	        var value = obj[name];
 	
 	        if ((0, _checkers.isArray)(value) || (0, _checkers.isObject)(value)) {
-	            obj[name] = (0, _createNewCrio2.default)(value);
+	            obj[name] = (0, _createNewCrio.createNewCrio)(value);
 	        }
 	    });
 	

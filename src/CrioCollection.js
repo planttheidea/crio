@@ -138,7 +138,7 @@ class CrioCollection {
      * @returns {boolean}
      */
     isEmpty() : boolean {
-        return this.size === 0
+        return this.size === 0;
     }
 
     /**
