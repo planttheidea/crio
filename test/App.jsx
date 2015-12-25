@@ -219,6 +219,24 @@ console.log(mappedFilledCrio);
 console.log(collectionedCrio);
 console.log(listedCrio);
 
+const testNewMerge = mappedFilledCrio.merge({
+    test:'me'
+});
+
+console.log(testNewMerge);
+
+const testNewFilter = dupCrio.map((item) => {
+    return item === 1;
+});
+
+console.log(testNewFilter);
+
+console.log(dupCrio.shift());
+
+console.log(dupCrio);
+
+console.log(dupCrio.slice(5, 15));
+
 class App extends React.Component {
     displayName = 'App';
 

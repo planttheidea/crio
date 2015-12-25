@@ -9,6 +9,7 @@ import CrioCollection from './CrioCollection';
 // local partial imports
 import {
     isArray,
+    isNumber,
     isValueless
 } from './utils/checkers';
 
@@ -37,7 +38,7 @@ class CrioList extends CrioCollection {
      * @returns {boolean}
      */
     every(callback: Function, thisArg: ?Object) : boolean {
-        return this.thaw().every.call(thisArg, callback);
+        return this.object.every.call(thisArg, callback);
     }
 
     /**
@@ -66,7 +67,7 @@ class CrioList extends CrioCollection {
      * @returns filteredArray<CrioList>
      */
     filter(callback: Function, ...args: Array) : CrioList {
-        const values = this.thaw().filter(callback, ...args);
+        const values = this.object.filter(callback, ...args);
 
         return getCrioInstance(this, createNewCrioList(values));
     }
@@ -81,7 +82,7 @@ class CrioList extends CrioCollection {
     find(callback: Function, thisArg: ?Object) : any {
         let match: any;
 
-        forEach(this.thaw(), (value, index, arr) => {
+        forEach(this.object, (value, index, arr) => {
             if (callback.call(thisArg, value, index, arr)) {
                 match = getCrioInstance(this, createNewCrioList(value));
                 return false;
@@ -101,7 +102,7 @@ class CrioList extends CrioCollection {
     findIndex(callback: Function, thisArg: ?Object) : number {
         let matchIndex: number = -1;
 
-        forEach(this.thaw(), (value, index, arr) => {
+        forEach(this.object, (value, index, arr) => {
             if (callback.call(thisArg, value, index, arr)) {
                 matchIndex = index;
                 return false;
@@ -117,20 +118,7 @@ class CrioList extends CrioCollection {
      * @returns {CrioCollection}
      */
     first() : any {
-        return this.thaw()[0];
-    }
-
-    /**
-     * Executes forEach over values stored in this.object
-     *
-     * @param fn<Function>
-     * @param thisArg<Object[optional]>
-     * @returns {CrioList}
-     */
-    forEach(fn: Function, thisArg: ?Object) {
-        forEach(this.thaw(), fn, thisArg);
-
-        return this;
+        return this.object[0];
     }
 
     /**
@@ -173,7 +161,7 @@ class CrioList extends CrioCollection {
      * @returns {*}
      */
     last() : any {
-        return this.thaw()[this.object.length - 1];
+        return this.object[this.object.length - 1];
     }
 
     /**
@@ -198,7 +186,7 @@ class CrioList extends CrioCollection {
      * @returns mappedArray<CrioList>
      */
     map(callback: Function, thisArg: ?Object) : CrioList {
-        const values = this.thaw().map(callback, thisArg);
+        const values = this.object.map(callback, thisArg);
 
         if (!isArray(values)) {
             throw new Error('You cannot change the type of object when mapping. If you want to do this, ' +
@@ -214,7 +202,7 @@ class CrioList extends CrioCollection {
      * @returns lastItemInArray<Any>
      */
     pop() : any {
-        return this.thaw().pop();
+        return this.splice(this.size - 1);
     }
 
     /**
@@ -239,7 +227,7 @@ class CrioList extends CrioCollection {
      * @returns {any}
      */
     reduce(callback: Function, initialValue: ?any = 0) : any {
-        const reducedValue = this.thaw().reduce(callback, initialValue);
+        const reducedValue = this.object.reduce(callback, initialValue);
 
         return coalesceCrioValue(this, reducedValue);
     }
@@ -263,7 +251,7 @@ class CrioList extends CrioCollection {
     reverse() : CrioList {
         const reversedArray: Array = [];
 
-        forEachRight(this.thaw(), (value) => {
+        forEachRight(this.object, (value) => {
             reversedArray.push(value);
         });
 
@@ -276,7 +264,7 @@ class CrioList extends CrioCollection {
      * @returns firstItemInArray<Any>
      */
     shift() : any{
-        return this.thaw().shift();
+        return this.splice(0);
     }
 
     /**
@@ -288,7 +276,7 @@ class CrioList extends CrioCollection {
      * @returns {CrioList}
      */
     slice(begin: number, end: ?number) : CrioList {
-        const slicedArray = this.thaw().slice(begin, end);
+        const slicedArray = [...this.object].slice(begin, end);
 
         return getCrioInstance(this, createNewCrioList(slicedArray));
     }
@@ -301,7 +289,7 @@ class CrioList extends CrioCollection {
      * @returns {boolean}
      */
     some(callback: Function, thisArg: ?Object) : boolean {
-        return this.thaw().some.call(thisArg, callback);
+        return this.object.some.call(thisArg, callback);
     }
 
     /**
@@ -320,21 +308,16 @@ class CrioList extends CrioCollection {
      * Returns a new CrioList with an object including all values except that
      * of the key(s) passed.
      *
-     * @param keys<Array>
+     * @param index<Number>
+     * @param removeNum<Number>
      * @returns itemWithKeysRemoved<Crio>
      */
-    splice(...keys: Array) : CrioList {
-        if (keys.length === 0) {
-            return createNewCrioList();
+    splice(index: number, removeNum: number = 1) : CrioList {
+        if (!isNumber(index)) {
+            return this;
         }
 
-        let newValue: Array = [...this.object];
-
-        forEach(keys, (index) => {
-            newValue = splice(this.object, index);
-        });
-
-        return getCrioInstance(this, createNewCrioList(newValue));
+        return getCrioInstance(this, createNewCrioList(splice(this.object, index, removeNum)));
     }
 
     /**

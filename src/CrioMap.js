@@ -33,26 +33,13 @@ class CrioMap extends CrioCollection {
             return createNewCrioMap();
         }
 
-        let newValue: Object = this.thaw();
+        let newValue: Object = {...this.object};
 
         forEach(keys, (key) => {
             delete newValue[key];
         });
 
         return getCrioInstance(this, createNewCrioMap(newValue));
-    }
-
-    /**
-     * Executes for-in loop over values stored in this.object
-     *
-     * @param fn<Function>
-     * @param thisArg<Object[optional]>
-     * @returns {CrioMap}
-     */
-    forEach(fn: Function, thisArg: ?Object) {
-        forIn(this.thaw(), fn, thisArg);
-
-        return this;
     }
 
     /**

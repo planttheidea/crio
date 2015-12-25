@@ -56,7 +56,9 @@ class CrioCollection {
      * @returns {CrioMap}
      */
     clear() : CrioCollection {
-        return getCrioInstance(this, createNewCrio(isArray(this.object) ? [] : {}));
+        const newObject = isArray(this.object) ? [] : {};
+
+        return getCrioInstance(this, createNewCrio(newObject));
     }
 
     /**
@@ -65,7 +67,7 @@ class CrioCollection {
      * @returns {Iterator}
      */
     entries() {
-        return this.thaw().entries();
+        return this.object.entries();
     }
 
     /**
@@ -80,6 +82,21 @@ class CrioCollection {
         }
 
         return isSameCrio(this, crio2);
+    }
+
+    /**
+     * Executes forEach over values stored in this.object
+     *
+     * @param fn<Function>
+     * @param thisArg<Object[optional]>
+     * @returns {CrioList}
+     */
+    forEach(fn: Function, thisArg: ?Object) {
+        const loopFunction = isArray(this.object) ? forEach : forIn;
+
+        loopFunction(this.object, fn, thisArg);
+
+        return this;
     }
 
     /**
@@ -122,7 +139,7 @@ class CrioCollection {
      * @returns {Array|Object}
      */
     getIn(keys = []) {
-        let retValue = this.thaw(),
+        let retValue = this.object,
             foundKeyMatch = true;
 
         forEach(keys, (key, index) => {
@@ -170,7 +187,7 @@ class CrioCollection {
      * @returns {CrioCollection}
      */
     merge(...sources: Array) : CrioCollection {
-        const mergedObject = merge(this.thaw(), ...sources);
+        const mergedObject = merge(this.object, ...sources);
 
         return getCrioInstance(this, createNewCrio(mergedObject));
     }
@@ -292,11 +309,9 @@ class CrioCollection {
      * @returns {Array}
      */
     values() : Array {
-        const thawedObject = this.thaw();
-
         let valueArray: Array = [];
 
-        forIn(thawedObject, (value) => {
+        forIn(this.object, (value) => {
             valueArray.push(value);
         });
 

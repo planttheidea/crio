@@ -126,9 +126,10 @@ const forOwn = (obj: Object, fn: Function, thisArg: ?Object) => {
  *
  * @param obj<Array>
  * @param index<Number>
+ * @param removeNum<Number>
  * @returns splicedArray<Array>
  */
-const immutableSplice = (obj: Array, index: number) => {
+const immutableSplice = (obj: Array, index: number, removeNum: number) => {
     if (!isArray(obj)) {
         throw new TypeError('Object passed to concat is not an array.');
     }
@@ -139,7 +140,7 @@ const immutableSplice = (obj: Array, index: number) => {
 
     return [
         ...obj.slice(0, index),
-        ...obj.slice(index + 1)
+        ...obj.slice(index + removeNum)
     ];
 };
 
