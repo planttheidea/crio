@@ -8,18 +8,20 @@ import {
 // local partial imports
 import {
     isArray,
-    isConvertibleToCrio,
     isObject,
     isUndefined,
     isValueless
 } from './utils/checkers';
 
 import {
+    isConvertibleToCrio,
+    isCrioCollection,
     isSameCrio
 } from './utils/crioCheckers';
 
 import {
     coalesceCrioValue,
+    convertToString,
     getCrioInstance,
     merge,
     thaw
@@ -31,16 +33,18 @@ import {
 } from './utils/decorators';
 
 import {
+    entries,
     forEach,
-    forIn
+    forIn,
+    setDeeplyNested
 } from './utils/functions';
 
 import {
     hashObject
 } from './utils/hash';
 
-const isValidKey = (obj: any, index: number, length: number) : boolean => {
-    return !isUndefined(obj) && index < length - 1;
+const isInvalidKey = (obj: any, index: number, length: number) : boolean => {
+    return index !== length - 1 && isUndefined(obj);
 };
 
 class CrioCollection {
@@ -67,7 +71,7 @@ class CrioCollection {
      * @returns {Iterator}
      */
     entries() {
-        return this.object.entries();
+        return entries(this.object);
     }
 
     /**
@@ -143,12 +147,14 @@ class CrioCollection {
             foundKeyMatch = true;
 
         forEach(keys, (key, index) => {
-            if (!isValidKey(retValue[key], index, keys.length)) {
+            const value = retValue[key];
+
+            if (isInvalidKey(value, index, keys.length)) {
                 foundKeyMatch = false;
                 return false;
             }
 
-            retValue = retValue[key];
+            retValue = isCrioCollection(value) ? value.object : value;
         });
 
         if (foundKeyMatch) {
@@ -251,27 +257,9 @@ class CrioCollection {
             throw new TypeError('You need to pass in a value to apply for the key.');
         }
 
-        let foundKeyMatch = true,
-            checkObj = this.thaw();
+        const updatedObject = setDeeplyNested(this.thaw(), keys, value);
 
-        forEach(keys, (key, index) => {
-            if (!isValidKey(checkObj[key], index, keys.length)) {
-                foundKeyMatch = false;
-                return false;
-            }
-
-            if (index === keys.length - 1) {
-                checkObj[key] = value;
-            } else {
-                checkObj = checkObj[key];
-            }
-        });
-
-        if (foundKeyMatch) {
-            return getCrioInstance(this, createNewCrio(checkObj));
-        }
-
-        return undefined;
+        return getCrioInstance(this, createNewCrio(updatedObject));
     }
 
     /**
@@ -289,7 +277,7 @@ class CrioCollection {
      * @returns {string}
      */
     toLocaleString() : string {
-        return this.object.toLocaleString();
+        return convertToString(this, true);
     }
 
     /**
@@ -298,7 +286,7 @@ class CrioCollection {
      * @returns {string}
      */
     toString() : string {
-        return this.object.toString();
+        return convertToString(this, false);
     }
 
     /**

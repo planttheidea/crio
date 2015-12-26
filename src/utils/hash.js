@@ -14,7 +14,6 @@ import toString from './toString';
 // local partial imports
 import {
     isArray,
-    isConvertibleToCrio,
     isFunction,
     isNAN,
     isNull,
@@ -22,6 +21,10 @@ import {
     isString,
     isUndefined
 } from './checkers';
+
+import {
+    isConvertibleToCrio
+} from './crioCheckers';
 
 import {
     forEach,

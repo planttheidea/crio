@@ -9,12 +9,14 @@ import CrioCollection from './../CrioCollection';
 
 import {
     isArray,
-    isConvertibleToCrio,
+    isDate,
+    isNumber,
     isObject,
     isUndefined
 } from './checkers';
 
 import {
+    isConvertibleToCrio,
     isCrioCollection,
     isSameCrio
 } from './crioCheckers';
@@ -124,6 +126,42 @@ const cloneObject = (originalObj: any) : any => {
     return cloneObj(originalObj);
 };
 
+const convertToString = (obj: CrioCollection, isLocaleSpecific: boolean) : string => {
+    const isThisObject = isObject(obj.object);
+    const prefix = isThisObject ? 'CrioMap {' : 'CrioList [';
+    const suffix = isThisObject ? '}' : ']';
+
+    let stringReturn = '';
+
+    obj.forEach((value, key) => {
+        if (stringReturn !== '') {
+            stringReturn += ', ';
+        }
+
+        if (isThisObject) {
+            stringReturn += key + ': ';
+        }
+
+        if (isCrioCollection(value)) {
+            stringReturn += convertToString(value, isLocaleSpecific);
+        } else if (isLocaleSpecific && (isNumber(value) || isDate(value))) {
+            stringReturn += value.toLocaleString();
+        } else {
+            stringReturn += value;
+        }
+    });
+
+    stringReturn = prefix + stringReturn + suffix;
+
+    return stringReturn;
+};
+
+/**
+ * Helper function to return either the thawed Crio object or the object itself
+ *
+ * @param obj<any>
+ * @returns {any}
+ */
 const getThawedObject = (obj: any) : any => {
     return isCrioCollection(obj) ? obj.thaw() : obj;
 };
@@ -221,6 +259,7 @@ const coalesceCrioValue = (Crio: CrioCollection, obj: any) => {
 
 export {cloneObject as cloneObject};
 export {coalesceCrioValue as coalesceCrioValue};
+export {convertToString as convertToString};
 export {getCrioInstance as getCrioInstance};
 export {mergeObject as merge};
 export {thawCrio as thaw};
@@ -228,6 +267,7 @@ export {thawCrio as thaw};
 export default {
     cloneObject,
     coalesceCrioValue,
+    convertToString,
     getCrioInstance,
     merge: mergeObject,
     thaw: thawCrio

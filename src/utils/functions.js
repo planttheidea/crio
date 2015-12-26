@@ -1,9 +1,11 @@
 
 
+// external dependencies
+import entries from 'core-js/fn/object/entries';
+
 // local partial imports
 import {
     isArray,
-    isObject,
     isUndefined
 } from './checkers';
 
@@ -90,11 +92,7 @@ const forLoopFromKeys = (obj: Object, keys: Array, fn: Function, thisArg: ?Objec
  * @param fn<Function>
  * @param thisArg<Object[optional]>
  */
-const forIn = (obj: Object, fn: Function, thisArg: ?Object) => {
-    if (!isObject(obj)) {
-        throw new TypeError('Object passed to forIn is not a plain object.');
-    }
-
+const forIn = (obj: Object|Array, fn: Function, thisArg: ?Object) => {
     if (!isUndefined(fn)) {
         const keys: Array = getKeys(Object.keys(obj), Object.keys(Object.getPrototypeOf(obj)));
 
@@ -109,11 +107,7 @@ const forIn = (obj: Object, fn: Function, thisArg: ?Object) => {
  * @param fn<Function>
  * @param thisArg<Object[optional]>
  */
-const forOwn = (obj: Object, fn: Function, thisArg: ?Object) => {
-    if (!isObject(obj)) {
-        throw new TypeError('Object passed to forIn is not a plain object.');
-    }
-
+const forOwn = (obj: Object|Array, fn: Function, thisArg: ?Object) => {
     if (!isUndefined(fn)) {
         const keys: Array = getKeys(Object.getOwnPropertyNames(obj));
 
@@ -144,16 +138,42 @@ const immutableSplice = (obj: Array, index: number, removeNum: number) => {
     ];
 };
 
+const setDeeplyNested = (obj: Array|Object, keys: Array, value: any) : Array|Object => {
+    forEach(keys, (key, index) => {
+        if (index < keys.length - 1) {
+            keys.shift();
+
+            obj[key] = setDeeplyNested(obj[key] || {}, keys, value);
+        } else if (!isUndefined(key)) {
+            obj[key] = value;
+        }
+    });
+
+    return obj;
+};
+
+const entriesShim = (obj: Array|Object) : Array|Object => {
+    if (obj.entries) {
+        return obj.entries();
+    }
+
+    return entries(obj);
+};
+
+export {entriesShim as entries};
 export {forEach as forEach};
 export {forEachRight as forEachRight};
 export {forIn as forIn};
 export {forOwn as forOwn};
+export {setDeeplyNested as setDeeplyNested};
 export {immutableSplice as splice};
 
 export default {
+    entries: entriesShim,
     forEach,
     forEachRight,
     forIn,
     forOwn,
+    setDeeplyNested,
     splice: immutableSplice
 };

@@ -2,6 +2,10 @@
 
 // local imports
 import {
+    isString
+} from './utils/checkers';
+
+import {
     createNewCrioMap
 } from './utils/createNewCrio';
 import CrioCollection from './CrioCollection';
@@ -45,10 +49,14 @@ class CrioMap extends CrioCollection {
     /**
      * Alias for Object.prototype.hasOwnProperty
      *
-     * @param prop<any>
-     * @returns {boolean}
+     * @param
+     * @returns {boolean}prop<any>
      */
     has(prop: any) : boolean {
+        if (!isString(prop)) {
+            prop = prop.toString();
+        }
+
         return this.object.hasOwnProperty(prop);
     }
 

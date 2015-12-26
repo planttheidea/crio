@@ -14,6 +14,10 @@ import {
 } from './utils/checkers';
 
 import {
+    isConvertibleToCrio
+} from './utils/crioCheckers';
+
+import {
     coalesceCrioValue,
     getCrioInstance
 } from './utils/crioFunctions';
@@ -27,18 +31,17 @@ import {
 class CrioList extends CrioCollection {
     constructor(obj) {
         // this converts array-like objects to actual arrays
-        super(Array.prototype.slice.call(obj));
+        super(obj);
     }
 
     /**
      * Returns true if every item in the array finds a match based on the return from the callback
      *
      * @param callback<Function>
-     * @param thisArg<Object[optional]>
      * @returns {boolean}
      */
-    every(callback: Function, thisArg: ?Object) : boolean {
-        return this.object.every.call(thisArg, callback);
+    every(callback: Function) : boolean {
+        return this.object.every(callback);
     }
 
     /**
@@ -84,7 +87,10 @@ class CrioList extends CrioCollection {
 
         forEach(this.object, (value, index, arr) => {
             if (callback.call(thisArg, value, index, arr)) {
-                match = getCrioInstance(this, createNewCrioList(value));
+                match = isConvertibleToCrio(value) ?
+                    getCrioInstance(this, createNewCrioList(value)) :
+                    value;
+
                 return false;
             }
         });
@@ -118,7 +124,13 @@ class CrioList extends CrioCollection {
      * @returns {CrioCollection}
      */
     first() : any {
-        return this.object[0];
+        const firstObject = this.object[0];
+
+        if (isArray(firstObject)) {
+            return getCrioInstance(this, createNewCrioList(firstObject));
+        }
+
+        return firstObject;
     }
 
     /**
@@ -161,7 +173,13 @@ class CrioList extends CrioCollection {
      * @returns {*}
      */
     last() : any {
-        return this.object[this.object.length - 1];
+        const lastObject = this.object[this.object.length - 1];
+
+        if (isArray(lastObject)) {
+            return getCrioInstance(this, createNewCrioList(lastObject));
+        }
+
+        return lastObject;
     }
 
     /**
@@ -285,11 +303,10 @@ class CrioList extends CrioCollection {
      * Returns true if any items in the array are a match, based on the return in the callback
      *
      * @param callback<Function>
-     * @param thisArg<Object[optional]>
      * @returns {boolean}
      */
-    some(callback: Function, thisArg: ?Object) : boolean {
-        return this.object.some.call(thisArg, callback);
+    some(callback: Function) : boolean {
+        return this.object.some(callback);
     }
 
     /**
@@ -361,7 +378,7 @@ class CrioList extends CrioCollection {
      * @returns {Crio}
      */
     unshift(...values: Array) : CrioList {
-        let newValues = [...values].concat(...this.object);
+        let newValues = [...values.reverse()].concat(...this.object);
 
         return createNewCrioList(newValues);
     }

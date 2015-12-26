@@ -9,6 +9,16 @@ import {
     isObject
 } from './checkers';
 
+/**
+ * Returns true if object passed is either an array or object
+ *
+ * @param obj<any>
+ * @returns {boolean}
+ */
+const isConvertibleToCrio = (obj: any) : boolean => {
+    return !isCrioCollection(obj) && (isArray(obj) || isObject(obj));
+};
+
 const isCrioCollection = (obj: any) : boolean => {
     return obj instanceof CrioCollection;
 };
@@ -48,12 +58,14 @@ const isSameCrio = (obj1: CrioCollection, obj2: CrioCollection) : boolean => {
     return false;
 };
 
+export {isConvertibleToCrio as isConvertibleToCrio};
 export {isCrioCollection as isCrioCollection};
 export {isCrioList as isCrioList};
 export {isCrioMap as isCrioMap};
 export {isSameCrio as isSameCrio};
 
 export default {
+    isConvertibleToCrio,
     isCrioCollection,
     isCrioList,
     isCrioMap,

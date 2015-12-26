@@ -8,7 +8,11 @@ import {
 // local partial imports
 import {
     isConvertibleToCrio
-} from './checkers';
+} from './crioCheckers';
+
+import {
+    cloneObject
+} from './crioFunctions';
 
 import {
     forEach
@@ -17,15 +21,17 @@ import {
 const deepFreeze = (obj: any) : any => {
     const propNames: Array = Object.getOwnPropertyNames(obj);
 
+    let clonedObj = cloneObject(obj);
+
     forEach(propNames, (name) => {
-        let value: any = obj[name];
+        let value: any = clonedObj[name];
 
         if (isConvertibleToCrio(value)) {
-            obj[name] = createNewCrio(value);
+            clonedObj[name] = createNewCrio(value);
         }
     });
 
-    return Object.freeze(obj);
+    return Object.freeze(clonedObj);
 };
 
 export default deepFreeze;

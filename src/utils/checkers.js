@@ -14,6 +14,16 @@ const isArray = (obj: any) : boolean => {
 };
 
 /**
+ * Returns true if object passed is date
+ *
+ * @param obj<any>
+ * @returns {boolean}
+ */
+const isDate = (obj: any) : boolean => {
+    return toString.call(obj) === '[object Date]';
+};
+
+/**
  * Returns true if object passed is function
  *
  * @param obj<Any>
@@ -31,16 +41,6 @@ const isFunction = (obj: any) : boolean => {
  */
 const isObject = (obj: any) : boolean => {
     return toString.call(obj) === '[object Object]' && !!obj;
-};
-
-/**
- * Returns true if object passed is either an array or object
- *
- * @param obj<any>
- * @returns {boolean}
- */
-const isConvertibleToCrio = (obj: any) : boolean => {
-    return isArray(obj) || isObject(obj);
 };
 
 /**
@@ -96,15 +96,29 @@ const isUndefined = (obj: any) : boolean => {
 /**
  * Returns true if object passed is either null or undefined
  *
- * @param obj
+ * @param obj<any>
  * @returns {boolean}
  */
 const isValueless = (obj) => {
     return isNull(obj) || isUndefined(obj);
 };
 
+/**
+ * Returns true if object is Array-like (HTMLCollection, NodeList, etc)
+ *
+ * @param obj<any>
+ * @returns {boolean}
+ */
+const isArrayLike = (obj: any) : boolean => {
+    return isArray(obj) || (
+            !isFunction(obj) && obj.hasOwnProperty('length') && isNumber(obj.length) &&
+            (obj.length === 0 || (obj.length > 0 && obj.length -1) in obj)
+        );
+};
+
 export {isArray as isArray};
-export {isConvertibleToCrio as isConvertibleToCrio};
+export {isArrayLike as isArrayLike};
+export {isDate as isDate};
 export {isFunction as isFunction};
 export {isObject as isObject};
 export {isNAN as isNAN};
@@ -116,7 +130,8 @@ export {isValueless as isValueless};
 
 export default {
     isArray,
-    isConvertibleToCrio,
+    isArrayLike,
+    isDate,
     isFunction,
     isObject,
     isNAN,

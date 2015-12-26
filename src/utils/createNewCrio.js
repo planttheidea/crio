@@ -8,6 +8,7 @@ import deepFreeze from './deepFreeze';
 // local partial imports
 import {
     isArray,
+    isArrayLike,
     isObject
 } from './checkers';
 
@@ -34,10 +35,12 @@ const createNewCrioMap = (obj: Object) : CrioMap => {
  * @param obj<Array|Object>
  * @returns {Array|Object}
  */
-const createNewCrio = (obj: any) : any => {
-    const frozenObj = deepFreeze(obj);
+const createNewCrio = (obj: any = {}) : any => {
+    const isObjArray = isArray(obj);
+    const cleanObj = !isObjArray && isArrayLike(obj) ? Array.prototype.slice.call(obj) : obj;
+    const frozenObj = deepFreeze(cleanObj);
 
-    if (isArray(obj)) {
+    if (isObjArray) {
         return createNewCrioList(frozenObj);
     }
 
