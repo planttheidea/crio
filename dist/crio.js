@@ -619,7 +619,7 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.isSameCrio = exports.isCrioMap = exports.isCrioList = exports.isCrioDate = exports.isCrioCollection = exports.isConvertibleToCrio = undefined;
+	exports.isSameCrio = exports.isCrioMap = exports.isCrioList = exports.isCrioDate = exports.isCrioCollection = exports.isCrio = exports.isConvertibleToCrio = undefined;
 	
 	var _CrioCollection = __webpack_require__(8);
 	
@@ -634,19 +634,11 @@ var crio =
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/**
-	 * Returns true if object passed is either an array or object
+	 * Returns true if object passed is CrioCollection
 	 *
-	 * @param obj<any>
+	 * @param obj<Any>
 	 * @returns {boolean}
 	 */
-	var isConvertibleToCrio = function isConvertibleToCrio(obj) {
-	    return !isCrioCollection(obj) && !isCrioDate(obj) && ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) || (0, _checkers.isDate)(obj));
-	};
-	
-	// local partial imports
-	
-	// local imports
-	
 	var isCrioCollection = function isCrioCollection(obj) {
 	    return obj instanceof _CrioCollection2.default;
 	};
@@ -657,8 +649,32 @@ var crio =
 	 * @param obj<Any>
 	 * @returns {boolean}
 	 */
+	
+	// local partial imports
+	
+	// local imports
 	var isCrioDate = function isCrioDate(obj) {
 	    return obj instanceof _CrioDate2.default;
+	};
+	
+	/**
+	 * Returns true if object passed is CrioCollection or CrioDate
+	 *
+	 * @param obj<Any>
+	 * @returns {boolean}
+	 */
+	var isCrio = function isCrio(obj) {
+	    return isCrioCollection(obj) || isCrioDate(obj);
+	};
+	
+	/**
+	 * Returns true if object passed is either an array or object
+	 *
+	 * @param obj<any>
+	 * @returns {boolean}
+	 */
+	var isConvertibleToCrio = function isConvertibleToCrio(obj) {
+	    return !isCrio(obj) && ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) || (0, _checkers.isDate)(obj));
 	};
 	
 	/**
@@ -697,6 +713,7 @@ var crio =
 	};
 	
 	exports.isConvertibleToCrio = isConvertibleToCrio;
+	exports.isCrio = isCrio;
 	exports.isCrioCollection = isCrioCollection;
 	exports.isCrioDate = isCrioDate;
 	exports.isCrioList = isCrioList;
@@ -704,6 +721,7 @@ var crio =
 	exports.isSameCrio = isSameCrio;
 	exports.default = {
 	    isConvertibleToCrio: isConvertibleToCrio,
+	    isCrio: isCrio,
 	    isCrioCollection: isCrioCollection,
 	    isCrioDate: isCrioDate,
 	    isCrioList: isCrioList,
@@ -884,7 +902,7 @@ var crio =
 	                    return false;
 	                }
 	
-	                retValue = (0, _crioCheckers.isCrioCollection)(value) ? value.object : value;
+	                retValue = (0, _crioCheckers.isCrio)(value) ? value.object : value;
 	            });
 	
 	            if (foundKeyMatch) {
@@ -939,6 +957,37 @@ var crio =
 	            var mergedObject = _crioFunctions.merge.apply(undefined, [this.object].concat(sources));
 	
 	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(mergedObject));
+	        }
+	
+	        /**
+	         * Accepts any number of parameters and merges them into a new object / array retrieved
+	         * based on the keys passed
+	         *
+	         * @param keys<Array>
+	         * @param sources<Array>
+	         * @returns {CrioCollection}
+	         */
+	
+	    }, {
+	        key: 'mergeIn',
+	        value: function mergeIn(keys) {
+	            for (var _len3 = arguments.length, sources = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+	                sources[_key3 - 1] = arguments[_key3];
+	            }
+	
+	            if (keys.length === 0) {
+	                return this.merge.apply(this, sources);
+	            }
+	
+	            var objectToMerge = this.getIn(keys).object;
+	
+	            var objectToSet = _crioFunctions.merge.apply(undefined, sources);
+	
+	            if ((0, _crioCheckers.isConvertibleToCrio)(objectToMerge)) {
+	                objectToSet = (0, _crioFunctions.merge)(objectToMerge, objectToSet);
+	            }
+	
+	            return (0, _crioFunctions.getCrioInstance)(this, this.setIn(keys, (0, _crioFunctions.merge)(objectToMerge, objectToSet)));
 	        }
 	
 	        /**
@@ -1116,6 +1165,10 @@ var crio =
 	
 	var _CrioCollection2 = _interopRequireDefault(_CrioCollection);
 	
+	var _CrioDate = __webpack_require__(3);
+	
+	var _CrioDate2 = _interopRequireDefault(_CrioDate);
+	
 	var _checkers = __webpack_require__(5);
 	
 	var _crioCheckers = __webpack_require__(7);
@@ -1161,7 +1214,7 @@ var crio =
 	    };
 	
 	    var cloneObj = function cloneObj(obj) {
-	        var cleanObj = (0, _crioCheckers.isCrioCollection)(obj) ? obj.object : obj;
+	        var cleanObj = (0, _crioCheckers.isCrio)(obj) ? obj.object : obj;
 	
 	        var base = [];
 	
@@ -1188,6 +1241,8 @@ var crio =
 	                        clonedArray.push(circularSet[visitedIndex].value);
 	                    }
 	                });
+	
+	                cloneObj.prototype = cloneObj(obj.prototype);
 	
 	                return {
 	                    v: clonedArray
@@ -1226,6 +1281,8 @@ var crio =
 	                    }
 	                });
 	
+	                cloneObj.prototype = cloneObj(obj.prototype);
+	
 	                return {
 	                    v: clonedObject
 	                };
@@ -1233,6 +1290,12 @@ var crio =
 	
 	            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
 	        }
+	
+	        if ((0, _checkers.isDate)(cleanObj)) {
+	            return new Date(cleanObj.valueOf());
+	        }
+	
+	        return cleanObj;
 	    };
 	
 	    return cloneObj(originalObj);
@@ -1256,6 +1319,8 @@ var crio =
 	
 	        if ((0, _crioCheckers.isCrioCollection)(value)) {
 	            stringReturn += convertToString(value, isLocaleSpecific);
+	        } else if ((0, _crioCheckers.isCrioDate)(value)) {
+	            stringReturn += value.toString();
 	        } else if (isLocaleSpecific && ((0, _checkers.isNumber)(value) || (0, _checkers.isDate)(value))) {
 	            stringReturn += value.toLocaleString();
 	        } else {
@@ -1275,7 +1340,7 @@ var crio =
 	 * @returns {any}
 	 */
 	var getThawedObject = function getThawedObject(obj) {
-	    return (0, _crioCheckers.isCrioCollection)(obj) ? obj.thaw() : obj;
+	    return (0, _crioCheckers.isCrio)(obj) ? obj.thaw() : obj;
 	};
 	
 	/**
@@ -1288,6 +1353,10 @@ var crio =
 	var mergeObject = function mergeObject(target) {
 	    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
 	        sources[_key - 1] = arguments[_key];
+	    }
+	
+	    if (sources.length === 0) {
+	        return target;
 	    }
 	
 	    target = getThawedObject(target);
@@ -1354,12 +1423,8 @@ var crio =
 	 * @returns {*}
 	 */
 	var thawCrio = function thawCrio(obj) {
-	    if ((0, _crioCheckers.isCrioCollection)(obj)) {
+	    if ((0, _crioCheckers.isCrio)(obj)) {
 	        return cloneObject(obj.object);
-	    }
-	
-	    if ((0, _crioCheckers.isCrioDate)(obj)) {
-	        return new Date(obj.object.valueOf());
 	    }
 	
 	    if (Object.isFrozen(obj)) {
@@ -1370,7 +1435,7 @@ var crio =
 	};
 	
 	var coalesceCrioValue = function coalesceCrioValue(Crio, obj) {
-	    if ((0, _crioCheckers.isConvertibleToCrio)(obj) && !(0, _crioCheckers.isCrioCollection)(obj)) {
+	    if ((0, _crioCheckers.isConvertibleToCrio)(obj) && !(0, _crioCheckers.isCrio)(obj)) {
 	        return getCrioInstance(Crio, (0, _createNewCrio.createNewCrio)(obj));
 	    }
 	
@@ -4133,6 +4198,28 @@ var crio =
 	
 	// local partial imports
 	
+	/**
+	 * Accepts sources of various types and converts them to an array of arrays
+	 *
+	 * @param sources<Array>
+	 * @returns {Array}
+	 */
+	var getCleanSources = function getCleanSources(sources) {
+	    var cleanSources = [];
+	
+	    (0, _functions.forEach)(sources, function (source) {
+	        if (!(0, _checkers.isArray)(source)) {
+	            var cleanSource = (0, _crioCheckers.isCrio)(source) ? source.thaw() : source;
+	
+	            cleanSources.push((0, _checkers.isArray)(cleanSource) ? cleanSource : [cleanSource]);
+	        } else {
+	            cleanSources.push(source);
+	        }
+	    });
+	
+	    return cleanSources;
+	};
+	
 	var CrioList = (function (_CrioCollection) {
 	    _inherits(CrioList, _CrioCollection);
 	
@@ -4144,13 +4231,34 @@ var crio =
 	    }
 	
 	    /**
-	     * Returns true if every item in the array finds a match based on the return from the callback
+	     * Returns new array of object concatentation with sources
 	     *
-	     * @param callback<Function>
-	     * @returns {boolean}
+	     * @param sources<Array>
+	     * @returns {CrioList}
 	     */
 	
 	    _createClass(CrioList, [{
+	        key: 'concat',
+	        value: function concat() {
+	            var _object;
+	
+	            for (var _len = arguments.length, sources = Array(_len), _key = 0; _key < _len; _key++) {
+	                sources[_key] = arguments[_key];
+	            }
+	
+	            var arrays = getCleanSources(sources);
+	
+	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)((_object = this.object).concat.apply(_object, _toConsumableArray(arrays))));
+	        }
+	
+	        /**
+	         * Returns true if every item in the array finds a match based on the return from the callback
+	         *
+	         * @param callback<Function>
+	         * @returns {boolean}
+	         */
+	
+	    }, {
 	        key: 'every',
 	        value: function every(callback) {
 	            return this.object.every(callback);
@@ -4191,13 +4299,13 @@ var crio =
 	    }, {
 	        key: 'filter',
 	        value: function filter(callback) {
-	            var _object;
+	            var _object2;
 	
-	            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	                args[_key - 1] = arguments[_key];
+	            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+	                args[_key2 - 1] = arguments[_key2];
 	            }
 	
-	            var values = (_object = this.object).filter.apply(_object, [callback].concat(args));
+	            var values = (_object2 = this.object).filter.apply(_object2, [callback].concat(args));
 	
 	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(values));
 	        }
@@ -4476,6 +4584,10 @@ var crio =
 	    }, {
 	        key: 'slice',
 	        value: function slice(begin, end) {
+	            if ((0, _checkers.isValueless)(begin)) {
+	                return this;
+	            }
+	
 	            var slicedArray = [].concat(_toConsumableArray(this.object)).slice(begin, end);
 	
 	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(slicedArray));
@@ -4499,6 +4611,8 @@ var crio =
 	         *
 	         * @param fn<Function[optional]>
 	         * @returns {Crio}
+	         *
+	         * @todo Modify this so that it doesn't require thawing (for use with native sort it's necessary)
 	         */
 	
 	    }, {
@@ -4551,6 +4665,25 @@ var crio =
 	        }
 	
 	        /**
+	         * Returns a unique list of all arrays passed concatenated with the original this.object
+	         *
+	         * @param sources<Array>
+	         * @returns {CrioList}
+	         */
+	
+	    }, {
+	        key: 'union',
+	        value: function union() {
+	            for (var _len3 = arguments.length, sources = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	                sources[_key3] = arguments[_key3];
+	            }
+	
+	            var arrays = getCleanSources(sources);
+	
+	            return (0, _crioFunctions.getCrioInstance)(this, this.concat.apply(this, _toConsumableArray(arrays)).unique());
+	        }
+	
+	        /**
 	         * Returns CrioList with only unique items in original CrioList
 	         *
 	         * @returns {CrioList}
@@ -4582,8 +4715,8 @@ var crio =
 	        value: function unshift() {
 	            var _ref2;
 	
-	            for (var _len2 = arguments.length, values = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	                values[_key2] = arguments[_key2];
+	            for (var _len4 = arguments.length, values = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	                values[_key4] = arguments[_key4];
 	            }
 	
 	            var newValues = (_ref2 = [].concat(_toConsumableArray(values.reverse()))).concat.apply(_ref2, _toConsumableArray(this.object));

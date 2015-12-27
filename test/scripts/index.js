@@ -1,5 +1,9 @@
 
 
+/**
+ * @todo Add tests for lodash and moment
+ */
+
 import constructorTests from './constructor';
 import crioCollectionTests from './CrioCollection';
 import crioDateTest from './CrioDate';
