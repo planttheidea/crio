@@ -376,7 +376,7 @@ class CrioList extends CrioCollection {
             return this;
         }
 
-        return getCrioInstance(this, createNewCrioList(splice(this.object, index, removeNum)).concat(itemsToAdd));
+        return getCrioInstance(this, createNewCrioList(splice(this.object, index, removeNum, ...itemsToAdd)));
     }
 
     /**

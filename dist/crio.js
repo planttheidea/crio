@@ -1604,18 +1604,23 @@ var crio =
 	 * @param obj<Array>
 	 * @param index<Number>
 	 * @param removeNum<Number>
+	 * @param newItems<Array>
 	 * @returns splicedArray<Array>
 	 */
 	var immutableSplice = function immutableSplice(obj, index, removeNum) {
+	    for (var _len2 = arguments.length, newItems = Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
+	        newItems[_key2 - 3] = arguments[_key2];
+	    }
+	
 	    if (!(0, _checkers.isArray)(obj)) {
-	        throw new TypeError('Object passed to concat is not an array.');
+	        throw new TypeError('Object passed is not an array.');
 	    }
 	
 	    if ((0, _checkers.isUndefined)(obj[index])) {
 	        return obj;
 	    }
 	
-	    return [].concat(_toConsumableArray(obj.slice(0, index)), _toConsumableArray(obj.slice(index + removeNum)));
+	    return [].concat(_toConsumableArray(obj.slice(0, index)), newItems, _toConsumableArray(obj.slice(index + removeNum)));
 	};
 	
 	var setDeeplyNested = function setDeeplyNested(obj, keys, value) {
@@ -4652,7 +4657,7 @@ var crio =
 	                itemsToAdd[_key3 - 2] = arguments[_key3];
 	            }
 	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)((0, _functions.splice)(this.object, index, removeNum)).concat(itemsToAdd));
+	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(_functions.splice.apply(undefined, [this.object, index, removeNum].concat(itemsToAdd))));
 	        }
 	
 	        /**
