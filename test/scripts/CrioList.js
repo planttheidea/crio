@@ -3,6 +3,7 @@
 import expect from 'expect';
 
 import crio from '../../src/index';
+import CrioCollection from '../../src/CrioCollection';
 import CrioList from '../../src/CrioList';
 
 import {
@@ -10,8 +11,17 @@ import {
     getValidLoopSize
 } from './testFunctions';
 
+const METHODS_ALREADY_TESTED = Object.getOwnPropertyNames(CrioCollection.prototype);
+
 let success = 0,
-    untested = 0;
+    testedObj = {},
+    methodsToTest = Object.getOwnPropertyNames(CrioList.prototype);
+
+methodsToTest.forEach((method) => {
+    if (METHODS_ALREADY_TESTED.indexOf(method) === -1) {
+        testedObj[method] = false;
+    }
+});
 
 /*
  Create the functions used in the tests
@@ -22,6 +32,25 @@ const testConstructor = () => {
 
     expect(crio.list([])).toBeA(CrioList);
     success++;
+
+    testedObj.constructor = true;
+};
+
+const testConcat = (list, array, size) => {
+    const halfway = Math.ceil(size / 2);
+    const newSize = size + halfway;
+    const testArray = createTestArray(halfway);
+
+    expect(list.concat(testArray).object).toEqual(array.concat(testArray));
+    success++;
+
+    expect(list.concat(testArray)).toEqual(crio(array.concat(testArray)));
+    success++;
+
+    expect(list.concat(testArray).size).toEqual(newSize);
+    success++;
+
+    testedObj.concat = true;
 };
 
 const testEvery = (list, size) => {
@@ -34,6 +63,8 @@ const testEvery = (list, size) => {
 
     expect(list.every(falseFunction)).toEqual(false);
     success++;
+
+    testedObj.every = true;
 };
 
 const testFill = (list, loopSize) => {
@@ -45,6 +76,8 @@ const testFill = (list, loopSize) => {
 
     expect(list.fill(fillString)).toEqual(crio(testArray));
     success++;
+
+    testedObj.fill = true;
 };
 
 const testFilter = (list, array) => {
@@ -59,6 +92,8 @@ const testFilter = (list, array) => {
 
     expect(list.filter(filterFunction).size).toEqual(filteredArray.length);
     success++;
+
+    testedObj.filter = true;
 };
 
 const testFind = (list, array, size) => {
@@ -76,6 +111,8 @@ const testFind = (list, array, size) => {
 
     expect(list.find(findNoneFunction)).toEqual(undefined);
     success++;
+
+    testedObj.find = true;
 };
 
 const testFindIndex = (list, array, size) => {
@@ -93,6 +130,8 @@ const testFindIndex = (list, array, size) => {
 
     expect(list.findIndex(findNoneFunction)).toEqual(-1);
     success++;
+
+    testedObj.findIndex = true;
 };
 
 const testFirst = (list, array) => {
@@ -107,6 +146,8 @@ const testFirst = (list, array) => {
 
     expect(crio(testNestedArray).first().object).toEqual(testNestedArray[0]);
     success++;
+
+    testedObj.first = true;
 };
 
 const testIncludes = (list, loopSize) => {
@@ -118,6 +159,8 @@ const testIncludes = (list, loopSize) => {
 
     expect(list.includes(doesNotIncludeIndex)).toEqual(false);
     success++;
+
+    testedObj.includes = true;
 };
 
 const testIndexOf = (list, array, size) => {
@@ -129,6 +172,8 @@ const testIndexOf = (list, array, size) => {
 
     expect(list.indexOf(checker)).toEqual(testArray[checker]);
     success++;
+
+    testedObj.indexOf = true;
 };
 
 const testJoin = (list, size) => {
@@ -140,6 +185,8 @@ const testJoin = (list, size) => {
 
     expect(list.join('|')).toEqual(testArrayJoin2);
     success++;
+
+    testedObj.join = true;
 };
 
 const testLast = (list, array, length) => {
@@ -156,6 +203,8 @@ const testLast = (list, array, length) => {
 
     expect(crio(testNestedArray).last().object).toEqual(testNestedArray[testNestedArray.length - 1]);
     success++;
+
+    testedObj.last = true;
 };
 
 const testLastIndexOf = () => {
@@ -167,6 +216,8 @@ const testLastIndexOf = () => {
 
     expect(testCrio.lastIndexOf(2)).toEqual(3);
     success++;
+
+    testedObj.lastIndexOf = true;
 };
 
 const testMap = (list, array) => {
@@ -181,6 +232,8 @@ const testMap = (list, array) => {
 
     expect(list.map(mapFunction).size).toEqual(mappedArray.length);
     success++;
+
+    testedObj.map = true;
 };
 
 const testPop = (list, size) => {
@@ -197,6 +250,8 @@ const testPop = (list, size) => {
 
     expect(listMinusLast3.object).toEqual(testArray);
     success++;
+
+    testedObj.pop = true;
 };
 
 const testPush = (list, size) => {
@@ -213,6 +268,8 @@ const testPush = (list, size) => {
 
     expect(listPlus3.object).toEqual(testArray);
     success++;
+
+    testedObj.push = true;
 };
 
 const testReduce = (list, array) => {
@@ -229,6 +286,8 @@ const testReduce = (list, array) => {
 
     expect(list.reduce(reduceConcatFunction, [])).toEqual(crio(reducedConcatArray));
     success++;
+
+    testedObj.reduce = true;
 };
 
 const testReduceRight = (list, array) => {
@@ -245,6 +304,8 @@ const testReduceRight = (list, array) => {
 
     expect(list.reduceRight(reduceConcatFunction, [])).toEqual(crio(reducedConcatArray));
     success++;
+
+    testedObj.reduceRight = true;
 };
 
 const testReverse = (list, size) => {
@@ -257,6 +318,8 @@ const testReverse = (list, size) => {
 
     expect(list.reverse()).toEqual(crio(testArray));
     success++;
+
+    testedObj.reverse = true;
 };
 
 const testShift = (list, size) => {
@@ -273,6 +336,35 @@ const testShift = (list, size) => {
 
     expect(listMinusFirst3.object).toEqual(testArray);
     success++;
+
+    testedObj.shift = true;
+};
+
+const testSlice = (list, size) => {
+    const begin = 2;
+    const end = 4;
+    const testArrayBegin = createTestArray(size).slice(begin);
+    const testArrayBeginEnd = createTestArray(size).slice(begin, end);
+
+    expect(list.slice().object).toEqual(list.object);
+    success++;
+
+    expect(list.slice()).toEqual(list);
+    success++;
+
+    expect(list.slice(begin).object).toEqual(testArrayBegin);
+    success++;
+
+    expect(list.slice(begin)).toEqual(crio(testArrayBegin));
+    success++;
+
+    expect(list.slice(begin, end).object).toEqual(testArrayBeginEnd);
+    success++;
+
+    expect(list.slice(begin, end)).toEqual(crio(testArrayBeginEnd));
+    success++;
+
+    testedObj.slice = true;
 };
 
 const testSome = (list, size) => {
@@ -285,6 +377,8 @@ const testSome = (list, size) => {
 
     expect(list.some(falseFunction)).toEqual(false);
     success++;
+
+    testedObj.some = true;
 };
 
 const testSort = () => {
@@ -314,6 +408,8 @@ const testSort = () => {
 
     expect(crio(unsortedArray).sort(sortFunction)).toEqual(crio(sortedArrayDesc));
     success++;
+
+    testedObj.sort = true;
 };
 
 const testSplice = (size) => {
@@ -339,6 +435,8 @@ const testSplice = (size) => {
 
     expect(testCrio.splice(1, 4)).toEqual(crio(testSplicedFourItemsArray));
     success++;
+
+    testedObj.splice = true;
 };
 
 const testToMap = (list, array) => {
@@ -353,6 +451,33 @@ const testToMap = (list, array) => {
 
     expect(list.toMap()).toEqual(crio(newMap));
     success++;
+
+    testedObj.toMap = true;
+};
+
+const testUnion = (list, array) => {
+    const testArray = ['foo', 'foo'];
+    const testUniqueArray = ['foo'];
+
+    expect(list.union(array).object).toEqual(list.object);
+    success++;
+
+    expect(list.union(array)).toEqual(list);
+    success++;
+
+    expect(list.union(list).object).toEqual(list.object);
+    success++;
+
+    expect(list.union(list)).toEqual(list);
+    success++;
+
+    expect(list.union(testArray).object).toEqual(array.concat(testUniqueArray));
+    success++;
+
+    expect(list.union(testArray)).toEqual(crio(array.concat(testUniqueArray)));
+    success++;
+
+    testedObj.union = true;
 };
 
 const testUnique = () => {
@@ -364,6 +489,8 @@ const testUnique = () => {
 
     expect(crio(arrayWithDuplicates).unique()).toEqual(crio(arrayUnique));
     success++;
+
+    testedObj.unique = true;
 };
 
 const testUnshift = (list, size) => {
@@ -386,6 +513,8 @@ const testUnshift = (list, size) => {
 
     expect(list.unshift(foo, bar)).toEqual(crio(testArray));
     success++;
+
+    testedObj.unshift = true;
 };
 
 /*
@@ -401,8 +530,11 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     const TEST_ARRAY = createTestArray(LOOP_SIZE);
     const TEST_CRIO_LIST = crio(TEST_ARRAY);
 
-    //test constructor
+    // test constructor
     testConstructor();
+
+    // test .concat()
+    testConcat(TEST_CRIO_LIST, TEST_ARRAY, LOOP_SIZE);
 
     // test .every()
     testEvery(TEST_CRIO_LIST, LOOP_SIZE);
@@ -458,6 +590,9 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     // test .shift()
     testShift(TEST_CRIO_LIST, LOOP_SIZE);
 
+    // test .slice()
+    testSlice(TEST_CRIO_LIST, LOOP_SIZE);
+
     // test .some()
     testSome(TEST_CRIO_LIST, LOOP_SIZE);
 
@@ -470,6 +605,9 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     // test .toMap()
     testToMap(TEST_CRIO_LIST, TEST_ARRAY);
 
+    // test .union()
+    testUnion(TEST_CRIO_LIST, TEST_ARRAY);
+
     // test .unique()
     testUnique(TEST_CRIO_LIST);
 
@@ -477,7 +615,15 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     testUnshift(TEST_CRIO_LIST, LOOP_SIZE);
 }
 
+let untestedMethods = [];
+
+for (let method in testedObj) {
+    if (!testedObj[method]) {
+        untestedMethods.push(method);
+    }
+}
+
 export default {
     success,
-    untested
+    untestedMethods
 };

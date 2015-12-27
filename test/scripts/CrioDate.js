@@ -36,7 +36,12 @@ const CRIO_DATE_METHODS = [
 
 let immutableMethods = Object.getOwnPropertyNames(CrioDate.prototype),
     success = 0,
-    untested = 0;
+    testedObj = {},
+    methodsToTest = Object.getOwnPropertyNames(CrioDate.prototype);
+
+methodsToTest.forEach((method) => {
+    testedObj[method] = false;
+});
 
 // get rid of methods added to class
 CRIO_DATE_METHODS.forEach((method) => {
@@ -69,11 +74,25 @@ const testConstructor = (date) => {
 
     expect(crio.date.utc(2015, 11, 31)).toBeA(CrioDate);
     success++;
+
+    testedObj.constructor = true;
 };
 
 const testDefaultImmutableMethod = (date, method) => {
     expect(crio(date)[method]()).toEqual(date[method]());
     success++;
+
+    testedObj[method] = true;
+};
+
+const testEquals = (date, object) => {
+    expect(date.equals(crio(object))).toEqual(true);
+    success++;
+
+    expect(date.equals(crio(new Date(2015, 1, 1)))).toEqual(false);
+    success++;
+
+    testedObj.equals = true;
 };
 
 const testImmutableMethod = (date, method, arg) => {
@@ -88,10 +107,14 @@ const testImmutableMethod = (date, method, arg) => {
 
     expect(crio(date)[method](newDate)).toEqual(crio(clone));
     success++;
+
+    testedObj[method] = true;
 };
 
 const testThaw = (date) => {
     expect(crio(date).thaw()).toEqual(date);
+
+    testedObj.thaw = true;
 };
 
 /*
@@ -158,11 +181,22 @@ for (let i = TEST_LOOP_SIZE; i--;) {
         testImmutableMethod(NEW_DATE, method, argToPass);
     }
 
+    // test .equals()
+    testEquals(crio(NEW_DATE), NEW_DATE);
+
     // test .thaw()
     testThaw(NEW_DATE);
 }
 
+let untestedMethods = [];
+
+for (let method in testedObj) {
+    if (!testedObj[method]) {
+        untestedMethods.push(method);
+    }
+}
+
 export default {
     success,
-    untested
+    untestedMethods
 };

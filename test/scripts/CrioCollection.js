@@ -13,7 +13,12 @@ import {
 } from './testFunctions';
 
 let success = 0,
-    untested = 0;
+    testedObj = {},
+    methodsToTest = Object.getOwnPropertyNames(CrioCollection.prototype);
+
+methodsToTest.forEach((method) => {
+    testedObj[method] = false;
+});
 
 /*
     Create the functions used in the tests
@@ -21,6 +26,8 @@ let success = 0,
 const testConstructor = () => {
     expect(crio({})).toBeA(CrioCollection);
     success++;
+
+    testedObj.constructor = true;
 };
 
 const testClear = (list, map) => {
@@ -35,6 +42,8 @@ const testClear = (list, map) => {
 
     expect(map.clear()).toEqual(crio({}));
     success++;
+
+    testedObj.clear = true;
 };
 
 const testEntries = (list, map, array, object) => {
@@ -43,6 +52,8 @@ const testEntries = (list, map, array, object) => {
 
     expect(map.entries()).toEqual(entries(object));
     success++;
+
+    testedObj.entries = true;
 };
 
 const testEquals = (list, map, array, object) => {
@@ -57,6 +68,8 @@ const testEquals = (list, map, array, object) => {
 
     expect(map.equals(crio(array))).toEqual(false);
     success++;
+
+    testedObj.equals = true;
 };
 
 const testForEach = (list, map, array, object) => {
@@ -84,6 +97,8 @@ const testForEach = (list, map, array, object) => {
 
     expect(testMap).toEqual(object);
     success++;
+
+    testedObj.forEach = true;
 };
 
 const testGet = (list, map) => {
@@ -104,6 +119,8 @@ const testGet = (list, map) => {
 
     expect(map.get(1, 3, 5).object).toEqual(getObject);
     success++;
+
+    testedObj.get = true;
 };
 
 const testGetIn = () => {
@@ -125,6 +142,8 @@ const testGetIn = () => {
 
     expect(crio(deeplyNestedArray).getIn([0, 'some', 'deep', 'nesting', 'going'])).toEqual('on');
     success++;
+
+    testedObj.getIn = true;
 };
 
 const testIsEmpty = () => {
@@ -139,6 +158,8 @@ const testIsEmpty = () => {
 
     expect(crio({foo: 'bar'}).isEmpty()).toEqual(false);
     success++;
+
+    testedObj.isEmpty = true;
 };
 
 const testKeys = (list, map, array, object) => {
@@ -147,6 +168,8 @@ const testKeys = (list, map, array, object) => {
 
     expect(map.keys()).toEqual(Object.keys(object));
     success++;
+
+    testedObj.keys = true;
 };
 
 const testMerge = (list, map, loopSize) => {
@@ -165,6 +188,50 @@ const testMerge = (list, map, loopSize) => {
 
     expect(map.merge(mergeObject)).toEqual(crio(createTestObject(loopSize + size)));
     success++;
+
+    testedObj.merge = true;
+};
+
+const testMergeIn = () => {
+    const deepObject = {
+        deep:{
+            nested:{
+                object:'value'
+            }
+        }
+    };
+    const deepList = [
+        deepObject
+    ];
+    const deepNewObject = {
+        deep:{
+            nested:{
+                object:'new value'
+            }
+        }
+    };
+    const deepNewList = [
+        deepNewObject
+    ];
+    const objectToMerge = {
+        object:'new value'
+    };
+    const crioList = crio(deepList);
+    const crioMap = crio(deepObject);
+
+    expect(crioList.mergeIn([0, 'deep', 'nested'], objectToMerge).thaw()).toEqual(deepNewList);
+    success++;
+
+    expect(crioMap.mergeIn(['deep', 'nested'], objectToMerge).thaw()).toEqual(deepNewObject);
+    success++;
+
+    expect(crioList.mergeIn([0, 'deep', 'nested'], objectToMerge)).toEqual(crio(deepNewList));
+    success++;
+
+    expect(crioMap.mergeIn(['deep', 'nested'], objectToMerge)).toEqual(crio(deepNewObject));
+    success++;
+
+    testedObj.mergeIn = true;
 };
 
 const testMutate = (list, map) => {
@@ -183,6 +250,8 @@ const testMutate = (list, map) => {
 
     expect(map.mutate(() => object)).toEqual(crio(object));
     success++;
+
+    testedObj.mutate = true;
 };
 
 const testSet = (list, map, array, object, loopSize) => {
@@ -203,6 +272,8 @@ const testSet = (list, map, array, object, loopSize) => {
 
     expect(map.set(0, 'foo')).toEqual(crio(changedMap));
     success++;
+
+    testedObj.set = true;
 };
 
 const testSetIn = () => {
@@ -261,6 +332,8 @@ const testSetIn = () => {
     expect(deeplyNestedArray.setIn([0, 'some', 'newer', 'nested'], 'field').thaw())
         .toEqual(deeplyNestedArrayNew);
     success++;
+
+    testedObj.setIn = true;
 };
 
 const testThaw = (list, map) => {
@@ -269,6 +342,8 @@ const testThaw = (list, map) => {
 
     expect(Object.isFrozen(map.thaw())).toEqual(false);
     success++;
+
+    testedObj.thaw = true;
 };
 
 const testToCollection = (list, map) => {
@@ -306,6 +381,8 @@ const testToCollection = (list, map) => {
 
     expect(map.toCollection(testMapCollection)).toEqual(crio(testMapCollection));
     success++;
+
+    testedObj.toCollection = true;
 };
 
 const testToLocaleString = () => {
@@ -325,6 +402,8 @@ const testToLocaleString = () => {
     expect(crio({number:numberString,date:dateString}).toString())
         .toEqual(`CrioMap {number: ${numberString}, date: ${dateString}}`);
     success++;
+
+    testedObj.toLocaleString = true;
 };
 
 const testToString = () => {
@@ -339,6 +418,8 @@ const testToString = () => {
 
     expect(crio({foo:'bar',bouncy:'ball'}).toString()).toEqual('CrioMap {foo: bar, bouncy: ball}');
     success++;
+
+    testedObj.toString = true;
 };
 
 const testValues = (list, map, array, object) => {
@@ -355,6 +436,8 @@ const testValues = (list, map, array, object) => {
         return values;
     })());
     success++;
+
+    testedObj.values = true;
 };
 
 /*
@@ -402,6 +485,9 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     // test .merge()
     testMerge(TEST_CRIO_LIST, TEST_CRIO_MAP, LOOP_SIZE);
 
+    // test .mergeIn()
+    testMergeIn();
+
     // test .mutate()
     testMutate(TEST_CRIO_LIST, TEST_CRIO_MAP);
 
@@ -427,7 +513,15 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     testValues(TEST_CRIO_LIST, TEST_CRIO_MAP, TEST_ARRAY, TEST_MAP);
 }
 
+let untestedMethods = [];
+
+for (let method in testedObj) {
+    if (!testedObj[method]) {
+        untestedMethods.push(method);
+    }
+}
+
 export default {
     success,
-    untested
+    untestedMethods
 };

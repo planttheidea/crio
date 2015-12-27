@@ -15,7 +15,7 @@ import {
 
 import {
     isConvertibleToCrio,
-    isCrioCollection,
+    isCrio,
     isSameCrio
 } from './utils/crioCheckers';
 
@@ -47,8 +47,10 @@ const isInvalidKey = (obj: any, index: number, length: number) : boolean => {
     return index !== length - 1 && isUndefined(obj);
 };
 
+type ArrayOrObject = Array|Object;
+
 class CrioCollection {
-    constructor(obj: Object|Array) {
+    constructor(obj: ArrayOrObject) {
         staticProperty(this, 'hashCode', hashObject(obj));
         readonlyProperty(this, 'object', obj);
         readonlyProperty(this, 'size', isArray(obj) ? obj.length : Object.getOwnPropertyNames(obj).length);
@@ -60,7 +62,7 @@ class CrioCollection {
      * @returns {CrioMap}
      */
     clear() : CrioCollection {
-        const newObject = isArray(this.object) ? [] : {};
+        const newObject: ArrayOrObject = isArray(this.object) ? [] : {};
 
         return getCrioInstance(this, createNewCrio(newObject));
     }
@@ -96,7 +98,7 @@ class CrioCollection {
      * @returns {CrioList}
      */
     forEach(fn: Function, thisArg: ?Object) {
-        const loopFunction = isArray(this.object) ? forEach : forIn;
+        const loopFunction: Function = isArray(this.object) ? forEach : forIn;
 
         loopFunction(this.object, fn, thisArg);
 
@@ -117,7 +119,7 @@ class CrioCollection {
         }
 
         if (keys.length === 1) {
-            const value = this.object[keys[0]];
+            const value: any = this.object[keys[0]];
 
             if (isConvertibleToCrio(value)) {
                 return coalesceCrioValue(this, createNewCrio(this.object[keys[0]]));
@@ -126,7 +128,7 @@ class CrioCollection {
             return value;
         }
 
-        let keyMap = createNewCrio({});
+        let keyMap: CrioCollection = createNewCrio({});
 
         forEach(keys, (key) => {
             keyMap = keyMap.set(key, this.object[key]);
@@ -143,8 +145,8 @@ class CrioCollection {
      * @returns {Array|Object}
      */
     getIn(keys = []) {
-        let retValue = this.object,
-            foundKeyMatch = true;
+        let retValue: any = this.object,
+            foundKeyMatch: boolean = true;
 
         forEach(keys, (key, index) => {
             const value = retValue[key];
@@ -154,7 +156,7 @@ class CrioCollection {
                 return false;
             }
 
-            retValue = isCrioCollection(value) ? value.object : value;
+            retValue = isCrio(value) ? value.object : value;
         });
 
         if (foundKeyMatch) {
@@ -193,9 +195,33 @@ class CrioCollection {
      * @returns {CrioCollection}
      */
     merge(...sources: Array) : CrioCollection {
-        const mergedObject = merge(this.object, ...sources);
+        const mergedObject: ArrayOrObject = merge(this.object, ...sources);
 
         return getCrioInstance(this, createNewCrio(mergedObject));
+    }
+
+    /**
+     * Accepts any number of parameters and merges them into a new object / array retrieved
+     * based on the keys passed
+     *
+     * @param keys<Array>
+     * @param sources<Array>
+     * @returns {CrioCollection}
+     */
+    mergeIn(keys: Array, ...sources: Array) : CrioCollection {
+        if (keys.length === 0) {
+            return this.merge(...sources);
+        }
+
+        const objectToMerge: ArrayOrObject = this.getIn(keys).object;
+
+        let objectToSet: ArrayOrObject = merge(...sources);
+
+        if (isConvertibleToCrio(objectToMerge)) {
+            objectToSet = merge(objectToMerge, objectToSet);
+        }
+
+        return getCrioInstance(this, this.setIn(keys, merge(objectToMerge, objectToSet)));
     }
 
     /**
@@ -207,8 +233,8 @@ class CrioCollection {
      * @returns {any}
      */
     mutate(callback: Function) : any {
-        const thawedObject = this.thaw();
-        const mutatedThis = callback(thawedObject) || thawedObject;
+        const thawedObject: ArrayOrObject = this.thaw();
+        const mutatedThis: any = callback(thawedObject) || thawedObject;
 
         if (isConvertibleToCrio(mutatedThis)) {
             return getCrioInstance(this, createNewCrio(mutatedThis));
@@ -232,7 +258,7 @@ class CrioCollection {
             throw new TypeError('The set method requires a key.');
         }
 
-        let newValue: Object|Array = this.thaw();
+        let newValue: ArrayOrObject = this.thaw();
 
         if (isObject(key)) {
             forIn(key, (value, index) => {
@@ -278,7 +304,7 @@ class CrioCollection {
      */
     toCollection() : CrioCollection {
         return this.mutate((mutableObject) => {
-            let collection = [];
+            let collection: Array = [];
 
             forIn(mutableObject, (value, key) => {
                 collection.push({

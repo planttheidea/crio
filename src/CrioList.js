@@ -14,7 +14,8 @@ import {
 } from './utils/checkers';
 
 import {
-    isConvertibleToCrio
+    isConvertibleToCrio,
+    isCrio
 } from './utils/crioCheckers';
 
 import {
@@ -28,10 +29,44 @@ import {
     splice
 } from './utils/functions';
 
+/**
+ * Accepts sources of various types and converts them to an array of arrays
+ *
+ * @param sources<Array>
+ * @returns {Array}
+ */
+const getCleanSources = (sources: Array) : Array => {
+    let cleanSources: Array = [];
+
+    forEach(sources, (source) => {
+        if (!isArray(source)) {
+            const cleanSource = isCrio(source) ? source.thaw() : source;
+
+            cleanSources.push(isArray(cleanSource) ? cleanSource : [cleanSource]);
+        } else {
+            cleanSources.push(source);
+        }
+    });
+
+    return cleanSources;
+};
+
 class CrioList extends CrioCollection {
     constructor(obj: Array) {
         // this converts array-like objects to actual arrays
         super(obj);
+    }
+
+    /**
+     * Returns new array of object concatentation with sources
+     *
+     * @param sources<Array>
+     * @returns {CrioList}
+     */
+    concat(...sources: Array) : CrioList {
+        const arrays: Array = getCleanSources(sources);
+
+        return getCrioInstance(this, createNewCrioList(this.object.concat(...arrays)));
     }
 
     /**
@@ -70,7 +105,7 @@ class CrioList extends CrioCollection {
      * @returns filteredArray<CrioList>
      */
     filter(callback: Function, ...args: Array) : CrioList {
-        const values = this.object.filter(callback, ...args);
+        const values: Array = this.object.filter(callback, ...args);
 
         return getCrioInstance(this, createNewCrioList(values));
     }
@@ -124,7 +159,7 @@ class CrioList extends CrioCollection {
      * @returns {CrioCollection}
      */
     first() : any {
-        const firstObject = this.object[0];
+        const firstObject: any = this.object[0];
 
         if (isArray(firstObject)) {
             return getCrioInstance(this, createNewCrioList(firstObject));
@@ -173,7 +208,7 @@ class CrioList extends CrioCollection {
      * @returns {*}
      */
     last() : any {
-        const lastObject = this.object[this.object.length - 1];
+        const lastObject: any = this.object[this.object.length - 1];
 
         if (isArray(lastObject)) {
             return getCrioInstance(this, createNewCrioList(lastObject));
@@ -204,7 +239,7 @@ class CrioList extends CrioCollection {
      * @returns mappedArray<CrioList>
      */
     map(callback: Function, thisArg: ?Object) : CrioList {
-        const values = this.object.map(callback, thisArg);
+        const values: Array = this.object.map(callback, thisArg);
 
         if (!isArray(values)) {
             throw new Error('You cannot change the type of object when mapping. If you want to do this, ' +
@@ -230,7 +265,7 @@ class CrioList extends CrioCollection {
      * @returns {Crio}
      */
     push(...values: Array) : CrioList {
-        let newValues = [...this.object].concat(...values);
+        let newValues: Array = [...this.object].concat(...values);
 
         return createNewCrioList(newValues);
     }
@@ -245,7 +280,7 @@ class CrioList extends CrioCollection {
      * @returns {any}
      */
     reduce(callback: Function, initialValue: ?any = 0) : any {
-        const reducedValue = this.object.reduce(callback, initialValue);
+        const reducedValue: any = this.object.reduce(callback, initialValue);
 
         return coalesceCrioValue(this, reducedValue);
     }
@@ -293,8 +328,12 @@ class CrioList extends CrioCollection {
      * @param end<Number[optional]>
      * @returns {CrioList}
      */
-    slice(begin: number, end: ?number) : CrioList {
-        const slicedArray = [...this.object].slice(begin, end);
+    slice(begin: ?number, end: ?number) : CrioList {
+        if (isValueless(begin)) {
+            return this;
+        }
+
+        const slicedArray: Array = [...this.object].slice(begin, end);
 
         return getCrioInstance(this, createNewCrioList(slicedArray));
     }
@@ -314,6 +353,8 @@ class CrioList extends CrioCollection {
      *
      * @param fn<Function[optional]>
      * @returns {Crio}
+     *
+     * @todo Modify this so that it doesn't require thawing (for use with native sort it's necessary)
      */
     sort(fn: ?Function) : CrioList {
         const sortedObject = this.thaw().sort(fn);
@@ -344,7 +385,7 @@ class CrioList extends CrioCollection {
      */
     toMap() : CrioCollection {
         return this.mutate((mutableList) => {
-            let map = {};
+            let map: Object = {};
 
             forEach(mutableList, (value, index) => {
                 map[index] = value;
@@ -352,6 +393,18 @@ class CrioList extends CrioCollection {
 
             return map;
         });
+    }
+
+    /**
+     * Returns a unique list of all arrays passed concatenated with the original this.object
+     *
+     * @param sources<Array>
+     * @returns {CrioList}
+     */
+    union(...sources: Array) : CrioList {
+        const arrays: Array = getCleanSources(sources);
+
+        return getCrioInstance(this, this.concat(...arrays).unique());
     }
 
     /**
@@ -378,7 +431,7 @@ class CrioList extends CrioCollection {
      * @returns {Crio}
      */
     unshift(...values: Array) : CrioList {
-        let newValues = [...values.reverse()].concat(...this.object);
+        let newValues: Array = [...values.reverse()].concat(...this.object);
 
         return createNewCrioList(newValues);
     }

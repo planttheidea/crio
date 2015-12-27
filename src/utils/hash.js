@@ -28,6 +28,8 @@ import {
     forIn
 } from './functions';
 
+type ArrayOrObject = Array|Object;
+
 const hashString = (obj: any) : number => {
     if (!isString(obj)) {
         obj = obj.toString();
@@ -38,10 +40,10 @@ const hashString = (obj: any) : number => {
     return murmur(buf);
 };
 
-const hashFunctionInObject = (obj: Array|Object) : Array|Object => {
-    const loopFunction: Array|Object = isArray(obj) ? forEach : forIn;
+const hashFunctionInObject = (obj: ArrayOrObject) : ArrayOrObject => {
+    const loopFunction: ArrayOrObject = isArray(obj) ? forEach : forIn;
 
-    let cleanObj: Array|Object = isArray(obj) ? [] : {};
+    let cleanObj: ArrayOrObject = isArray(obj) ? [] : {};
 
     loopFunction(obj, (value, key) => {
         if (isConvertibleToCrio(value)) {
@@ -65,7 +67,7 @@ const hashObject = (obj: any) : number => {
 
     // if its an array, check if a function exists in there
     if (isConvertibleToCrio(obj)) {
-        const objWithFunctionsHashed: Array|Object = hashFunctionInObject(obj);
+        const objWithFunctionsHashed: ArrayOrObject = hashFunctionInObject(obj);
 
         return hashString(Cereal.stringify(objWithFunctionsHashed));
     }

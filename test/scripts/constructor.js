@@ -14,7 +14,18 @@ import {
 } from './testFunctions';
 
 let success = 0,
-    untested = 0;
+    testedObj = {},
+    constructorAspetsToTest = [
+        'constructor',
+        'size',
+        'assignment',
+        'frozen',
+        'hash'
+    ];
+
+constructorAspetsToTest.forEach((aspect) => {
+    testedObj[aspect] = false;
+});
 
 /*
     Create the functions used in the test
@@ -28,6 +39,8 @@ const testConstructors = () => {
 
     expect(crio({})).toBeA(CrioMap);
     success++;
+    
+    testedObj.constructor = true;
 };
 
 const testSize = (loop) => {
@@ -42,6 +55,8 @@ const testSize = (loop) => {
 
     expect(crio(createTestObject(loop)).size).toEqual(loop);
     success++;
+
+    testedObj.size = true;
 };
 
 const testAssignment = (loop, array, object) => {
@@ -50,6 +65,8 @@ const testAssignment = (loop, array, object) => {
 
     expect(crio(createTestObject(loop)).object).toEqual(object);
     success++;
+
+    testedObj.assignment = true;
 };
 
 const testFrozen = (loop) => {
@@ -58,6 +75,8 @@ const testFrozen = (loop) => {
 
     expect(Object.isFrozen(crio(createTestObject(loop)).object)).toEqual(true);
     success++;
+
+    testedObj.frozen = true;
 };
 
 const testHash = (loop, arrayHash, mapHash) => {
@@ -66,6 +85,8 @@ const testHash = (loop, arrayHash, mapHash) => {
 
     expect(crio(createTestObject(loop)).hashCode).toEqual(mapHash);
     success++;
+
+    testedObj.hash = true;
 };
 
 /*
@@ -98,7 +119,15 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     testHash(LOOP_SIZE, TEST_ARRAY_HASH, TEST_MAP_HASH);
 }
 
+let untestedMethods = [];
+
+for (let method in testedObj) {
+    if (!testedObj[method]) {
+        untestedMethods.push(method);
+    }
+}
+
 export default {
     success,
-    untested
+    untestedMethods
 };

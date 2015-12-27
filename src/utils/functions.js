@@ -9,6 +9,8 @@ import {
     isUndefined
 } from './checkers';
 
+type ArrayOrObject = Array|Object;
+
 /**
  * Loops over array, executing each function
  * If one of the iterations returns false, the forEach is canceled
@@ -92,7 +94,7 @@ const forLoopFromKeys = (obj: Object, keys: Array, fn: Function, thisArg: ?Objec
  * @param fn<Function>
  * @param thisArg<Object[optional]>
  */
-const forIn = (obj: Object|Array, fn: Function, thisArg: ?Object) => {
+const forIn = (obj: ArrayOrObject, fn: Function, thisArg: ?Object) => {
     if (!isUndefined(fn)) {
         const keys: Array = getKeys(Object.keys(obj), Object.keys(Object.getPrototypeOf(obj)));
 
@@ -107,7 +109,7 @@ const forIn = (obj: Object|Array, fn: Function, thisArg: ?Object) => {
  * @param fn<Function>
  * @param thisArg<Object[optional]>
  */
-const forOwn = (obj: Object|Array, fn: Function, thisArg: ?Object) => {
+const forOwn = (obj: ArrayOrObject, fn: Function, thisArg: ?Object) => {
     if (!isUndefined(fn)) {
         const keys: Array = getKeys(Object.getOwnPropertyNames(obj));
 
@@ -138,7 +140,7 @@ const immutableSplice = (obj: Array, index: number, removeNum: number) => {
     ];
 };
 
-const setDeeplyNested = (obj: Array|Object, keys: Array, value: any) : Array|Object => {
+const setDeeplyNested = (obj: ArrayOrObject, keys: Array, value: any) : ArrayOrObject => {
     forEach(keys, (key, index) => {
         if (index < keys.length - 1) {
             keys.shift();
@@ -152,7 +154,7 @@ const setDeeplyNested = (obj: Array|Object, keys: Array, value: any) : Array|Obj
     return obj;
 };
 
-const entriesShim = (obj: Array|Object) : Array|Object => {
+const entriesShim = (obj: ArrayOrObject) : ArrayOrObject => {
     if (obj.entries) {
         return obj.entries();
     }

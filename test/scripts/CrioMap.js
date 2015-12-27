@@ -3,6 +3,7 @@
 import expect from 'expect';
 
 import crio from '../../src/index';
+import CrioCollection from '../../src/CrioCollection';
 import CrioMap from '../../src/CrioMap';
 
 import {
@@ -10,8 +11,17 @@ import {
     getValidLoopSize
 } from './testFunctions';
 
+const METHODS_ALREADY_TESTED = Object.getOwnPropertyNames(CrioCollection.prototype);
+
 let success = 0,
-    untested = 0;
+    testedObj = {},
+    methodsToTest = Object.getOwnPropertyNames(CrioMap.prototype);
+
+methodsToTest.forEach((method) => {
+    if (METHODS_ALREADY_TESTED.indexOf(method) === -1) {
+        testedObj[method] = false;
+    }
+});
 
 /*
  Create the functions used in the tests
@@ -22,6 +32,8 @@ const testConstructor = () => {
 
     expect(crio.map({})).toBeA(CrioMap);
     success++;
+
+    testedObj.constructor = true;
 };
 
 const testDelete = (map, loopSize) => {
@@ -36,6 +48,8 @@ const testDelete = (map, loopSize) => {
 
     expect(map.delete(checker)).toEqual(crio(testObject));
     success++;
+
+    testedObj.delete = true;
 };
 
 const testHas = (map, loopSize) => {
@@ -46,6 +60,8 @@ const testHas = (map, loopSize) => {
 
     expect(map.has('test')).toEqual(false);
     success++;
+
+    testedObj.has = true;
 };
 
 const testToList = (map) => {
@@ -64,6 +80,8 @@ const testToList = (map) => {
 
     expect(map.toList(testList)).toEqual(crio(testList));
     success++;
+
+    testedObj.toList = true;
 };
 
 /*
@@ -92,7 +110,15 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     testToList(TEST_CRIO_MAP);
 }
 
+let untestedMethods = [];
+
+for (let method in testedObj) {
+    if (!testedObj[method]) {
+        untestedMethods.push(method);
+    }
+}
+
 export default {
     success,
-    untested
+    untestedMethods
 };

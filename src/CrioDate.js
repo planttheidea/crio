@@ -85,7 +85,7 @@ const addPrototypeMethod = (method: string) => {
          * @returns {CrioDate}
          */
         return function (...args: Array) : CrioDate|number|string {
-            const result = Date.prototype[method].apply(this.object, args);
+            const result: Date|number|string = Date.prototype[method].apply(this.object, args);
 
             if (isDate(result)) {
                 const newDate: Date = new Date(result.valueOf());
@@ -113,7 +113,7 @@ const addPrototypeMethod = (method: string) => {
     };
 };
 
-let prototypeMethods = Object.getOwnPropertyNames(Date.prototype);
+let prototypeMethods: Array = Object.getOwnPropertyNames(Date.prototype);
 
 prototypeMethods.splice(prototypeMethods.indexOf('constructor'), 1);
 

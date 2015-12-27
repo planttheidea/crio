@@ -17,6 +17,12 @@ const headerStyle = {
     fontWeight:'bold',
     marginBottom:10
 };
+const untestedStyle = {
+    marginTop:10
+};
+const listStyle = {
+    margin:0
+};
 
 class App extends React.Component {
     displayName = 'App';
@@ -42,8 +48,26 @@ class App extends React.Component {
                             </div>
 
                             <div>
-                                {`${tests[key].untested} ${key} tests were unable to be run.`}
+                                {`${tests[key].untestedMethods.length} ${key} methods were not tested.`}
                             </div>
+
+                            {!!tests[key].untestedMethods.length && (
+                                <div style={untestedStyle}>
+                                    <div>
+                                        The following methods were not tested:
+                                    </div>
+
+                                    <ul style={listStyle}>
+                                        {tests[key].untestedMethods.map((method, j) => {
+                                            return (
+                                                <li key={j}>
+                                                    {method}
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     );
                 })}

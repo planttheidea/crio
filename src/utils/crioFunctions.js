@@ -6,6 +6,7 @@ import {
     createNewCrio
 } from './createNewCrio';
 import CrioCollection from './../CrioCollection';
+import CrioDate from './../CrioDate';
 
 import {
     isArray,
@@ -17,6 +18,7 @@ import {
 
 import {
     isConvertibleToCrio,
+    isCrio,
     isCrioCollection,
     isCrioDate,
     isSameCrio
@@ -27,6 +29,8 @@ import {
     forOwn
 } from './functions';
 
+type CrioInstance = CrioCollection|CrioDate;
+
 /**
  * If the Crio values are equal, then return the original instance, else return the new instance
  *
@@ -34,7 +38,7 @@ import {
  * @param crio2<Object>
  * @returns isSameCrio<Boolean>
  */
-const getCrioInstance = (crio1: CrioCollection, crio2: CrioCollection) : CrioCollection => {
+const getCrioInstance = (crio1: CrioInstance, crio2: CrioInstance) : CrioInstance => {
     return isSameCrio(crio1, crio2) ? crio1 : crio2;
 };
 
@@ -62,7 +66,7 @@ const cloneObject = (originalObj: any) : any => {
     };
 
     const cloneObj = (obj) => {
-        const cleanObj = isCrioCollection(obj) ? obj.object : obj;
+        const cleanObj = isCrio(obj) ? obj.object : obj;
 
         let base: Array = [];
 
@@ -88,6 +92,8 @@ const cloneObject = (originalObj: any) : any => {
                     clonedArray.push(circularSet[visitedIndex].value);
                 }
             });
+
+            cloneObj.prototype = cloneObj(obj.prototype);
 
             return clonedArray;
         }
@@ -120,14 +126,22 @@ const cloneObject = (originalObj: any) : any => {
                 }
             });
 
+            cloneObj.prototype = cloneObj(obj.prototype);
+
             return clonedObject;
         }
+
+        if (isDate(cleanObj)) {
+            return new Date(cleanObj.valueOf());
+        }
+
+        return cleanObj;
     };
 
     return cloneObj(originalObj);
 };
 
-const convertToString = (obj: CrioCollection, isLocaleSpecific: boolean) : string => {
+const convertToString = (obj: CrioInstance, isLocaleSpecific: boolean) : string => {
     const isThisObject = isObject(obj.object);
     const prefix = isThisObject ? 'CrioMap {' : 'CrioList [';
     const suffix = isThisObject ? '}' : ']';
@@ -145,6 +159,8 @@ const convertToString = (obj: CrioCollection, isLocaleSpecific: boolean) : strin
 
         if (isCrioCollection(value)) {
             stringReturn += convertToString(value, isLocaleSpecific);
+        } else if (isCrioDate(value)) {
+            stringReturn += value.toString();
         } else if (isLocaleSpecific && (isNumber(value) || isDate(value))) {
             stringReturn += value.toLocaleString();
         } else {
@@ -164,7 +180,7 @@ const convertToString = (obj: CrioCollection, isLocaleSpecific: boolean) : strin
  * @returns {any}
  */
 const getThawedObject = (obj: any) : any => {
-    return isCrioCollection(obj) ? obj.thaw() : obj;
+    return isCrio(obj) ? obj.thaw() : obj;
 };
 
 /**
@@ -175,6 +191,10 @@ const getThawedObject = (obj: any) : any => {
  * @returns {*}
  */
 const mergeObject = (target: any, ...sources: Array) => {
+    if (sources.length === 0) {
+        return target;
+    }
+
     target = getThawedObject(target);
 
     const isTargetArr = isArray(target);
@@ -239,12 +259,8 @@ const mergeObject = (target: any, ...sources: Array) => {
  * @returns {*}
  */
 const thawCrio = (obj: any) : any => {
-    if (isCrioCollection(obj)) {
+    if (isCrio(obj)) {
         return cloneObject(obj.object);
-    }
-
-    if (isCrioDate(obj)) {
-        return new Date(obj.object.valueOf());
     }
 
     if (Object.isFrozen(obj)) {
@@ -255,7 +271,7 @@ const thawCrio = (obj: any) : any => {
 };
 
 const coalesceCrioValue = (Crio: CrioCollection, obj: any) => {
-    if (isConvertibleToCrio(obj) && !isCrioCollection(obj)) {
+    if (isConvertibleToCrio(obj) && !isCrio(obj)) {
         return getCrioInstance(Crio, createNewCrio(obj));
     }
 

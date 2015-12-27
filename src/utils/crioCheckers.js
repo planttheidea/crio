@@ -11,16 +11,14 @@ import {
     isObject
 } from './checkers';
 
+type CrioInstance = CrioCollection|CrioDate;
+
 /**
- * Returns true if object passed is either an array or object
+ * Returns true if object passed is CrioCollection
  *
- * @param obj<any>
+ * @param obj<Any>
  * @returns {boolean}
  */
-const isConvertibleToCrio = (obj: any) : boolean => {
-    return !isCrioCollection(obj) && !isCrioDate(obj) && (isArray(obj) || isObject(obj) || isDate(obj));
-};
-
 const isCrioCollection = (obj: any) : boolean => {
     return obj instanceof CrioCollection;
 };
@@ -33,6 +31,26 @@ const isCrioCollection = (obj: any) : boolean => {
  */
 const isCrioDate = (obj: any) : boolean => {
     return obj instanceof CrioDate;
+};
+
+/**
+ * Returns true if object passed is CrioCollection or CrioDate
+ *
+ * @param obj<Any>
+ * @returns {boolean}
+ */
+const isCrio = (obj: any) : boolean => {
+    return isCrioCollection(obj) || isCrioDate(obj);
+};
+
+/**
+ * Returns true if object passed is either an array or object
+ *
+ * @param obj<any>
+ * @returns {boolean}
+ */
+const isConvertibleToCrio = (obj: any) : boolean => {
+    return !isCrio(obj) && (isArray(obj) || isObject(obj) || isDate(obj));
 };
 
 /**
@@ -62,7 +80,7 @@ const isCrioMap = (obj: any) : boolean => {
  * @param obj2<Any>
  * @returns {boolean}
  */
-const isSameCrio = (obj1: CrioCollection|CrioDate, obj2: CrioCollection|CrioDate) : boolean => {
+const isSameCrio = (obj1: CrioInstance, obj2: CrioInstance) : boolean => {
     if ((isCrioDate(obj1) && isCrioDate(obj2)) || (isCrioList(obj1) && isCrioList(obj2)) ||
         (isCrioMap(obj1) && isCrioMap(obj2))) {
         return obj1.hashCode === obj2.hashCode;
@@ -72,6 +90,7 @@ const isSameCrio = (obj1: CrioCollection|CrioDate, obj2: CrioCollection|CrioDate
 };
 
 export {isConvertibleToCrio as isConvertibleToCrio};
+export {isCrio as isCrio};
 export {isCrioCollection as isCrioCollection};
 export {isCrioDate as isCrioDate};
 export {isCrioList as isCrioList};
@@ -80,6 +99,7 @@ export {isSameCrio as isSameCrio};
 
 export default {
     isConvertibleToCrio,
+    isCrio,
     isCrioCollection,
     isCrioDate,
     isCrioList,
