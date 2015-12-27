@@ -18,6 +18,7 @@ import {
 import {
     isConvertibleToCrio,
     isCrioCollection,
+    isCrioDate,
     isSameCrio
 } from './crioCheckers';
 
@@ -240,6 +241,10 @@ const mergeObject = (target: any, ...sources: Array) => {
 const thawCrio = (obj: any) : any => {
     if (isCrioCollection(obj)) {
         return cloneObject(obj.object);
+    }
+
+    if (isCrioDate(obj)) {
+        return new Date(obj.object.valueOf());
     }
 
     if (Object.isFrozen(obj)) {

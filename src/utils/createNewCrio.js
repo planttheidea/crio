@@ -1,6 +1,7 @@
 
 
 // local imports
+import CrioDate from './../CrioDate';
 import CrioList from './../CrioList';
 import CrioMap from './../CrioMap';
 import deepFreeze from './deepFreeze';
@@ -9,6 +10,7 @@ import deepFreeze from './deepFreeze';
 import {
     isArray,
     isArrayLike,
+    isDate,
     isObject
 } from './checkers';
 
@@ -21,12 +23,34 @@ import {
     cloneObject
 } from './crioFunctions';
 
-const createNewCrioList = (obj: Object) : CrioList => {
-    return Object.seal(new CrioList(obj));
+/**
+ * Creates new CrioDate from passed object
+ *
+ * @param obj<Date>
+ * @returns {CrioDate}
+ */
+const createNewCrioDate = (obj: Date) : CrioDate => {
+    return Object.freeze(new CrioDate(deepFreeze(obj)));
 };
 
+/**
+ * Creates new CrioList from passed object
+ *
+ * @param obj<Date>
+ * @returns {CrioList}
+ */
+const createNewCrioList = (obj: Object) : CrioList => {
+    return Object.freeze(new CrioList(deepFreeze(obj)));
+};
+
+/**
+ * Creates new CrioMap from passed object
+ *
+ * @param obj<Date>
+ * @returns {CrioMap}
+ */
 const createNewCrioMap = (obj: Object) : CrioMap => {
-    return Object.seal(new CrioMap(obj));
+    return Object.freeze(new CrioMap(deepFreeze(obj)));
 };
 
 /**
@@ -38,17 +62,64 @@ const createNewCrioMap = (obj: Object) : CrioMap => {
 const createNewCrio = (obj: any = {}) : any => {
     const isObjArray = isArray(obj);
     const cleanObj = !isObjArray && isArrayLike(obj) ? Array.prototype.slice.call(obj) : obj;
-    const frozenObj = deepFreeze(cleanObj);
 
     if (isObjArray) {
-        return createNewCrioList(frozenObj);
+        return createNewCrioList(cleanObj);
+    }
+
+    if (isDate(obj)) {
+        return createNewCrioDate(cleanObj);
     }
 
     if (isObject(obj)) {
-        return createNewCrioMap(frozenObj);
+        return createNewCrioMap(cleanObj);
     }
 
     return obj;
+};
+
+/**
+ * Creates new CrioDate from passed object
+ *
+ * @param obj<Date>
+ * @returns {CrioDate}
+ */
+createNewCrio.date = (obj: any) : any => {
+    return createNewCrioDate(obj);
+};
+
+/**
+ * Creates new CrioDate from arguments passed
+ *
+ * @param args<Array>
+ * @returns {CrioDate}
+ */
+createNewCrio.date.from = (...args: Array) => {
+    return createNewCrioDate(new Date(...args));
+};
+
+/**
+ * Creates new UTC-based CrioDate from arguments passed
+ *
+ * @param args<Array>
+ * @returns {CrioDate}
+ */
+createNewCrio.date.utc = (...args: Array) => {
+    if (args.length === 1 && isDate(args[0])) {
+        const date = args[0];
+
+        return createNewCrio(new Date(Date.UTC(
+            date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
+            date.getUTCHours(),
+            date.getUTCMinutes(),
+            date.getUTCSeconds(),
+            date.getUTCMilliseconds()
+        )));
+    }
+
+    return createNewCrio(new Date(Date.UTC(...args)));
 };
 
 /**
@@ -75,7 +146,14 @@ createNewCrio.isList = isCrioList;
 createNewCrio.isMap = isCrioMap;
 
 createNewCrio.list = createNewCrioList;
-createNewCrio.list.of = (...items) => {
+
+/**
+ * Creates new CrioList from passed object
+ *
+ * @param items<Date>
+ * @returns {CrioList}
+ */
+createNewCrio.list.of = (...items: Array) => {
     return createNewCrioList(deepFreeze(items));
 };
 

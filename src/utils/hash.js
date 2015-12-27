@@ -8,9 +8,6 @@ import {
     Buffer
 } from 'buffer';
 
-// local imports
-import toString from './toString';
-
 // local partial imports
 import {
     isArray,
@@ -33,7 +30,7 @@ import {
 
 const hashString = (obj: any) : number => {
     if (!isString(obj)) {
-        obj = toString.call(obj);
+        obj = obj.toString();
     }
 
     const buf: Buffer = new Buffer(obj);

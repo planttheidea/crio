@@ -29,7 +29,7 @@ import {
 } from './utils/functions';
 
 class CrioList extends CrioCollection {
-    constructor(obj) {
+    constructor(obj: Array) {
         // this converts array-like objects to actual arrays
         super(obj);
     }

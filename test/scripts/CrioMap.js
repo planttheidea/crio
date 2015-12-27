@@ -48,26 +48,6 @@ const testHas = (map, loopSize) => {
     success++;
 };
 
-const testToCollection = (map) => {
-    const testCollection = (() => {
-        let collection = [];
-
-        map.forEach((value, key) => {
-            collection.push({
-                [key]:value
-            });
-        });
-
-        return collection;
-    })();
-
-    expect(map.toCollection(testCollection).thaw()).toEqual(testCollection);
-    success++;
-
-    expect(map.toCollection(testCollection)).toEqual(crio(testCollection));
-    success++;
-};
-
 const testToList = (map) => {
     const testList = (() => {
         let list = [];
@@ -107,9 +87,6 @@ for (let i = TEST_LOOP_SIZE; i--;) {
 
     // test .has()
     testHas(TEST_CRIO_MAP, LOOP_SIZE);
-
-    // test .toCollection()
-    testToCollection(TEST_CRIO_MAP);
 
     // test .toList()
     testToList(TEST_CRIO_MAP);

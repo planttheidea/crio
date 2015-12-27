@@ -271,6 +271,43 @@ const testThaw = (list, map) => {
     success++;
 };
 
+const testToCollection = (list, map) => {
+    const testListCollection = (() => {
+        let collection = [];
+
+        list.forEach((value, index) => {
+            collection.push({
+                [index]:value
+            });
+        });
+
+        return collection;
+    })();
+    const testMapCollection = (() => {
+        let collection = [];
+
+        map.forEach((value, key) => {
+            collection.push({
+                [key]:value
+            });
+        });
+
+        return collection;
+    })();
+
+    expect(map.toCollection(testListCollection).thaw()).toEqual(testListCollection);
+    success++;
+
+    expect(map.toCollection(testListCollection)).toEqual(crio(testListCollection));
+    success++;
+
+    expect(map.toCollection(testMapCollection).thaw()).toEqual(testMapCollection);
+    success++;
+
+    expect(map.toCollection(testMapCollection)).toEqual(crio(testMapCollection));
+    success++;
+};
+
 const testToLocaleString = () => {
     const dateString = (new Date()).toLocaleString();
     const numberString = Number(1).toLocaleString();
@@ -376,6 +413,9 @@ for (let i = TEST_LOOP_SIZE; i--;) {
 
     // test .thaw()
     testThaw(TEST_CRIO_LIST, TEST_CRIO_MAP);
+
+    // test .toCollection()
+    testToCollection(TEST_CRIO_LIST, TEST_CRIO_MAP);
 
     // test .toLocaleString()
     testToLocaleString();

@@ -48,7 +48,7 @@ const isInvalidKey = (obj: any, index: number, length: number) : boolean => {
 };
 
 class CrioCollection {
-    constructor(obj) {
+    constructor(obj: Object|Array) {
         staticProperty(this, 'hashCode', hashObject(obj));
         readonlyProperty(this, 'object', obj);
         readonlyProperty(this, 'size', isArray(obj) ? obj.length : Object.getOwnPropertyNames(obj).length);
@@ -80,7 +80,7 @@ class CrioCollection {
      * @param crio2<Crio>
      * @returns {boolean}
      */
-    equals(crio2: Object) {
+    equals(crio2: Object) : boolean {
         if (isValueless(crio2)) {
             return false;
         }
@@ -268,7 +268,26 @@ class CrioCollection {
      * @returns thawedCrio<Array|Object>
      */
     thaw() : Array|Object {
-        return thaw(this.object);
+        return thaw(this);
+    }
+
+    /**
+     * Converts CrioCollection to a CrioList, where each item is a key:value object from the original map
+     *
+     * @returns {CrioCollection}
+     */
+    toCollection() : CrioCollection {
+        return this.mutate((mutableObject) => {
+            let collection = [];
+
+            forIn(mutableObject, (value, key) => {
+                collection.push({
+                    [key]:value
+                });
+            });
+
+            return collection;
+        });
     }
 
     /**

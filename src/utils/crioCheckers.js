@@ -2,10 +2,12 @@
 
 // local imports
 import CrioCollection from './../CrioCollection';
+import CrioDate from './../CrioDate';
 
 // local partial imports
 import {
     isArray,
+    isDate,
     isObject
 } from './checkers';
 
@@ -16,11 +18,21 @@ import {
  * @returns {boolean}
  */
 const isConvertibleToCrio = (obj: any) : boolean => {
-    return !isCrioCollection(obj) && (isArray(obj) || isObject(obj));
+    return !isCrioCollection(obj) && !isCrioDate(obj) && (isArray(obj) || isObject(obj) || isDate(obj));
 };
 
 const isCrioCollection = (obj: any) : boolean => {
     return obj instanceof CrioCollection;
+};
+
+/**
+ * Returns true if object passed is CrioDate
+ *
+ * @param obj<Any>
+ * @returns {boolean}
+ */
+const isCrioDate = (obj: any) : boolean => {
+    return obj instanceof CrioDate;
 };
 
 /**
@@ -50,8 +62,9 @@ const isCrioMap = (obj: any) : boolean => {
  * @param obj2<Any>
  * @returns {boolean}
  */
-const isSameCrio = (obj1: CrioCollection, obj2: CrioCollection) : boolean => {
-    if ((isCrioList(obj1) || isCrioMap(obj1)) && (isCrioList(obj2) || isCrioMap(obj2))) {
+const isSameCrio = (obj1: CrioCollection|CrioDate, obj2: CrioCollection|CrioDate) : boolean => {
+    if ((isCrioDate(obj1) && isCrioDate(obj2)) || (isCrioList(obj1) && isCrioList(obj2)) ||
+        (isCrioMap(obj1) && isCrioMap(obj2))) {
         return obj1.hashCode === obj2.hashCode;
     }
 
@@ -60,6 +73,7 @@ const isSameCrio = (obj1: CrioCollection, obj2: CrioCollection) : boolean => {
 
 export {isConvertibleToCrio as isConvertibleToCrio};
 export {isCrioCollection as isCrioCollection};
+export {isCrioDate as isCrioDate};
 export {isCrioList as isCrioList};
 export {isCrioMap as isCrioMap};
 export {isSameCrio as isSameCrio};
@@ -67,6 +81,7 @@ export {isSameCrio as isSameCrio};
 export default {
     isConvertibleToCrio,
     isCrioCollection,
+    isCrioDate,
     isCrioList,
     isCrioMap,
     isSameCrio

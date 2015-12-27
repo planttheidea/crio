@@ -27,6 +27,8 @@
     "eslint-plugin-babel": "^3.0.0",
     "eslint-plugin-react": "^3.12.0",
     "expect": "^1.13.4",
+    "lodash": "^3.10.1",
+    "moment": "^2.10.6",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "webpack": "^1.12.9",
@@ -49,7 +51,7 @@
     "build-minified": "NODE_ENV=production ./node_modules/webpack/bin/webpack.js --progress --colors --config=webpack.config.minified.js",
     "compile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/",
     "dist": "npm run compile && npm run build && npm run build-minified",
-    "test": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --colors --config=webpack.config.test.js"
+    "test": "NODE_ENV=test ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --colors --config=webpack.config.test.js"
   },
   "version": "1.0.0"
 }

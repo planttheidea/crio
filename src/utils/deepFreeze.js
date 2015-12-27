@@ -7,6 +7,10 @@ import {
 
 // local partial imports
 import {
+    isDate
+} from './checkers';
+
+import {
     isConvertibleToCrio
 } from './crioCheckers';
 
@@ -19,9 +23,13 @@ import {
 } from './functions';
 
 const deepFreeze = (obj: any) : any => {
-    const propNames: Array = Object.getOwnPropertyNames(obj);
-
     let clonedObj = cloneObject(obj);
+
+    if (isDate(obj)) {
+        return Object.freeze(obj);
+    }
+
+    const propNames: Array = Object.getOwnPropertyNames(obj);
 
     forEach(propNames, (name) => {
         let value: any = clonedObj[name];

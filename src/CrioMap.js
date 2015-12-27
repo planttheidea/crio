@@ -21,7 +21,7 @@ import {
 } from './utils/functions';
 
 class CrioMap extends CrioCollection {
-    constructor(obj) {
+    constructor(obj: Object) {
         super(obj);
     }
 
@@ -58,25 +58,6 @@ class CrioMap extends CrioCollection {
         }
 
         return this.object.hasOwnProperty(prop);
-    }
-
-    /**
-     * Converts CrioMap to a CrioList, where each item is a key:value object from the original map
-     *
-     * @returns {CrioCollection}
-     */
-    toCollection() : CrioCollection {
-        return this.mutate((mutableObject) => {
-            let collection = [];
-
-            forIn(mutableObject, (value, key) => {
-                collection.push({
-                    [key]:value
-                });
-            });
-
-            return collection;
-        });
     }
 
     /**

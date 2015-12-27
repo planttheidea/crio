@@ -1,5 +1,9 @@
 
 
+const cloneDate = (date) => {
+    return new Date(date.valueOf());
+};
+
 const createTestArray = (size, start = 0, value) => {
     let testArray = [];
 
@@ -8,6 +12,10 @@ const createTestArray = (size, start = 0, value) => {
     }
 
     return testArray;
+};
+
+const createTestDate = (...args) => {
+    return new Date(...args);
 };
 
 const createTestObject = (size, start = 0, value) => {
@@ -30,12 +38,16 @@ const getValidLoopSize = (min, size) => {
     return loopSize;
 };
 
+export {cloneDate as cloneDate};
 export {createTestArray as createTestArray};
+export {createTestDate as createTestDate};
 export {createTestObject as createTestObject};
 export {getValidLoopSize as getValidLoopSize};
 
 export default {
+    cloneDate,
     createTestArray,
+    createTestDate,
     createTestObject,
     getValidLoopSize
 };
