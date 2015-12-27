@@ -23,6 +23,13 @@ var path = require("path"),
                     sequences:true,
                     warnings:false
                 },
+                mangle:{
+                    except:[
+                        "CrioDate",
+                        "CrioList",
+                        "CrioMap"
+                    ]
+                },
                 sourceMap:false
             })
         ]

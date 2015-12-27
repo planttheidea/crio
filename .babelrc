@@ -5,7 +5,8 @@
                 "development": true,
                 "production": true
             }
-        }]
+        }],
+        "add-module-exports"
     ],
     "presets":[
         "es2015",

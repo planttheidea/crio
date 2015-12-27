@@ -368,14 +368,15 @@ class CrioList extends CrioCollection {
      *
      * @param index<Number>
      * @param removeNum<Number>
+     * @param itemsToAdd<Array>
      * @returns itemWithKeysRemoved<Crio>
      */
-    splice(index: number, removeNum: number = 1) : CrioList {
+    splice(index: number, removeNum: number = 1, ...itemsToAdd: Array) : CrioList {
         if (!isNumber(index)) {
             return this;
         }
 
-        return getCrioInstance(this, createNewCrioList(splice(this.object, index, removeNum)));
+        return getCrioInstance(this, createNewCrioList(splice(this.object, index, removeNum)).concat(itemsToAdd));
     }
 
     /**

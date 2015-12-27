@@ -64,6 +64,8 @@ var crio =
 	
 	// local imports
 
+	module.exports = exports['default'];
+
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
@@ -398,6 +400,7 @@ var crio =
 	});
 	
 	exports.default = CrioDate;
+	module.exports = exports['default'];
 
 /***/ },
 /* 4 */
@@ -444,6 +447,7 @@ var crio =
 	// local imports
 	
 	exports.default = deepFreeze;
+	module.exports = exports['default'];
 
 /***/ },
 /* 5 */
@@ -609,6 +613,7 @@ var crio =
 	  value: true
 	});
 	exports.default = Object.prototype.toString;
+	module.exports = exports['default'];
 
 /***/ },
 /* 7 */
@@ -1147,6 +1152,7 @@ var crio =
 	})();
 	
 	exports.default = CrioCollection;
+	module.exports = exports['default'];
 
 /***/ },
 /* 9 */
@@ -4629,6 +4635,7 @@ var crio =
 	         *
 	         * @param index<Number>
 	         * @param removeNum<Number>
+	         * @param itemsToAdd<Array>
 	         * @returns itemWithKeysRemoved<Crio>
 	         */
 	
@@ -4641,7 +4648,11 @@ var crio =
 	                return this;
 	            }
 	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)((0, _functions.splice)(this.object, index, removeNum)));
+	            for (var _len3 = arguments.length, itemsToAdd = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+	                itemsToAdd[_key3 - 2] = arguments[_key3];
+	            }
+	
+	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)((0, _functions.splice)(this.object, index, removeNum)).concat(itemsToAdd));
 	        }
 	
 	        /**
@@ -4674,8 +4685,8 @@ var crio =
 	    }, {
 	        key: 'union',
 	        value: function union() {
-	            for (var _len3 = arguments.length, sources = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-	                sources[_key3] = arguments[_key3];
+	            for (var _len4 = arguments.length, sources = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	                sources[_key4] = arguments[_key4];
 	            }
 	
 	            var arrays = getCleanSources(sources);
@@ -4715,8 +4726,8 @@ var crio =
 	        value: function unshift() {
 	            var _ref2;
 	
-	            for (var _len4 = arguments.length, values = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-	                values[_key4] = arguments[_key4];
+	            for (var _len5 = arguments.length, values = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+	                values[_key5] = arguments[_key5];
 	            }
 	
 	            var newValues = (_ref2 = [].concat(_toConsumableArray(values.reverse()))).concat.apply(_ref2, _toConsumableArray(this.object));
@@ -4729,6 +4740,7 @@ var crio =
 	})(_CrioCollection3.default);
 	
 	exports.default = CrioList;
+	module.exports = exports['default'];
 
 /***/ },
 /* 42 */
@@ -4848,6 +4860,7 @@ var crio =
 	})(_CrioCollection3.default);
 	
 	exports.default = CrioMap;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);
