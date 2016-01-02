@@ -2,7 +2,7 @@
 Immutable JS objects with a natural API
 
 #### Jump to the API
-[API Documentation](API/)
+[API Documentation](API/README.md)
 
 #### What is immutable?
 
@@ -61,7 +61,7 @@ const crioMap = crio({});
 ```
 These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
 
-The [API](API/) is the same as you already know working with those objects (and include polyfills for all ES6 and some ES7 functions), with the only difference is that each operation returns a new crio of the modified object. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. The only requirement is that your browser has a proper ES5 environment, which you can mostly shim with something like [es5-shim](https://github.com/es-shims/es5-shim), however certain things like Object.defineProperty cannot be shimmed, so IE8 and below cannot be supported.
+The [API](API/README.md) is the same as you already know working with those objects (and include polyfills for all ES6 and some ES7 functions), with the only difference is that each operation returns a new crio of the modified object. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. The only requirement is that your browser has a proper ES5 environment, which you can mostly shim with something like [es5-shim](https://github.com/es-shims/es5-shim), however certain things like Object.defineProperty cannot be shimmed, so IE8 and below cannot be supported.
 
 #### Why not just use X immutable library?
 
