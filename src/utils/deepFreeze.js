@@ -1,45 +1,19 @@
 
 
-// local imports
-import {
-    createNewCrio
-} from './createNewCrio';
+// external dependencies
+import deepFreeze from 'deep-freeze-strict';
 
 // local partial imports
 import {
-    isDate
-} from './checkers';
-
-import {
-    isConvertibleToCrio
-} from './crioCheckers';
-
-import {
     cloneObject
-} from './crioFunctions';
+} from './recursiveObjectModifications';
 
-import {
-    forEach
-} from './functions';
-
-const deepFreeze = (obj: any) : any => {
-    let clonedObj = cloneObject(obj);
-
-    if (isDate(obj)) {
-        return Object.freeze(obj);
+const deepFreezeWithClone = (object: any, shouldClone: boolean = false) : any => {
+    if (object) {
+        return shouldClone ? cloneObject(object, true) : deepFreeze(object);
     }
 
-    const propNames: Array = Object.getOwnPropertyNames(obj);
-
-    forEach(propNames, (name) => {
-        let value: any = clonedObj[name];
-
-        if (isConvertibleToCrio(value)) {
-            clonedObj[name] = createNewCrio(value);
-        }
-    });
-
-    return Object.freeze(clonedObj);
+    return object;
 };
 
-export default deepFreeze;
+export default deepFreezeWithClone;

@@ -1,7 +1,7 @@
 
 
-// local imports
-import toString from './toString';
+// make sure that IE's window.TO_STRING isn't used
+const TO_STRING = Object.prototype.toString;
 
 /**
  * Returns true if object passed is array
@@ -10,7 +10,11 @@ import toString from './toString';
  * @returns {boolean}
  */
 const isArray = (obj: any) : boolean => {
-    return toString.call(obj) === '[object Array]';
+    return TO_STRING.call(obj) === '[object Array]';
+};
+
+const isCrio = (obj: any) : boolean => {
+    return (isArray(obj) || isDate(obj) || isObject(obj)) && !!obj.$$crio;
 };
 
 /**
@@ -20,7 +24,7 @@ const isArray = (obj: any) : boolean => {
  * @returns {boolean}
  */
 const isDate = (obj: any) : boolean => {
-    return toString.call(obj) === '[object Date]';
+    return TO_STRING.call(obj) === '[object Date]';
 };
 
 /**
@@ -30,7 +34,7 @@ const isDate = (obj: any) : boolean => {
  * @returns {boolean}
  */
 const isFunction = (obj: any) : boolean => {
-    return toString.call(obj) === '[object Function]' || typeof obj === 'function';
+    return TO_STRING.call(obj) === '[object Function]' || typeof obj === 'function';
 };
 
 /**
@@ -40,7 +44,7 @@ const isFunction = (obj: any) : boolean => {
  * @returns {boolean}
  */
 const isObject = (obj: any) : boolean => {
-    return toString.call(obj) === '[object Object]' && !!obj;
+    return TO_STRING.call(obj) === '[object Object]' && !!obj;
 };
 
 /**
@@ -70,7 +74,7 @@ const isNAN = (obj: any) : boolean => {
  * @returns {boolean}
  */
 const isNumber = (obj: any) : boolean => {
-    return !isNAN(obj) && toString.call(obj) === '[object Number]';
+    return !isNAN(obj) && TO_STRING.call(obj) === '[object Number]';
 };
 
 /**
@@ -80,7 +84,7 @@ const isNumber = (obj: any) : boolean => {
  * @returns {boolean}
  */
 const isString = (obj: any) : boolean => {
-    return toString.call(obj) === '[object String]';
+    return TO_STRING.call(obj) === '[object String]';
 };
 
 /**
@@ -110,14 +114,14 @@ const isValueless = (obj) => {
  * @returns {boolean}
  */
 const isArrayLike = (obj: any) : boolean => {
-    return isArray(obj) || (
-            !isFunction(obj) && obj.hasOwnProperty('length') && isNumber(obj.length) &&
-            (obj.length === 0 || (obj.length > 0 && obj.length -1) in obj)
-        );
+    return !isArray(obj) && !isFunction(obj) && obj.hasOwnProperty('length') && isNumber(obj.length) && (
+        obj.length === 0 || (obj.length > 0 && obj.length -1) in obj
+    );
 };
 
 export {isArray as isArray};
 export {isArrayLike as isArrayLike};
+export {isCrio as isCrio};
 export {isDate as isDate};
 export {isFunction as isFunction};
 export {isObject as isObject};
@@ -131,6 +135,7 @@ export {isValueless as isValueless};
 export default {
     isArray,
     isArrayLike,
+    isCrio,
     isDate,
     isFunction,
     isObject,

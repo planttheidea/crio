@@ -3,7 +3,11 @@
 import expect from 'expect';
 
 import crio from '../../src/index';
-import CrioDate from '../../src/CrioDate';
+import crioDatePrototype from '../../src/crio/crioDatePrototype';
+
+import {
+    crioConstants
+} from './testConstants';
 
 import {
     cloneDate,
@@ -29,22 +33,23 @@ const MUTABLE_METHODS = [
     'setYear'
 ];
 
-const CRIO_DATE_METHODS = [
-    'equals',
-    'thaw'
-];
-
-let immutableMethods = Object.getOwnPropertyNames(CrioDate.prototype),
+let immutableMethods = Object.getOwnPropertyNames(crioDatePrototype),
     success = 0,
     testedObj = {},
-    methodsToTest = Object.getOwnPropertyNames(CrioDate.prototype);
+    methodsToTest;
+
+if (immutableMethods.indexOf('$$crio') !== -1) {
+    immutableMethods.splice(immutableMethods.indexOf('$$crio'), 1);
+}
+
+methodsToTest = immutableMethods.slice();
 
 methodsToTest.forEach((method) => {
     testedObj[method] = false;
 });
 
 // get rid of methods added to class
-CRIO_DATE_METHODS.forEach((method) => {
+crioConstants.forEach((method) => {
     immutableMethods.splice(immutableMethods.indexOf(method), 1);
 });
 
@@ -54,33 +59,39 @@ MUTABLE_METHODS.forEach((method) => {
 });
 
 // get rid of the constructor
-immutableMethods.splice(immutableMethods.indexOf('constructor'), 1);
+const constructorIndex = immutableMethods.indexOf('constructor');
+
+if (constructorIndex !== -1) {
+    immutableMethods.splice(constructorIndex, 1);
+}
 
 /*
  Create the functions used in the tests
  */
 const testConstructor = (date) => {
-    expect(crio(date)).toBeA(CrioDate);
+    expect(crio(date)).toBeA(Date);
     success++;
 
-    expect(crio.date(date)).toBeA(CrioDate);
+    expect(crio.date(date)).toBeA(Date);
     success++;
 
-    expect(crio.date.from(2015, 11, 31)).toBeA(CrioDate);
+    expect(crio.date.from(2015, 11, 31)).toBeA(Date);
     success++;
 
-    expect(crio.date.utc(date)).toBeA(CrioDate);
+    expect(crio.date.utc(date)).toBeA(Date);
     success++;
 
-    expect(crio.date.utc(2015, 11, 31)).toBeA(CrioDate);
+    expect(crio.date.utc(2015, 11, 31)).toBeA(Date);
     success++;
 
     testedObj.constructor = true;
 };
 
 const testDefaultImmutableMethod = (date, method) => {
-    expect(crio(date)[method]()).toEqual(date[method]());
-    success++;
+    if (date[method]) {
+        expect(crio(date)[method]()).toEqual(date[method]());
+        success++;
+    }
 
     testedObj[method] = true;
 };
@@ -95,6 +106,30 @@ const testEquals = (date, object) => {
     testedObj.equals = true;
 };
 
+const testFreeze = (date) => {
+    const thawedDate = date.thaw();
+
+    expect(thawedDate.freeze().isFrozen()).toEqual(true);
+    success++;
+
+    expect(date.freeze().isFrozen()).toEqual(true);
+    success++;
+
+    testedObj.freeze = true;
+};
+
+const testIsFrozen = (date) => {
+    const thawedDate = date.thaw();
+
+    expect(thawedDate.isFrozen()).toEqual(false);
+    success++;
+
+    expect(date.isFrozen()).toEqual(true);
+    success++;
+
+    testedObj.isFrozen = true;
+};
+
 const testImmutableMethod = (date, method, arg) => {
     const increase = Math.ceil(Math.random() * 10);
     const clone = cloneDate(date);
@@ -102,17 +137,28 @@ const testImmutableMethod = (date, method, arg) => {
 
     clone[method](newDate);
 
-    expect(crio(date)[method](newDate).object).toEqual(clone);
-    success++;
-
-    expect(crio(date)[method](newDate)).toEqual(crio(clone));
+    expect(crio(date)[method](newDate)).toEqual(clone);
     success++;
 
     testedObj[method] = true;
 };
 
-const testThaw = (date) => {
-    expect(crio(date).thaw()).toEqual(date);
+const testToJs = (date, object) => {
+    expect(date.toJS()).toEqual(object);
+    success++;
+
+    expect(date.toJS()).toBeA(Date);
+    success++;
+
+    testedObj.toJS = true;
+};
+
+const testThaw = (object) => {
+    expect(crio(object).thaw()).toEqual(object);
+    success++;
+
+    expect(crio(object).thaw()).toBeA(Date);
+    success++;
 
     testedObj.thaw = true;
 };
@@ -184,8 +230,17 @@ for (let i = TEST_LOOP_SIZE; i--;) {
     // test .equals()
     testEquals(crio(NEW_DATE), NEW_DATE);
 
+    // test .equals()
+    testFreeze(crio(NEW_DATE), NEW_DATE);
+
+    // test .equals()
+    testIsFrozen(crio(NEW_DATE), NEW_DATE);
+
     // test .thaw()
     testThaw(NEW_DATE);
+
+    // test .thaw()
+    testToJs(crio(NEW_DATE), NEW_DATE);
 }
 
 let untestedMethods = [];

@@ -22,6 +22,9 @@
     "browser":true,
     "es6":true
   },
+  "globals":{
+    "__ENVIRONMENT__": true
+  },
   "parser":"babel-eslint",
   "plugins":[
     "babel",
@@ -55,9 +58,9 @@
     "no-implied-eval":2,
     "no-native-reassign":2,
     "no-new-func":2,
-    "no-new-object":2,
+//    "no-new-object":2,
     "no-obj-calls":2,
-    "no-proto":2,
+//    "no-proto":2,
     "no-this-before-super":2,
     "no-undef":2,
     "no-unexpected-multiline":1,

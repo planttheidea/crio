@@ -1,17 +1,19 @@
 {
   "author": "planttheidea",
   "bugs": {
-    "url": "https://github.com/planttheidea/pietra/issues"
+    "url": "https://github.com/planttheidea/crio/issues"
   },
   "dependencies": {
-    "buffer": "^3.5.5",
+    "buffer": "^3.6.0",
     "cereal": "^0.2.3",
-    "core-js": "^2.0.0",
-    "murmur-hash-js": "^1.0.0"
+    "core-js": "^2.0.1",
+    "deep-freeze-strict": "^1.1.1",
+    "murmur-hash-js": "^1.0.0",
+    "setprototypeof": "^1.0.0"
   },
   "description": "Immutable JS ojbects with a natural API",
   "devDependencies": {
-    "babel": "^6.3.13",
+    "babel": "^6.3.26",
     "babel-cli": "^6.3.17",
     "babel-eslint": "^5.0.0-beta6",
     "babel-loader": "^6.2.0",
@@ -26,26 +28,24 @@
     "eslint-friendly-formatter": "^1.2.2",
     "eslint-loader": "^1.1.1",
     "eslint-plugin-babel": "^3.0.0",
-    "eslint-plugin-react": "^3.12.0",
+    "eslint-plugin-react": "^3.13.1",
     "expect": "^1.13.4",
-    "lodash": "^3.10.1",
-    "moment": "^2.10.6",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
+    "react": "^0.14.5",
+    "react-dom": "^0.14.5",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.0"
   },
-  "homepage": "https://github.com/planttheidea/pietra#readme",
+  "homepage": "https://github.com/planttheidea/crio#readme",
   "keywords": [
     "immutable",
-    "pietra"
+    "crio"
   ],
   "license": "MIT",
   "main": "lib/index.js",
-  "name": "pietra",
+  "name": "crio",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/planttheidea/pietra.git"
+    "url": "git+https://github.com/planttheidea/crio.git"
   },
   "scripts": {
     "build": "NODE_ENV=development ./node_modules/webpack/bin/webpack.js --progress --colors",

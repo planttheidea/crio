@@ -11,24 +11,26 @@ import {
 // local partial imports
 import {
     isArray,
+    isDate,
     isFunction,
     isNAN,
     isNull,
     isNumber,
+    isObject,
     isString,
     isUndefined
 } from './checkers';
 
 import {
-    isConvertibleToCrio
-} from './crioCheckers';
-
-import {
     forEach,
-    forIn
+    forOwn
 } from './functions';
 
 type ArrayOrObject = Array|Object;
+
+const isConvertibleToCrio = (obj: any) : boolean => {
+    return isArray(obj) || isDate(obj) || isObject(obj);
+};
 
 const hashString = (obj: any) : number => {
     if (!isString(obj)) {
@@ -41,7 +43,7 @@ const hashString = (obj: any) : number => {
 };
 
 const hashFunctionInObject = (obj: ArrayOrObject) : ArrayOrObject => {
-    const loopFunction: ArrayOrObject = isArray(obj) ? forEach : forIn;
+    const loopFunction: ArrayOrObject = isArray(obj) ? forEach : forOwn;
 
     let cleanObj: ArrayOrObject = isArray(obj) ? [] : {};
 
@@ -63,6 +65,10 @@ const hashObject = (obj: any) : number => {
     if (isNull(obj) || isUndefined(obj) ||
         isString(obj) || isNumber(obj) || isNAN(obj)) {
         return hashString(obj);
+    }
+
+    if (isDate(obj)) {
+        return hashString(Date.prototype.valueOf.call(obj));
     }
 
     // if its an array, check if a function exists in there

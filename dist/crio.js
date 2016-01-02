@@ -1,5 +1,14 @@
-var crio =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("crio", [], factory);
+	else if(typeof exports === 'object')
+		exports["crio"] = factory();
+	else
+		root["crio"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -54,16 +63,116 @@ var crio =
 
 	'use strict';
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
-	var _createNewCrio = __webpack_require__(2);
+	var _recursiveObjectModifications = __webpack_require__(2);
 	
-	exports.default = _createNewCrio.createNewCrio;
+	var _checkers = __webpack_require__(4);
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	// local imports
-
+	
+	var defaults = {
+	    autoFreeze: true
+	};
+	
+	var crio = function crio() {
+	    var obj = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	    if ((0, _checkers.isCrio)(obj)) {
+	        return obj;
+	    }
+	
+	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) || (0, _checkers.isDate)(obj)) {
+	        var cleanedObj = (0, _checkers.isArrayLike)(obj) ? [].concat(_toConsumableArray(obj)) : obj;
+	
+	        return (0, _recursiveObjectModifications.cloneObject)(cleanedObj, defaults.autoFreeze);
+	    }
+	
+	    return obj;
+	};
+	
+	crio.array = function () {
+	    var obj = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	
+	    if ((0, _checkers.isCrio)(obj)) {
+	        return obj;
+	    }
+	
+	    if ((0, _checkers.isArray)(obj) || (0, _checkers.isArrayLike)(obj)) {
+	        return crio(obj);
+	    }
+	
+	    throw new TypeError('Value passed to crio.array is not an Array.');
+	};
+	
+	crio.array.from = function () {
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	        args[_key] = arguments[_key];
+	    }
+	
+	    return crio.array(args);
+	};
+	
+	crio.date = function () {
+	    var obj = arguments.length <= 0 || arguments[0] === undefined ? new Date() : arguments[0];
+	
+	    if ((0, _checkers.isCrio)(obj)) {
+	        return obj;
+	    }
+	
+	    if ((0, _checkers.isDate)(obj)) {
+	        return crio(obj);
+	    }
+	
+	    throw new TypeError('Value passed to crio.date is not a Date.');
+	};
+	
+	crio.date.from = function () {
+	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	        args[_key2] = arguments[_key2];
+	    }
+	
+	    return crio.date(new (Function.prototype.bind.apply(Date, [null].concat(args)))());
+	};
+	
+	crio.date.utc = function () {
+	    var _Date;
+	
+	    if ((0, _checkers.isDate)(arguments.length <= 0 ? undefined : arguments[0])) {
+	        return crio.date(new Date(Date.UTC(arguments.length <= 0 ? undefined : arguments[0])));
+	    }
+	
+	    return crio.date(new Date((_Date = Date).UTC.apply(_Date, arguments)));
+	};
+	
+	crio.object = function () {
+	    var obj = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	    if ((0, _checkers.isCrio)(obj)) {
+	        return obj;
+	    }
+	
+	    if ((0, _checkers.isObject)(obj)) {
+	        return crio(obj);
+	    }
+	
+	    throw new TypeError('Value passed to crio.object is not an Object.');
+	};
+	
+	crio.setDefaults = function (newDefaults) {
+	    if (!(0, _checkers.isObject)(newDefaults)) {
+	        return;
+	    }
+	
+	    defaults = _extends({}, defaults, newDefaults);
+	};
+	exports.default = crio;
 	module.exports = exports['default'];
 
 /***/ },
@@ -75,201 +184,189 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.createNewCrioMap = exports.createNewCrioList = exports.createNewCrio = undefined;
+	exports.setDeepPrototype = exports.cloneObject = undefined;
 	
-	var _CrioDate = __webpack_require__(3);
+	var _setPrototypeOf = __webpack_require__(3);
 	
-	var _CrioDate2 = _interopRequireDefault(_CrioDate);
+	var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 	
-	var _CrioList = __webpack_require__(41);
+	var _crioArrayPrototype = __webpack_require__(5);
 	
-	var _CrioList2 = _interopRequireDefault(_CrioList);
+	var _crioArrayPrototype2 = _interopRequireDefault(_crioArrayPrototype);
 	
-	var _CrioMap = __webpack_require__(42);
+	var _crioDatePrototype = __webpack_require__(115);
 	
-	var _CrioMap2 = _interopRequireDefault(_CrioMap);
+	var _crioDatePrototype2 = _interopRequireDefault(_crioDatePrototype);
 	
-	var _deepFreeze = __webpack_require__(4);
+	var _crioObjectPrototype = __webpack_require__(119);
 	
-	var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
+	var _crioObjectPrototype2 = _interopRequireDefault(_crioObjectPrototype);
 	
-	var _checkers = __webpack_require__(5);
-	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _crioFunctions = __webpack_require__(9);
+	var _checkers = __webpack_require__(4);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	/**
-	 * Creates new CrioDate from passed object
-	 *
-	 * @param obj<Date>
-	 * @returns {CrioDate}
-	 */
-	var createNewCrioDate = function createNewCrioDate(obj) {
-	    return Object.freeze(new _CrioDate2.default((0, _deepFreeze2.default)(obj)));
-	};
+	// local imports
 	
-	/**
-	 * Creates new CrioList from passed object
-	 *
-	 * @param obj<Date>
-	 * @returns {CrioList}
-	 */
+	var create = Object.create;
 	
 	// local partial imports
 	
 	// local imports
-	var createNewCrioList = function createNewCrioList(obj) {
-	    return Object.freeze(new _CrioList2.default((0, _deepFreeze2.default)(obj)));
+	
+	var freeze = Object.freeze;
+	var getOwnPropertyNames = Object.getOwnPropertyNames;
+	var isFrozen = Object.isFrozen;
+	
+	var freezeIfApplicable = function freezeIfApplicable(obj, shouldFreeze) {
+	    return shouldFreeze ? freeze(obj) : obj;
 	};
 	
-	/**
-	 * Creates new CrioMap from passed object
-	 *
-	 * @param obj<Date>
-	 * @returns {CrioMap}
-	 */
-	var createNewCrioMap = function createNewCrioMap(obj) {
-	    return Object.freeze(new _CrioMap2.default((0, _deepFreeze2.default)(obj)));
-	};
-	
-	/**
-	 * Creates new Crio from passed object
-	 *
-	 * @param obj<Array|Object>
-	 * @returns {Array|Object}
-	 */
-	var createNewCrio = function createNewCrio() {
-	    var obj = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	
+	var cloneObj = function cloneObj(obj, visited, circularSet, shouldFreeze, shouldApplyPrototype) {
 	    var isObjArray = (0, _checkers.isArray)(obj);
-	    var cleanObj = !isObjArray && (0, _checkers.isArrayLike)(obj) ? Array.prototype.slice.call(obj) : obj;
 	
-	    if (isObjArray) {
-	        return createNewCrioList(cleanObj);
+	    if (isObjArray || (0, _checkers.isObject)(obj)) {
+	        var clonedObject = isObjArray ? [] : {};
+	
+	        if (shouldApplyPrototype) {
+	            if (isObjArray) {
+	                (0, _setPrototypeOf2.default)(clonedObject, _crioArrayPrototype2.default);
+	            } else {
+	                clonedObject = create(_crioObjectPrototype2.default);
+	            }
+	        }
+	
+	        if (isObjArray) {
+	            for (var i = 0, len = obj.length; i < len; i++) {
+	                clonedObject[i] = pushToCircularSetAndVisited(visited, i, circularSet, obj[i], [], i, isObjArray, shouldFreeze, shouldApplyPrototype);
+	            }
+	        } else {
+	            var propertyNames = getOwnPropertyNames(obj);
+	
+	            for (var i = 0, len = propertyNames.length; i < len; i++) {
+	                var prop = propertyNames[i];
+	                var visitedIndex = visited.indexOf(obj[i]);
+	
+	                if (visitedIndex !== -1) {
+	                    return visited[visitedIndex];
+	                }
+	
+	                clonedObject[i] = pushToCircularSetAndVisited(visited, prop, circularSet, obj[prop], {}, prop, isObjArray, shouldFreeze, shouldApplyPrototype);
+	            }
+	        }
+	
+	        return freezeIfApplicable(clonedObject, shouldFreeze);
 	    }
 	
 	    if ((0, _checkers.isDate)(obj)) {
-	        return createNewCrioDate(cleanObj);
+	        var newDate = new Date(obj.valueOf());
+	
+	        if (shouldApplyPrototype) {
+	            (0, _setPrototypeOf2.default)(newDate, _crioDatePrototype2.default);
+	        }
+	
+	        return freezeIfApplicable(newDate, shouldFreeze);
+	    }
+	
+	    return obj;
+	};
+	
+	var setProtos = function setProtos(obj, visited, circularSet, shouldFreeze) {
+	    if (isFrozen(obj)) {
+	        return cloneObj(obj, visited, circularSet, shouldFreeze, true);
+	    }
+	
+	    if ((0, _checkers.isArray)(obj)) {
+	        (0, _setPrototypeOf2.default)(obj, _crioArrayPrototype2.default);
+	
+	        for (var i = 0, len = obj.length; i < len; i++) {
+	            if (visited.indexOf(obj[i]) === -1) {
+	                pushToCircularSetAndVisited(visited, i, circularSet, obj[i], [], i, true, shouldFreeze, true);
+	            }
+	        }
+	
+	        return freezeIfApplicable(obj, shouldFreeze);
 	    }
 	
 	    if ((0, _checkers.isObject)(obj)) {
-	        return createNewCrioMap(cleanObj);
+	        (0, _setPrototypeOf2.default)(obj, _crioObjectPrototype2.default);
+	
+	        var propertyNames = getOwnPropertyNames(obj);
+	
+	        for (var i = 0, len = propertyNames.length; i < len; i++) {
+	            if (visited.indexOf(obj[i]) === -1) {
+	                var prop = propertyNames[i];
+	
+	                pushToCircularSetAndVisited(visited, prop, circularSet, obj[prop], {}, prop, false, shouldFreeze, true);
+	            }
+	        }
+	
+	        return freezeIfApplicable(obj, shouldFreeze);
+	    }
+	
+	    if ((0, _checkers.isDate)(obj)) {
+	        (0, _setPrototypeOf2.default)(obj, _crioDatePrototype2.default);
+	
+	        return freezeIfApplicable(obj, shouldFreeze);
 	    }
 	
 	    return obj;
 	};
 	
-	/**
-	 * Creates new CrioDate from passed object
-	 *
-	 * @param obj<Date>
-	 * @returns {CrioDate}
-	 */
-	createNewCrio.date = function (obj) {
-	    return createNewCrioDate(obj);
+	var pushToCircularSet = function pushToCircularSet(circularSet, base, key, isValueArray) {
+	    var newBase = base[key] = isValueArray ? [] : {};
+	
+	    circularSet[circularSet.length] = {
+	        up: base,
+	        value: newBase
+	    };
 	};
 	
-	/**
-	 * Creates new CrioDate from arguments passed
-	 *
-	 * @param args<Array>
-	 * @returns {CrioDate}
-	 */
-	createNewCrio.date.from = function () {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
+	var pushToVisited = function pushToVisited(visited, prop, value) {
+	    visited[visited.length] = value;
+	};
+	
+	var pushToCircularSetAndVisited = function pushToCircularSetAndVisited(visited, prop, circularSet, value, base, key, isValueArray, shouldFreeze, shouldApplyPrototype) {
+	    var isClone = arguments.length <= 9 || arguments[9] === undefined ? true : arguments[9];
+	
+	    pushToVisited(visited, prop, value);
+	    pushToCircularSet(circularSet, base, key, isValueArray);
+	
+	    if (isClone) {
+	        return cloneObj(value, visited, circularSet, shouldFreeze, shouldApplyPrototype);
 	    }
 	
-	    return createNewCrioDate(new (Function.prototype.bind.apply(Date, [null].concat(args)))());
+	    return setProtos(value);
 	};
 	
-	/**
-	 * Creates new UTC-based CrioDate from arguments passed
-	 *
-	 * @param args<Array>
-	 * @returns {CrioDate}
-	 */
-	createNewCrio.date.utc = function () {
-	    var _Date;
+	var cloneObject = function cloneObject(originalObj) {
+	    var shouldFreeze = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	    var shouldApplyPrototype = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 	
-	    if (arguments.length === 1 && (0, _checkers.isDate)(arguments[0])) {
-	        var date = arguments[0];
+	    var visited = [],
+	        circularSet = [{ base: originalObj }];
 	
-	        return createNewCrio(new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getUTCMilliseconds())));
+	    return cloneObj(originalObj, visited, circularSet, shouldFreeze, shouldApplyPrototype);
+	};
+	
+	var setDeepPrototype = function setDeepPrototype(obj) {
+	    var shouldFreeze = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	
+	    if (!(0, _checkers.isArray)(obj) && !(0, _checkers.isDate)(obj) && !(0, _checkers.isObject)(obj)) {
+	        return obj;
 	    }
 	
-	    return createNewCrio(new Date((_Date = Date).UTC.apply(_Date, arguments)));
+	    var visited = [],
+	        circularSet = [{ base: obj }];
+	
+	    return setProtos(obj, visited, circularSet, shouldFreeze);
 	};
 	
-	/**
-	 * Recursively freezes object passed to it
-	 *
-	 * @param obj<any>
-	 * @returns {any}
-	 */
-	createNewCrio.freeze = function (obj) {
-	    return (0, _deepFreeze2.default)(obj);
-	};
-	
-	/**
-	 * Returns true if object passed is frozen
-	 *
-	 * @param obj<any>
-	 * @returns {boolean}
-	 */
-	createNewCrio.isFrozen = function (obj) {
-	    return Object.isFrozen(obj);
-	};
-	
-	createNewCrio.isList = _crioCheckers.isCrioList;
-	createNewCrio.isMap = _crioCheckers.isCrioMap;
-	
-	createNewCrio.list = createNewCrioList;
-	
-	/**
-	 * Creates new CrioList from passed object
-	 *
-	 * @param items<Date>
-	 * @returns {CrioList}
-	 */
-	createNewCrio.list.of = function () {
-	    for (var _len2 = arguments.length, items = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	        items[_key2] = arguments[_key2];
-	    }
-	
-	    return createNewCrioList((0, _deepFreeze2.default)(items));
-	};
-	
-	createNewCrio.map = createNewCrioMap;
-	
-	/**
-	 * Returns mutable copy of the object that was Crio
-	 *
-	 * @param obj<any>
-	 * @returns {any}
-	 */
-	createNewCrio.thaw = function (obj) {
-	    if ((0, _crioCheckers.isCrioList)(obj) || (0, _crioCheckers.isCrioMap)(obj)) {
-	        return obj.thaw();
-	    }
-	
-	    if (undefined.isFrozen(obj)) {
-	        return (0, _crioFunctions.cloneObject)(obj);
-	    }
-	
-	    return obj;
-	};
-	
-	exports.createNewCrio = createNewCrio;
-	exports.createNewCrioList = createNewCrioList;
-	exports.createNewCrioMap = createNewCrioMap;
+	exports.cloneObject = cloneObject;
+	exports.setDeepPrototype = setDeepPrototype;
 	exports.default = {
-	    createNewCrio: createNewCrio,
-	    createNewCrioList: createNewCrioList,
-	    createNewCrioMap: createNewCrioMap
+	    cloneObject: cloneObject,
+	    setDeepPrototype: setDeepPrototype
 	};
 
 /***/ },
@@ -278,133 +375,34 @@ var crio =
 
 	'use strict';
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	// local imports
-	
-	// local partial imports
-	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
-	var _deepFreeze = __webpack_require__(4);
+	var _checkers = __webpack_require__(4);
 	
-	var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
-	
-	var _checkers = __webpack_require__(5);
-	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _crioFunctions = __webpack_require__(9);
-	
-	var _functions = __webpack_require__(10);
-	
-	var _decorators = __webpack_require__(30);
-	
-	var _hash = __webpack_require__(31);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var MUTABLE_METHODS = ['setTime', 'setMilliseconds', 'setUTCMilliseconds', 'setSeconds', 'setUTCSeconds', 'setMinutes', 'setUTCMinutes', 'setHours', 'setUTCHours', 'setDate', 'setUTCDate', 'setMonth', 'setUTCMonth', 'setFullYear', 'setUTCFullYear', 'setYear'];
-	
-	var CrioDate = (function () {
-	    function CrioDate(obj) {
-	        _classCallCheck(this, CrioDate);
-	
-	        (0, _decorators.staticProperty)(this, 'hashCode', (0, _hash.hashString)(obj));
-	        (0, _decorators.readonlyProperty)(this, 'object', obj);
-	        (0, _decorators.readonlyProperty)(this, 'size', 1);
-	    }
-	
-	    /**
-	     * Tests if object passed is equal to the current Crio object
-	     *
-	     * @param crio2<Crio>
-	     * @returns {boolean}
-	     */
-	
-	    _createClass(CrioDate, [{
-	        key: 'equals',
-	        value: function equals(crio2) {
-	            if ((0, _checkers.isValueless)(crio2)) {
-	                return false;
-	            }
-	
-	            return (0, _crioCheckers.isSameCrio)(this, crio2);
-	        }
-	    }, {
-	        key: 'thaw',
-	        value: function thaw() {
-	            return (0, _crioFunctions.thaw)(this);
-	        }
-	    }]);
-	
-	    return CrioDate;
-	})();
-	
-	var addPrototypeMethod = function addPrototypeMethod(method) {
-	    if (MUTABLE_METHODS.indexOf(method) === -1) {
-	        /**
-	         * Accepts standard Date parameters and returns a CrioDate created with the
-	         * existing immutable Date prototype functions.
-	         *
-	         * @param args<Array>
-	         * @returns {CrioDate}
-	         */
-	        return function () {
-	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	                args[_key] = arguments[_key];
-	            }
-	
-	            var result = Date.prototype[method].apply(this.object, args);
-	
-	            if ((0, _checkers.isDate)(result)) {
-	                var newDate = new Date(result.valueOf());
-	
-	                return new CrioDate((0, _deepFreeze2.default)(newDate));
-	            }
-	
-	            return result;
-	        };
-	    }
-	
-	    /**
-	     * Accepts standard Date parameters and returns a CrioDate created with a cloned version
-	     * of the original date with the mutation applied
-	     *
-	     * @param args<Array>
-	     * @returns {CrioDate}
-	     */
-	    return function () {
-	        var cloneDate = new Date(this.object.valueOf());
-	
-	        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	            args[_key2] = arguments[_key2];
-	        }
-	
-	        Date.prototype[method].apply(cloneDate, args);
-	
-	        return new CrioDate((0, _deepFreeze2.default)(cloneDate));
-	    };
+	// polyfill for back to IE9 (since core-js doesn't do this)
+	var setDeprecatedProtoProperty = function setDeprecatedProtoProperty(obj, proto) {
+	    obj.__proto__ = proto;
 	};
 	
-	var prototypeMethods = Object.getOwnPropertyNames(Date.prototype);
+	// really old fallback in case __proto__ property is unavailable
 	
-	prototypeMethods.splice(prototypeMethods.indexOf('constructor'), 1);
+	// local imports
+	var assignProtoPropsDirectly = function assignProtoPropsDirectly(obj, proto) {
+	    for (var prop in proto) {
+	        if (proto.hasOwnProperty(prop)) {
+	            obj[prop] = proto[prop];
+	        }
+	    }
+	};
 	
-	(0, _functions.forEach)(prototypeMethods, function (method) {
-	    CrioDate.prototype[method] = addPrototypeMethod(method);
-	});
-	
-	exports.default = CrioDate;
+	exports.default = (0, _checkers.isFunction)(Object.setPrototypeOf) ? Object.setPrototypeOf : ({ __proto__: [] }) instanceof Array ? setDeprecatedProtoProperty : assignProtoPropsDirectly;
 	module.exports = exports['default'];
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
@@ -412,59 +410,8 @@ var crio =
 	    value: true
 	});
 	
-	var _createNewCrio = __webpack_require__(2);
-	
-	var _checkers = __webpack_require__(5);
-	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _crioFunctions = __webpack_require__(9);
-	
-	var _functions = __webpack_require__(10);
-	
-	// local partial imports
-	
-	var deepFreeze = function deepFreeze(obj) {
-	    var clonedObj = (0, _crioFunctions.cloneObject)(obj);
-	
-	    if ((0, _checkers.isDate)(obj)) {
-	        return Object.freeze(obj);
-	    }
-	
-	    var propNames = Object.getOwnPropertyNames(obj);
-	
-	    (0, _functions.forEach)(propNames, function (name) {
-	        var value = clonedObj[name];
-	
-	        if ((0, _crioCheckers.isConvertibleToCrio)(value)) {
-	            clonedObj[name] = (0, _createNewCrio.createNewCrio)(value);
-	        }
-	    });
-	
-	    return Object.freeze(clonedObj);
-	};
-	
-	// local imports
-	
-	exports.default = deepFreeze;
-	module.exports = exports['default'];
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.isValueless = exports.isUndefined = exports.isString = exports.isNumber = exports.isNull = exports.isNAN = exports.isObject = exports.isFunction = exports.isDate = exports.isArrayLike = exports.isArray = undefined;
-	
-	var _toString = __webpack_require__(6);
-	
-	var _toString2 = _interopRequireDefault(_toString);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	// make sure that IE's window.TO_STRING isn't used
+	var TO_STRING = Object.prototype.toString;
 	
 	/**
 	 * Returns true if object passed is array
@@ -473,7 +420,11 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isArray = function isArray(obj) {
-	    return _toString2.default.call(obj) === '[object Array]';
+	    return TO_STRING.call(obj) === '[object Array]';
+	};
+	
+	var isCrio = function isCrio(obj) {
+	    return (isArray(obj) || isDate(obj) || isObject(obj)) && !!obj.$$crio;
 	};
 	
 	/**
@@ -482,10 +433,8 @@ var crio =
 	 * @param obj<any>
 	 * @returns {boolean}
 	 */
-	
-	// local imports
 	var isDate = function isDate(obj) {
-	    return _toString2.default.call(obj) === '[object Date]';
+	    return TO_STRING.call(obj) === '[object Date]';
 	};
 	
 	/**
@@ -495,7 +444,7 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isFunction = function isFunction(obj) {
-	    return _toString2.default.call(obj) === '[object Function]' || typeof obj === 'function';
+	    return TO_STRING.call(obj) === '[object Function]' || typeof obj === 'function';
 	};
 	
 	/**
@@ -505,7 +454,7 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isObject = function isObject(obj) {
-	    return _toString2.default.call(obj) === '[object Object]' && !!obj;
+	    return TO_STRING.call(obj) === '[object Object]' && !!obj;
 	};
 	
 	/**
@@ -535,7 +484,7 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isNumber = function isNumber(obj) {
-	    return !isNAN(obj) && _toString2.default.call(obj) === '[object Number]';
+	    return !isNAN(obj) && TO_STRING.call(obj) === '[object Number]';
 	};
 	
 	/**
@@ -545,7 +494,7 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isString = function isString(obj) {
-	    return _toString2.default.call(obj) === '[object String]';
+	    return TO_STRING.call(obj) === '[object String]';
 	};
 	
 	/**
@@ -575,11 +524,12 @@ var crio =
 	 * @returns {boolean}
 	 */
 	var isArrayLike = function isArrayLike(obj) {
-	    return isArray(obj) || !isFunction(obj) && obj.hasOwnProperty('length') && isNumber(obj.length) && (obj.length === 0 || (obj.length > 0 && obj.length - 1) in obj);
+	    return !isArray(obj) && !isFunction(obj) && obj.hasOwnProperty('length') && isNumber(obj.length) && (obj.length === 0 || (obj.length > 0 && obj.length - 1) in obj);
 	};
 	
 	exports.isArray = isArray;
 	exports.isArrayLike = isArrayLike;
+	exports.isCrio = isCrio;
 	exports.isDate = isDate;
 	exports.isFunction = isFunction;
 	exports.isObject = isObject;
@@ -592,6 +542,7 @@ var crio =
 	exports.default = {
 	    isArray: isArray,
 	    isArrayLike: isArrayLike,
+	    isCrio: isCrio,
 	    isDate: isDate,
 	    isFunction: isFunction,
 	    isObject: isObject,
@@ -604,1094 +555,454 @@ var crio =
 	};
 
 /***/ },
-/* 6 */
-/***/ function(module, exports) {
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
-	exports.default = Object.prototype.toString;
+	
+	var _setCrioArrayOrObjectMethods = __webpack_require__(6);
+	
+	var _setCrioArrayOrObjectMethods2 = _interopRequireDefault(_setCrioArrayOrObjectMethods);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var PROTOTYPE_METHODS = ['concat', 'copyWithin', 'entries', 'every', 'fill', 'filter', 'find', 'findIndex', 'forEach', 'includes', 'indexOf', 'join', 'keys', 'lastIndexOf', 'map', 'pop', 'push', 'reduce', 'reduceRight', 'reverse', 'shift', 'slice', 'some', 'sort', 'splice', 'toLocaleString', 'toString', 'unshift', 'values'];
+	
+	// local imports
+	
+	var MUTABLE_METHODS = ['fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+	
+	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'keys', 'map', 'values'];
+	
+	var crioArrayPrototype = Object.create(Array.prototype);
+	
+	exports.default = _setCrioArrayOrObjectMethods2.default.call(crioArrayPrototype, Array, crioArrayPrototype, PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
+	module.exports = exports['default'];
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	// polyfills
+	
+	// local imports
+	
+	// local partial imports
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _array = __webpack_require__(7);
+	
+	var _array2 = _interopRequireDefault(_array);
+	
+	var _symbol = __webpack_require__(61);
+	
+	var _symbol2 = _interopRequireDefault(_symbol);
+	
+	var _array3 = __webpack_require__(68);
+	
+	var _array4 = _interopRequireDefault(_array3);
+	
+	var _object = __webpack_require__(71);
+	
+	var _object2 = _interopRequireDefault(_object);
+	
+	var _object3 = __webpack_require__(89);
+	
+	var _object4 = _interopRequireDefault(_object3);
+	
+	__webpack_require__(95);
+	
+	var _coalesceCrio = __webpack_require__(97);
+	
+	var _coalesceCrio2 = _interopRequireDefault(_coalesceCrio);
+	
+	var _crioDefaultMethods = __webpack_require__(100);
+	
+	var _crioDefaultMethods2 = _interopRequireDefault(_crioDefaultMethods);
+	
+	var _crioHelperMethods = __webpack_require__(113);
+	
+	var _crioHelperMethods2 = _interopRequireDefault(_crioHelperMethods);
+	
+	var _crioIdentifier = __webpack_require__(101);
+	
+	var _checkers = __webpack_require__(4);
+	
+	var _functions = __webpack_require__(102);
+	
+	var _crioIterator = __webpack_require__(114);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'freeze', 'get', 'equals', 'hashCode', 'isFrozen', 'keys', 'map', 'merge', 'mutate', 'set', 'thaw', 'toArray', 'toJS', 'toObject', 'values'];
+	
+	var coalesceResultIfApplicable = function coalesceResultIfApplicable(obj, result, prototype) {
+	    if (!!result) {
+	        if (obj.equals(result)) {
+	            return obj;
+	        }
+	
+	        if ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(result)) {
+	            return (0, _coalesceCrio2.default)(obj, result, prototype);
+	        }
+	    }
+	
+	    return result;
+	};
+	
+	var setArrayOrObjectPrototypeMethods = function setArrayOrObjectPrototypeMethods(mainObject, prototype, prototypeMethods, mutableMethods, customMethods) {
+	
+	    var isPrototypeForArray = mainObject === Array;
+	    var mainPrototype = mainObject.prototype;
+	    var es6 = isPrototypeForArray ? _array2.default : _object2.default;
+	    var es7 = isPrototypeForArray ? _array4.default : _object4.default;
+	
+	    var customPrototype = _extends({}, _crioDefaultMethods2.default);
+	
+	    prototypeMethods.splice(prototypeMethods.indexOf('constructor'), 1);
+	
+	    prototypeMethods.slice().forEach(function (method) {
+	        if (customMethods.indexOf(method) !== -1 || /__/.test(method) || /@@/.test(method)) {
+	            prototypeMethods.splice(prototypeMethods.indexOf(method), 1);
+	        }
+	    });
+	
+	    customPrototype.entries = function entries() {
+	        return es6.entries(this);
+	    };
+	
+	    customPrototype.filter = (function (isThisArray, filterPrototype) {
+	        var filterMethod = isThisArray ? _crioHelperMethods2.default.filterArray : _crioHelperMethods2.default.filterObject;
+	
+	        return function filter(callback) {
+	            if (!callback) {
+	                return this;
+	            }
+	
+	            return filterMethod.call(this, callback, filterPrototype);
+	        };
+	    })(isPrototypeForArray, prototype);
+	
+	    customPrototype.forEach = isPrototypeForArray ? _crioHelperMethods2.default.forEachArray : _crioHelperMethods2.default.forEachObject;
+	
+	    customPrototype.get = _crioHelperMethods2.default.get;
+	
+	    customPrototype.keys = function keys() {
+	        return es6.keys(this);
+	    };
+	
+	    customPrototype.map = (function (isThisArray, mapPrototype) {
+	        var mapMethod = isThisArray ? _crioHelperMethods2.default.mapArray : _crioHelperMethods2.default.mapObject;
+	
+	        return function map(callback) {
+	            if (!callback) {
+	                return this;
+	            }
+	
+	            return mapMethod.call(this, callback, mapPrototype);
+	        };
+	    })(isPrototypeForArray, prototype);
+	
+	    customPrototype.merge = _crioHelperMethods2.default.merge;
+	
+	    customPrototype.mutate = function mutate(callback) {
+	        if (!callback) {
+	            return this;
+	        }
+	
+	        return _crioHelperMethods2.default.mutate.call(this, callback);
+	    };
+	
+	    customPrototype.set = (function (newPrototype) {
+	        return function (keys, value) {
+	            return _crioHelperMethods2.default.set.call(this, keys, value, newPrototype);
+	        };
+	    })(prototype);
+	
+	    customPrototype.toArray = _crioHelperMethods2.default.toArray;
+	
+	    customPrototype.toObject = _crioHelperMethods2.default.toObject;
+	
+	    customPrototype.values = function values() {
+	        return (isPrototypeForArray ? es6 : es7).values(this);
+	    };
+	
+	    CUSTOM_METHODS.forEach(function (method) {
+	        (0, _functions.setNonEnumerable)(prototype, method, customPrototype[method]);
+	    });
+	
+	    var hasSymbol = typeof Symbol !== 'undefined';
+	    var hasObjectSpecificIteratorFunction = hasSymbol && !!mainPrototype[Symbol.iterator];
+	
+	    (0, _functions.setNonEnumerable)(prototype, hasSymbol ? Symbol.iterator : _symbol2.default.iterator, hasObjectSpecificIteratorFunction ? mainPrototype[Symbol.iterator] : isPrototypeForArray ? _array2.default.iterator : _crioIterator.iteratorFunction);
+	
+	    prototypeMethods.forEach(function (method) {
+	        var newMethod = undefined;
+	
+	        if (mutableMethods.indexOf(method) !== -1) {
+	            if (mainPrototype[method]) {
+	                newMethod = function () {
+	                    var clone = (0, _functions.shallowClone)(this);
+	
+	                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	                        args[_key] = arguments[_key];
+	                    }
+	
+	                    mainPrototype[method].apply(clone, args);
+	
+	                    return (0, _coalesceCrio2.default)(this, clone, prototype);
+	                };
+	            } else {
+	                (function () {
+	                    var polyfilledMethod = es6[method] || es7[method];
+	
+	                    if (polyfilledMethod) {
+	                        newMethod = function () {
+	                            var clone = (0, _functions.shallowClone)(this);
+	
+	                            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	                                args[_key2] = arguments[_key2];
+	                            }
+	
+	                            polyfilledMethod.apply(undefined, [clone].concat(args));
+	
+	                            return (0, _coalesceCrio2.default)(this, clone, prototype);
+	                        };
+	                    }
+	                })();
+	            }
+	        } else {
+	            if (mainPrototype[method]) {
+	                newMethod = function () {
+	                    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	                        args[_key3] = arguments[_key3];
+	                    }
+	
+	                    var result = mainPrototype[method].apply(this, args);
+	
+	                    if (!(0, _checkers.isArray)(result) && !(0, _checkers.isObject)(result)) {
+	                        return result;
+	                    }
+	
+	                    return coalesceResultIfApplicable(this, result, prototype);
+	                };
+	            } else {
+	                (function () {
+	                    var polyfilledMethod = es6[method] || es7[method];
+	
+	                    if (polyfilledMethod) {
+	                        newMethod = function () {
+	                            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	                                args[_key4] = arguments[_key4];
+	                            }
+	
+	                            var result = polyfilledMethod.apply(undefined, [this].concat(args));
+	
+	                            if (!(0, _checkers.isArray)(result) && !(0, _checkers.isObject)(result)) {
+	                                return result;
+	                            }
+	
+	                            return coalesceResultIfApplicable(this, result, prototype);
+	                        };
+	                    }
+	                })();
+	            }
+	        }
+	
+	        if ((0, _checkers.isFunction)(newMethod)) {
+	            (0, _functions.setNonEnumerable)(prototype, method, newMethod);
+	        }
+	    });
+	
+	    (0, _crioIdentifier.setCrioIdentifier)(prototype, mainObject);
+	
+	    return prototype;
+	};
+	
+	exports.default = setArrayOrObjectPrototypeMethods;
 	module.exports = exports['default'];
 
 /***/ },
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.isSameCrio = exports.isCrioMap = exports.isCrioList = exports.isCrioDate = exports.isCrioCollection = exports.isCrio = exports.isConvertibleToCrio = undefined;
-	
-	var _CrioCollection = __webpack_require__(8);
-	
-	var _CrioCollection2 = _interopRequireDefault(_CrioCollection);
-	
-	var _CrioDate = __webpack_require__(3);
-	
-	var _CrioDate2 = _interopRequireDefault(_CrioDate);
-	
-	var _checkers = __webpack_require__(5);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	/**
-	 * Returns true if object passed is CrioCollection
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	var isCrioCollection = function isCrioCollection(obj) {
-	    return obj instanceof _CrioCollection2.default;
-	};
-	
-	/**
-	 * Returns true if object passed is CrioDate
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	
-	// local partial imports
-	
-	// local imports
-	var isCrioDate = function isCrioDate(obj) {
-	    return obj instanceof _CrioDate2.default;
-	};
-	
-	/**
-	 * Returns true if object passed is CrioCollection or CrioDate
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	var isCrio = function isCrio(obj) {
-	    return isCrioCollection(obj) || isCrioDate(obj);
-	};
-	
-	/**
-	 * Returns true if object passed is either an array or object
-	 *
-	 * @param obj<any>
-	 * @returns {boolean}
-	 */
-	var isConvertibleToCrio = function isConvertibleToCrio(obj) {
-	    return !isCrio(obj) && ((0, _checkers.isArray)(obj) || (0, _checkers.isObject)(obj) || (0, _checkers.isDate)(obj));
-	};
-	
-	/**
-	 * Returns true if object passed is CrioList
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	var isCrioList = function isCrioList(obj) {
-	    return isCrioCollection(obj) && (0, _checkers.isArray)(obj.object);
-	};
-	
-	/**
-	 * Returns true if object passed is CrioMap
-	 *
-	 * @param obj<Any>
-	 * @returns {boolean}
-	 */
-	var isCrioMap = function isCrioMap(obj) {
-	    return isCrioCollection(obj) && (0, _checkers.isObject)(obj.object);
-	};
-	
-	/**
-	 * Returns true if both objects passed are Crio and are equal to one another
-	 *
-	 * @param obj1<Any>
-	 * @param obj2<Any>
-	 * @returns {boolean}
-	 */
-	var isSameCrio = function isSameCrio(obj1, obj2) {
-	    if (isCrioDate(obj1) && isCrioDate(obj2) || isCrioList(obj1) && isCrioList(obj2) || isCrioMap(obj1) && isCrioMap(obj2)) {
-	        return obj1.hashCode === obj2.hashCode;
-	    }
-	
-	    return false;
-	};
-	
-	exports.isConvertibleToCrio = isConvertibleToCrio;
-	exports.isCrio = isCrio;
-	exports.isCrioCollection = isCrioCollection;
-	exports.isCrioDate = isCrioDate;
-	exports.isCrioList = isCrioList;
-	exports.isCrioMap = isCrioMap;
-	exports.isSameCrio = isSameCrio;
-	exports.default = {
-	    isConvertibleToCrio: isConvertibleToCrio,
-	    isCrio: isCrio,
-	    isCrioCollection: isCrioCollection,
-	    isCrioDate: isCrioDate,
-	    isCrioList: isCrioList,
-	    isCrioMap: isCrioMap,
-	    isSameCrio: isSameCrio
-	};
+	__webpack_require__(8);
+	__webpack_require__(32);
+	__webpack_require__(43);
+	__webpack_require__(44);
+	__webpack_require__(46);
+	__webpack_require__(51);
+	__webpack_require__(54);
+	__webpack_require__(56);
+	__webpack_require__(60);
+	module.exports = __webpack_require__(16).Array;
 
 /***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+	var $at  = __webpack_require__(9)(true);
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	// local imports
-	
-	// local partial imports
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	// 21.1.3.27 String.prototype[@@iterator]()
+	__webpack_require__(12)(String, 'String', function(iterated){
+	  this._t = String(iterated); // target
+	  this._i = 0;                // next index
+	// 21.1.5.2.1 %StringIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , index = this._i
+	    , point;
+	  if(index >= O.length)return {value: undefined, done: true};
+	  point = $at(O, index);
+	  this._i += point.length;
+	  return {value: point, done: false};
 	});
-	
-	var _createNewCrio = __webpack_require__(2);
-	
-	var _checkers = __webpack_require__(5);
-	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _crioFunctions = __webpack_require__(9);
-	
-	var _decorators = __webpack_require__(30);
-	
-	var _functions = __webpack_require__(10);
-	
-	var _hash = __webpack_require__(31);
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var isInvalidKey = function isInvalidKey(obj, index, length) {
-	    return index !== length - 1 && (0, _checkers.isUndefined)(obj);
-	};
-	
-	var CrioCollection = (function () {
-	    function CrioCollection(obj) {
-	        _classCallCheck(this, CrioCollection);
-	
-	        (0, _decorators.staticProperty)(this, 'hashCode', (0, _hash.hashObject)(obj));
-	        (0, _decorators.readonlyProperty)(this, 'object', obj);
-	        (0, _decorators.readonlyProperty)(this, 'size', (0, _checkers.isArray)(obj) ? obj.length : Object.getOwnPropertyNames(obj).length);
-	    }
-	
-	    /**
-	     * Creates empty CrioMap
-	     *
-	     * @returns {CrioMap}
-	     */
-	
-	    _createClass(CrioCollection, [{
-	        key: 'clear',
-	        value: function clear() {
-	            var newObject = (0, _checkers.isArray)(this.object) ? [] : {};
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(newObject));
-	        }
-	
-	        /**
-	         * Alias for Array.prototype.entries
-	         *
-	         * @returns {Iterator}
-	         */
-	
-	    }, {
-	        key: 'entries',
-	        value: function entries() {
-	            return (0, _functions.entries)(this.object);
-	        }
-	
-	        /**
-	         * Tests if object passed is equal to the current Crio object
-	         *
-	         * @param crio2<Crio>
-	         * @returns {boolean}
-	         */
-	
-	    }, {
-	        key: 'equals',
-	        value: function equals(crio2) {
-	            if ((0, _checkers.isValueless)(crio2)) {
-	                return false;
-	            }
-	
-	            return (0, _crioCheckers.isSameCrio)(this, crio2);
-	        }
-	
-	        /**
-	         * Executes forEach over values stored in this.object
-	         *
-	         * @param fn<Function>
-	         * @param thisArg<Object[optional]>
-	         * @returns {CrioList}
-	         */
-	
-	    }, {
-	        key: 'forEach',
-	        value: function forEach(fn, thisArg) {
-	            var loopFunction = (0, _checkers.isArray)(this.object) ? _functions.forEach : _functions.forIn;
-	
-	            loopFunction(this.object, fn, thisArg);
-	
-	            return this;
-	        }
-	
-	        /**
-	         * Based on key(s) passed, retrieves value(s) associated. If multiple keys are passed,
-	         * a CrioMap of key:value pairs are returned, otherwise the value itself is returned. If the value
-	         * is an array or object, then it is returned as a CrioList or CrioMap to allow for chaining.
-	         *
-	         * @param keys<Array>
-	         * @returns {*}
-	         */
-	
-	    }, {
-	        key: 'get',
-	        value: function get() {
-	            var _this = this;
-	
-	            for (var _len = arguments.length, keys = Array(_len), _key = 0; _key < _len; _key++) {
-	                keys[_key] = arguments[_key];
-	            }
-	
-	            if (keys.length === 0) {
-	                return this;
-	            }
-	
-	            if (keys.length === 1) {
-	                var value = this.object[keys[0]];
-	
-	                if ((0, _crioCheckers.isConvertibleToCrio)(value)) {
-	                    return (0, _crioFunctions.coalesceCrioValue)(this, (0, _createNewCrio.createNewCrio)(this.object[keys[0]]));
-	                }
-	
-	                return value;
-	            }
-	
-	            var keyMap = (0, _createNewCrio.createNewCrio)({});
-	
-	            (0, _functions.forEach)(keys, function (key) {
-	                keyMap = keyMap.set(key, _this.object[key]);
-	            });
-	
-	            return (0, _crioFunctions.coalesceCrioValue)(this, keyMap);
-	        }
-	
-	        /**
-	         * Returns value of deeply nested item in this.object based on keys array. if value is an
-	         * array or object, then a CrioList or CrioMap is returned to allow for chaining.
-	         *
-	         * @param keys
-	         * @returns {Array|Object}
-	         */
-	
-	    }, {
-	        key: 'getIn',
-	        value: function getIn() {
-	            var keys = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-	
-	            var retValue = this.object,
-	                foundKeyMatch = true;
-	
-	            (0, _functions.forEach)(keys, function (key, index) {
-	                var value = retValue[key];
-	
-	                if (isInvalidKey(value, index, keys.length)) {
-	                    foundKeyMatch = false;
-	                    return false;
-	                }
-	
-	                retValue = (0, _crioCheckers.isCrio)(value) ? value.object : value;
-	            });
-	
-	            if (foundKeyMatch) {
-	                if ((0, _crioCheckers.isConvertibleToCrio)(retValue)) {
-	                    return (0, _crioFunctions.coalesceCrioValue)(this, (0, _createNewCrio.createNewCrio)(retValue));
-	                }
-	
-	                return retValue;
-	            }
-	
-	            return undefined;
-	        }
-	
-	        /**
-	         * Returns true if size is 0
-	         *
-	         * @returns {boolean}
-	         */
-	
-	    }, {
-	        key: 'isEmpty',
-	        value: function isEmpty() {
-	            return this.size === 0;
-	        }
-	
-	        /**
-	         * Retrieves an array of the keys for this.object
-	         *
-	         * @returns {Array}
-	         */
-	
-	    }, {
-	        key: 'keys',
-	        value: function keys() {
-	            return Object.keys(this.object);
-	        }
-	
-	        /**
-	         * Accepts any number of parameters and merges them into a new object / array
-	         *
-	         * @param sources<Array>
-	         * @returns {CrioCollection}
-	         */
-	
-	    }, {
-	        key: 'merge',
-	        value: function merge() {
-	            for (var _len2 = arguments.length, sources = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	                sources[_key2] = arguments[_key2];
-	            }
-	
-	            var mergedObject = _crioFunctions.merge.apply(undefined, [this.object].concat(sources));
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(mergedObject));
-	        }
-	
-	        /**
-	         * Accepts any number of parameters and merges them into a new object / array retrieved
-	         * based on the keys passed
-	         *
-	         * @param keys<Array>
-	         * @param sources<Array>
-	         * @returns {CrioCollection}
-	         */
-	
-	    }, {
-	        key: 'mergeIn',
-	        value: function mergeIn(keys) {
-	            for (var _len3 = arguments.length, sources = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-	                sources[_key3 - 1] = arguments[_key3];
-	            }
-	
-	            if (keys.length === 0) {
-	                return this.merge.apply(this, sources);
-	            }
-	
-	            var objectToMerge = this.getIn(keys).object;
-	
-	            var objectToSet = _crioFunctions.merge.apply(undefined, sources);
-	
-	            if ((0, _crioCheckers.isConvertibleToCrio)(objectToMerge)) {
-	                objectToSet = (0, _crioFunctions.merge)(objectToMerge, objectToSet);
-	            }
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, this.setIn(keys, (0, _crioFunctions.merge)(objectToMerge, objectToSet)));
-	        }
-	
-	        /**
-	         * Accepts a function which will receive single parameter of a thawed Crio object. This allows
-	         * working with the object in a standard mutable way, and whatever you return in the function will
-	         * be either be converted back to a CrioCollection (if array or object) or simply returned.
-	         *
-	         * @param callback<Function>
-	         * @returns {any}
-	         */
-	
-	    }, {
-	        key: 'mutate',
-	        value: function mutate(callback) {
-	            var thawedObject = this.thaw();
-	            var mutatedThis = callback(thawedObject) || thawedObject;
-	
-	            if ((0, _crioCheckers.isConvertibleToCrio)(mutatedThis)) {
-	                return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(mutatedThis));
-	            }
-	
-	            return mutatedThis;
-	        }
-	
-	        /**
-	         * Based on values in this.object, sets the values called out by key and returns a new CrioList.
-	         * If key is a string or number, then the value where the property / index is equal to key is updated
-	         * to value. If key is an object, then each property in the object will set the equivalent property
-	         * in this.object to the value in the key object.
-	         *
-	         * @param key<Array|String>
-	         * @param value<Any[optional]>
-	         * @returns {Object}
-	         */
-	
-	    }, {
-	        key: 'set',
-	        value: function set(key, value) {
-	            if ((0, _checkers.isUndefined)(key)) {
-	                throw new TypeError('The set method requires a key.');
-	            }
-	
-	            var newValue = this.thaw();
-	
-	            if ((0, _checkers.isObject)(key)) {
-	                (0, _functions.forIn)(key, function (value, index) {
-	                    newValue[index] = value;
-	                });
-	            } else {
-	                newValue[key] = value;
-	            }
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(newValue));
-	        }
-	
-	        /**
-	         * Based on array of keys, sets deeply-nested value in object
-	         *
-	         * @param keys<Array>
-	         * @param value<any>
-	         * @returns {Object}
-	         */
-	
-	    }, {
-	        key: 'setIn',
-	        value: function setIn() {
-	            var keys = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-	            var value = arguments[1];
-	
-	            if ((0, _checkers.isUndefined)(value)) {
-	                throw new TypeError('You need to pass in a value to apply for the key.');
-	            }
-	
-	            var updatedObject = (0, _functions.setDeeplyNested)(this.thaw(), keys, value);
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrio)(updatedObject));
-	        }
-	
-	        /**
-	         * Returns a new vanillaJS object of the Crio's object that has been unfrzon
-	         *
-	         * @returns thawedCrio<Array|Object>
-	         */
-	
-	    }, {
-	        key: 'thaw',
-	        value: function thaw() {
-	            return (0, _crioFunctions.thaw)(this);
-	        }
-	
-	        /**
-	         * Converts CrioCollection to a CrioList, where each item is a key:value object from the original map
-	         *
-	         * @returns {CrioCollection}
-	         */
-	
-	    }, {
-	        key: 'toCollection',
-	        value: function toCollection() {
-	            return this.mutate(function (mutableObject) {
-	                var collection = [];
-	
-	                (0, _functions.forIn)(mutableObject, function (value, key) {
-	                    collection.push(_defineProperty({}, key, value));
-	                });
-	
-	                return collection;
-	            });
-	        }
-	
-	        /**
-	         * Alias of Array.prototype.toLocaleString
-	         *
-	         * @returns {string}
-	         */
-	
-	    }, {
-	        key: 'toLocaleString',
-	        value: function toLocaleString() {
-	            return (0, _crioFunctions.convertToString)(this, true);
-	        }
-	
-	        /**
-	         * Alias of Array.prototype.toString
-	         *
-	         * @returns {string}
-	         */
-	
-	    }, {
-	        key: 'toString',
-	        value: function toString() {
-	            return (0, _crioFunctions.convertToString)(this, false);
-	        }
-	
-	        /**
-	         * Similar to .keys(), this will instead return an array of values. In the case of objects, the values
-	         * are plucked from the top-level mapping and returned as an array. In all other cases, this.object itself
-	         * is returned. In all scenarios, mutable is returned to the object.
-	         *
-	         * @returns {Array}
-	         */
-	
-	    }, {
-	        key: 'values',
-	        value: function values() {
-	            var valueArray = [];
-	
-	            (0, _functions.forIn)(this.object, function (value) {
-	                valueArray.push(value);
-	            });
-	
-	            return valueArray;
-	        }
-	    }]);
-	
-	    return CrioCollection;
-	})();
-	
-	exports.default = CrioCollection;
-	module.exports = exports['default'];
 
 /***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.thaw = exports.merge = exports.getCrioInstance = exports.convertToString = exports.coalesceCrioValue = exports.cloneObject = undefined;
-	
-	var _createNewCrio = __webpack_require__(2);
-	
-	var _CrioCollection = __webpack_require__(8);
-	
-	var _CrioCollection2 = _interopRequireDefault(_CrioCollection);
-	
-	var _CrioDate = __webpack_require__(3);
-	
-	var _CrioDate2 = _interopRequireDefault(_CrioDate);
-	
-	var _checkers = __webpack_require__(5);
-	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _functions = __webpack_require__(10);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-	
-	// local imports
-	
-	/**
-	 * If the Crio values are equal, then return the original instance, else return the new instance
-	 *
-	 * @param crio1<Object>
-	 * @param crio2<Object>
-	 * @returns isSameCrio<Boolean>
-	 */
-	var getCrioInstance = function getCrioInstance(crio1, crio2) {
-	    return (0, _crioCheckers.isSameCrio)(crio1, crio2) ? crio1 : crio2;
-	};
-	
-	/**
-	 * Deep clone object passed, returning configurability and enumerabity back to it
-	 *
-	 * @param originalObj<Any>
-	 * @returns {*}
-	 */
-	var cloneObject = function cloneObject(originalObj) {
-	    var visited = [originalObj],
-	        circularSet = [{
-	        base: originalObj
-	    }];
-	
-	    var pushToCircularSet = function pushToCircularSet(base, index, isValueArray) {
-	        var newBase = base[index] = isValueArray ? [] : {};
-	
-	        circularSet.push({
-	            up: base,
-	            value: newBase
-	        });
-	    };
-	
-	    var cloneObj = function cloneObj(obj) {
-	        var cleanObj = (0, _crioCheckers.isCrio)(obj) ? obj.object : obj;
-	
-	        var base = [];
-	
-	        if ((0, _checkers.isArray)(cleanObj)) {
-	            var _ret = (function () {
-	                var clonedArray = [];
-	
-	                (0, _functions.forEach)(cleanObj, function (value, index) {
-	                    var visitedIndex = visited.indexOf(value);
-	
-	                    if (visitedIndex === -1) {
-	                        var isValueArray = (0, _checkers.isArray)(value);
-	
-	                        if (isValueArray || (0, _checkers.isObject)(value)) {
-	                            visited.push(value);
-	
-	                            pushToCircularSet(base, index, isValueArray);
-	
-	                            clonedArray.push(cloneObject(value));
-	                        } else {
-	                            clonedArray.push(value);
-	                        }
-	                    } else {
-	                        clonedArray.push(circularSet[visitedIndex].value);
-	                    }
-	                });
-	
-	                cloneObj.prototype = cloneObj(obj.prototype);
-	
-	                return {
-	                    v: clonedArray
-	                };
-	            })();
-	
-	            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-	        }
-	
-	        if ((0, _checkers.isObject)(cleanObj)) {
-	            var _ret2 = (function () {
-	                var clonedObject = {};
-	
-	                (0, _functions.forOwn)(cleanObj, function (value, key) {
-	                    var visitedIndex = visited.indexOf(value);
-	
-	                    if (visitedIndex === -1) {
-	                        var isValueArray = (0, _checkers.isArray)(value);
-	
-	                        if (isValueArray || (0, _checkers.isObject)(value)) {
-	                            visited.push(value);
-	
-	                            pushToCircularSet(base, key, isValueArray);
-	
-	                            value = cloneObject(value);
-	                        }
-	
-	                        Object.defineProperty(clonedObject, key, {
-	                            configurable: true,
-	                            enumerable: cleanObj.propertyIsEnumerable(key),
-	                            value: value,
-	                            writable: true
-	                        });
-	                    } else {
-	                        clonedObject[key] = circularSet[visitedIndex].value;
-	                    }
-	                });
-	
-	                cloneObj.prototype = cloneObj(obj.prototype);
-	
-	                return {
-	                    v: clonedObject
-	                };
-	            })();
-	
-	            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
-	        }
-	
-	        if ((0, _checkers.isDate)(cleanObj)) {
-	            return new Date(cleanObj.valueOf());
-	        }
-	
-	        return cleanObj;
-	    };
-	
-	    return cloneObj(originalObj);
-	};
-	
-	var convertToString = function convertToString(obj, isLocaleSpecific) {
-	    var isThisObject = (0, _checkers.isObject)(obj.object);
-	    var prefix = isThisObject ? 'CrioMap {' : 'CrioList [';
-	    var suffix = isThisObject ? '}' : ']';
-	
-	    var stringReturn = '';
-	
-	    obj.forEach(function (value, key) {
-	        if (stringReturn !== '') {
-	            stringReturn += ', ';
-	        }
-	
-	        if (isThisObject) {
-	            stringReturn += key + ': ';
-	        }
-	
-	        if ((0, _crioCheckers.isCrioCollection)(value)) {
-	            stringReturn += convertToString(value, isLocaleSpecific);
-	        } else if ((0, _crioCheckers.isCrioDate)(value)) {
-	            stringReturn += value.toString();
-	        } else if (isLocaleSpecific && ((0, _checkers.isNumber)(value) || (0, _checkers.isDate)(value))) {
-	            stringReturn += value.toLocaleString();
-	        } else {
-	            stringReturn += value;
-	        }
-	    });
-	
-	    stringReturn = prefix + stringReturn + suffix;
-	
-	    return stringReturn;
-	};
-	
-	/**
-	 * Helper function to return either the thawed Crio object or the object itself
-	 *
-	 * @param obj<any>
-	 * @returns {any}
-	 */
-	var getThawedObject = function getThawedObject(obj) {
-	    return (0, _crioCheckers.isCrio)(obj) ? obj.thaw() : obj;
-	};
-	
-	/**
-	 * Deeply merge objects or arrays
-	 *
-	 * @param target<any>
-	 * @param sources<Array>
-	 * @returns {*}
-	 */
-	var mergeObject = function mergeObject(target) {
-	    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        sources[_key - 1] = arguments[_key];
-	    }
-	
-	    if (sources.length === 0) {
-	        return target;
-	    }
-	
-	    target = getThawedObject(target);
-	
-	    var isTargetArr = (0, _checkers.isArray)(target);
-	    var isTargetObj = (0, _checkers.isObject)(target);
-	
-	    if (!isTargetArr && !isTargetObj) {
-	        return sources[sources.length - 1];
-	    }
-	
-	    var dest = isTargetArr ? [] : {};
-	
-	    (0, _functions.forEach)(sources, function (source) {
-	        var realSource = getThawedObject(source);
-	
-	        if ((0, _checkers.isArray)(realSource)) {
-	            target = target || [];
-	            dest = dest.concat(target);
-	
-	            (0, _functions.forEach)(realSource, function (item, i) {
-	                var realItem = getThawedObject(item);
-	
-	                if ((0, _checkers.isUndefined)(dest[i])) {
-	                    dest[i] = realItem;
-	                } else if ((0, _checkers.isObject)(realItem)) {
-	                    dest[i] = mergeObject(target[i], realItem);
-	                } else {
-	                    if (target.indexOf(realItem) === -1) {
-	                        dest.push(realItem);
-	                    }
-	                }
-	            });
-	        } else {
-	            target = target || {};
-	
-	            (0, _functions.forOwn)(target, function (value, key) {
-	                dest[key] = getThawedObject(value);
-	            });
-	
-	            (0, _functions.forOwn)(realSource, function (value, key) {
-	                var realValue = getThawedObject(value);
-	
-	                if ((0, _checkers.isObject)(realValue)) {
-	                    dest[key] = mergeObject(target[key], realValue);
-	                }
-	
-	                if (!(0, _checkers.isObject)(realValue) || !realValue) {
-	                    dest[key] = realValue;
-	                } else if (!target[key]) {
-	                    dest[key] = realValue;
-	                }
-	            });
-	        }
-	    });
-	
-	    return dest;
-	};
-	
-	/**
-	 * Accepts any parameter, and if it is a Crio then return a cloned and unfrozen item
-	 *
-	 * @param obj<Any>
-	 * @returns {*}
-	 */
-	var thawCrio = function thawCrio(obj) {
-	    if ((0, _crioCheckers.isCrio)(obj)) {
-	        return cloneObject(obj.object);
-	    }
-	
-	    if (Object.isFrozen(obj)) {
-	        return cloneObject(obj);
-	    }
-	
-	    return obj;
-	};
-	
-	var coalesceCrioValue = function coalesceCrioValue(Crio, obj) {
-	    if ((0, _crioCheckers.isConvertibleToCrio)(obj) && !(0, _crioCheckers.isCrio)(obj)) {
-	        return getCrioInstance(Crio, (0, _createNewCrio.createNewCrio)(obj));
-	    }
-	
-	    return obj;
-	};
-	
-	exports.cloneObject = cloneObject;
-	exports.coalesceCrioValue = coalesceCrioValue;
-	exports.convertToString = convertToString;
-	exports.getCrioInstance = getCrioInstance;
-	exports.merge = mergeObject;
-	exports.thaw = thawCrio;
-	exports.default = {
-	    cloneObject: cloneObject,
-	    coalesceCrioValue: coalesceCrioValue,
-	    convertToString: convertToString,
-	    getCrioInstance: getCrioInstance,
-	    merge: mergeObject,
-	    thaw: thawCrio
+	var toInteger = __webpack_require__(10)
+	  , defined   = __webpack_require__(11);
+	// true  -> String#at
+	// false -> String#codePointAt
+	module.exports = function(TO_STRING){
+	  return function(that, pos){
+	    var s = String(defined(that))
+	      , i = toInteger(pos)
+	      , l = s.length
+	      , a, b;
+	    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+	    a = s.charCodeAt(i);
+	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+	      ? TO_STRING ? s.charAt(i) : a
+	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+	  };
 	};
 
 /***/ },
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.splice = exports.setDeeplyNested = exports.forOwn = exports.forIn = exports.forEachRight = exports.forEach = exports.entries = undefined;
-	
-	var _entries = __webpack_require__(11);
-	
-	var _entries2 = _interopRequireDefault(_entries);
-	
-	var _checkers = __webpack_require__(5);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	// external dependencies
-	
-	// local partial imports
-	
-	/**
-	 * Loops over array, executing each function
-	 * If one of the iterations returns false, the forEach is canceled
-	 *
-	 * @param arr<Array>
-	 * @param fn<Function>
-	 * @param thisArg<Object[optional]>
-	 */
-	var forEach = function forEach(arr, fn, thisArg) {
-	    if (!(0, _checkers.isArray)(arr)) {
-	        throw new TypeError('Object passed to forEach is not an array.');
-	    }
-	
-	    if ((0, _checkers.isUndefined)(fn)) {
-	        return;
-	    }
-	
-	    for (var i = 0, len = arr.length; i < len; i++) {
-	        if (fn.call(thisArg, arr[i], i, arr) === false) {
-	            break;
-	        }
-	    }
-	};
-	
-	var forEachRight = function forEachRight(arr, fn, thisArg) {
-	    if (!(0, _checkers.isArray)(arr)) {
-	        throw new TypeError('Object passed to forEach is not an array.');
-	    }
-	
-	    if ((0, _checkers.isUndefined)(fn)) {
-	        return;
-	    }
-	
-	    for (var i = arr.length; i--;) {
-	        if (fn.call(thisArg, arr[i], i, arr) === false) {
-	            break;
-	        }
-	    }
-	};
-	
-	/**
-	 * Creates flattened array of keys to be used in object loops
-	 *
-	 * @param args<Array>
-	 * @returns keys<Array>
-	 */
-	var getKeys = function getKeys() {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
-	    }
-	
-	    var keys = [];
-	
-	    forEach(args, function (keyArr) {
-	        keys.push.apply(keys, _toConsumableArray(keyArr));
-	    });
-	
-	    return keys;
-	};
-	
-	/**
-	 * Executes standard for loop using the keys provided, which is faster than a traditional for-in
-	 *
-	 * @param obj<Object>
-	 * @param keys<Array>
-	 * @param fn<Function>
-	 * @param thisArg<Object[optional]>
-	 */
-	var forLoopFromKeys = function forLoopFromKeys(obj, keys, fn, thisArg) {
-	    if (!(0, _checkers.isUndefined)(fn)) {
-	        for (var i = 0, len = keys.length; i < len; i++) {
-	            var key = keys[i];
-	
-	            if (fn.call(thisArg, obj[key], key, obj) === false) {
-	                break;
-	            }
-	        }
-	    }
-	};
-	
-	/**
-	 * Checks if object passed is a plain object, and if so then loops over all own keys + prototype keys
-	 *
-	 * @param obj<Object>
-	 * @param fn<Function>
-	 * @param thisArg<Object[optional]>
-	 */
-	var forIn = function forIn(obj, fn, thisArg) {
-	    if (!(0, _checkers.isUndefined)(fn)) {
-	        var keys = getKeys(Object.keys(obj), Object.keys(Object.getPrototypeOf(obj)));
-	
-	        forLoopFromKeys(obj, keys, fn, thisArg);
-	    }
-	};
-	
-	/**
-	 * Checks if object passed is a plain object, and if so then loops over all own keys
-	 *
-	 * @param obj<Object>
-	 * @param fn<Function>
-	 * @param thisArg<Object[optional]>
-	 */
-	var forOwn = function forOwn(obj, fn, thisArg) {
-	    if (!(0, _checkers.isUndefined)(fn)) {
-	        var keys = getKeys(Object.getOwnPropertyNames(obj));
-	
-	        forLoopFromKeys(obj, keys, fn, thisArg);
-	    }
-	};
-	
-	/**
-	 * Returns a new array with all values of the original array except for the value at the index passed
-	 *
-	 * @param obj<Array>
-	 * @param index<Number>
-	 * @param removeNum<Number>
-	 * @param newItems<Array>
-	 * @returns splicedArray<Array>
-	 */
-	var immutableSplice = function immutableSplice(obj, index, removeNum) {
-	    for (var _len2 = arguments.length, newItems = Array(_len2 > 3 ? _len2 - 3 : 0), _key2 = 3; _key2 < _len2; _key2++) {
-	        newItems[_key2 - 3] = arguments[_key2];
-	    }
-	
-	    if (!(0, _checkers.isArray)(obj)) {
-	        throw new TypeError('Object passed is not an array.');
-	    }
-	
-	    if ((0, _checkers.isUndefined)(obj[index])) {
-	        return obj;
-	    }
-	
-	    return [].concat(_toConsumableArray(obj.slice(0, index)), newItems, _toConsumableArray(obj.slice(index + removeNum)));
-	};
-	
-	var setDeeplyNested = function setDeeplyNested(obj, keys, value) {
-	    forEach(keys, function (key, index) {
-	        if (index < keys.length - 1) {
-	            keys.shift();
-	
-	            obj[key] = setDeeplyNested(obj[key] || {}, keys, value);
-	        } else if (!(0, _checkers.isUndefined)(key)) {
-	            obj[key] = value;
-	        }
-	    });
-	
-	    return obj;
-	};
-	
-	var entriesShim = function entriesShim(obj) {
-	    if (obj.entries) {
-	        return obj.entries();
-	    }
-	
-	    return (0, _entries2.default)(obj);
-	};
-	
-	exports.entries = entriesShim;
-	exports.forEach = forEach;
-	exports.forEachRight = forEachRight;
-	exports.forIn = forIn;
-	exports.forOwn = forOwn;
-	exports.setDeeplyNested = setDeeplyNested;
-	exports.splice = immutableSplice;
-	exports.default = {
-	    entries: entriesShim,
-	    forEach: forEach,
-	    forEachRight: forEachRight,
-	    forIn: forIn,
-	    forOwn: forOwn,
-	    setDeeplyNested: setDeeplyNested,
-	    splice: immutableSplice
+	// 7.1.4 ToInteger
+	var ceil  = Math.ceil
+	  , floor = Math.floor;
+	module.exports = function(it){
+	  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 	};
 
 /***/ },
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	__webpack_require__(12);
-	module.exports = __webpack_require__(15).Object.entries;
+	// 7.2.1 RequireObjectCoercible(argument)
+	module.exports = function(it){
+	  if(it == undefined)throw TypeError("Can't call method on  " + it);
+	  return it;
+	};
 
 /***/ },
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// http://goo.gl/XkBrjD
-	var $export  = __webpack_require__(13)
-	  , $entries = __webpack_require__(25)(true);
+	'use strict';
+	var LIBRARY        = __webpack_require__(13)
+	  , $export        = __webpack_require__(14)
+	  , redefine       = __webpack_require__(22)
+	  , hide           = __webpack_require__(17)
+	  , has            = __webpack_require__(26)
+	  , Iterators      = __webpack_require__(27)
+	  , $iterCreate    = __webpack_require__(28)
+	  , setToStringTag = __webpack_require__(29)
+	  , getProto       = __webpack_require__(18).getProto
+	  , ITERATOR       = __webpack_require__(30)('iterator')
+	  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+	  , FF_ITERATOR    = '@@iterator'
+	  , KEYS           = 'keys'
+	  , VALUES         = 'values';
 	
-	$export($export.S, 'Object', {
-	  entries: function entries(it){
-	    return $entries(it);
+	var returnThis = function(){ return this; };
+	
+	module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+	  $iterCreate(Constructor, NAME, next);
+	  var getMethod = function(kind){
+	    if(!BUGGY && kind in proto)return proto[kind];
+	    switch(kind){
+	      case KEYS: return function keys(){ return new Constructor(this, kind); };
+	      case VALUES: return function values(){ return new Constructor(this, kind); };
+	    } return function entries(){ return new Constructor(this, kind); };
+	  };
+	  var TAG        = NAME + ' Iterator'
+	    , DEF_VALUES = DEFAULT == VALUES
+	    , VALUES_BUG = false
+	    , proto      = Base.prototype
+	    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+	    , $default   = $native || getMethod(DEFAULT)
+	    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
+	    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
+	    , methods, key, IteratorPrototype;
+	  // Fix native
+	  if($anyNative){
+	    IteratorPrototype = getProto($anyNative.call(new Base));
+	    if(IteratorPrototype !== Object.prototype){
+	      // Set @@toStringTag to native iterators
+	      setToStringTag(IteratorPrototype, TAG, true);
+	      // fix for some old engines
+	      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+	    }
 	  }
-	});
+	  // fix Array#{values, @@iterator}.name in V8 / FF
+	  if(DEF_VALUES && $native && $native.name !== VALUES){
+	    VALUES_BUG = true;
+	    $default = function values(){ return $native.call(this); };
+	  }
+	  // Define iterator
+	  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+	    hide(proto, ITERATOR, $default);
+	  }
+	  // Plug for library
+	  Iterators[NAME] = $default;
+	  Iterators[TAG]  = returnThis;
+	  if(DEFAULT){
+	    methods = {
+	      values:  DEF_VALUES ? $default : getMethod(VALUES),
+	      keys:    IS_SET     ? $default : getMethod(KEYS),
+	      entries: $entries
+	    };
+	    if(FORCED)for(key in methods){
+	      if(!(key in proto))redefine(proto, key, methods[key]);
+	    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+	  }
+	  return methods;
+	};
 
 /***/ },
 /* 13 */
+/***/ function(module, exports) {
+
+	module.exports = false;
+
+/***/ },
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var global    = __webpack_require__(14)
-	  , core      = __webpack_require__(15)
-	  , hide      = __webpack_require__(16)
-	  , redefine  = __webpack_require__(21)
-	  , ctx       = __webpack_require__(23)
+	var global    = __webpack_require__(15)
+	  , core      = __webpack_require__(16)
+	  , hide      = __webpack_require__(17)
+	  , redefine  = __webpack_require__(22)
+	  , ctx       = __webpack_require__(24)
 	  , PROTOTYPE = 'prototype';
 	
 	var $export = function(type, name, source){
@@ -1732,7 +1043,7 @@ var crio =
 	module.exports = $export;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -1741,19 +1052,19 @@ var crio =
 	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
-	var core = module.exports = {version: '2.0.0'};
+	var core = module.exports = {version: '2.0.1'};
 	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $          = __webpack_require__(17)
-	  , createDesc = __webpack_require__(18);
-	module.exports = __webpack_require__(19) ? function(object, key, value){
+	var $          = __webpack_require__(18)
+	  , createDesc = __webpack_require__(19);
+	module.exports = __webpack_require__(20) ? function(object, key, value){
 	  return $.setDesc(object, key, createDesc(1, value));
 	} : function(object, key, value){
 	  object[key] = value;
@@ -1761,7 +1072,7 @@ var crio =
 	};
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	var $Object = Object;
@@ -1779,7 +1090,7 @@ var crio =
 	};
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = function(bitmap, value){
@@ -1792,16 +1103,16 @@ var crio =
 	};
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Thank's IE8 for his funny defineProperty
-	module.exports = !__webpack_require__(20)(function(){
+	module.exports = !__webpack_require__(21)(function(){
 	  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 	});
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	module.exports = function(exec){
@@ -1813,19 +1124,19 @@ var crio =
 	};
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// add fake Function#toString
 	// for correct work wrapped methods / constructors with methods like LoDash isNative
-	var global    = __webpack_require__(14)
-	  , hide      = __webpack_require__(16)
-	  , SRC       = __webpack_require__(22)('src')
+	var global    = __webpack_require__(15)
+	  , hide      = __webpack_require__(17)
+	  , SRC       = __webpack_require__(23)('src')
 	  , TO_STRING = 'toString'
 	  , $toString = Function[TO_STRING]
 	  , TPL       = ('' + $toString).split(TO_STRING);
 	
-	__webpack_require__(15).inspectSource = function(it){
+	__webpack_require__(16).inspectSource = function(it){
 	  return $toString.call(it);
 	};
 	
@@ -1850,7 +1161,7 @@ var crio =
 	});
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	var id = 0
@@ -1860,11 +1171,11 @@ var crio =
 	};
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// optional / simple context binding
-	var aFunction = __webpack_require__(24);
+	var aFunction = __webpack_require__(25);
 	module.exports = function(fn, that, length){
 	  aFunction(fn);
 	  if(that === undefined)return fn;
@@ -1885,7 +1196,7 @@ var crio =
 	};
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	module.exports = function(it){
@@ -1894,11 +1205,1347 @@ var crio =
 	};
 
 /***/ },
-/* 25 */
+/* 26 */
+/***/ function(module, exports) {
+
+	var hasOwnProperty = {}.hasOwnProperty;
+	module.exports = function(it, key){
+	  return hasOwnProperty.call(it, key);
+	};
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	module.exports = {};
+
+/***/ },
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $         = __webpack_require__(17)
-	  , toIObject = __webpack_require__(26)
+	'use strict';
+	var $              = __webpack_require__(18)
+	  , descriptor     = __webpack_require__(19)
+	  , setToStringTag = __webpack_require__(29)
+	  , IteratorPrototype = {};
+	
+	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+	__webpack_require__(17)(IteratorPrototype, __webpack_require__(30)('iterator'), function(){ return this; });
+	
+	module.exports = function(Constructor, NAME, next){
+	  Constructor.prototype = $.create(IteratorPrototype, {next: descriptor(1, next)});
+	  setToStringTag(Constructor, NAME + ' Iterator');
+	};
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var def = __webpack_require__(18).setDesc
+	  , has = __webpack_require__(26)
+	  , TAG = __webpack_require__(30)('toStringTag');
+	
+	module.exports = function(it, tag, stat){
+	  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+	};
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var store      = __webpack_require__(31)('wks')
+	  , uid        = __webpack_require__(23)
+	  , Symbol     = __webpack_require__(15).Symbol
+	  , USE_SYMBOL = typeof Symbol == 'function';
+	module.exports = function(name){
+	  return store[name] || (store[name] =
+	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+	};
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global = __webpack_require__(15)
+	  , SHARED = '__core-js_shared__'
+	  , store  = global[SHARED] || (global[SHARED] = {});
+	module.exports = function(key){
+	  return store[key] || (store[key] = {});
+	};
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var ctx         = __webpack_require__(24)
+	  , $export     = __webpack_require__(14)
+	  , toObject    = __webpack_require__(33)
+	  , call        = __webpack_require__(34)
+	  , isArrayIter = __webpack_require__(37)
+	  , toLength    = __webpack_require__(38)
+	  , getIterFn   = __webpack_require__(39);
+	$export($export.S + $export.F * !__webpack_require__(42)(function(iter){ Array.from(iter); }), 'Array', {
+	  // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
+	  from: function from(arrayLike/*, mapfn = undefined, thisArg = undefined*/){
+	    var O       = toObject(arrayLike)
+	      , C       = typeof this == 'function' ? this : Array
+	      , aLen    = arguments.length
+	      , mapfn   = aLen > 1 ? arguments[1] : undefined
+	      , mapping = mapfn !== undefined
+	      , index   = 0
+	      , iterFn  = getIterFn(O)
+	      , length, result, step, iterator;
+	    if(mapping)mapfn = ctx(mapfn, aLen > 2 ? arguments[2] : undefined, 2);
+	    // if object isn't iterable or it's array with default iterator - use simple case
+	    if(iterFn != undefined && !(C == Array && isArrayIter(iterFn))){
+	      for(iterator = iterFn.call(O), result = new C; !(step = iterator.next()).done; index++){
+	        result[index] = mapping ? call(iterator, mapfn, [step.value, index], true) : step.value;
+	      }
+	    } else {
+	      length = toLength(O.length);
+	      for(result = new C(length); length > index; index++){
+	        result[index] = mapping ? mapfn(O[index], index) : O[index];
+	      }
+	    }
+	    result.length = index;
+	    return result;
+	  }
+	});
+
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.13 ToObject(argument)
+	var defined = __webpack_require__(11);
+	module.exports = function(it){
+	  return Object(defined(it));
+	};
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// call something on iterator step with safe closing on error
+	var anObject = __webpack_require__(35);
+	module.exports = function(iterator, fn, value, entries){
+	  try {
+	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+	  // 7.4.6 IteratorClose(iterator, completion)
+	  } catch(e){
+	    var ret = iterator['return'];
+	    if(ret !== undefined)anObject(ret.call(iterator));
+	    throw e;
+	  }
+	};
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(36);
+	module.exports = function(it){
+	  if(!isObject(it))throw TypeError(it + ' is not an object!');
+	  return it;
+	};
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	module.exports = function(it){
+	  return typeof it === 'object' ? it !== null : typeof it === 'function';
+	};
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// check on default Array iterator
+	var Iterators  = __webpack_require__(27)
+	  , ITERATOR   = __webpack_require__(30)('iterator')
+	  , ArrayProto = Array.prototype;
+	
+	module.exports = function(it){
+	  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
+	};
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.15 ToLength
+	var toInteger = __webpack_require__(10)
+	  , min       = Math.min;
+	module.exports = function(it){
+	  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+	};
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var classof   = __webpack_require__(40)
+	  , ITERATOR  = __webpack_require__(30)('iterator')
+	  , Iterators = __webpack_require__(27);
+	module.exports = __webpack_require__(16).getIteratorMethod = function(it){
+	  if(it != undefined)return it[ITERATOR]
+	    || it['@@iterator']
+	    || Iterators[classof(it)];
+	};
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+	var cof = __webpack_require__(41)
+	  , TAG = __webpack_require__(30)('toStringTag')
+	  // ES3 wrong here
+	  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+	
+	module.exports = function(it){
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = (O = Object(it))[TAG]) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? cof(O)
+	    // ES3 arguments fallback
+	    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	var toString = {}.toString;
+	
+	module.exports = function(it){
+	  return toString.call(it).slice(8, -1);
+	};
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ITERATOR     = __webpack_require__(30)('iterator')
+	  , SAFE_CLOSING = false;
+	
+	try {
+	  var riter = [7][ITERATOR]();
+	  riter['return'] = function(){ SAFE_CLOSING = true; };
+	  Array.from(riter, function(){ throw 2; });
+	} catch(e){ /* empty */ }
+	
+	module.exports = function(exec, skipClosing){
+	  if(!skipClosing && !SAFE_CLOSING)return false;
+	  var safe = false;
+	  try {
+	    var arr  = [7]
+	      , iter = arr[ITERATOR]();
+	    iter.next = function(){ safe = true; };
+	    arr[ITERATOR] = function(){ return iter; };
+	    exec(arr);
+	  } catch(e){ /* empty */ }
+	  return safe;
+	};
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $export = __webpack_require__(14);
+	
+	// WebKit Array.of isn't generic
+	$export($export.S + $export.F * __webpack_require__(21)(function(){
+	  function F(){}
+	  return !(Array.of.call(F) instanceof F);
+	}), 'Array', {
+	  // 22.1.2.3 Array.of( ...items)
+	  of: function of(/* ...args */){
+	    var index  = 0
+	      , aLen   = arguments.length
+	      , result = new (typeof this == 'function' ? this : Array)(aLen);
+	    while(aLen > index)result[index] = arguments[index++];
+	    result.length = aLen;
+	    return result;
+	  }
+	});
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(45)('Array');
+
+/***/ },
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var global      = __webpack_require__(15)
+	  , $           = __webpack_require__(18)
+	  , DESCRIPTORS = __webpack_require__(20)
+	  , SPECIES     = __webpack_require__(30)('species');
+	
+	module.exports = function(KEY){
+	  var C = global[KEY];
+	  if(DESCRIPTORS && C && !C[SPECIES])$.setDesc(C, SPECIES, {
+	    configurable: true,
+	    get: function(){ return this; }
+	  });
+	};
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var addToUnscopables = __webpack_require__(47)
+	  , step             = __webpack_require__(48)
+	  , Iterators        = __webpack_require__(27)
+	  , toIObject        = __webpack_require__(49);
+	
+	// 22.1.3.4 Array.prototype.entries()
+	// 22.1.3.13 Array.prototype.keys()
+	// 22.1.3.29 Array.prototype.values()
+	// 22.1.3.30 Array.prototype[@@iterator]()
+	module.exports = __webpack_require__(12)(Array, 'Array', function(iterated, kind){
+	  this._t = toIObject(iterated); // target
+	  this._i = 0;                   // next index
+	  this._k = kind;                // kind
+	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , kind  = this._k
+	    , index = this._i++;
+	  if(!O || index >= O.length){
+	    this._t = undefined;
+	    return step(1);
+	  }
+	  if(kind == 'keys'  )return step(0, index);
+	  if(kind == 'values')return step(0, O[index]);
+	  return step(0, [index, O[index]]);
+	}, 'values');
+	
+	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+	Iterators.Arguments = Iterators.Array;
+	
+	addToUnscopables('keys');
+	addToUnscopables('values');
+	addToUnscopables('entries');
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.31 Array.prototype[@@unscopables]
+	var UNSCOPABLES = __webpack_require__(30)('unscopables')
+	  , ArrayProto  = Array.prototype;
+	if(ArrayProto[UNSCOPABLES] == undefined)__webpack_require__(17)(ArrayProto, UNSCOPABLES, {});
+	module.exports = function(key){
+	  ArrayProto[UNSCOPABLES][key] = true;
+	};
+
+/***/ },
+/* 48 */
+/***/ function(module, exports) {
+
+	module.exports = function(done, value){
+	  return {value: value, done: !!done};
+	};
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// to indexed object, toObject with fallback for non-array-like ES3 strings
+	var IObject = __webpack_require__(50)
+	  , defined = __webpack_require__(11);
+	module.exports = function(it){
+	  return IObject(defined(it));
+	};
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// fallback for non-array-like ES3 and non-enumerable old V8 strings
+	var cof = __webpack_require__(41);
+	module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+	  return cof(it) == 'String' ? it.split('') : Object(it);
+	};
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
+	var $export = __webpack_require__(14);
+	
+	$export($export.P, 'Array', {copyWithin: __webpack_require__(52)});
+	
+	__webpack_require__(47)('copyWithin');
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
+	'use strict';
+	var toObject = __webpack_require__(33)
+	  , toIndex  = __webpack_require__(53)
+	  , toLength = __webpack_require__(38);
+	
+	module.exports = [].copyWithin || function copyWithin(target/*= 0*/, start/*= 0, end = @length*/){
+	  var O     = toObject(this)
+	    , len   = toLength(O.length)
+	    , to    = toIndex(target, len)
+	    , from  = toIndex(start, len)
+	    , end   = arguments.length > 2 ? arguments[2] : undefined
+	    , count = Math.min((end === undefined ? len : toIndex(end, len)) - from, len - to)
+	    , inc   = 1;
+	  if(from < to && to < from + count){
+	    inc  = -1;
+	    from += count - 1;
+	    to   += count - 1;
+	  }
+	  while(count-- > 0){
+	    if(from in O)O[to] = O[from];
+	    else delete O[to];
+	    to   += inc;
+	    from += inc;
+	  } return O;
+	};
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var toInteger = __webpack_require__(10)
+	  , max       = Math.max
+	  , min       = Math.min;
+	module.exports = function(index, length){
+	  index = toInteger(index);
+	  return index < 0 ? max(index + length, 0) : min(index, length);
+	};
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
+	var $export = __webpack_require__(14);
+	
+	$export($export.P, 'Array', {fill: __webpack_require__(55)});
+	
+	__webpack_require__(47)('fill');
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
+	'use strict';
+	var toObject = __webpack_require__(33)
+	  , toIndex  = __webpack_require__(53)
+	  , toLength = __webpack_require__(38);
+	module.exports = function fill(value /*, start = 0, end = @length */){
+	  var O      = toObject(this)
+	    , length = toLength(O.length)
+	    , aLen   = arguments.length
+	    , index  = toIndex(aLen > 1 ? arguments[1] : undefined, length)
+	    , end    = aLen > 2 ? arguments[2] : undefined
+	    , endPos = end === undefined ? length : toIndex(end, length);
+	  while(endPos > index)O[index++] = value;
+	  return O;
+	};
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
+	var $export = __webpack_require__(14)
+	  , $find   = __webpack_require__(57)(5)
+	  , KEY     = 'find'
+	  , forced  = true;
+	// Shouldn't skip holes
+	if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+	$export($export.P + $export.F * forced, 'Array', {
+	  find: function find(callbackfn/*, that = undefined */){
+	    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+	__webpack_require__(47)(KEY);
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 0 -> Array#forEach
+	// 1 -> Array#map
+	// 2 -> Array#filter
+	// 3 -> Array#some
+	// 4 -> Array#every
+	// 5 -> Array#find
+	// 6 -> Array#findIndex
+	var ctx      = __webpack_require__(24)
+	  , IObject  = __webpack_require__(50)
+	  , toObject = __webpack_require__(33)
+	  , toLength = __webpack_require__(38)
+	  , asc      = __webpack_require__(58);
+	module.exports = function(TYPE, $create){
+	  var IS_MAP        = TYPE == 1
+	    , IS_FILTER     = TYPE == 2
+	    , IS_SOME       = TYPE == 3
+	    , IS_EVERY      = TYPE == 4
+	    , IS_FIND_INDEX = TYPE == 6
+	    , NO_HOLES      = TYPE == 5 || IS_FIND_INDEX
+	    , create        = $create || asc;
+	  return function($this, callbackfn, that){
+	    var O      = toObject($this)
+	      , self   = IObject(O)
+	      , f      = ctx(callbackfn, that, 3)
+	      , length = toLength(self.length)
+	      , index  = 0
+	      , result = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined
+	      , val, res;
+	    for(;length > index; index++)if(NO_HOLES || index in self){
+	      val = self[index];
+	      res = f(val, index, O);
+	      if(TYPE){
+	        if(IS_MAP)result[index] = res;            // map
+	        else if(res)switch(TYPE){
+	          case 3: return true;                    // some
+	          case 5: return val;                     // find
+	          case 6: return index;                   // findIndex
+	          case 2: result.push(val);               // filter
+	        } else if(IS_EVERY)return false;          // every
+	      }
+	    }
+	    return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
+	  };
+	};
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 9.4.2.3 ArraySpeciesCreate(originalArray, length)
+	var isObject = __webpack_require__(36)
+	  , isArray  = __webpack_require__(59)
+	  , SPECIES  = __webpack_require__(30)('species');
+	module.exports = function(original, length){
+	  var C;
+	  if(isArray(original)){
+	    C = original.constructor;
+	    // cross-realm fallback
+	    if(typeof C == 'function' && (C === Array || isArray(C.prototype)))C = undefined;
+	    if(isObject(C)){
+	      C = C[SPECIES];
+	      if(C === null)C = undefined;
+	    }
+	  } return new (C === undefined ? Array : C)(length);
+	};
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.2.2 IsArray(argument)
+	var cof = __webpack_require__(41);
+	module.exports = Array.isArray || function(arg){
+	  return cof(arg) == 'Array';
+	};
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
+	var $export = __webpack_require__(14)
+	  , $find   = __webpack_require__(57)(6)
+	  , KEY     = 'findIndex'
+	  , forced  = true;
+	// Shouldn't skip holes
+	if(KEY in [])Array(1)[KEY](function(){ forced = false; });
+	$export($export.P + $export.F * forced, 'Array', {
+	  findIndex: function findIndex(callbackfn/*, that = undefined */){
+	    return $find(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+	__webpack_require__(47)(KEY);
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(62);
+	__webpack_require__(67);
+	module.exports = __webpack_require__(16).Symbol;
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// ECMAScript 6 symbols shim
+	var $              = __webpack_require__(18)
+	  , global         = __webpack_require__(15)
+	  , core           = __webpack_require__(16)
+	  , has            = __webpack_require__(26)
+	  , DESCRIPTORS    = __webpack_require__(20)
+	  , $export        = __webpack_require__(14)
+	  , redefine       = __webpack_require__(22)
+	  , META           = __webpack_require__(63).KEY
+	  , $fails         = __webpack_require__(21)
+	  , shared         = __webpack_require__(31)
+	  , setToStringTag = __webpack_require__(29)
+	  , uid            = __webpack_require__(23)
+	  , wks            = __webpack_require__(30)
+	  , keyOf          = __webpack_require__(64)
+	  , $names         = __webpack_require__(65)
+	  , enumKeys       = __webpack_require__(66)
+	  , isArray        = __webpack_require__(59)
+	  , anObject       = __webpack_require__(35)
+	  , toIObject      = __webpack_require__(49)
+	  , createDesc     = __webpack_require__(19)
+	  , getDesc        = $.getDesc
+	  , setDesc        = $.setDesc
+	  , _create        = $.create
+	  , getNames       = $names.get
+	  , $Symbol        = global.Symbol
+	  , $JSON          = global.JSON
+	  , _stringify     = $JSON && $JSON.stringify
+	  , setter         = false
+	  , HIDDEN         = wks('_hidden')
+	  , isEnum         = $.isEnum
+	  , SymbolRegistry = shared('symbol-registry')
+	  , AllSymbols     = shared('symbols')
+	  , ObjectProto    = Object.prototype
+	  , USE_NATIVE     = typeof $Symbol == 'function';
+	
+	// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+	var setSymbolDesc = DESCRIPTORS && $fails(function(){
+	  return _create(setDesc({}, 'a', {
+	    get: function(){ return setDesc(this, 'a', {value: 7}).a; }
+	  })).a != 7;
+	}) ? function(it, key, D){
+	  var protoDesc = getDesc(ObjectProto, key);
+	  if(protoDesc)delete ObjectProto[key];
+	  setDesc(it, key, D);
+	  if(protoDesc && it !== ObjectProto)setDesc(ObjectProto, key, protoDesc);
+	} : setDesc;
+	
+	var wrap = function(tag){
+	  var sym = AllSymbols[tag] = _create($Symbol.prototype);
+	  sym._k = tag;
+	  DESCRIPTORS && setter && setSymbolDesc(ObjectProto, tag, {
+	    configurable: true,
+	    set: function(value){
+	      if(has(this, HIDDEN) && has(this[HIDDEN], tag))this[HIDDEN][tag] = false;
+	      setSymbolDesc(this, tag, createDesc(1, value));
+	    }
+	  });
+	  return sym;
+	};
+	
+	var isSymbol = function(it){
+	  return typeof it == 'symbol';
+	};
+	
+	var $defineProperty = function defineProperty(it, key, D){
+	  if(D && has(AllSymbols, key)){
+	    if(!D.enumerable){
+	      if(!has(it, HIDDEN))setDesc(it, HIDDEN, createDesc(1, {}));
+	      it[HIDDEN][key] = true;
+	    } else {
+	      if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
+	      D = _create(D, {enumerable: createDesc(0, false)});
+	    } return setSymbolDesc(it, key, D);
+	  } return setDesc(it, key, D);
+	};
+	var $defineProperties = function defineProperties(it, P){
+	  anObject(it);
+	  var keys = enumKeys(P = toIObject(P))
+	    , i    = 0
+	    , l = keys.length
+	    , key;
+	  while(l > i)$defineProperty(it, key = keys[i++], P[key]);
+	  return it;
+	};
+	var $create = function create(it, P){
+	  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
+	};
+	var $propertyIsEnumerable = function propertyIsEnumerable(key){
+	  var E = isEnum.call(this, key);
+	  return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key]
+	    ? E : true;
+	};
+	var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key){
+	  var D = getDesc(it = toIObject(it), key);
+	  if(D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key]))D.enumerable = true;
+	  return D;
+	};
+	var $getOwnPropertyNames = function getOwnPropertyNames(it){
+	  var names  = getNames(toIObject(it))
+	    , result = []
+	    , i      = 0
+	    , key;
+	  while(names.length > i)if(!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META)result.push(key);
+	  return result;
+	};
+	var $getOwnPropertySymbols = function getOwnPropertySymbols(it){
+	  var names  = getNames(toIObject(it))
+	    , result = []
+	    , i      = 0
+	    , key;
+	  while(names.length > i)if(has(AllSymbols, key = names[i++]))result.push(AllSymbols[key]);
+	  return result;
+	};
+	var $stringify = function stringify(it){
+	  if(it === undefined || isSymbol(it))return; // IE8 returns string on undefined
+	  var args = [it]
+	    , i    = 1
+	    , replacer, $replacer;
+	  while(arguments.length > i)args.push(arguments[i++]);
+	  replacer = args[1];
+	  if(typeof replacer == 'function')$replacer = replacer;
+	  if($replacer || !isArray(replacer))replacer = function(key, value){
+	    if($replacer)value = $replacer.call(this, key, value);
+	    if(!isSymbol(value))return value;
+	  };
+	  args[1] = replacer;
+	  return _stringify.apply($JSON, args);
+	};
+	var BUGGY_JSON = $fails(function(){
+	  var S = $Symbol();
+	  // MS Edge converts symbol values to JSON as {}
+	  // WebKit converts symbol values to JSON as null
+	  // V8 throws on boxed symbols
+	  return _stringify([S]) != '[null]' || _stringify({a: S}) != '{}' || _stringify(Object(S)) != '{}';
+	});
+	
+	// 19.4.1.1 Symbol([description])
+	if(!USE_NATIVE){
+	  $Symbol = function Symbol(){
+	    if(isSymbol(this))throw TypeError('Symbol is not a constructor');
+	    return wrap(uid(arguments.length > 0 ? arguments[0] : undefined));
+	  };
+	  redefine($Symbol.prototype, 'toString', function toString(){
+	    return this._k;
+	  });
+	
+	  isSymbol = function(it){
+	    return it instanceof $Symbol;
+	  };
+	
+	  $.create     = $create;
+	  $.isEnum     = $propertyIsEnumerable;
+	  $.getDesc    = $getOwnPropertyDescriptor;
+	  $.setDesc    = $defineProperty;
+	  $.setDescs   = $defineProperties;
+	  $.getNames   = $names.get = $getOwnPropertyNames;
+	  $.getSymbols = $getOwnPropertySymbols;
+	
+	  if(DESCRIPTORS && !__webpack_require__(13)){
+	    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+	  }
+	}
+	
+	$export($export.G + $export.W + $export.F * !USE_NATIVE, {Symbol: $Symbol});
+	
+	// 19.4.2.2 Symbol.hasInstance
+	// 19.4.2.3 Symbol.isConcatSpreadable
+	// 19.4.2.4 Symbol.iterator
+	// 19.4.2.6 Symbol.match
+	// 19.4.2.8 Symbol.replace
+	// 19.4.2.9 Symbol.search
+	// 19.4.2.10 Symbol.species
+	// 19.4.2.11 Symbol.split
+	// 19.4.2.12 Symbol.toPrimitive
+	// 19.4.2.13 Symbol.toStringTag
+	// 19.4.2.14 Symbol.unscopables
+	$.each.call((
+	  'hasInstance,isConcatSpreadable,iterator,match,replace,search,' +
+	  'species,split,toPrimitive,toStringTag,unscopables'
+	).split(','), function(it){
+	  var Wrapper = core.Symbol
+	    , sym     = wks(it);
+	  if(!(it in Wrapper))setDesc(Wrapper, it, {value: USE_NATIVE ? sym : wrap(sym)});
+	});
+	
+	setter = true;
+	
+	$export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
+	  // 19.4.2.1 Symbol.for(key)
+	  'for': function(key){
+	    return has(SymbolRegistry, key += '')
+	      ? SymbolRegistry[key]
+	      : SymbolRegistry[key] = $Symbol(key);
+	  },
+	  // 19.4.2.5 Symbol.keyFor(sym)
+	  keyFor: function keyFor(key){
+	    return keyOf(SymbolRegistry, key);
+	  },
+	  useSetter: function(){ setter = true; },
+	  useSimple: function(){ setter = false; }
+	});
+	
+	$export($export.S + $export.F * !USE_NATIVE, 'Object', {
+	  // 19.1.2.2 Object.create(O [, Properties])
+	  create: $create,
+	  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
+	  defineProperty: $defineProperty,
+	  // 19.1.2.3 Object.defineProperties(O, Properties)
+	  defineProperties: $defineProperties,
+	  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+	  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
+	  // 19.1.2.7 Object.getOwnPropertyNames(O)
+	  getOwnPropertyNames: $getOwnPropertyNames,
+	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
+	  getOwnPropertySymbols: $getOwnPropertySymbols
+	});
+	
+	// 24.3.2 JSON.stringify(value [, replacer [, space]])
+	$JSON && $export($export.S + $export.F * (!USE_NATIVE || BUGGY_JSON), 'JSON', {stringify: $stringify});
+	
+	// 19.4.3.5 Symbol.prototype[@@toStringTag]
+	setToStringTag($Symbol, 'Symbol');
+	// 20.2.1.9 Math[@@toStringTag]
+	setToStringTag(Math, 'Math', true);
+	// 24.3.3 JSON[@@toStringTag]
+	setToStringTag(global.JSON, 'JSON', true);
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var META     = __webpack_require__(23)('meta')
+	  , isObject = __webpack_require__(36)
+	  , has      = __webpack_require__(26)
+	  , setDesc  = __webpack_require__(18).setDesc
+	  , id       = 0;
+	var isExtensible = Object.isExtensible || function(){
+	  return true;
+	};
+	var FREEZE = !__webpack_require__(21)(function(){
+	  return isExtensible(Object.preventExtensions({}));
+	});
+	var setMeta = function(it){
+	  setDesc(it, META, {value: {
+	    i: 'O' + ++id, // object ID
+	    w: {}          // weak collections IDs
+	  }});
+	};
+	var fastKey = function(it, create){
+	  // return primitive with prefix
+	  if(!isObject(it))return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+	  if(!has(it, META)){
+	    // can't set metadata to uncaught frozen object
+	    if(!isExtensible(it))return 'F';
+	    // not necessary to add metadata
+	    if(!create)return 'E';
+	    // add missing metadata
+	    setMeta(it);
+	  // return object ID
+	  } return it[META].i;
+	};
+	var getWeak = function(it, create){
+	  if(!has(it, META)){
+	    // can't set metadata to uncaught frozen object
+	    if(!isExtensible(it))return true;
+	    // not necessary to add metadata
+	    if(!create)return false;
+	    // add missing metadata
+	    setMeta(it);
+	  // return hash weak collections IDs
+	  } return it[META].w;
+	};
+	// add metadata on freeze-family methods calling
+	var onFreeze = function(it){
+	  if(FREEZE && meta.NEED && isExtensible(it) && !has(it, META))setMeta(it);
+	  return it;
+	};
+	var meta = module.exports = {
+	  KEY:      META,
+	  NEED:     false,
+	  fastKey:  fastKey,
+	  getWeak:  getWeak,
+	  onFreeze: onFreeze
+	};
+
+/***/ },
+/* 64 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $         = __webpack_require__(18)
+	  , toIObject = __webpack_require__(49);
+	module.exports = function(object, el){
+	  var O      = toIObject(object)
+	    , keys   = $.getKeys(O)
+	    , length = keys.length
+	    , index  = 0
+	    , key;
+	  while(length > index)if(O[key = keys[index++]] === el)return key;
+	};
+
+/***/ },
+/* 65 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+	var toIObject = __webpack_require__(49)
+	  , getNames  = __webpack_require__(18).getNames
+	  , toString  = {}.toString;
+	
+	var windowNames = typeof window == 'object' && Object.getOwnPropertyNames
+	  ? Object.getOwnPropertyNames(window) : [];
+	
+	var getWindowNames = function(it){
+	  try {
+	    return getNames(it);
+	  } catch(e){
+	    return windowNames.slice();
+	  }
+	};
+	
+	module.exports.get = function getOwnPropertyNames(it){
+	  if(windowNames && toString.call(it) == '[object Window]')return getWindowNames(it);
+	  return getNames(toIObject(it));
+	};
+
+/***/ },
+/* 66 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// all enumerable object keys, includes symbols
+	var $ = __webpack_require__(18);
+	module.exports = function(it){
+	  var keys       = $.getKeys(it)
+	    , getSymbols = $.getSymbols;
+	  if(getSymbols){
+	    var symbols = getSymbols(it)
+	      , isEnum  = $.isEnum
+	      , i       = 0
+	      , key;
+	    while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))keys.push(key);
+	  }
+	  return keys;
+	};
+
+/***/ },
+/* 67 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 19.1.3.6 Object.prototype.toString()
+	var classof = __webpack_require__(40)
+	  , test    = {};
+	test[__webpack_require__(30)('toStringTag')] = 'z';
+	if(test + '' != '[object z]'){
+	  __webpack_require__(22)(Object.prototype, 'toString', function toString(){
+	    return '[object ' + classof(this) + ']';
+	  }, true);
+	}
+
+/***/ },
+/* 68 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(69);
+	module.exports = __webpack_require__(16).Array;
+
+/***/ },
+/* 69 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $export   = __webpack_require__(14)
+	  , $includes = __webpack_require__(70)(true);
+	
+	$export($export.P, 'Array', {
+	  // https://github.com/domenic/Array.prototype.includes
+	  includes: function includes(el /*, fromIndex = 0 */){
+	    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+	  }
+	});
+	
+	__webpack_require__(47)('includes');
+
+/***/ },
+/* 70 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// false -> Array#indexOf
+	// true  -> Array#includes
+	var toIObject = __webpack_require__(49)
+	  , toLength  = __webpack_require__(38)
+	  , toIndex   = __webpack_require__(53);
+	module.exports = function(IS_INCLUDES){
+	  return function($this, el, fromIndex){
+	    var O      = toIObject($this)
+	      , length = toLength(O.length)
+	      , index  = toIndex(fromIndex, length)
+	      , value;
+	    // Array#includes uses SameValueZero equality algorithm
+	    if(IS_INCLUDES && el != el)while(length > index){
+	      value = O[index++];
+	      if(value != value)return true;
+	    // Array#toIndex ignores holes, Array#includes - not
+	    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+	      if(O[index] === el)return IS_INCLUDES || index;
+	    } return !IS_INCLUDES && -1;
+	  };
+	};
+
+/***/ },
+/* 71 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(62);
+	__webpack_require__(72);
+	__webpack_require__(74);
+	__webpack_require__(76);
+	__webpack_require__(67);
+	__webpack_require__(78);
+	__webpack_require__(80);
+	__webpack_require__(81);
+	__webpack_require__(82);
+	__webpack_require__(83);
+	__webpack_require__(84);
+	__webpack_require__(85);
+	__webpack_require__(86);
+	__webpack_require__(87);
+	__webpack_require__(88);
+	
+	module.exports = __webpack_require__(16).Object;
+
+/***/ },
+/* 72 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.3.1 Object.assign(target, source)
+	var $export = __webpack_require__(14);
+	
+	$export($export.S + $export.F, 'Object', {assign: __webpack_require__(73)});
+
+/***/ },
+/* 73 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// 19.1.2.1 Object.assign(target, source, ...)
+	var $        = __webpack_require__(18)
+	  , toObject = __webpack_require__(33)
+	  , IObject  = __webpack_require__(50);
+	
+	// should work with symbols and should have deterministic property order (V8 bug)
+	module.exports = __webpack_require__(21)(function(){
+	  var a = Object.assign
+	    , A = {}
+	    , B = {}
+	    , S = Symbol()
+	    , K = 'abcdefghijklmnopqrst';
+	  A[S] = 7;
+	  K.split('').forEach(function(k){ B[k] = k; });
+	  return a({}, A)[S] != 7 || Object.keys(a({}, B)).join('') != K;
+	}) ? function assign(target, source){ // eslint-disable-line no-unused-vars
+	  var T     = toObject(target)
+	    , aLen  = arguments.length
+	    , index = 1
+	    , getKeys    = $.getKeys
+	    , getSymbols = $.getSymbols
+	    , isEnum     = $.isEnum;
+	  while(aLen > index){
+	    var S      = IObject(arguments[index++])
+	      , keys   = getSymbols ? getKeys(S).concat(getSymbols(S)) : getKeys(S)
+	      , length = keys.length
+	      , j      = 0
+	      , key;
+	    while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
+	  }
+	  return T;
+	} : Object.assign;
+
+/***/ },
+/* 74 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.3.10 Object.is(value1, value2)
+	var $export = __webpack_require__(14);
+	$export($export.S, 'Object', {is: __webpack_require__(75)});
+
+/***/ },
+/* 75 */
+/***/ function(module, exports) {
+
+	// 7.2.9 SameValue(x, y)
+	module.exports = Object.is || function is(x, y){
+	  return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
+	};
+
+/***/ },
+/* 76 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.3.19 Object.setPrototypeOf(O, proto)
+	var $export = __webpack_require__(14);
+	$export($export.S, 'Object', {setPrototypeOf: __webpack_require__(77).set});
+
+/***/ },
+/* 77 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Works with __proto__ only. Old v8 can't work with null proto objects.
+	/* eslint-disable no-proto */
+	var getDesc  = __webpack_require__(18).getDesc
+	  , isObject = __webpack_require__(36)
+	  , anObject = __webpack_require__(35);
+	var check = function(O, proto){
+	  anObject(O);
+	  if(!isObject(proto) && proto !== null)throw TypeError(proto + ": can't set as prototype!");
+	};
+	module.exports = {
+	  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
+	    function(test, buggy, set){
+	      try {
+	        set = __webpack_require__(24)(Function.call, getDesc(Object.prototype, '__proto__').set, 2);
+	        set(test, []);
+	        buggy = !(test instanceof Array);
+	      } catch(e){ buggy = true; }
+	      return function setPrototypeOf(O, proto){
+	        check(O, proto);
+	        if(buggy)O.__proto__ = proto;
+	        else set(O, proto);
+	        return O;
+	      };
+	    }({}, false) : undefined),
+	  check: check
+	};
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.5 Object.freeze(O)
+	var isObject = __webpack_require__(36)
+	  , meta     = __webpack_require__(63).onFreeze;
+	
+	__webpack_require__(79)('freeze', function($freeze){
+	  return function freeze(it){
+	    return $freeze && isObject(it) ? $freeze(meta(it)) : it;
+	  };
+	});
+
+/***/ },
+/* 79 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// most Object methods by ES6 should accept primitives
+	var $export = __webpack_require__(14)
+	  , core    = __webpack_require__(16)
+	  , fails   = __webpack_require__(21);
+	module.exports = function(KEY, exec){
+	  var fn  = (core.Object || {})[KEY] || Object[KEY]
+	    , exp = {};
+	  exp[KEY] = exec(fn);
+	  $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
+	};
+
+/***/ },
+/* 80 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.17 Object.seal(O)
+	var isObject = __webpack_require__(36)
+	  , meta     = __webpack_require__(63).onFreeze;
+	
+	__webpack_require__(79)('seal', function($seal){
+	  return function seal(it){
+	    return $seal && isObject(it) ? $seal(meta(it)) : it;
+	  };
+	});
+
+/***/ },
+/* 81 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.15 Object.preventExtensions(O)
+	var isObject = __webpack_require__(36)
+	  , meta     = __webpack_require__(63).onFreeze;
+	
+	__webpack_require__(79)('preventExtensions', function($preventExtensions){
+	  return function preventExtensions(it){
+	    return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
+	  };
+	});
+
+/***/ },
+/* 82 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.12 Object.isFrozen(O)
+	var isObject = __webpack_require__(36);
+	
+	__webpack_require__(79)('isFrozen', function($isFrozen){
+	  return function isFrozen(it){
+	    return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
+	  };
+	});
+
+/***/ },
+/* 83 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.13 Object.isSealed(O)
+	var isObject = __webpack_require__(36);
+	
+	__webpack_require__(79)('isSealed', function($isSealed){
+	  return function isSealed(it){
+	    return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
+	  };
+	});
+
+/***/ },
+/* 84 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.11 Object.isExtensible(O)
+	var isObject = __webpack_require__(36);
+	
+	__webpack_require__(79)('isExtensible', function($isExtensible){
+	  return function isExtensible(it){
+	    return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
+	  };
+	});
+
+/***/ },
+/* 85 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+	var toIObject = __webpack_require__(49);
+	
+	__webpack_require__(79)('getOwnPropertyDescriptor', function($getOwnPropertyDescriptor){
+	  return function getOwnPropertyDescriptor(it, key){
+	    return $getOwnPropertyDescriptor(toIObject(it), key);
+	  };
+	});
+
+/***/ },
+/* 86 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.9 Object.getPrototypeOf(O)
+	var toObject = __webpack_require__(33);
+	
+	__webpack_require__(79)('getPrototypeOf', function($getPrototypeOf){
+	  return function getPrototypeOf(it){
+	    return $getPrototypeOf(toObject(it));
+	  };
+	});
+
+/***/ },
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.14 Object.keys(O)
+	var toObject = __webpack_require__(33);
+	
+	__webpack_require__(79)('keys', function($keys){
+	  return function keys(it){
+	    return $keys(toObject(it));
+	  };
+	});
+
+/***/ },
+/* 88 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.7 Object.getOwnPropertyNames(O)
+	__webpack_require__(79)('getOwnPropertyNames', function(){
+	  return __webpack_require__(65).get;
+	});
+
+/***/ },
+/* 89 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(90);
+	__webpack_require__(92);
+	__webpack_require__(94);
+	module.exports = __webpack_require__(16).Object;
+
+/***/ },
+/* 90 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// https://gist.github.com/WebReflection/9353781
+	var $          = __webpack_require__(18)
+	  , $export    = __webpack_require__(14)
+	  , ownKeys    = __webpack_require__(91)
+	  , toIObject  = __webpack_require__(49)
+	  , createDesc = __webpack_require__(19);
+	
+	$export($export.S, 'Object', {
+	  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object){
+	    var O       = toIObject(object)
+	      , setDesc = $.setDesc
+	      , getDesc = $.getDesc
+	      , keys    = ownKeys(O)
+	      , result  = {}
+	      , i       = 0
+	      , key, D;
+	    while(keys.length > i){
+	      D = getDesc(O, key = keys[i++]);
+	      if(key in result)setDesc(result, key, createDesc(0, D));
+	      else result[key] = D;
+	    } return result;
+	  }
+	});
+
+/***/ },
+/* 91 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// all object keys, includes non-enumerable and symbols
+	var $        = __webpack_require__(18)
+	  , anObject = __webpack_require__(35)
+	  , Reflect  = __webpack_require__(15).Reflect;
+	module.exports = Reflect && Reflect.ownKeys || function ownKeys(it){
+	  var keys       = $.getNames(anObject(it))
+	    , getSymbols = $.getSymbols;
+	  return getSymbols ? keys.concat(getSymbols(it)) : keys;
+	};
+
+/***/ },
+/* 92 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// http://goo.gl/XkBrjD
+	var $export = __webpack_require__(14)
+	  , $values = __webpack_require__(93)(false);
+	
+	$export($export.S, 'Object', {
+	  values: function values(it){
+	    return $values(it);
+	  }
+	});
+
+/***/ },
+/* 93 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $         = __webpack_require__(18)
+	  , toIObject = __webpack_require__(49)
 	  , isEnum    = $.isEnum;
 	module.exports = function(isEntries){
 	  return function(it){
@@ -1915,83 +2562,1114 @@ var crio =
 	};
 
 /***/ },
-/* 26 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// to indexed object, toObject with fallback for non-array-like ES3 strings
-	var IObject = __webpack_require__(27)
-	  , defined = __webpack_require__(29);
-	module.exports = function(it){
-	  return IObject(defined(it));
-	};
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// fallback for non-array-like ES3 and non-enumerable old V8 strings
-	var cof = __webpack_require__(28);
-	module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
-	  return cof(it) == 'String' ? it.split('') : Object(it);
-	};
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	var toString = {}.toString;
+	// http://goo.gl/XkBrjD
+	var $export  = __webpack_require__(14)
+	  , $entries = __webpack_require__(93)(true);
 	
-	module.exports = function(it){
-	  return toString.call(it).slice(8, -1);
-	};
+	$export($export.S, 'Object', {
+	  entries: function entries(it){
+	    return $entries(it);
+	  }
+	});
 
 /***/ },
-/* 29 */
-/***/ function(module, exports) {
+/* 95 */
+/***/ function(module, exports, __webpack_require__) {
 
-	// 7.2.1 RequireObjectCoercible(argument)
-	module.exports = function(it){
-	  if(it == undefined)throw TypeError("Can't call method on  " + it);
-	  return it;
-	};
+	/* WEBPACK VAR INJECTION */(function(global, process) {/**
+	 * Copyright (c) 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * https://raw.github.com/facebook/regenerator/master/LICENSE file. An
+	 * additional grant of patent rights can be found in the PATENTS file in
+	 * the same directory.
+	 */
+	
+	!(function(global) {
+	  "use strict";
+	
+	  var hasOwn = Object.prototype.hasOwnProperty;
+	  var undefined; // More compressible than void 0.
+	  var iteratorSymbol =
+	    typeof Symbol === "function" && Symbol.iterator || "@@iterator";
+	
+	  var inModule = typeof module === "object";
+	  var runtime = global.regeneratorRuntime;
+	  if (runtime) {
+	    if (inModule) {
+	      // If regeneratorRuntime is defined globally and we're in a module,
+	      // make the exports object identical to regeneratorRuntime.
+	      module.exports = runtime;
+	    }
+	    // Don't bother evaluating the rest of this file if the runtime was
+	    // already defined globally.
+	    return;
+	  }
+	
+	  // Define the runtime globally (as expected by generated code) as either
+	  // module.exports (if we're in a module) or a new, empty object.
+	  runtime = global.regeneratorRuntime = inModule ? module.exports : {};
+	
+	  function wrap(innerFn, outerFn, self, tryLocsList) {
+	    // If outerFn provided, then outerFn.prototype instanceof Generator.
+	    var generator = Object.create((outerFn || Generator).prototype);
+	    var context = new Context(tryLocsList || []);
+	
+	    // The ._invoke method unifies the implementations of the .next,
+	    // .throw, and .return methods.
+	    generator._invoke = makeInvokeMethod(innerFn, self, context);
+	
+	    return generator;
+	  }
+	  runtime.wrap = wrap;
+	
+	  // Try/catch helper to minimize deoptimizations. Returns a completion
+	  // record like context.tryEntries[i].completion. This interface could
+	  // have been (and was previously) designed to take a closure to be
+	  // invoked without arguments, but in all the cases we care about we
+	  // already have an existing method we want to call, so there's no need
+	  // to create a new function object. We can even get away with assuming
+	  // the method takes exactly one argument, since that happens to be true
+	  // in every case, so we don't have to touch the arguments object. The
+	  // only additional allocation required is the completion record, which
+	  // has a stable shape and so hopefully should be cheap to allocate.
+	  function tryCatch(fn, obj, arg) {
+	    try {
+	      return { type: "normal", arg: fn.call(obj, arg) };
+	    } catch (err) {
+	      return { type: "throw", arg: err };
+	    }
+	  }
+	
+	  var GenStateSuspendedStart = "suspendedStart";
+	  var GenStateSuspendedYield = "suspendedYield";
+	  var GenStateExecuting = "executing";
+	  var GenStateCompleted = "completed";
+	
+	  // Returning this object from the innerFn has the same effect as
+	  // breaking out of the dispatch switch statement.
+	  var ContinueSentinel = {};
+	
+	  // Dummy constructor functions that we use as the .constructor and
+	  // .constructor.prototype properties for functions that return Generator
+	  // objects. For full spec compliance, you may wish to configure your
+	  // minifier not to mangle the names of these two functions.
+	  function Generator() {}
+	  function GeneratorFunction() {}
+	  function GeneratorFunctionPrototype() {}
+	
+	  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype;
+	  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+	  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+	  GeneratorFunction.displayName = "GeneratorFunction";
+	
+	  // Helper for defining the .next, .throw, and .return methods of the
+	  // Iterator interface in terms of a single ._invoke method.
+	  function defineIteratorMethods(prototype) {
+	    ["next", "throw", "return"].forEach(function(method) {
+	      prototype[method] = function(arg) {
+	        return this._invoke(method, arg);
+	      };
+	    });
+	  }
+	
+	  runtime.isGeneratorFunction = function(genFun) {
+	    var ctor = typeof genFun === "function" && genFun.constructor;
+	    return ctor
+	      ? ctor === GeneratorFunction ||
+	        // For the native GeneratorFunction constructor, the best we can
+	        // do is to check its .name property.
+	        (ctor.displayName || ctor.name) === "GeneratorFunction"
+	      : false;
+	  };
+	
+	  runtime.mark = function(genFun) {
+	    if (Object.setPrototypeOf) {
+	      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+	    } else {
+	      genFun.__proto__ = GeneratorFunctionPrototype;
+	    }
+	    genFun.prototype = Object.create(Gp);
+	    return genFun;
+	  };
+	
+	  // Within the body of any async function, `await x` is transformed to
+	  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+	  // `value instanceof AwaitArgument` to determine if the yielded value is
+	  // meant to be awaited. Some may consider the name of this method too
+	  // cutesy, but they are curmudgeons.
+	  runtime.awrap = function(arg) {
+	    return new AwaitArgument(arg);
+	  };
+	
+	  function AwaitArgument(arg) {
+	    this.arg = arg;
+	  }
+	
+	  function AsyncIterator(generator) {
+	    // This invoke function is written in a style that assumes some
+	    // calling function (or Promise) will handle exceptions.
+	    function invoke(method, arg) {
+	      var result = generator[method](arg);
+	      var value = result.value;
+	      return value instanceof AwaitArgument
+	        ? Promise.resolve(value.arg).then(invokeNext, invokeThrow)
+	        : Promise.resolve(value).then(function(unwrapped) {
+	            // When a yielded Promise is resolved, its final value becomes
+	            // the .value of the Promise<{value,done}> result for the
+	            // current iteration. If the Promise is rejected, however, the
+	            // result for this iteration will be rejected with the same
+	            // reason. Note that rejections of yielded Promises are not
+	            // thrown back into the generator function, as is the case
+	            // when an awaited Promise is rejected. This difference in
+	            // behavior between yield and await is important, because it
+	            // allows the consumer to decide what to do with the yielded
+	            // rejection (swallow it and continue, manually .throw it back
+	            // into the generator, abandon iteration, whatever). With
+	            // await, by contrast, there is no opportunity to examine the
+	            // rejection reason outside the generator function, so the
+	            // only option is to throw it from the await expression, and
+	            // let the generator function handle the exception.
+	            result.value = unwrapped;
+	            return result;
+	          });
+	    }
+	
+	    if (typeof process === "object" && process.domain) {
+	      invoke = process.domain.bind(invoke);
+	    }
+	
+	    var invokeNext = invoke.bind(generator, "next");
+	    var invokeThrow = invoke.bind(generator, "throw");
+	    var invokeReturn = invoke.bind(generator, "return");
+	    var previousPromise;
+	
+	    function enqueue(method, arg) {
+	      function callInvokeWithMethodAndArg() {
+	        return invoke(method, arg);
+	      }
+	
+	      return previousPromise =
+	        // If enqueue has been called before, then we want to wait until
+	        // all previous Promises have been resolved before calling invoke,
+	        // so that results are always delivered in the correct order. If
+	        // enqueue has not been called before, then it is important to
+	        // call invoke immediately, without waiting on a callback to fire,
+	        // so that the async generator function has the opportunity to do
+	        // any necessary setup in a predictable way. This predictability
+	        // is why the Promise constructor synchronously invokes its
+	        // executor callback, and why async functions synchronously
+	        // execute code before the first await. Since we implement simple
+	        // async functions in terms of async generators, it is especially
+	        // important to get this right, even though it requires care.
+	        previousPromise ? previousPromise.then(
+	          callInvokeWithMethodAndArg,
+	          // Avoid propagating failures to Promises returned by later
+	          // invocations of the iterator.
+	          callInvokeWithMethodAndArg
+	        ) : new Promise(function (resolve) {
+	          resolve(callInvokeWithMethodAndArg());
+	        });
+	    }
+	
+	    // Define the unified helper method that is used to implement .next,
+	    // .throw, and .return (see defineIteratorMethods).
+	    this._invoke = enqueue;
+	  }
+	
+	  defineIteratorMethods(AsyncIterator.prototype);
+	
+	  // Note that simple async functions are implemented on top of
+	  // AsyncIterator objects; they just return a Promise for the value of
+	  // the final result produced by the iterator.
+	  runtime.async = function(innerFn, outerFn, self, tryLocsList) {
+	    var iter = new AsyncIterator(
+	      wrap(innerFn, outerFn, self, tryLocsList)
+	    );
+	
+	    return runtime.isGeneratorFunction(outerFn)
+	      ? iter // If outerFn is a generator, return the full iterator.
+	      : iter.next().then(function(result) {
+	          return result.done ? result.value : iter.next();
+	        });
+	  };
+	
+	  function makeInvokeMethod(innerFn, self, context) {
+	    var state = GenStateSuspendedStart;
+	
+	    return function invoke(method, arg) {
+	      if (state === GenStateExecuting) {
+	        throw new Error("Generator is already running");
+	      }
+	
+	      if (state === GenStateCompleted) {
+	        if (method === "throw") {
+	          throw arg;
+	        }
+	
+	        // Be forgiving, per 25.3.3.3.3 of the spec:
+	        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+	        return doneResult();
+	      }
+	
+	      while (true) {
+	        var delegate = context.delegate;
+	        if (delegate) {
+	          if (method === "return" ||
+	              (method === "throw" && delegate.iterator[method] === undefined)) {
+	            // A return or throw (when the delegate iterator has no throw
+	            // method) always terminates the yield* loop.
+	            context.delegate = null;
+	
+	            // If the delegate iterator has a return method, give it a
+	            // chance to clean up.
+	            var returnMethod = delegate.iterator["return"];
+	            if (returnMethod) {
+	              var record = tryCatch(returnMethod, delegate.iterator, arg);
+	              if (record.type === "throw") {
+	                // If the return method threw an exception, let that
+	                // exception prevail over the original return or throw.
+	                method = "throw";
+	                arg = record.arg;
+	                continue;
+	              }
+	            }
+	
+	            if (method === "return") {
+	              // Continue with the outer return, now that the delegate
+	              // iterator has been terminated.
+	              continue;
+	            }
+	          }
+	
+	          var record = tryCatch(
+	            delegate.iterator[method],
+	            delegate.iterator,
+	            arg
+	          );
+	
+	          if (record.type === "throw") {
+	            context.delegate = null;
+	
+	            // Like returning generator.throw(uncaught), but without the
+	            // overhead of an extra function call.
+	            method = "throw";
+	            arg = record.arg;
+	            continue;
+	          }
+	
+	          // Delegate generator ran and handled its own exceptions so
+	          // regardless of what the method was, we continue as if it is
+	          // "next" with an undefined arg.
+	          method = "next";
+	          arg = undefined;
+	
+	          var info = record.arg;
+	          if (info.done) {
+	            context[delegate.resultName] = info.value;
+	            context.next = delegate.nextLoc;
+	          } else {
+	            state = GenStateSuspendedYield;
+	            return info;
+	          }
+	
+	          context.delegate = null;
+	        }
+	
+	        if (method === "next") {
+	          context._sent = arg;
+	
+	          if (state === GenStateSuspendedYield) {
+	            context.sent = arg;
+	          } else {
+	            context.sent = undefined;
+	          }
+	        } else if (method === "throw") {
+	          if (state === GenStateSuspendedStart) {
+	            state = GenStateCompleted;
+	            throw arg;
+	          }
+	
+	          if (context.dispatchException(arg)) {
+	            // If the dispatched exception was caught by a catch block,
+	            // then let that catch block handle the exception normally.
+	            method = "next";
+	            arg = undefined;
+	          }
+	
+	        } else if (method === "return") {
+	          context.abrupt("return", arg);
+	        }
+	
+	        state = GenStateExecuting;
+	
+	        var record = tryCatch(innerFn, self, context);
+	        if (record.type === "normal") {
+	          // If an exception is thrown from innerFn, we leave state ===
+	          // GenStateExecuting and loop back for another invocation.
+	          state = context.done
+	            ? GenStateCompleted
+	            : GenStateSuspendedYield;
+	
+	          var info = {
+	            value: record.arg,
+	            done: context.done
+	          };
+	
+	          if (record.arg === ContinueSentinel) {
+	            if (context.delegate && method === "next") {
+	              // Deliberately forget the last sent value so that we don't
+	              // accidentally pass it on to the delegate.
+	              arg = undefined;
+	            }
+	          } else {
+	            return info;
+	          }
+	
+	        } else if (record.type === "throw") {
+	          state = GenStateCompleted;
+	          // Dispatch the exception by looping back around to the
+	          // context.dispatchException(arg) call above.
+	          method = "throw";
+	          arg = record.arg;
+	        }
+	      }
+	    };
+	  }
+	
+	  // Define Generator.prototype.{next,throw,return} in terms of the
+	  // unified ._invoke helper method.
+	  defineIteratorMethods(Gp);
+	
+	  Gp[iteratorSymbol] = function() {
+	    return this;
+	  };
+	
+	  Gp.toString = function() {
+	    return "[object Generator]";
+	  };
+	
+	  function pushTryEntry(locs) {
+	    var entry = { tryLoc: locs[0] };
+	
+	    if (1 in locs) {
+	      entry.catchLoc = locs[1];
+	    }
+	
+	    if (2 in locs) {
+	      entry.finallyLoc = locs[2];
+	      entry.afterLoc = locs[3];
+	    }
+	
+	    this.tryEntries.push(entry);
+	  }
+	
+	  function resetTryEntry(entry) {
+	    var record = entry.completion || {};
+	    record.type = "normal";
+	    delete record.arg;
+	    entry.completion = record;
+	  }
+	
+	  function Context(tryLocsList) {
+	    // The root entry object (effectively a try statement without a catch
+	    // or a finally block) gives us a place to store values thrown from
+	    // locations where there is no enclosing try statement.
+	    this.tryEntries = [{ tryLoc: "root" }];
+	    tryLocsList.forEach(pushTryEntry, this);
+	    this.reset(true);
+	  }
+	
+	  runtime.keys = function(object) {
+	    var keys = [];
+	    for (var key in object) {
+	      keys.push(key);
+	    }
+	    keys.reverse();
+	
+	    // Rather than returning an object with a next method, we keep
+	    // things simple and return the next function itself.
+	    return function next() {
+	      while (keys.length) {
+	        var key = keys.pop();
+	        if (key in object) {
+	          next.value = key;
+	          next.done = false;
+	          return next;
+	        }
+	      }
+	
+	      // To avoid creating an additional object, we just hang the .value
+	      // and .done properties off the next function object itself. This
+	      // also ensures that the minifier will not anonymize the function.
+	      next.done = true;
+	      return next;
+	    };
+	  };
+	
+	  function values(iterable) {
+	    if (iterable) {
+	      var iteratorMethod = iterable[iteratorSymbol];
+	      if (iteratorMethod) {
+	        return iteratorMethod.call(iterable);
+	      }
+	
+	      if (typeof iterable.next === "function") {
+	        return iterable;
+	      }
+	
+	      if (!isNaN(iterable.length)) {
+	        var i = -1, next = function next() {
+	          while (++i < iterable.length) {
+	            if (hasOwn.call(iterable, i)) {
+	              next.value = iterable[i];
+	              next.done = false;
+	              return next;
+	            }
+	          }
+	
+	          next.value = undefined;
+	          next.done = true;
+	
+	          return next;
+	        };
+	
+	        return next.next = next;
+	      }
+	    }
+	
+	    // Return an iterator with no values.
+	    return { next: doneResult };
+	  }
+	  runtime.values = values;
+	
+	  function doneResult() {
+	    return { value: undefined, done: true };
+	  }
+	
+	  Context.prototype = {
+	    constructor: Context,
+	
+	    reset: function(skipTempReset) {
+	      this.prev = 0;
+	      this.next = 0;
+	      this.sent = undefined;
+	      this.done = false;
+	      this.delegate = null;
+	
+	      this.tryEntries.forEach(resetTryEntry);
+	
+	      if (!skipTempReset) {
+	        for (var name in this) {
+	          // Not sure about the optimal order of these conditions:
+	          if (name.charAt(0) === "t" &&
+	              hasOwn.call(this, name) &&
+	              !isNaN(+name.slice(1))) {
+	            this[name] = undefined;
+	          }
+	        }
+	      }
+	    },
+	
+	    stop: function() {
+	      this.done = true;
+	
+	      var rootEntry = this.tryEntries[0];
+	      var rootRecord = rootEntry.completion;
+	      if (rootRecord.type === "throw") {
+	        throw rootRecord.arg;
+	      }
+	
+	      return this.rval;
+	    },
+	
+	    dispatchException: function(exception) {
+	      if (this.done) {
+	        throw exception;
+	      }
+	
+	      var context = this;
+	      function handle(loc, caught) {
+	        record.type = "throw";
+	        record.arg = exception;
+	        context.next = loc;
+	        return !!caught;
+	      }
+	
+	      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+	        var entry = this.tryEntries[i];
+	        var record = entry.completion;
+	
+	        if (entry.tryLoc === "root") {
+	          // Exception thrown outside of any try block that could handle
+	          // it, so set the completion value of the entire function to
+	          // throw the exception.
+	          return handle("end");
+	        }
+	
+	        if (entry.tryLoc <= this.prev) {
+	          var hasCatch = hasOwn.call(entry, "catchLoc");
+	          var hasFinally = hasOwn.call(entry, "finallyLoc");
+	
+	          if (hasCatch && hasFinally) {
+	            if (this.prev < entry.catchLoc) {
+	              return handle(entry.catchLoc, true);
+	            } else if (this.prev < entry.finallyLoc) {
+	              return handle(entry.finallyLoc);
+	            }
+	
+	          } else if (hasCatch) {
+	            if (this.prev < entry.catchLoc) {
+	              return handle(entry.catchLoc, true);
+	            }
+	
+	          } else if (hasFinally) {
+	            if (this.prev < entry.finallyLoc) {
+	              return handle(entry.finallyLoc);
+	            }
+	
+	          } else {
+	            throw new Error("try statement without catch or finally");
+	          }
+	        }
+	      }
+	    },
+	
+	    abrupt: function(type, arg) {
+	      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+	        var entry = this.tryEntries[i];
+	        if (entry.tryLoc <= this.prev &&
+	            hasOwn.call(entry, "finallyLoc") &&
+	            this.prev < entry.finallyLoc) {
+	          var finallyEntry = entry;
+	          break;
+	        }
+	      }
+	
+	      if (finallyEntry &&
+	          (type === "break" ||
+	           type === "continue") &&
+	          finallyEntry.tryLoc <= arg &&
+	          arg <= finallyEntry.finallyLoc) {
+	        // Ignore the finally entry if control is not jumping to a
+	        // location outside the try/catch block.
+	        finallyEntry = null;
+	      }
+	
+	      var record = finallyEntry ? finallyEntry.completion : {};
+	      record.type = type;
+	      record.arg = arg;
+	
+	      if (finallyEntry) {
+	        this.next = finallyEntry.finallyLoc;
+	      } else {
+	        this.complete(record);
+	      }
+	
+	      return ContinueSentinel;
+	    },
+	
+	    complete: function(record, afterLoc) {
+	      if (record.type === "throw") {
+	        throw record.arg;
+	      }
+	
+	      if (record.type === "break" ||
+	          record.type === "continue") {
+	        this.next = record.arg;
+	      } else if (record.type === "return") {
+	        this.rval = record.arg;
+	        this.next = "end";
+	      } else if (record.type === "normal" && afterLoc) {
+	        this.next = afterLoc;
+	      }
+	    },
+	
+	    finish: function(finallyLoc) {
+	      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+	        var entry = this.tryEntries[i];
+	        if (entry.finallyLoc === finallyLoc) {
+	          this.complete(entry.completion, entry.afterLoc);
+	          resetTryEntry(entry);
+	          return ContinueSentinel;
+	        }
+	      }
+	    },
+	
+	    "catch": function(tryLoc) {
+	      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+	        var entry = this.tryEntries[i];
+	        if (entry.tryLoc === tryLoc) {
+	          var record = entry.completion;
+	          if (record.type === "throw") {
+	            var thrown = record.arg;
+	            resetTryEntry(entry);
+	          }
+	          return thrown;
+	        }
+	      }
+	
+	      // The context.catch method must only be called with a location
+	      // argument that corresponds to a known catch block.
+	      throw new Error("illegal catch attempt");
+	    },
+	
+	    delegateYield: function(iterable, resultName, nextLoc) {
+	      this.delegate = {
+	        iterator: values(iterable),
+	        resultName: resultName,
+	        nextLoc: nextLoc
+	      };
+	
+	      return ContinueSentinel;
+	    }
+	  };
+	})(
+	  // Among the various tricks for obtaining a reference to the global
+	  // object, this seems to be the most reliable technique that does not
+	  // use indirect eval (which violates Content Security Policy).
+	  typeof global === "object" ? global :
+	  typeof window === "object" ? window :
+	  typeof self === "object" ? self : this
+	);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(96)))
 
 /***/ },
-/* 30 */
+/* 96 */
 /***/ function(module, exports) {
 
-	"use strict";
+	// shim for using process in browser
+	
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 97 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
-	var staticProperty = function staticProperty(obj, property, value) {
-	    Object.defineProperty(obj, property, {
-	        configurable: false,
-	        enumerable: false,
-	        value: value,
-	        writable: false
-	    });
+	var _deepFreeze = __webpack_require__(98);
+	
+	var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
+	
+	var _setPrototypeOf = __webpack_require__(3);
+	
+	var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// local imports
+	
+	var coalesceCrio = function coalesceCrio(obj, newObj) {
+	    var prototype = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	    var applyPrototype = arguments.length <= 3 || arguments[3] === undefined ? true : arguments[3];
+	
+	    if (applyPrototype) {
+	        (0, _setPrototypeOf2.default)(newObj, prototype);
+	    }
+	
+	    if (obj.equals(newObj)) {
+	        return obj;
+	    }
+	
+	    return obj.isFrozen() ? (0, _deepFreeze2.default)(newObj, false) : newObj;
 	};
 	
-	var readonlyProperty = function readonlyProperty(obj, property, value) {
-	    Object.defineProperty(obj, property, {
-	        configurable: false,
-	        enumerable: true,
-	        value: value,
-	        writable: false
-	    });
+	exports.default = coalesceCrio;
+	module.exports = exports['default'];
+
+/***/ },
+/* 98 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _deepFreezeStrict = __webpack_require__(99);
+	
+	var _deepFreezeStrict2 = _interopRequireDefault(_deepFreezeStrict);
+	
+	var _recursiveObjectModifications = __webpack_require__(2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// external dependencies
+	
+	var deepFreezeWithClone = function deepFreezeWithClone(object) {
+	    var shouldClone = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+	
+	    if (object) {
+	        return shouldClone ? (0, _recursiveObjectModifications.cloneObject)(object, true) : (0, _deepFreezeStrict2.default)(object);
+	    }
+	
+	    return object;
 	};
 	
-	exports.readonlyProperty = readonlyProperty;
-	exports.staticProperty = staticProperty;
+	// local partial imports
+	
+	exports.default = deepFreezeWithClone;
+	module.exports = exports['default'];
+
+/***/ },
+/* 99 */
+/***/ function(module, exports) {
+
+	module.exports = function deepFreeze (o) {
+	  Object.freeze(o);
+	
+	  var oIsFunction = typeof o === "function";
+	  var hasOwnProp = Object.prototype.hasOwnProperty;
+	
+	  Object.getOwnPropertyNames(o).forEach(function (prop) {
+	    if (hasOwnProp.call(o, prop)
+	    && (oIsFunction ? prop !== 'caller' && prop !== 'callee' && prop !== 'arguments' : true )
+	    && o[prop] !== null
+	    && (typeof o[prop] === "object" || typeof o[prop] === "function")
+	    && !Object.isFrozen(o[prop])) {
+	      deepFreeze(o[prop]);
+	    }
+	  });
+	  
+	  return o;
+	};
+
+
+/***/ },
+/* 100 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.toJS = exports.thaw = exports.isFrozen = exports.hashCode = exports.freeze = exports.equals = undefined;
+	
+	var _deepFreeze = __webpack_require__(98);
+	
+	var _deepFreeze2 = _interopRequireDefault(_deepFreeze);
+	
+	var _crioIdentifier = __webpack_require__(101);
+	
+	var _hash = __webpack_require__(103);
+	
+	var _recursiveObjectModifications = __webpack_require__(2);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// local imports
+	
+	var CRIO_IDENTIFIER = (0, _crioIdentifier.getCrioIdentifier)();
+	
+	// local partial imports
+	
+	var equals = function equals(obj) {
+	    if (obj[CRIO_IDENTIFIER]) {
+	        return this.hashCode() === obj.hashCode();
+	    }
+	
+	    return false;
+	};
+	
+	var freeze = function freeze() {
+	    return (0, _deepFreeze2.default)(this);
+	};
+	
+	var hashCode = function hashCode() {
+	    return (0, _hash.hashObject)(this);
+	};
+	
+	var isFrozen = function isFrozen() {
+	    return Object.isFrozen(this);
+	};
+	
+	var thaw = function thaw() {
+	    return (0, _recursiveObjectModifications.cloneObject)(this);
+	};
+	
+	var toJS = function toJS() {
+	    return (0, _recursiveObjectModifications.cloneObject)(this, false, false);
+	};
+	
+	exports.equals = equals;
+	exports.freeze = freeze;
+	exports.hashCode = hashCode;
+	exports.isFrozen = isFrozen;
+	exports.thaw = thaw;
+	exports.toJS = toJS;
 	exports.default = {
-	    readonlyProperty: readonlyProperty,
-	    staticProperty: staticProperty
+	    equals: equals,
+	    freeze: freeze,
+	    hashCode: hashCode,
+	    isFrozen: isFrozen,
+	    thaw: thaw,
+	    toJS: toJS
 	};
 
 /***/ },
-/* 31 */
+/* 101 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.setCrioIdentifier = exports.getCrioIdentifier = undefined;
+	
+	var _functions = __webpack_require__(102);
+	
+	var CRIO_IDENTIFIER = '$$crio';
+	
+	var getCrioIdentifier = function getCrioIdentifier() {
+	    return CRIO_IDENTIFIER;
+	};
+	
+	var setCrioIdentifier = function setCrioIdentifier(obj, type) {
+	    (0, _functions.setReadonly)(obj, CRIO_IDENTIFIER, type);
+	};
+	
+	exports.getCrioIdentifier = getCrioIdentifier;
+	exports.setCrioIdentifier = setCrioIdentifier;
+	exports.default = {
+	    getCrioIdentifier: getCrioIdentifier,
+	    setCrioIdentifier: setCrioIdentifier
+	};
+
+/***/ },
+/* 102 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	// local imports
+	
+	// local partial imports
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.shallowClone = exports.setReadonly = exports.setNonEnumerable = exports.setDeeplyNested = exports.forOwn = exports.forEach = undefined;
+	
+	var _setPrototypeOf = __webpack_require__(3);
+	
+	var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
+	
+	var _checkers = __webpack_require__(4);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 * Loops over array, executing each function
+	 * If one of the iterations returns false, the forEach is canceled
+	 *
+	 * @param arr<Array>
+	 * @param fn<Function>
+	 */
+	var forEach = function forEach(arr, fn) {
+	    if ((0, _checkers.isUndefined)(fn)) {
+	        return;
+	    }
+	
+	    for (var i = 0, len = arr.length; i < len; i++) {
+	        fn(arr[i], i, arr);
+	    }
+	};
+	
+	/**
+	 * Loops over array of own properties, executing each function
+	 * If one of the iterations returns false, the forEach is canceled
+	 *
+	 * @param obj<Object>
+	 * @param fn<Function>
+	 */
+	var forOwn = function forOwn(obj, fn) {
+	    if ((0, _checkers.isUndefined)(fn)) {
+	        return;
+	    }
+	
+	    var keys = Object.getOwnPropertyNames(obj);
+	
+	    for (var i = 0, len = keys.length; i < len; i++) {
+	        if (fn(obj[keys[i]], keys[i], obj) === false) {
+	            break;
+	        }
+	    }
+	};
+	
+	var setDeeplyNested = function setDeeplyNested(obj, keys, value, prototype) {
+	    forEach(keys, function (key, index) {
+	        if (index !== keys.length - 1) {
+	            keys.shift();
+	
+	            obj[key] = setDeeplyNested(obj[key] || Object.create(prototype), keys, value, prototype);
+	        } else if (!(0, _checkers.isUndefined)(key)) {
+	            obj[key] = value;
+	        }
+	    });
+	
+	    (0, _setPrototypeOf2.default)(obj, prototype);
+	
+	    return obj;
+	};
+	
+	var setNonEnumerable = function setNonEnumerable(obj, prop, value) {
+	    Object.defineProperty(obj, prop, {
+	        enumerable: false,
+	        configurable: true,
+	        value: value,
+	        writable: true
+	    });
+	
+	    return obj;
+	};
+	
+	var setReadonly = function setReadonly(obj, prop, value) {
+	    Object.defineProperty(obj, prop, {
+	        enumerable: false,
+	        configurable: false,
+	        value: value,
+	        writable: false
+	    });
+	
+	    return obj;
+	};
+	
+	var shallowClone = function shallowClone(obj) {
+	    if ((0, _checkers.isArray)(obj)) {
+	        var i = obj.length,
+	            newArray = new Array(i);
+	
+	        for (; i--;) {
+	            newArray[i] = obj[i];
+	        }
+	
+	        return newArray;
+	    }
+	
+	    return _extends({}, obj);
+	};
+	
+	exports.forEach = forEach;
+	exports.forOwn = forOwn;
+	exports.setDeeplyNested = setDeeplyNested;
+	exports.setNonEnumerable = setNonEnumerable;
+	exports.setReadonly = setReadonly;
+	exports.shallowClone = shallowClone;
+	exports.default = {
+	    forEach: forEach,
+	    forOwn: forOwn,
+	    setDeeplyNested: setDeeplyNested,
+	    setNonEnumerable: setNonEnumerable,
+	    setReadonly: setReadonly,
+	    shallowClone: shallowClone
+	};
+
+/***/ },
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2001,23 +3679,27 @@ var crio =
 	});
 	exports.hashString = exports.hashObject = undefined;
 	
-	var _murmurHashJs = __webpack_require__(32);
+	var _murmurHashJs = __webpack_require__(104);
 	
 	var _murmurHashJs2 = _interopRequireDefault(_murmurHashJs);
 	
-	var _cereal = __webpack_require__(39);
+	var _cereal = __webpack_require__(111);
 	
 	var _cereal2 = _interopRequireDefault(_cereal);
 	
-	var _buffer = __webpack_require__(34);
+	var _buffer = __webpack_require__(106);
 	
-	var _checkers = __webpack_require__(5);
+	var _checkers = __webpack_require__(4);
 	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _functions = __webpack_require__(10);
+	var _functions = __webpack_require__(102);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// local partial imports
+	
+	var isConvertibleToCrio = function isConvertibleToCrio(obj) {
+	    return (0, _checkers.isArray)(obj) || (0, _checkers.isDate)(obj) || (0, _checkers.isObject)(obj);
+	};
 	
 	// external dependencies
 	
@@ -2031,15 +3713,13 @@ var crio =
 	    return (0, _murmurHashJs2.default)(buf);
 	};
 	
-	// local partial imports
-	
 	var hashFunctionInObject = function hashFunctionInObject(obj) {
-	    var loopFunction = (0, _checkers.isArray)(obj) ? _functions.forEach : _functions.forIn;
+	    var loopFunction = (0, _checkers.isArray)(obj) ? _functions.forEach : _functions.forOwn;
 	
 	    var cleanObj = (0, _checkers.isArray)(obj) ? [] : {};
 	
 	    loopFunction(obj, function (value, key) {
-	        if ((0, _crioCheckers.isConvertibleToCrio)(value)) {
+	        if (isConvertibleToCrio(value)) {
 	            cleanObj[key] = hashFunctionInObject(value);
 	        } else if ((0, _checkers.isFunction)(value)) {
 	            cleanObj[key] = value.toString();
@@ -2057,8 +3737,12 @@ var crio =
 	        return hashString(obj);
 	    }
 	
+	    if ((0, _checkers.isDate)(obj)) {
+	        return hashString(Date.prototype.valueOf.call(obj));
+	    }
+	
 	    // if its an array, check if a function exists in there
-	    if ((0, _crioCheckers.isConvertibleToCrio)(obj)) {
+	    if (isConvertibleToCrio(obj)) {
 	        var objWithFunctionsHashed = hashFunctionInObject(obj);
 	
 	        return hashString(_cereal2.default.stringify(objWithFunctionsHashed));
@@ -2075,11 +3759,11 @@ var crio =
 	};
 
 /***/ },
-/* 32 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var murmur3 = __webpack_require__(33)
-	var murmur2 = __webpack_require__(38)
+	var murmur3 = __webpack_require__(105)
+	var murmur2 = __webpack_require__(110)
 	
 	module.exports = murmur3
 	module.exports.murmur3 = murmur3
@@ -2087,7 +3771,7 @@ var crio =
 
 
 /***/ },
-/* 33 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {/**
@@ -2157,10 +3841,10 @@ var crio =
 	
 	module.exports = murmurhash3_32_gc
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(106).Buffer))
 
 /***/ },
-/* 34 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
@@ -2173,9 +3857,9 @@ var crio =
 	
 	'use strict'
 	
-	var base64 = __webpack_require__(35)
-	var ieee754 = __webpack_require__(36)
-	var isArray = __webpack_require__(37)
+	var base64 = __webpack_require__(107)
+	var ieee754 = __webpack_require__(108)
+	var isArray = __webpack_require__(109)
 	
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -3712,10 +5396,10 @@ var crio =
 	  return i
 	}
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34).Buffer, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(106).Buffer, (function() { return this; }())))
 
 /***/ },
-/* 35 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -3845,7 +5529,7 @@ var crio =
 
 
 /***/ },
-/* 36 */
+/* 108 */
 /***/ function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -3935,7 +5619,7 @@ var crio =
 
 
 /***/ },
-/* 37 */
+/* 109 */
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
@@ -3946,7 +5630,7 @@ var crio =
 
 
 /***/ },
-/* 38 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {/**
@@ -3999,17 +5683,17 @@ var crio =
 	
 	module.exports = murmurhash2_32_gc
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(34).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(106).Buffer))
 
 /***/ },
-/* 39 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(40);
+	module.exports = __webpack_require__(112);
 
 
 /***/ },
-/* 40 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*global exports */
@@ -4170,703 +5854,838 @@ var crio =
 
 
 /***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createNewCrio = __webpack_require__(2);
-	
-	var _CrioCollection2 = __webpack_require__(8);
-	
-	var _CrioCollection3 = _interopRequireDefault(_CrioCollection2);
-	
-	var _checkers = __webpack_require__(5);
-	
-	var _crioCheckers = __webpack_require__(7);
-	
-	var _crioFunctions = __webpack_require__(9);
-	
-	var _functions = __webpack_require__(10);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	// local imports
-	
-	// local partial imports
-	
-	/**
-	 * Accepts sources of various types and converts them to an array of arrays
-	 *
-	 * @param sources<Array>
-	 * @returns {Array}
-	 */
-	var getCleanSources = function getCleanSources(sources) {
-	    var cleanSources = [];
-	
-	    (0, _functions.forEach)(sources, function (source) {
-	        if (!(0, _checkers.isArray)(source)) {
-	            var cleanSource = (0, _crioCheckers.isCrio)(source) ? source.thaw() : source;
-	
-	            cleanSources.push((0, _checkers.isArray)(cleanSource) ? cleanSource : [cleanSource]);
-	        } else {
-	            cleanSources.push(source);
-	        }
-	    });
-	
-	    return cleanSources;
-	};
-	
-	var CrioList = (function (_CrioCollection) {
-	    _inherits(CrioList, _CrioCollection);
-	
-	    function CrioList(obj) {
-	        _classCallCheck(this, CrioList);
-	
-	        // this converts array-like objects to actual arrays
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CrioList).call(this, obj));
-	    }
-	
-	    /**
-	     * Returns new array of object concatentation with sources
-	     *
-	     * @param sources<Array>
-	     * @returns {CrioList}
-	     */
-	
-	    _createClass(CrioList, [{
-	        key: 'concat',
-	        value: function concat() {
-	            var _object;
-	
-	            for (var _len = arguments.length, sources = Array(_len), _key = 0; _key < _len; _key++) {
-	                sources[_key] = arguments[_key];
-	            }
-	
-	            var arrays = getCleanSources(sources);
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)((_object = this.object).concat.apply(_object, _toConsumableArray(arrays))));
-	        }
-	
-	        /**
-	         * Returns true if every item in the array finds a match based on the return from the callback
-	         *
-	         * @param callback<Function>
-	         * @returns {boolean}
-	         */
-	
-	    }, {
-	        key: 'every',
-	        value: function every(callback) {
-	            return this.object.every(callback);
-	        }
-	
-	        /**
-	         * Returns new CrioList with items at indices starting at start and prior to end replaced with fillValue
-	         *
-	         * @param fillValue
-	         * @param start
-	         * @param end
-	         * @returns {CrioCollection}
-	         */
-	
-	    }, {
-	        key: 'fill',
-	        value: function fill(fillValue) {
-	            var start = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-	            var end = arguments.length <= 2 || arguments[2] === undefined ? this.size : arguments[2];
-	
-	            var filledArray = [];
-	
-	            (0, _functions.forEach)(this.object, function (value, index) {
-	                filledArray[index] = index >= start && index < end ? fillValue : value;
-	            });
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(filledArray));
-	        }
-	
-	        /**
-	         * Executes standard filter function (as filter returns new array)
-	         *
-	         * @param callback<Function>
-	         * @param args<Array>
-	         * @returns filteredArray<CrioList>
-	         */
-	
-	    }, {
-	        key: 'filter',
-	        value: function filter(callback) {
-	            var _object2;
-	
-	            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	                args[_key2 - 1] = arguments[_key2];
-	            }
-	
-	            var values = (_object2 = this.object).filter.apply(_object2, [callback].concat(args));
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(values));
-	        }
-	
-	        /**
-	         * Finds first item in array that returns a value, and returns a new Crio of it
-	         *
-	         * @param callback<Function>
-	         * @param thisArg<Object[optional]>
-	         * @returns {any}
-	         */
-	
-	    }, {
-	        key: 'find',
-	        value: function find(callback, thisArg) {
-	            var _this2 = this;
-	
-	            var match = undefined;
-	
-	            (0, _functions.forEach)(this.object, function (value, index, arr) {
-	                if (callback.call(thisArg, value, index, arr)) {
-	                    match = (0, _crioCheckers.isConvertibleToCrio)(value) ? (0, _crioFunctions.getCrioInstance)(_this2, (0, _createNewCrio.createNewCrioList)(value)) : value;
-	
-	                    return false;
-	                }
-	            });
-	
-	            return match;
-	        }
-	
-	        /**
-	         * Finds first item in array that returns a value, and returns index of it in array
-	         *
-	         * @param callback<Function>
-	         * @param thisArg<Object[optional]>
-	         * @returns {number}
-	         */
-	
-	    }, {
-	        key: 'findIndex',
-	        value: function findIndex(callback, thisArg) {
-	            var matchIndex = -1;
-	
-	            (0, _functions.forEach)(this.object, function (value, index, arr) {
-	                if (callback.call(thisArg, value, index, arr)) {
-	                    matchIndex = index;
-	                    return false;
-	                }
-	            });
-	
-	            return matchIndex;
-	        }
-	
-	        /**
-	         * Returns mutable first item in the object
-	         *
-	         * @returns {CrioCollection}
-	         */
-	
-	    }, {
-	        key: 'first',
-	        value: function first() {
-	            var firstObject = this.object[0];
-	
-	            if ((0, _checkers.isArray)(firstObject)) {
-	                return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(firstObject));
-	            }
-	
-	            return firstObject;
-	        }
-	
-	        /**
-	         * Convenience function for checking if array includes value or not
-	         *
-	         * @param value
-	         * @returns includesMatch<Boolean>
-	         */
-	
-	    }, {
-	        key: 'includes',
-	        value: function includes(value) {
-	            return this.indexOf(value) !== -1;
-	        }
-	
-	        /**
-	         * Returns index of first matching element in this.object
-	         *
-	         * @param value<Any>
-	         * @returns indexOfMatch<Number>
-	         */
-	
-	    }, {
-	        key: 'indexOf',
-	        value: function indexOf(value) {
-	            if ((0, _checkers.isValueless)(value)) {
-	                return -1;
-	            }
-	
-	            return this.object.indexOf(value);
-	        }
-	
-	        /**
-	         * Joins array values into string separated by joiner
-	         *
-	         * @param joiner<String>
-	         * @returns joinedArray<String>
-	         */
-	
-	    }, {
-	        key: 'join',
-	        value: function join() {
-	            var joiner = arguments.length <= 0 || arguments[0] === undefined ? ',' : arguments[0];
-	
-	            return this.object.join(joiner);
-	        }
-	
-	        /**
-	         * Returns mutable last item in the CrioList
-	         *
-	         * @returns {*}
-	         */
-	
-	    }, {
-	        key: 'last',
-	        value: function last() {
-	            var lastObject = this.object[this.object.length - 1];
-	
-	            if ((0, _checkers.isArray)(lastObject)) {
-	                return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(lastObject));
-	            }
-	
-	            return lastObject;
-	        }
-	
-	        /**
-	         * Same as .indexOf(), except returns last item in array that matches instead of first
-	         *
-	         * @param value<Any>
-	         * @returns lastIndexMatch<Number>
-	         */
-	
-	    }, {
-	        key: 'lastIndexOf',
-	        value: function lastIndexOf(value) {
-	            if ((0, _checkers.isValueless)(value)) {
-	                return -1;
-	            }
-	
-	            return this.object.lastIndexOf(value);
-	        }
-	
-	        /**
-	         * Executes standard map function (as map returns new array)
-	         *
-	         * @param callback<Function>
-	         * @param thisArg<Object[optional]>
-	         * @returns mappedArray<CrioList>
-	         */
-	
-	    }, {
-	        key: 'map',
-	        value: function map(callback, thisArg) {
-	            var values = this.object.map(callback, thisArg);
-	
-	            if (!(0, _checkers.isArray)(values)) {
-	                throw new Error('You cannot change the type of object when mapping. If you want to do this, ' + 'you can use the .mutate() method.');
-	            }
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(values));
-	        }
-	
-	        /**
-	         * Alias function for pop
-	         *
-	         * @returns lastItemInArray<Any>
-	         */
-	
-	    }, {
-	        key: 'pop',
-	        value: function pop() {
-	            return this.splice(this.size - 1);
-	        }
-	
-	        /**
-	         * Adds values passed to array at the back, after the existing items
-	         *
-	         * @param values<Array>
-	         * @returns {Crio}
-	         */
-	
-	    }, {
-	        key: 'push',
-	        value: function push() {
-	            var _ref;
-	
-	            var newValues = (_ref = [].concat(_toConsumableArray(this.object))).concat.apply(_ref, arguments);
-	
-	            return (0, _createNewCrio.createNewCrioList)(newValues);
-	        }
-	
-	        /**
-	         * Based on action in callback, each item in array executes function to somehow modify
-	         * initialValue. If the resulting reduction is an array or an object, then return a new
-	         * Crio, otherwise return the reduction.
-	         *
-	         * @param callback<Function>
-	         * @param initialValue<any>
-	         * @returns {any}
-	         */
-	
-	    }, {
-	        key: 'reduce',
-	        value: function reduce(callback) {
-	            var initialValue = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-	
-	            var reducedValue = this.object.reduce(callback, initialValue);
-	
-	            return (0, _crioFunctions.coalesceCrioValue)(this, reducedValue);
-	        }
-	
-	        /**
-	         * Identical to .reduce(), but performs action on the array from right to left.
-	         *
-	         * @param callback<Function>
-	         * @param initialValue<any>
-	         * @returns {any}
-	         */
-	
-	    }, {
-	        key: 'reduceRight',
-	        value: function reduceRight(callback) {
-	            var initialValue = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-	
-	            return this.reverse().reduce(callback, initialValue);
-	        }
-	
-	        /**
-	         * Reverses the order of the array in this.object and returns new Crio
-	         *
-	         * @returns reversedArray<CrioList>
-	         */
-	
-	    }, {
-	        key: 'reverse',
-	        value: function reverse() {
-	            var reversedArray = [];
-	
-	            (0, _functions.forEachRight)(this.object, function (value) {
-	                reversedArray.push(value);
-	            });
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(reversedArray));
-	        }
-	
-	        /**
-	         * ALias for shift function
-	         *
-	         * @returns firstItemInArray<Any>
-	         */
-	
-	    }, {
-	        key: 'shift',
-	        value: function shift() {
-	            return this.splice(0);
-	        }
-	
-	        /**
-	         * Returns an array of items that is a window of original array, from passed begin to passed end.
-	         * If no end is passed, then window is from begin to end of the original array.
-	         *
-	         * @param begin<Number>
-	         * @param end<Number[optional]>
-	         * @returns {CrioList}
-	         */
-	
-	    }, {
-	        key: 'slice',
-	        value: function slice(begin, end) {
-	            if ((0, _checkers.isValueless)(begin)) {
-	                return this;
-	            }
-	
-	            var slicedArray = [].concat(_toConsumableArray(this.object)).slice(begin, end);
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(slicedArray));
-	        }
-	
-	        /**
-	         * Returns true if any items in the array are a match, based on the return in the callback
-	         *
-	         * @param callback<Function>
-	         * @returns {boolean}
-	         */
-	
-	    }, {
-	        key: 'some',
-	        value: function some(callback) {
-	            return this.object.some(callback);
-	        }
-	
-	        /**
-	         * Applies sort to object, and returns new CrioList with sorted objects
-	         *
-	         * @param fn<Function[optional]>
-	         * @returns {Crio}
-	         *
-	         * @todo Modify this so that it doesn't require thawing (for use with native sort it's necessary)
-	         */
-	
-	    }, {
-	        key: 'sort',
-	        value: function sort(fn) {
-	            var sortedObject = this.thaw().sort(fn);
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(sortedObject));
-	        }
-	
-	        /**
-	         * Returns a new CrioList with an object including all values except that
-	         * of the key(s) passed.
-	         *
-	         * @param index<Number>
-	         * @param removeNum<Number>
-	         * @param itemsToAdd<Array>
-	         * @returns itemWithKeysRemoved<Crio>
-	         */
-	
-	    }, {
-	        key: 'splice',
-	        value: function splice(index) {
-	            var removeNum = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
-	
-	            if (!(0, _checkers.isNumber)(index)) {
-	                return this;
-	            }
-	
-	            for (var _len3 = arguments.length, itemsToAdd = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
-	                itemsToAdd[_key3 - 2] = arguments[_key3];
-	            }
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(_functions.splice.apply(undefined, [this.object, index, removeNum].concat(itemsToAdd))));
-	        }
-	
-	        /**
-	         * Converts CrioList into CrioMap
-	         *
-	         * @returns {any}
-	         */
-	
-	    }, {
-	        key: 'toMap',
-	        value: function toMap() {
-	            return this.mutate(function (mutableList) {
-	                var map = {};
-	
-	                (0, _functions.forEach)(mutableList, function (value, index) {
-	                    map[index] = value;
-	                });
-	
-	                return map;
-	            });
-	        }
-	
-	        /**
-	         * Returns a unique list of all arrays passed concatenated with the original this.object
-	         *
-	         * @param sources<Array>
-	         * @returns {CrioList}
-	         */
-	
-	    }, {
-	        key: 'union',
-	        value: function union() {
-	            for (var _len4 = arguments.length, sources = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-	                sources[_key4] = arguments[_key4];
-	            }
-	
-	            var arrays = getCleanSources(sources);
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, this.concat.apply(this, _toConsumableArray(arrays)).unique());
-	        }
-	
-	        /**
-	         * Returns CrioList with only unique items in original CrioList
-	         *
-	         * @returns {CrioList}
-	         */
-	
-	    }, {
-	        key: 'unique',
-	        value: function unique() {
-	            var uniqueList = [];
-	
-	            this.forEach(function (value) {
-	                if (uniqueList.indexOf(value) === -1) {
-	                    uniqueList.push(value);
-	                }
-	            });
-	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioList)(uniqueList));
-	        }
-	
-	        /**
-	         * Adds values passed to array at the front, before the existing items
-	         *
-	         * @param values<Array>
-	         * @returns {Crio}
-	         */
-	
-	    }, {
-	        key: 'unshift',
-	        value: function unshift() {
-	            var _ref2;
-	
-	            for (var _len5 = arguments.length, values = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-	                values[_key5] = arguments[_key5];
-	            }
-	
-	            var newValues = (_ref2 = [].concat(_toConsumableArray(values.reverse()))).concat.apply(_ref2, _toConsumableArray(this.object));
-	
-	            return (0, _createNewCrio.createNewCrioList)(newValues);
-	        }
-	    }]);
-	
-	    return CrioList;
-	})(_CrioCollection3.default);
-	
-	exports.default = CrioList;
-	module.exports = exports['default'];
-
-/***/ },
-/* 42 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.toObject = exports.toArray = exports.set = exports.mutate = exports.merge = exports.mapObject = exports.mapArray = exports.get = exports.forEachObject = exports.forEachArray = exports.filterObject = exports.filterArray = undefined;
 	
-	var _checkers = __webpack_require__(5);
+	var _setPrototypeOf = __webpack_require__(3);
 	
-	var _createNewCrio = __webpack_require__(2);
+	var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
 	
-	var _CrioCollection2 = __webpack_require__(8);
+	var _recursiveObjectModifications = __webpack_require__(2);
 	
-	var _CrioCollection3 = _interopRequireDefault(_CrioCollection2);
+	var _checkers = __webpack_require__(4);
 	
-	var _crioFunctions = __webpack_require__(9);
-	
-	var _functions = __webpack_require__(10);
+	var _functions = __webpack_require__(102);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	// local imports
 	
 	// local partial imports
 	
-	var CrioMap = (function (_CrioCollection) {
-	    _inherits(CrioMap, _CrioCollection);
+	var OBJECT_CREATE = Object.create;
 	
-	    function CrioMap(obj) {
-	        _classCallCheck(this, CrioMap);
-	
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(CrioMap).call(this, obj));
+	var compareNewToOriginal = function compareNewToOriginal(originalObj, result) {
+	    if ((0, _checkers.isFunction)(originalObj.equals) && originalObj.equals(result)) {
+	        return originalObj;
 	    }
 	
-	    /**
-	     * Returns a new Crio with an object including all values except that
-	     * of the key(s) passed.
-	     *
-	     * @param keys<Array>
-	     * @returns itemWithKeysRemoved<Crio>
-	     */
+	    return result;
+	};
 	
-	    _createClass(CrioMap, [{
-	        key: 'delete',
-	        value: function _delete() {
-	            for (var _len = arguments.length, keys = Array(_len), _key = 0; _key < _len; _key++) {
-	                keys[_key] = arguments[_key];
+	var isSingleKey = function isSingleKey(keys) {
+	    return (0, _checkers.isNumber)(keys) || (0, _checkers.isString)(keys);
+	};
+	
+	var filterArray = function filterArray(callback, prototype) {
+	    var _this = this;
+	
+	    var newArray = [];
+	
+	    (0, _functions.forEach)(this, function (value, index) {
+	        if (callback(value, index, _this) !== false) {
+	            newArray[newArray.length] = value;
+	        }
+	    });
+	
+	    (0, _setPrototypeOf2.default)(newArray, prototype);
+	
+	    return compareNewToOriginal(this, newArray);
+	};
+	
+	var filterObject = function filterObject(callback, prototype) {
+	    var filteredIterable = filterGeneratorObject.call(this, callback);
+	
+	    var filteredIterableObject = OBJECT_CREATE(prototype);
+	
+	    (0, _functions.forEach)([].concat(_toConsumableArray(filteredIterable)), function (filteredIterableArrayItem) {
+	        var key = Object.keys(filteredIterableArrayItem)[0];
+	
+	        filteredIterableObject[key] = filteredIterableArrayItem[key];
+	    });
+	
+	    return compareNewToOriginal(this, filteredIterableObject);
+	};
+	
+	var filterGeneratorObject = regeneratorRuntime.mark(function filterGeneratorObject(callback) {
+	    var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, _step$value, key, value;
+	
+	    return regeneratorRuntime.wrap(function filterGeneratorObject$(_context) {
+	        while (1) {
+	            switch (_context.prev = _context.next) {
+	                case 0:
+	                    _iteratorNormalCompletion = true;
+	                    _didIteratorError = false;
+	                    _iteratorError = undefined;
+	                    _context.prev = 3;
+	                    _iterator = this[Symbol.iterator]();
+	
+	                case 5:
+	                    if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+	                        _context.next = 15;
+	                        break;
+	                    }
+	
+	                    _step$value = _step.value;
+	                    key = _step$value.key;
+	                    value = _step$value.value;
+	
+	                    if (!(callback(value, key, this) !== false)) {
+	                        _context.next = 12;
+	                        break;
+	                    }
+	
+	                    _context.next = 12;
+	                    return _defineProperty({}, key, value);
+	
+	                case 12:
+	                    _iteratorNormalCompletion = true;
+	                    _context.next = 5;
+	                    break;
+	
+	                case 15:
+	                    _context.next = 21;
+	                    break;
+	
+	                case 17:
+	                    _context.prev = 17;
+	                    _context.t0 = _context['catch'](3);
+	                    _didIteratorError = true;
+	                    _iteratorError = _context.t0;
+	
+	                case 21:
+	                    _context.prev = 21;
+	                    _context.prev = 22;
+	
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	
+	                case 24:
+	                    _context.prev = 24;
+	
+	                    if (!_didIteratorError) {
+	                        _context.next = 27;
+	                        break;
+	                    }
+	
+	                    throw _iteratorError;
+	
+	                case 27:
+	                    return _context.finish(24);
+	
+	                case 28:
+	                    return _context.finish(21);
+	
+	                case 29:
+	                case 'end':
+	                    return _context.stop();
 	            }
+	        }
+	    }, filterGeneratorObject, this, [[3, 17, 21, 29], [22,, 24, 28]]);
+	});
 	
-	            if (keys.length === 0) {
-	                return (0, _createNewCrio.createNewCrioMap)();
+	/**
+	 * Loops over the iterable, breaking when function returns false
+	 *
+	 * @param obj<Array|Object>
+	 * @param callback<Function>
+	 */
+	var forEachArray = function forEachArray(callback) {
+	    for (var index = 0, length = this.length; index < length; index++) {
+	        if (callback(this[index], index, this) === false) {
+	            break;
+	        }
+	    }
+	};
+	
+	/**
+	 * Loops over the iterable, breaking when function returns false
+	 *
+	 * @param obj<Array|Object>
+	 * @param callback<Function>
+	 */
+	var forEachObject = function forEachObject(callback) {
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = this[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var _step2$value = _step2.value;
+	            var _key = _step2$value.key;
+	            var _value = _step2$value.value;
+	
+	            if (callback(_value, _key, this) === false) {
+	                break;
 	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
+	            }
+	        }
+	    }
+	};
 	
-	            var newValue = _extends({}, this.object);
+	var get = function get(keys) {
+	    var _this2 = this;
 	
-	            (0, _functions.forEach)(keys, function (key) {
-	                delete newValue[key];
+	    if ((0, _checkers.isUndefined)(keys)) {
+	        return this;
+	    }
+	
+	    if (isSingleKey(keys)) {
+	        return this[keys];
+	    }
+	
+	    if ((0, _checkers.isArray)(keys)) {
+	        var _ret = (function () {
+	            var retrievalObj = _this2,
+	                returnValue = undefined;
+	
+	            (0, _functions.forEach)(keys, function (key, index) {
+	                if ((0, _checkers.isUndefined)(retrievalObj[key])) {
+	                    return false;
+	                }
+	
+	                if (index === keys.length - 1) {
+	                    returnValue = retrievalObj[key];
+	                } else {
+	                    retrievalObj = retrievalObj[key];
+	                }
 	            });
 	
-	            return (0, _crioFunctions.getCrioInstance)(this, (0, _createNewCrio.createNewCrioMap)(newValue));
-	        }
+	            return {
+	                v: returnValue
+	            };
+	        })();
 	
-	        /**
-	         * Alias for Object.prototype.hasOwnProperty
-	         *
-	         * @param
-	         * @returns {boolean}prop<any>
-	         */
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	    }
 	
-	    }, {
-	        key: 'has',
-	        value: function has(prop) {
-	            if (!(0, _checkers.isString)(prop)) {
-	                prop = prop.toString();
+	    return this;
+	};
+	
+	var getThawedObject = function getThawedObject(obj) {
+	    if (obj.thaw) {
+	        return obj.thaw();
+	    }
+	
+	    return obj;
+	};
+	
+	var mapArray = function mapArray(callback, prototype) {
+	    var _this3 = this;
+	
+	    var mappedArray = [];
+	
+	    (0, _functions.forEach)(this, function (value, index) {
+	        mappedArray[index] = callback(value, index, _this3);
+	    });
+	
+	    (0, _setPrototypeOf2.default)(mappedArray, prototype);
+	
+	    return compareNewToOriginal(this, mappedArray);
+	};
+	
+	var mapObject = function mapObject(callback, prototype) {
+	    var mappedIterable = mapGeneratorObject.call(this, callback);
+	
+	    var mappedIterableObject = OBJECT_CREATE(prototype);
+	
+	    (0, _functions.forEach)([].concat(_toConsumableArray(mappedIterable)), function (mappedIterableArrayItem) {
+	        var key = Object.keys(mappedIterableArrayItem)[0];
+	
+	        mappedIterableObject[key] = mappedIterableArrayItem[key];
+	    });
+	
+	    return compareNewToOriginal(this, mappedIterableObject);
+	};
+	
+	var mapGeneratorObject = regeneratorRuntime.mark(function mapGeneratorObject(callback) {
+	    var _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, _step3$value, _key2, _value2;
+	
+	    return regeneratorRuntime.wrap(function mapGeneratorObject$(_context2) {
+	        while (1) {
+	            switch (_context2.prev = _context2.next) {
+	                case 0:
+	                    _iteratorNormalCompletion3 = true;
+	                    _didIteratorError3 = false;
+	                    _iteratorError3 = undefined;
+	                    _context2.prev = 3;
+	                    _iterator3 = this[Symbol.iterator]();
+	
+	                case 5:
+	                    if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+	                        _context2.next = 14;
+	                        break;
+	                    }
+	
+	                    _step3$value = _step3.value;
+	                    _key2 = _step3$value.key;
+	                    _value2 = _step3$value.value;
+	                    _context2.next = 11;
+	                    return _defineProperty({}, _key2, callback(_value2, _key2, this));
+	
+	                case 11:
+	                    _iteratorNormalCompletion3 = true;
+	                    _context2.next = 5;
+	                    break;
+	
+	                case 14:
+	                    _context2.next = 20;
+	                    break;
+	
+	                case 16:
+	                    _context2.prev = 16;
+	                    _context2.t0 = _context2['catch'](3);
+	                    _didIteratorError3 = true;
+	                    _iteratorError3 = _context2.t0;
+	
+	                case 20:
+	                    _context2.prev = 20;
+	                    _context2.prev = 21;
+	
+	                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                        _iterator3.return();
+	                    }
+	
+	                case 23:
+	                    _context2.prev = 23;
+	
+	                    if (!_didIteratorError3) {
+	                        _context2.next = 26;
+	                        break;
+	                    }
+	
+	                    throw _iteratorError3;
+	
+	                case 26:
+	                    return _context2.finish(23);
+	
+	                case 27:
+	                    return _context2.finish(20);
+	
+	                case 28:
+	                case 'end':
+	                    return _context2.stop();
 	            }
-	
-	            return this.object.hasOwnProperty(prop);
 	        }
+	    }, mapGeneratorObject, this, [[3, 16, 20, 28], [21,, 23, 27]]);
+	});
 	
-	        /**
-	         * Converts CrioMap to a CrioList, where each item is a value from the key:value pairs
-	         * in the original map
-	         *
-	         * @returns {CrioCollection}
-	         */
+	/**
+	 * Deeply merge objects or arrays
+	 *
+	 * @param target<any>
+	 * @param sources<Array>
+	 * @returns {*}
+	 */
+	var merge = function merge() {
+	    for (var _len = arguments.length, sources = Array(_len), _key3 = 0; _key3 < _len; _key3++) {
+	        sources[_key3] = arguments[_key3];
+	    }
 	
-	    }, {
-	        key: 'toList',
-	        value: function toList() {
-	            return this.mutate(function (mutableObject) {
-	                var list = [];
+	    if (sources.length === 0) {
+	        return this;
+	    }
 	
-	                (0, _functions.forIn)(mutableObject, function (value) {
-	                    list.push(value);
-	                });
+	    var target = getThawedObject(this);
+	    var isTargetArr = (0, _checkers.isArray)(target);
+	    var isTargetObj = (0, _checkers.isObject)(target);
 	
-	                return list;
+	    if (!isTargetArr && !isTargetObj) {
+	        return sources[sources.length - 1];
+	    }
+	
+	    var dest = isTargetArr ? [] : {};
+	
+	    (0, _functions.forEach)(sources, function (source) {
+	        var realSource = getThawedObject(source);
+	
+	        if ((0, _checkers.isArray)(realSource)) {
+	            dest = dest.concat(target || []);
+	
+	            (0, _functions.forEach)(realSource, function (value, i) {
+	                var realValue = getThawedObject(value);
+	
+	                dest[i] = (0, _checkers.isObject)(realValue) || (0, _checkers.isArray)(realValue) ? merge(target[i], realValue) : realValue;
+	            });
+	        } else {
+	            dest = _extends({}, target || {});
+	
+	            (0, _functions.forOwn)(realSource, function (value, key) {
+	                var realValue = getThawedObject(value);
+	
+	                dest[key] = (0, _checkers.isObject)(realValue) || (0, _checkers.isArray)(realValue) ? merge(target[key], realValue) : realValue;
 	            });
 	        }
-	    }]);
+	    });
 	
-	    return CrioMap;
-	})(_CrioCollection3.default);
+	    return compareNewToOriginal(this, (0, _recursiveObjectModifications.setDeepPrototype)(dest));
+	};
 	
-	exports.default = CrioMap;
+	var mutate = function mutate(callback) {
+	    var result = callback.call(this, (0, _recursiveObjectModifications.cloneObject)(this, false), this);
+	
+	    return compareNewToOriginal(this, (0, _recursiveObjectModifications.setDeepPrototype)(result));
+	};
+	
+	var set = function set(keys, value, prototype) {
+	    if ((0, _checkers.isUndefined)(keys)) {
+	        return this;
+	    }
+	
+	    var isThisFrozen = this.isFrozen();
+	
+	    var mutatedThis = isThisFrozen ? this.thaw() : this;
+	
+	    if (isSingleKey(keys) || (0, _checkers.isObject)(keys) || (0, _checkers.isArray)(keys)) {
+	        var updatedObject = undefined;
+	
+	        if (isSingleKey(keys)) {
+	            mutatedThis[keys] = value;
+	
+	            updatedObject = mutatedThis;
+	        }
+	
+	        if ((0, _checkers.isObject)(keys) || (0, _checkers.isArray)(keys)) {
+	            updatedObject = (0, _functions.setDeeplyNested)(mutatedThis, keys, value, prototype);
+	        }
+	
+	        return compareNewToOriginal(this, isThisFrozen ? updatedObject.freeze() : updatedObject);
+	    }
+	};
+	
+	var toArray = function toArray() {
+	    if ((0, _checkers.isArray)(this)) {
+	        return this;
+	    }
+	
+	    return (0, _recursiveObjectModifications.setDeepPrototype)([].concat(_toConsumableArray(this.values())));
+	};
+	
+	var toObject = function toObject() {
+	    if ((0, _checkers.isObject)(this)) {
+	        return this;
+	    }
+	
+	    return (0, _recursiveObjectModifications.setDeepPrototype)(_extends({}, this));
+	};
+	
+	exports.filterArray = filterArray;
+	exports.filterObject = filterObject;
+	exports.forEachArray = forEachArray;
+	exports.forEachObject = forEachObject;
+	exports.get = get;
+	exports.mapArray = mapArray;
+	exports.mapObject = mapObject;
+	exports.merge = merge;
+	exports.mutate = mutate;
+	exports.set = set;
+	exports.toArray = toArray;
+	exports.toObject = toObject;
+	exports.default = {
+	    filterArray: filterArray,
+	    filterObject: filterObject,
+	    forEachArray: forEachArray,
+	    forEachObject: forEachObject,
+	    get: get,
+	    mapArray: mapArray,
+	    mapObject: mapObject,
+	    merge: merge,
+	    mutate: mutate,
+	    set: set,
+	    toArray: toArray,
+	    toObject: toObject
+	};
+
+/***/ },
+/* 114 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.iteratorFunction = exports.createIterator = undefined;
+	
+	var _array = __webpack_require__(7);
+	
+	var _array2 = _interopRequireDefault(_array);
+	
+	var _checkers = __webpack_require__(4);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// polyfills
+	
+	var iteratorFunction = function iteratorFunction() {
+	    var self = this;
+	    var isObjArray = (0, _checkers.isArray)(this);
+	    var keys = Object.getOwnPropertyNames(this);
+	    var length = isObjArray ? this.length : keys.length;
+	
+	    var index = 0;
+	
+	    return {
+	        next: function next() {
+	            var key = isObjArray ? index : keys[index];
+	            var value = isObjArray ? self[index] : self[keys[index]];
+	
+	            var returnValue = {};
+	
+	            if (index === length) {
+	                returnValue = {
+	                    done: true
+	                };
+	            } else {
+	                returnValue = {
+	                    done: false,
+	                    value: {
+	                        key: key,
+	                        value: value
+	                    }
+	                };
+	            }
+	
+	            index++;
+	
+	            return returnValue;
+	        }
+	    };
+	};
+	
+	// local partial imports
+	
+	var createIterator = function createIterator(obj) {
+	    var symbolIterator = typeof Symbol !== 'undefined' ? Symbol.iterator : _array2.default.iterator;
+	
+	    obj[symbolIterator] = iteratorFunction;
+	
+	    return obj;
+	};
+	
+	exports.createIterator = createIterator;
+	exports.iteratorFunction = iteratorFunction;
+	exports.default = {
+	    createIterator: createIterator,
+	    iteratorFunction: iteratorFunction
+	};
+
+/***/ },
+/* 115 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _setCrioDateMethods = __webpack_require__(116);
+	
+	var _setCrioDateMethods2 = _interopRequireDefault(_setCrioDateMethods);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var PROTOTYPE_METHODS = ['getDate', 'getDay', 'getFullYear', 'getHours', 'getMilliseconds', 'getMinutes', 'getMonth', 'getSeconds', 'getTime', 'getTimezoneOffset', 'getUTCDate', 'getUTCDay', 'getUTCFullYear', 'getUTCHours', 'getUTCMilliseconds', 'getUTCMinutes', 'getUTCMonth', 'getUTCSeconds', 'getYear', 'setDate', 'setFullYear', 'setHours', 'setMilliseconds', 'setMinutes', 'setMonth', 'setSeconds', 'setTime', 'setUTCDate', 'setUTCFullYear', 'setUTCHours', 'setUTCMilliseconds', 'setUTCMinutes', 'setUTCMonth', 'setUTCSeconds', 'setYear', 'toDateString', 'toGMTString', 'toISOString', 'toJSON', 'toLocaleDateString', 'toLocaleString', 'toLocaleTimeString', 'toString', 'toTimeString', 'toUTCString', 'valueOf'];
+	
+	// local imports
+	
+	var MUTABLE_METHODS = ['setDate', 'setFullYear', 'setHours', 'setMilliseconds', 'setMinutes', 'setMonth', 'setSeconds', 'setTime', 'setUTCDate', 'setUTCFullYear', 'setUTCHours', 'setUTCMilliseconds', 'setUTCMinutes', 'setUTCMonth', 'setUTCSeconds', 'setYear'];
+	
+	var CUSTOM_METHODS = [];
+	
+	var crioDatePrototype = Object.create(Date.prototype);
+	
+	exports.default = _setCrioDateMethods2.default.call(crioDatePrototype, crioDatePrototype, PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
+	module.exports = exports['default'];
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	// polyfills
+	
+	// local imports
+	
+	// local partial imports
+	
+	//import {
+	//    cloneObject
+	//} from '../utils/recursiveObjectModifications';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _date = __webpack_require__(117);
+	
+	var _date2 = _interopRequireDefault(_date);
+	
+	var _symbol = __webpack_require__(61);
+	
+	var _symbol2 = _interopRequireDefault(_symbol);
+	
+	__webpack_require__(95);
+	
+	var _coalesceCrio = __webpack_require__(97);
+	
+	var _coalesceCrio2 = _interopRequireDefault(_coalesceCrio);
+	
+	var _crioDefaultMethods = __webpack_require__(100);
+	
+	var _crioDefaultMethods2 = _interopRequireDefault(_crioDefaultMethods);
+	
+	var _crioIdentifier = __webpack_require__(101);
+	
+	var _checkers = __webpack_require__(4);
+	
+	var _functions = __webpack_require__(102);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var CUSTOM_METHODS = ['equals', 'freeze', 'hashCode', 'isFrozen', 'thaw', 'toJS'];
+	
+	var toDatePrimitive = function toDatePrimitive(hint) {
+	    var hasToString = !!this.toString;
+	    var hasValueOf = !!this.valueOf;
+	
+	    if (hint === 'number') {
+	        if (hasValueOf) {
+	            return this.valueOf();
+	        }
+	
+	        if (hasToString) {
+	            return this.toString();
+	        }
+	
+	        throw new TypeError('No valueOf or toString defined.');
+	    }
+	
+	    if (hasToString) {
+	        return this.toString();
+	    }
+	
+	    if (hasValueOf) {
+	        return this.valueOf();
+	    }
+	
+	    throw new TypeError('No valueOf or toString defined.');
+	};
+	
+	var setDateMethods = function setDateMethods(prototype, prototypeMethods, mutableMethods, customMethods) {
+	
+	    var mainPrototype = Date.prototype;
+	
+	    var customPrototype = _extends({}, _crioDefaultMethods2.default);
+	
+	    prototypeMethods.splice(prototypeMethods.indexOf('valueOf'), 1);
+	
+	    prototypeMethods.slice().forEach(function (method) {
+	        if (customMethods.indexOf(method) !== -1 || /__/.test(method) || /@@/.test(method)) {
+	            prototypeMethods.splice(prototypeMethods.indexOf(method), 1);
+	        }
+	    });
+	
+	    CUSTOM_METHODS.forEach(function (method) {
+	        (0, _functions.setNonEnumerable)(prototype, method, customPrototype[method]);
+	    });
+	
+	    var hasSymbol = typeof Symbol !== 'undefined';
+	    var hasDateToPrimitive = !!mainPrototype[Symbol.toPrimitive];
+	
+	    (0, _functions.setNonEnumerable)(prototype, hasSymbol ? Symbol.toPrimitive : _symbol2.default.toPrimitive, hasDateToPrimitive ? mainPrototype[Symbol.toPrimitive] : toDatePrimitive);
+	
+	    (0, _functions.setNonEnumerable)(prototype, 'valueOf', function valueOf() {
+	        return mainPrototype.valueOf.call(this);
+	    });
+	
+	    prototypeMethods.forEach(function (method) {
+	        var newMethod = undefined;
+	
+	        if (mutableMethods.indexOf(method) !== -1) {
+	            if (mainPrototype[method]) {
+	                newMethod = function () {
+	                    var clone = new Date(this.valueOf());
+	
+	                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	                        args[_key] = arguments[_key];
+	                    }
+	
+	                    mainPrototype[method].apply(clone, args);
+	
+	                    return (0, _coalesceCrio2.default)(this, clone, prototype);
+	                };
+	            } else {
+	                (function () {
+	                    var polyfilledMethod = _date2.default[method];
+	
+	                    if (polyfilledMethod) {
+	                        newMethod = function () {
+	                            var clone = new Date(this.valueOf());
+	
+	                            console.log(this.isFrozen());
+	
+	                            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	                                args[_key2] = arguments[_key2];
+	                            }
+	
+	                            polyfilledMethod.apply(undefined, [clone].concat(args));
+	
+	                            return (0, _coalesceCrio2.default)(this, clone, prototype);
+	                        };
+	                    }
+	                })();
+	            }
+	        } else {
+	            if (mainPrototype[method]) {
+	                newMethod = function () {
+	                    var clone = new Date(this.valueOf());
+	
+	                    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+	                        args[_key3] = arguments[_key3];
+	                    }
+	
+	                    var result = mainPrototype[method].apply(clone, args);
+	
+	                    if (!(0, _checkers.isDate)(result)) {
+	                        return result;
+	                    }
+	
+	                    return (0, _coalesceCrio2.default)(this, result, prototype);
+	                };
+	            } else {
+	                (function () {
+	                    var polyfilledMethod = _date2.default[method];
+	
+	                    if (polyfilledMethod) {
+	                        newMethod = function () {
+	                            var clone = new Date(this.valueOf());
+	
+	                            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	                                args[_key4] = arguments[_key4];
+	                            }
+	
+	                            var result = polyfilledMethod.apply(undefined, [clone].concat(args));
+	
+	                            if (!(0, _checkers.isDate)(result)) {
+	                                return result;
+	                            }
+	
+	                            return (0, _coalesceCrio2.default)(this, result, prototype);
+	                        };
+	                    }
+	                })();
+	            }
+	        }
+	
+	        if ((0, _checkers.isFunction)(newMethod)) {
+	            (0, _functions.setNonEnumerable)(prototype, method, newMethod);
+	        }
+	    });
+	
+	    (0, _crioIdentifier.setCrioIdentifier)(prototype, Date);
+	
+	    return prototype;
+	};
+	
+	exports.default = setDateMethods;
+	module.exports = exports['default'];
+
+/***/ },
+/* 117 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(118);
+	module.exports = Date;
+
+/***/ },
+/* 118 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var DateProto    = Date.prototype
+	  , INVALID_DATE = 'Invalid Date'
+	  , TO_STRING    = 'toString'
+	  , $toString    = DateProto[TO_STRING];
+	if(new Date(NaN) + '' != INVALID_DATE){
+	  __webpack_require__(22)(DateProto, TO_STRING, function toString(){
+	    var value = +this;
+	    return value === value ? $toString.call(this) : INVALID_DATE;
+	  });
+	}
+
+/***/ },
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _setCrioArrayOrObjectMethods = __webpack_require__(6);
+	
+	var _setCrioArrayOrObjectMethods2 = _interopRequireDefault(_setCrioArrayOrObjectMethods);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var PROTOTYPE_METHODS = ['entries', 'filter', 'forEach', 'hasOwnProperty', 'isPrototypeOf', 'keys', 'map', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf', 'values'];
+	
+	// local imports
+	
+	var MUTABLE_METHODS = [];
+	
+	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'keys', 'map', 'values'];
+	
+	var crioObjectPrototype = Object.create(Object.prototype);
+	
+	exports.default = _setCrioArrayOrObjectMethods2.default.call(crioObjectPrototype, Object, crioObjectPrototype, PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
 	module.exports = exports['default'];
 
 /***/ }
-/******/ ]);
+/******/ ])
+});
+;
 //# sourceMappingURL=crio.js.map

@@ -10,8 +10,7 @@ var path = require("path"),
             filename:"dist/crio.min.js"
         }),
 
-        plugins:[
-            new webpack.optimize.DedupePlugin(),
+        plugins:defaultConfig.plugins.concat([
             new webpack.optimize.UglifyJsPlugin({
                 compress:{
                     booleans:true,
@@ -32,7 +31,7 @@ var path = require("path"),
                 },
                 sourceMap:false
             })
-        ]
+        ])
     });
 
 delete productionConfig.devtool;

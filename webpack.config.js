@@ -54,13 +54,18 @@ module.exports = {
     },
 
     output: {
-        filename:"dist/crio.js",
-        library:"crio",
-        libraryTarget:"var"
+        filename: "dist/crio.js",
+        library: "crio",
+        libraryTarget: "umd",
+        umdNamedDefine: true
     },
 
     plugins:[
-        new webpack.optimize.DedupePlugin()
+        new webpack.optimize.DedupePlugin(),
+        new webpack.DefinePlugin({
+            "__ENVIRONMENT__": JSON.stringify(process.env.NODE_ENV)
+        }),
+        new webpack.NoErrorsPlugin()
     ],
 
     resolve:{
