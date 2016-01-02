@@ -55,9 +55,9 @@ crio attempts to solve the problem by closing the "immutable loop", meaning it a
 
 To create a new crio object, its pretty straightforward:
 ```
+const crioArray = crio([]);
 const crioDate = crio(new Date());
-const crioList = crio([]);
-const crioMap = crio({});
+const crioObject = crio({});
 ```
 These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
 
@@ -66,15 +66,15 @@ The [API](API.md) is the same as you already know working with those objects, in
 #### Why not just use X immutable library?
 
 There are a bunch of ones out there, but the three that people usually gravitate towards:
-* ImmutableJS
-* mori
-* seamless-immutable
+* [Immutable.js](https://github.com/facebook/immutable-js)
+* [mori](https://github.com/swannodette/mori)
+* [seamless-immutable](https://github.com/rtfeldman/seamless-immutable)
 
-ImmutableJS is quite nice, and their API also follows the object standard (in their case, Array and Map), however it creates a classed object that cannot be used with other external libraries (namely lodash) without converting back and forth. They have a great thing going, however inevitably the inability to use objects like their native counterparts felt like a hinderance.
+**Immutable** is quite nice, and their API also follows the object standard (in their case, Array and Map), however it creates a classed object that cannot be used with other external libraries (namely lodash) without converting back and forth. They have a great thing going, however inevitably the inability to use objects like their native counterparts felt like a hinderance.
 
-Mori is the seasoned veteran, having been hardened via ClosureScript, and for many is chosen specifically because it does not try to immutabilize the default API methods. Personal taste, I wasn't interested in relearning an entirely new API (that for a person without a ClosureScript background is obtuse). Plus, it's not written in JavaScript ... its compiled to it, which just felt wrong to a JavaScript devout like me.
+**mori** is the seasoned veteran, having been hardened via ClosureScript, and for many is chosen specifically because it does not try to immutabilize the default API methods. Personal taste, I wasn't interested in relearning an entirely new API (that for a person without a ClosureScript background is obtuse). Plus, it's not written in JavaScript ... its compiled to it, which just felt wrong to a JavaScript devout like me.
 
-seamless-immutable had great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the "right way". As such, it fell short of my expectations
+**seamless-immutable** had great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the "right way". As such, it fell short of my expectations
 
 Bottom line, I support each one of these projects to the fullest because they are trying to create immutability in JavaScript, just with different approaches.
 
