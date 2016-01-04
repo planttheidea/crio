@@ -9,7 +9,7 @@ As most of these methods are either Native or polyfilled to replicate native fun
 * [every](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
 * [filter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter)
 * [forEach](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)
-    * Can break the forEach by returning false in the callback function
+   * Can break the forEach by returning false in the callback function
 * [indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf)
 * [join](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)
 * [lastIndexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf)
@@ -43,27 +43,27 @@ As most of these methods are either Native or polyfilled to replicate native fun
 
 #### crio Methods
 * equals *returns boolean*
-    * Determines whether array is deeply equal in value to another by comparing hashCodes
+   * Determines whether array is deeply equal in value to another by comparing hashCodes
 * freeze *returns CrioArray*
-    * Recursively freezes array deeply
+   * Recursively freezes array deeply
 * get *accepts number/array, returns any*
-    * Retrieve value at index of *keys*, or if an array checks for deeply nested object
+   * Retrieve value at index of *keys*, or if an array checks for deeply nested object
 * hashCode *returns number*
-    * Get unique hash of array
+   * Get unique hash of array
 * isFrozen *returns boolean*
-    * Is the crio array in a frozen state
+   * Is the crio array in a frozen state
 * mutate *accepts callback function, returns any*
    * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
    * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
 * set *accepts number/array, returns CrioArray*
-    * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
-    * Returns new crio array with values post-set
+   * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
+   * Returns new crio array with values post-set
 * thaw *returns CrioArray*
-    * Recursively thaws array deeply
+   * Recursively thaws array deeply
 * toObject *returns CrioObject*
-    * Converts crio array to crio object of {index: value} structure
+   * Converts crio array to crio object of {index: value} structure
 * toJS *returns array*
-    * Converts crio array to plain JavaScript Array
+   * Converts crio array to plain JavaScript Array
 
 ## Objects
 
@@ -86,24 +86,32 @@ N/A
 * equals *returns boolean*
     * Determines whether object is deeply equal in value to another by comparing hashCodes
 * freeze *returns CrioObject*
-    * Recursively freezes object deeply
+   * Recursively freezes object deeply
 * get *accepts number/array, returns any*
-    * Retrieve value at index of *keys*, or if an array checks for deeply nested object
+   * Retrieve value at index of *keys*, or if an array checks for deeply nested object
+* filter *accepts callback function, returns filtered CrioObject*
+   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
+   * If value returned in the callback iteration is false, then that key is removed from the object
+* forEach *accepts callback function, does not return anything*
+   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
 * hashCode *returns number*
-    * Get unique hash of object
+   * Get unique hash of object
 * isFrozen *returns boolean*
-    * Is the crio object in a frozen state
+   * Is the crio object in a frozen state
+* map *accepts callback function, returns mapped CrioObject*
+   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
+   * Value returned in each iteration of callback will be assigned to that iteration's key
 * mutate *accepts callback function, returns any*
    * Callback function accepts two parameters: mutated (plain JS) object, and the original CrioObject
    * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioObject
 * set *accepts number/array, returns CrioObject*
-    * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
-    * Returns new crio object with values post-set
+   * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
+   * Returns new crio object with values post-set
 * thaw *returns CrioObject*
-    * Recursively thaws object deeply
+   * Recursively thaws object deeply
 * toArray *returns CrioArray*
-    * Converts crio object to crio array of values
-* toJS *returns object*
+   * Converts crio object to crio array of values
+* tJS *returns object*
     * Converts crio object to plain Object
     
 ## Dates
@@ -169,14 +177,14 @@ N/A
 
 #### crio Methods
 * equals *returns boolean*
-    * Determines whether object is deeply equal in value to another by comparing hashCodes
+   * Determines whether object is deeply equal in value to another by comparing hashCodes
 * freeze *returns CrioDate*
-    * Recursively freezes object deeply
+   * Recursively freezes object deeply
 * hashCode *returns number*
-    * Get unique hash of object
+   * Get unique hash of object
 * isFrozen *returns boolean*
-    * Is the crio object in a frozen state
+   * Is the crio object in a frozen state
 * thaw *returns CrioDate*
-    * Recursively thaws object deeply
+   * Recursively thaws object deeply
 * toJS *returns date*
-    * Converts crio object to plain Object
+   * Converts crio object to plain Object
