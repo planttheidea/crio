@@ -222,7 +222,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return shouldFreeze ? freeze(obj) : obj;
 	};
 	
-	var cloneObj = function cloneObj(obj, visited, circularSet, shouldFreeze, shouldApplyPrototype) {
+	var cloneObj = function cloneObj(obj, visited, shouldFreeze, shouldApplyPrototype) {
 	    var isObjArray = (0, _checkers.isArray)(obj);
 	
 	    if (isObjArray || (0, _checkers.isObject)(obj)) {
@@ -238,20 +238,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        if (isObjArray) {
 	            for (var i = 0, len = obj.length; i < len; i++) {
-	                clonedObject[i] = pushToCircularSetAndVisited(visited, i, circularSet, obj[i], [], i, isObjArray, shouldFreeze, shouldApplyPrototype);
+	                var visitedIndex = visited.indexOf(obj[i]);
+	
+	                clonedObject[i] = visitedIndex !== -1 ? visited[visitedIndex] : pushToVisitedAndCloneNested(visited, i, obj[i], i, isObjArray, shouldFreeze, shouldApplyPrototype);
 	            }
 	        } else {
 	            var propertyNames = getOwnPropertyNames(obj);
 	
 	            for (var i = 0, len = propertyNames.length; i < len; i++) {
 	                var prop = propertyNames[i];
-	                var visitedIndex = visited.indexOf(obj[i]);
+	                var visitedIndex = visited.indexOf(obj[prop]);
 	
-	                if (visitedIndex !== -1) {
-	                    return visited[visitedIndex];
-	                }
-	
-	                clonedObject[i] = pushToCircularSetAndVisited(visited, prop, circularSet, obj[prop], {}, prop, isObjArray, shouldFreeze, shouldApplyPrototype);
+	                clonedObject[prop] = visitedIndex !== -1 ? visited[visitedIndex] : pushToVisitedAndCloneNested(visited, prop, obj[prop], prop, isObjArray, shouldFreeze, shouldApplyPrototype);
 	            }
 	        }
 	
@@ -271,9 +269,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return obj;
 	};
 	
-	var setProtos = function setProtos(obj, visited, circularSet, shouldFreeze) {
+	var setProtos = function setProtos(obj, visited, shouldFreeze) {
 	    if (isFrozen(obj)) {
-	        return cloneObj(obj, visited, circularSet, shouldFreeze, true);
+	        return cloneObj(obj, visited, shouldFreeze, true);
 	    }
 	
 	    if ((0, _checkers.isArray)(obj)) {
@@ -281,7 +279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        for (var i = 0, len = obj.length; i < len; i++) {
 	            if (visited.indexOf(obj[i]) === -1) {
-	                pushToCircularSetAndVisited(visited, i, circularSet, obj[i], [], i, true, shouldFreeze, true);
+	                pushToVisitedAndCloneNested(visited, i, obj[i], i, true, shouldFreeze, true);
 	            }
 	        }
 	
@@ -297,7 +295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (visited.indexOf(obj[i]) === -1) {
 	                var prop = propertyNames[i];
 	
-	                pushToCircularSetAndVisited(visited, prop, circularSet, obj[prop], {}, prop, false, shouldFreeze, true);
+	                pushToVisitedAndCloneNested(visited, prop, obj[prop], prop, false, shouldFreeze, true);
 	            }
 	        }
 	
@@ -313,27 +311,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return obj;
 	};
 	
-	var pushToCircularSet = function pushToCircularSet(circularSet, base, key, isValueArray) {
-	    var newBase = base[key] = isValueArray ? [] : {};
-	
-	    circularSet[circularSet.length] = {
-	        up: base,
-	        value: newBase
-	    };
-	};
-	
-	var pushToVisited = function pushToVisited(visited, prop, value) {
+	var pushToVisited = function pushToVisited(visited, value) {
 	    visited[visited.length] = value;
 	};
 	
-	var pushToCircularSetAndVisited = function pushToCircularSetAndVisited(visited, prop, circularSet, value, base, key, isValueArray, shouldFreeze, shouldApplyPrototype) {
-	    var isClone = arguments.length <= 9 || arguments[9] === undefined ? true : arguments[9];
+	var pushToVisitedAndCloneNested = function pushToVisitedAndCloneNested(visited, prop, value, key, isValueArray, shouldFreeze, shouldApplyPrototype) {
+	    var isClone = arguments.length <= 7 || arguments[7] === undefined ? true : arguments[7];
 	
-	    pushToVisited(visited, prop, value);
-	    pushToCircularSet(circularSet, base, key, isValueArray);
+	    pushToVisited(visited, value);
 	
 	    if (isClone) {
-	        return cloneObj(value, visited, circularSet, shouldFreeze, shouldApplyPrototype);
+	        return cloneObj(value, visited, shouldFreeze, shouldApplyPrototype);
 	    }
 	
 	    return setProtos(value);
@@ -343,10 +331,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var shouldFreeze = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 	    var shouldApplyPrototype = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 	
-	    var visited = [],
-	        circularSet = [{ base: originalObj }];
+	    var visited = [];
 	
-	    return cloneObj(originalObj, visited, circularSet, shouldFreeze, shouldApplyPrototype);
+	    return cloneObj(originalObj, visited, shouldFreeze, shouldApplyPrototype);
 	};
 	
 	var setDeepPrototype = function setDeepPrototype(obj) {
@@ -356,10 +343,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return obj;
 	    }
 	
-	    var visited = [],
-	        circularSet = [{ base: obj }];
+	    var visited = [];
 	
-	    return setProtos(obj, visited, circularSet, shouldFreeze);
+	    return setProtos(obj, visited, shouldFreeze);
 	};
 	
 	exports.cloneObject = cloneObject;
@@ -576,11 +562,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var MUTABLE_METHODS = ['fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
 	
-	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'keys', 'map', 'values'];
-	
 	var crioArrayPrototype = Object.create(Array.prototype);
 	
-	exports.default = _setCrioArrayOrObjectMethods2.default.call(crioArrayPrototype, Array, crioArrayPrototype, PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
+	exports.default = _setCrioArrayOrObjectMethods2.default.call(crioArrayPrototype, Array, crioArrayPrototype, PROTOTYPE_METHODS, MUTABLE_METHODS);
 	module.exports = exports['default'];
 
 /***/ },
@@ -645,7 +629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'freeze', 'get', 'equals', 'hashCode', 'isFrozen', 'keys', 'map', 'merge', 'mutate', 'set', 'thaw', 'toArray', 'toJS', 'toObject', 'values'];
+	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'freeze', 'get', 'equals', 'hashCode', 'isFrozen', 'keys', 'map', 'merge', 'mutate', 'set', 'thaw', 'toArray', 'toJS', 'toObject', 'toString', 'values'];
 	
 	var coalesceResultIfApplicable = function coalesceResultIfApplicable(obj, result, prototype) {
 	    if (!!result) {
@@ -661,7 +645,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return result;
 	};
 	
-	var setArrayOrObjectPrototypeMethods = function setArrayOrObjectPrototypeMethods(mainObject, prototype, prototypeMethods, mutableMethods, customMethods) {
+	var setArrayOrObjectPrototypeMethods = function setArrayOrObjectPrototypeMethods(mainObject, prototype, prototypeMethods, mutableMethods) {
 	
 	    var isPrototypeForArray = mainObject === Array;
 	    var mainPrototype = mainObject.prototype;
@@ -673,7 +657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    prototypeMethods.splice(prototypeMethods.indexOf('constructor'), 1);
 	
 	    prototypeMethods.slice().forEach(function (method) {
-	        if (customMethods.indexOf(method) !== -1 || /__/.test(method) || /@@/.test(method)) {
+	        if (CUSTOM_METHODS.indexOf(method) !== -1 || /__/.test(method) || /@@/.test(method)) {
 	            prototypeMethods.splice(prototypeMethods.indexOf(method), 1);
 	        }
 	    });
@@ -733,6 +717,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    customPrototype.toArray = _crioHelperMethods2.default.toArray;
 	
 	    customPrototype.toObject = _crioHelperMethods2.default.toObject;
+	
+	    customPrototype.toString = _crioHelperMethods2.default.toString;
 	
 	    customPrototype.values = function values() {
 	        return (isPrototypeForArray ? es6 : es7).values(this);
@@ -1055,7 +1041,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 16 */
 /***/ function(module, exports) {
 
-	var core = module.exports = {version: '2.0.1'};
+	var core = module.exports = {version: '2.0.2'};
 	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 /***/ },
@@ -5864,7 +5850,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.toObject = exports.toArray = exports.set = exports.mutate = exports.merge = exports.mapObject = exports.mapArray = exports.get = exports.forEachObject = exports.forEachArray = exports.filterObject = exports.filterArray = undefined;
+	exports.toString = exports.toObject = exports.toArray = exports.set = exports.mutate = exports.merge = exports.mapObject = exports.mapArray = exports.get = exports.forEachObject = exports.forEachArray = exports.filterObject = exports.filterArray = undefined;
 	
 	var _setPrototypeOf = __webpack_require__(3);
 	
@@ -6307,6 +6293,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return (0, _recursiveObjectModifications.setDeepPrototype)(_extends({}, this));
 	};
 	
+	var toString = function toString() {
+	    var isThisArray = (0, _checkers.isArray)(this);
+	
+	    var string = 'Crio' + (isThisArray ? 'Array [' : 'Object {'),
+	        isFirst = true;
+	
+	    for (var _key4 in this) {
+	        var _value3 = this[_key4];
+	
+	        if (this.hasOwnProperty(_key4)) {
+	            if (!isFirst) {
+	                string += ', ';
+	            }
+	
+	            if (!isThisArray) {
+	                string += _key4 + ': ';
+	            }
+	
+	            string += (0, _checkers.isArray)(_value3) || (0, _checkers.isObject)(_value3) ? this.prototype.toString.call(_value3) : _value3;
+	
+	            if (isFirst) {
+	                isFirst = false;
+	            }
+	        }
+	    }
+	
+	    string += isThisArray ? ']' : '}';
+	
+	    return string;
+	};
+	
 	exports.filterArray = filterArray;
 	exports.filterObject = filterObject;
 	exports.forEachArray = forEachArray;
@@ -6319,6 +6336,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.set = set;
 	exports.toArray = toArray;
 	exports.toObject = toObject;
+	exports.toString = toString;
 	exports.default = {
 	    filterArray: filterArray,
 	    filterObject: filterObject,
@@ -6331,7 +6349,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    mutate: mutate,
 	    set: set,
 	    toArray: toArray,
-	    toObject: toObject
+	    toObject: toObject,
+	    toString: toString
 	};
 
 /***/ },
@@ -6677,11 +6696,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var MUTABLE_METHODS = [];
 	
-	var CUSTOM_METHODS = ['entries', 'filter', 'forEach', 'keys', 'map', 'values'];
-	
 	var crioObjectPrototype = Object.create(Object.prototype);
 	
-	exports.default = _setCrioArrayOrObjectMethods2.default.call(crioObjectPrototype, Object, crioObjectPrototype, PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
+	exports.default = _setCrioArrayOrObjectMethods2.default.call(crioObjectPrototype, Object, crioObjectPrototype, PROTOTYPE_METHODS, MUTABLE_METHODS);
 	module.exports = exports['default'];
 
 /***/ }
