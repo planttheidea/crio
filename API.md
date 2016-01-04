@@ -59,7 +59,7 @@ As most of these methods are either Native or polyfilled to replicate native fun
     * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
     * Returns new crio array with values post-set
 * thaw *returns CrioArray*
-    * Recursively thaw array deeply
+    * Recursively thaws array deeply
 * toObject *returns CrioObject*
     * Converts crio array to crio object of {index: value} structure
 * toJS *returns array*
@@ -100,7 +100,7 @@ N/A
     * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
     * Returns new crio object with values post-set
 * thaw *returns CrioObject*
-    * Recursively thaw object deeply
+    * Recursively thaws object deeply
 * toArray *returns CrioArray*
     * Converts crio object to crio array of values
 * toJS *returns object*
@@ -168,15 +168,15 @@ N/A
 #### crio Methods
 
 #### crio Methods
-* equals <> : boolean
-    * Determines whether date is deeply equal in value to another by comparing hashCodes
-* freeze <> : CrioDate
-    * Recursively freezes date deeply
-* hashCode <> : number
-    * Get unique hash of date
-* isFrozen <> : boolean
+* equals *returns boolean*
+    * Determines whether object is deeply equal in value to another by comparing hashCodes
+* freeze *returns CrioDate*
+    * Recursively freezes object deeply
+* hashCode *returns number*
+    * Get unique hash of object
+* isFrozen *returns boolean*
     * Is the crio object in a frozen state
-* thaw <> : CrioDate
-    * Recursively thaw date deeply
-* toJS <> : Date
-    * Converts crio date to plain Date
+* thaw *returns CrioDate*
+    * Recursively thaws object deeply
+* toJS *returns date*
+    * Converts crio object to plain Object
