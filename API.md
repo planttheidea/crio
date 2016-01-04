@@ -76,8 +76,8 @@ As most of these methods are either Native or polyfilled to replicate native fun
 N/A
 
 #### ES2016 Methods
-* keys
-* values
+* keys *returns Iterator of all properties in the object*
+* values *returns Iterator of all values in the object*
 
 #### crio Methods
 * equals *returns boolean*
