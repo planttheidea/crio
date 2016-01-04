@@ -20,16 +20,7 @@ const PROTOTYPE_METHODS = [
 
 const MUTABLE_METHODS = [];
 
-const CUSTOM_METHODS = [
-    'entries',
-    'filter',
-    'forEach',
-    'keys',
-    'map',
-    'values'
-];
-
 let crioObjectPrototype = Object.create(Object.prototype);
 
 export default setCrioArrayOrObjectMethods.call(crioObjectPrototype, Object, crioObjectPrototype,
-    PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
+    PROTOTYPE_METHODS, MUTABLE_METHODS);

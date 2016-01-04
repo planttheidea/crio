@@ -78,6 +78,12 @@ There are a bunch of ones out there, but the three that people usually gravitate
 
 Bottom line, I support each one of these projects to the fullest because they are trying to create immutability in JavaScript, just with different approaches.
 
+#### Are there any drawbacks?
+
+Indeed ... performance, although it is thankfully controllable. **crio** leverages native code whereever possible, basically creating a wrapper around native functions rather than attempting to rewrite them, however the act of freezing the object by Object.freeze recursively can slow things down. The control of when objects should be auto-frozen is in your hands, though, so you could easily set things up to auto-freeze in development but not in testing or production.
+
+Additionally, interally crio performs a deep clone of your object so that you can continue using it outside of crio without worry of the pointer being frozen. As with any deep clone, this can have a performance impact (especially if creating or modifying a crio in a loop). There are techniques to optimize this, and they are covered in the [API](API.md).
+
 #### Browser support
 
 The only requirement is that your browser has a proper ES5 environment, which you can mostly shim with something like [es5-shim](https://github.com/es-shims/es5-shim), however certain things like Object.defineProperty cannot be shimmed, so IE8 and below cannot be supported.

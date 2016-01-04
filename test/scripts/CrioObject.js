@@ -5,6 +5,7 @@ import _ from 'lodash';
 
 import crio from '../../src/index';
 import crioObjectPrototype from '../../src/crio/crioObjectPrototype';
+import crioHelperMethods from '../../src/crio/crioHelperMethods';
 
 import {
     crioConstants
@@ -63,7 +64,11 @@ const testConstructor = () => {
 
 const testDefaultImmutableMethod = (object, method) => {
     if (object[method]) {
-        expect(_.isEqual(crio(object)[method](), object[method]())).toEqual(true);
+        if (method === 'toString' || method === 'toLocaleString') {
+            expect(_.isEqual(crio(object)[method](), crioHelperMethods.toString.call(object))).toEqual(true);
+        } else {
+            expect(_.isEqual(crio(object)[method](), object[method]())).toEqual(true);
+        }
         success++;
     }
 
@@ -104,6 +109,13 @@ const testIsFrozen = (object) => {
     testedObj.isFrozen = true;
 };
 
+const testThaw = (object) => {
+    expect(_.isEqual(crio(object).thaw(), object)).toEqual(true);
+    success++;
+
+    testedObj.thaw = true;
+};
+
 const testToJs = (crioObject, object) => {
     expect(crioObject.toJS()).toEqual(object);
     success++;
@@ -112,16 +124,6 @@ const testToJs = (crioObject, object) => {
     success++;
 
     testedObj.toJS = true;
-};
-
-const testThaw = (object) => {
-    expect(_.isEqual(crio(object).thaw(), object)).toEqual(true);
-    success++;
-
-    expect(crio(object).thaw()).toBeA(Object);
-    success++;
-
-    testedObj.thaw = true;
 };
 
 /*

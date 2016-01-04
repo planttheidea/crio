@@ -24,8 +24,7 @@ const freezeIfApplicable = (obj: Array|Object, shouldFreeze: boolean) : Array|Ob
     return shouldFreeze ? freeze(obj) : obj;
 };
 
-const cloneObj = (obj: any, visited: Object, circularSet: Array,
-      shouldFreeze: boolean, shouldApplyPrototype: boolean) => {
+const cloneObj = (obj: any, visited: Object, shouldFreeze: boolean, shouldApplyPrototype: boolean) => {
     const isObjArray = isArray(obj);
 
     if (isObjArray || isObject(obj)) {
@@ -41,22 +40,22 @@ const cloneObj = (obj: any, visited: Object, circularSet: Array,
 
         if (isObjArray) {
             for (let i: number = 0, len = obj.length; i < len; i++) {
-                clonedObject[i] = pushToCircularSetAndVisited(visited, i, circularSet, obj[i],
-                    [], i, isObjArray, shouldFreeze, shouldApplyPrototype);
+                const visitedIndex = visited.indexOf(obj[i]);
+
+                clonedObject[i] = visitedIndex !== -1 ? visited[visitedIndex] :
+                    pushToVisitedAndCloneNested(visited, i, obj[i],
+                        i, isObjArray, shouldFreeze, shouldApplyPrototype);
             }
         } else {
             const propertyNames = getOwnPropertyNames(obj);
 
             for (let i: number = 0, len = propertyNames.length; i < len; i++) {
                 const prop = propertyNames[i];
-                const visitedIndex = visited.indexOf(obj[i]);
+                const visitedIndex = visited.indexOf(obj[prop]);
 
-                if (visitedIndex !== -1) {
-                    return visited[visitedIndex];
-                }
-
-                clonedObject[i] = pushToCircularSetAndVisited(visited, prop, circularSet, obj[prop],
-                    {}, prop, isObjArray, shouldFreeze, shouldApplyPrototype);
+                clonedObject[prop] = visitedIndex !== -1 ? visited[visitedIndex] :
+                    pushToVisitedAndCloneNested(visited, prop, obj[prop],
+                        prop, isObjArray, shouldFreeze, shouldApplyPrototype);
             }
         }
 
@@ -76,9 +75,9 @@ const cloneObj = (obj: any, visited: Object, circularSet: Array,
     return obj;
 };
 
-const setProtos = (obj: Object, visited: Array, circularSet: Array, shouldFreeze: boolean) => {
+const setProtos = (obj: Object, visited: Array, shouldFreeze: boolean) => {
     if (isFrozen(obj)) {
-        return cloneObj(obj, visited, circularSet, shouldFreeze, true);
+        return cloneObj(obj, visited, shouldFreeze, true);
     }
 
     if (isArray(obj)) {
@@ -86,8 +85,8 @@ const setProtos = (obj: Object, visited: Array, circularSet: Array, shouldFreeze
 
         for (let i: number = 0, len = obj.length; i < len; i++) {
             if (visited.indexOf(obj[i]) === -1) {
-                pushToCircularSetAndVisited(visited, i, circularSet, obj[i],
-                    [], i, true, shouldFreeze, true);
+                pushToVisitedAndCloneNested(visited, i, obj[i],
+                    i, true, shouldFreeze, true);
             }
         }
 
@@ -103,8 +102,8 @@ const setProtos = (obj: Object, visited: Array, circularSet: Array, shouldFreeze
             if (visited.indexOf(obj[i]) === -1) {
                 const prop = propertyNames[i];
 
-                pushToCircularSetAndVisited(visited, prop, circularSet, obj[prop],
-                    {}, prop, false, shouldFreeze, true);
+                pushToVisitedAndCloneNested(visited, prop, obj[prop],
+                    prop, false, shouldFreeze, true);
             }
         }
 
@@ -120,28 +119,17 @@ const setProtos = (obj: Object, visited: Array, circularSet: Array, shouldFreeze
     return obj;
 };
 
-const pushToCircularSet = (circularSet: Array, base: Array|Object, key: number|string, isValueArray: boolean) => {
-    let newBase = base[key] = isValueArray ? [] : {};
-
-    circularSet[circularSet.length] = {
-        up: base,
-        value: newBase
-    };
-};
-
-const pushToVisited = (visited: Object, prop: number|string, value: any) => {
+const pushToVisited = (visited: Object, value: any) => {
     visited[visited.length] = value;
 };
 
-const pushToCircularSetAndVisited = (visited: Object, prop: number|string, circularSet: Array, value: any,
-     base: Array|Object, key: number|string, isValueArray: boolean,
-     shouldFreeze: boolean, shouldApplyPrototype: boolean, isClone: boolean = true) => {
+const pushToVisitedAndCloneNested = (visited: Object, prop: number|string, value: any, key: number|string,
+         isValueArray: boolean, shouldFreeze: boolean, shouldApplyPrototype: boolean, isClone: boolean = true) => {
 
-    pushToVisited(visited, prop, value);
-    pushToCircularSet(circularSet, base, key, isValueArray);
+    pushToVisited(visited, value);
 
     if (isClone) {
-        return cloneObj(value, visited, circularSet, shouldFreeze, shouldApplyPrototype);
+        return cloneObj(value, visited, shouldFreeze, shouldApplyPrototype);
     }
 
     return setProtos(value);
@@ -150,12 +138,9 @@ const pushToCircularSetAndVisited = (visited: Object, prop: number|string, circu
 const cloneObject = (originalObj: any, shouldFreeze: boolean = false,
          shouldApplyPrototype: boolean = true) : any => {
 
-    let visited: Array = [],
-        circularSet: Array = [
-            {base: originalObj}
-        ];
+    let visited: Array = [];
 
-    return cloneObj(originalObj, visited, circularSet, shouldFreeze, shouldApplyPrototype);
+    return cloneObj(originalObj, visited, shouldFreeze, shouldApplyPrototype);
 };
 
 const setDeepPrototype = (obj: any, shouldFreeze: boolean = false) : any => {
@@ -163,12 +148,9 @@ const setDeepPrototype = (obj: any, shouldFreeze: boolean = false) : any => {
         return obj;
     }
 
-    let visited: Array = [],
-        circularSet: Array = [
-            {base: obj}
-        ];
+    let visited: Array = [];
 
-    return setProtos(obj, visited, circularSet, shouldFreeze);
+    return setProtos(obj, visited, shouldFreeze);
 };
 
 export {cloneObject as cloneObject};

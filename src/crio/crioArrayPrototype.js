@@ -46,16 +46,7 @@ const MUTABLE_METHODS = [
     'unshift'
 ];
 
-const CUSTOM_METHODS = [
-    'entries',
-    'filter',
-    'forEach',
-    'keys',
-    'map',
-    'values'
-];
-
 let crioArrayPrototype = Object.create(Array.prototype);
 
 export default setCrioArrayOrObjectMethods.call(crioArrayPrototype, Array, crioArrayPrototype,
-    PROTOTYPE_METHODS, MUTABLE_METHODS, CUSTOM_METHODS);
+    PROTOTYPE_METHODS, MUTABLE_METHODS);

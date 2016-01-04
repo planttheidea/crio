@@ -7,6 +7,13 @@ import _ from 'lodash';
 import crio from '../src/index';
 
 import tests from './scripts';
+//
+//const tests = {
+//    dummy:{
+//        success:0,
+//        untestedMethods:[]
+//    }
+//};
 
 const divStyle = {
     margin:'20px auto',

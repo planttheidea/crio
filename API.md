@@ -1,1 +1,231 @@
 # crio API
+
+As most of these methods are either Native or polyfilled to replicate native functions, instead most will be links to MDN to get what the default behavior is. Where any differences from the default behavior exist, they will be called out.
+
+## Arrays
+
+#### ES5 Methods
+* [concat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat)
+* [every](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
+* [filter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter)
+* [forEach](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)
+    * Differences:
+        * Can break the forEach by returning false in the callback function
+* [indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf)
+* [join](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)
+* [lastIndexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf)
+* [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
+* [pop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop)
+    * Differences:
+        * Instead of returning index, returns new array with first item removed
+* [push](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push)
+    * Differences:
+        * Instead of returning index, returns new array with new item added
+* [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce)
+* [reduceRight](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/ReduceRight)
+* [reverse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse)
+* [shift](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift)
+    * Differences:
+        * Instead of returning index, returns new array with last item removed
+* [slice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice)
+* [some](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
+* [sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
+    * Differences:
+        * Instead of mutating array, returns new array sorted by either callback or default
+* [splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice)
+    * Differences:
+        * Instead of returning index, returns new array post-splicing
+* [toLocaleString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toLocaleString)
+* [toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString)
+    * Differences:
+        * Returns a string representation of console.log rather than list of values
+* [unshift](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift)
+    * Differences:
+        * Instead of returning index, returns new array with new items added to beginning
+
+#### ES2015 Methods
+* [copyWithin](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin)
+* [entries](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries)
+* [fill](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill)
+* [find](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find)
+* [findIndex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex)
+* [keys](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/keys)
+* [values](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values)
+* [Symbol.iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/%40%40iterator)
+
+#### ES2016 Methods
+* [includes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes)
+
+#### crio Methods
+* equals <> : boolean
+    * Determines whether array is deeply equal in value to another by comparing hashCodes
+* freeze <> : CrioArray
+    * Recursively freezes array deeply
+* get <keys: number|Array> : any
+    * Retrieve value at index of *keys*, or if an array checks for deeply nested object
+* hashCode <> : number
+    * Get unique hash of array
+* isFrozen <> : boolean
+    * Is the crio array in a frozen state
+* set <keys: number|Array> : CrioArray
+    * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
+    * Returns new crio array with values post-set
+* thaw <> : CrioArray
+    * Recursively thaw array deeply
+* toObject <> : CrioObject
+    * Converts crio array to crio object of {index: value} structure
+* toJS <> : Array
+    * Converts crio array to plain JavaScript Array
+
+## Objects
+
+#### ES5 Methods
+* [hasOwnProperty](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty)
+* [isPrototypeOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isPrototypeOf)
+* [propertyIsEnumerable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable)
+* [toLocaleString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString)
+* [toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString)
+    * Differences:
+        * Returns a string representation of console.log rather than list of values
+* [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf)
+
+#### ES2015 Methods
+N/A
+
+#### ES2016 Methods
+* keys
+* values
+
+#### crio Methods
+* equals <> : boolean
+    * Determines whether object is deeply equal in value to another by comparing hashCodes
+* freeze <> : CrioObject
+    * Recursively freezes object deeply
+* get <keys: number|Array> : any
+    * Retrieve value at index of *keys*, or if an array checks for deeply nested object
+* hashCode <> : number
+    * Get unique hash of object
+* isFrozen <> : boolean
+    * Is the crio object in a frozen state
+* set <keys: number|Array> : CrioObject
+    * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
+    * Returns new crio object with values post-set
+* thaw <> : CrioObject
+    * Recursively thaw object deeply
+* toArray <> : CrioArray
+    * Converts crio object to crio array of values
+* toJS <> : Object
+    * Converts crio object to plain Object
+    
+## Dates
+
+#### ES5 Methods
+* [getDate](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDate)
+* [getDay](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getDay)
+* [getFullYear](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getFullYear)
+* [getHours](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getHours)
+* [getMilliseconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMilliseconds)
+* [getMinutes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMinutes)
+* [getMonth](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getMonth)
+* [getSeconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getSeconds)
+* [getTime](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)
+* [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+* [getUTCDate](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCDate)
+* [getUTCDay](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCDay)
+* [getUTCFullYear](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCFullYear)
+* [getUTCHours](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCHours)
+* [getUTCMilliseconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCMilliseconds)
+* [getUTCMinutes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCMinutes)
+* [getUTCMonth](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCMonth)
+* [getUTCSeconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCSeconds)
+* [getYear](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getYear)
+* [setDate](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setDate)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setDay](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setDay)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setFullYear](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setFullYear)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setHours](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setHours)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setMilliseconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setMilliseconds)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setMinutes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setMinutes)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setMonth](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setMonth)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setSeconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setSeconds)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setTime](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setTime)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setTimezoneOffset)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCDate](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCDate)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCDay](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCDay)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCFullYear](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCFullYear)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCHours](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCHours)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCMilliseconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCMilliseconds)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCMinutes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCMinutes)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCMonth](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCMonth)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setUTCSeconds](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCSeconds)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [setYear](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setYear)
+    * Differences:
+        * Returns a new date with values set rather than mutating original date
+* [toDateString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toDateString)
+* [toISOString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+* [toJSON](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toJSON)
+* [toLocaleDateString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString)
+* [toLocaleFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleFormat)
+* [toLocaleString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString)
+* [toLocaleTimeString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleTimeString)
+* [toTimeString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toTimeString)
+* [toUTCString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString)
+* [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/valueOf)
+* [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/valueOf)
+
+#### ES2015 Methods
+* [toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString)
+
+#### ES2015 Methods
+N/A
+
+#### crio Methods
+
+#### crio Methods
+* equals <> : boolean
+    * Determines whether date is deeply equal in value to another by comparing hashCodes
+* freeze <> : CrioDate
+    * Recursively freezes date deeply
+* hashCode <> : number
+    * Get unique hash of date
+* isFrozen <> : boolean
+    * Is the crio object in a frozen state
+* thaw <> : CrioDate
+    * Recursively thaw date deeply
+* toJS <> : Date
+    * Converts crio date to plain Date

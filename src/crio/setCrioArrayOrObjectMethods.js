@@ -53,6 +53,7 @@ const CUSTOM_METHODS = [
     'toArray',
     'toJS',
     'toObject',
+    'toString',
     'values'
 ];
 
@@ -71,7 +72,7 @@ const coalesceResultIfApplicable = (obj: any, result: any, prototype: Object) : 
 };
 
 const setArrayOrObjectPrototypeMethods = (mainObject: Array|Object, prototype: Object,
-        prototypeMethods: Array, mutableMethods: Array, customMethods: Array) : Object => {
+        prototypeMethods: Array, mutableMethods: Array) : Object => {
 
     const isPrototypeForArray = mainObject === Array;
     const mainPrototype = mainObject.prototype;
@@ -83,7 +84,7 @@ const setArrayOrObjectPrototypeMethods = (mainObject: Array|Object, prototype: O
     prototypeMethods.splice(prototypeMethods.indexOf('constructor'), 1);
 
     prototypeMethods.slice().forEach((method) => {
-        if (customMethods.indexOf(method) !== -1 || /__/.test(method) || /@@/.test(method)) {
+        if (CUSTOM_METHODS.indexOf(method) !== -1 || /__/.test(method) || /@@/.test(method)) {
             prototypeMethods.splice(prototypeMethods.indexOf(method), 1);
         }
     });
@@ -143,6 +144,8 @@ const setArrayOrObjectPrototypeMethods = (mainObject: Array|Object, prototype: O
     customPrototype.toArray = crioHelperMethods.toArray;
 
     customPrototype.toObject = crioHelperMethods.toObject;
+
+    customPrototype.toString = crioHelperMethods.toString;
 
     customPrototype.values = function values() {
         return (isPrototypeForArray ? es6 : es7).values(this);

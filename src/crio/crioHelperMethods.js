@@ -29,7 +29,7 @@ const OBJECT_CREATE = Object.create;
 type ArrayOrObject = Array|Object;
 type Keys = number|string|Array;
 
-const compareNewToOriginal = (originalObj: ArrayOrObject, result: ArrayOrObject) : ArrayOrObject => {
+const compareNewToOriginal = (originalObj: ArrayOrObject, result: any) : any => {
     if (isFunction(originalObj.equals) && originalObj.equals(result)) {
         return originalObj;
     }
@@ -271,6 +271,37 @@ const toObject = function() : ArrayOrObject {
     return setDeepPrototype({...this});
 };
 
+const toString = function() : string {
+    const isThisArray: boolean = isArray(this);
+
+    let string: string = `Crio${isThisArray ? 'Array [' : 'Object {'}`,
+        isFirst: boolean = true;
+
+    for (let key: string in this) {
+        const value: any = this[key];
+
+        if (this.hasOwnProperty(key)) {
+            if (!isFirst) {
+                string += ', ';
+            }
+
+            if (!isThisArray) {
+                string += `${key}: `;
+            }
+
+            string += isArray(value) || isObject(value) ? this.prototype.toString.call(value) : value;
+
+            if (isFirst) {
+                isFirst = false;
+            }
+        }
+    }
+
+    string += isThisArray ? ']' : '}';
+
+    return string;
+};
+
 export {filterArray as filterArray};
 export {filterObject as filterObject};
 export {forEachArray as forEachArray};
@@ -283,6 +314,7 @@ export {mutate as mutate};
 export {set as set};
 export {toArray as toArray};
 export {toObject as toObject};
+export {toString as toString};
 
 export default {
     filterArray,
@@ -296,5 +328,6 @@ export default {
     mutate,
     set,
     toArray,
-    toObject
+    toObject,
+    toString
 };
