@@ -4,6 +4,17 @@ Immutable JS objects with a natural API
 #### Jump to the API
 [API Documentation](API.md)
 
+#### Usage
+For built projects with webpack / browserify:
+```
+npm i crio --save
+```
+
+For traditional inclusion of library by script tag (pulled from dist folder):
+```
+<script src="crio.min.js"></script>
+```
+
 #### What is immutable?
 
 When something is described as immutable, it means that it cannot change after it has been created. In JavaScript terms, this means that any attempted change to an object results in a brand new object being created, without changing the original object.
