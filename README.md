@@ -4,10 +4,18 @@ Immutable JS objects with a natural API
 #### Jump to the API
 [API Documentation](API.md)
 
-#### Usage
+#### Installation
 For built projects with webpack / browserify:
 ```
 npm i crio --save
+```
+And to use in your file:
+```
+// CommonJS
+var crio = require('crio');
+
+// ES2015
+import crio from 'crio';
 ```
 
 For traditional inclusion of library by script tag (pulled from dist folder):
