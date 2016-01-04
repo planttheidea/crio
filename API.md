@@ -52,6 +52,9 @@ As most of these methods are either Native or polyfilled to replicate native fun
     * Get unique hash of array
 * isFrozen *returns boolean*
     * Is the crio array in a frozen state
+* mutate *accepts callback function, returns any*
+   * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
+   * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
 * set *accepts number/array, returns CrioArray*
     * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
     * Returns new crio array with values post-set
@@ -90,6 +93,9 @@ N/A
     * Get unique hash of object
 * isFrozen *returns boolean*
     * Is the crio object in a frozen state
+* mutate *accepts callback function, returns any*
+   * Callback function accepts two parameters: mutated (plain JS) object, and the original CrioObject
+   * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioObject
 * set *accepts number/array, returns CrioObject*
     * Set value at index of *keys*, or if an array sets deeply nested object (will create if does not exist)
     * Returns new crio object with values post-set
