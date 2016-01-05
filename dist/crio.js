@@ -560,7 +560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	// local imports
 	
-	var MUTABLE_METHODS = ['fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
+	var MUTABLE_METHODS = ['copyWithin', 'fill', 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'];
 	
 	var crioArrayPrototype = Object.create(Array.prototype);
 	

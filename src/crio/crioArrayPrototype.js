@@ -36,6 +36,7 @@ const PROTOTYPE_METHODS = [
 ];
 
 const MUTABLE_METHODS = [
+    'copyWithin',
     'fill',
     'pop',
     'push',
