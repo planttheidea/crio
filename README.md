@@ -87,9 +87,9 @@ There are a bunch of ones out there, but the three that people usually gravitate
 * [mori](https://github.com/swannodette/mori)
 * [seamless-immutable](https://github.com/rtfeldman/seamless-immutable)
 
-**Immutable** is quite nice, and their API also follows the object standard (in their case, Array and Map), however it creates a classed object that cannot be used with other external libraries (namely lodash) without converting back and forth. They have a great thing going, however inevitably the inability to use objects like their native counterparts felt like a hinderance.
+**Immutable** is quite robust and well-accepted, however it creates a classed object that cannot be used with other external libraries (for example, lodash) without converting back and forth. They have a great thing going, however inevitably the inability to use objects like their native counterparts felt like a hinderance.
 
-**mori** is the seasoned veteran, having been hardened via ClosureScript, and for many is chosen specifically because it does not try to immutabilize the default API methods. Personal taste, I wasn't interested in relearning an entirely new API (that for a person without a ClosureScript background is obtuse). Plus, it's not written in JavaScript ... its compiled to it, which just felt wrong to a JavaScript devout like me.
+**mori** is the seasoned veteran, having been hardened via ClosureScript, and for many is chosen specifically because it does not try to "immutify" the default API methods. Personal taste, I wasn't interested in learning an entirely new API (that for a person without a ClosureScript background is rather obtuse). Plus, it's not written in JavaScript ... its compiled to it, which just felt wrong to a JavaScript devout like me.
 
 **seamless-immutable** had great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the "right way". As such, it fell short of my expectations
 
@@ -101,8 +101,9 @@ The only requirement is that your browser has a proper ES5 environment, which yo
 
 crio has been tested on the following browsers:
 * Chrome
-* Firefox
 * Edge
+* Firefox
 * IE11
+* Opera
 
-This is only because of the youth of the project, as the intended support includes Safari, Opera, and IE versions back to 9. Theoretically these should all work out of the box, just giving fair warning as that is unverified as-of yet. Please report any issues that you encounter.
+This is only because of the youth of the project, as the intended support includes Safari and IE versions 9 and 10. Theoretically these should all work out of the box, just giving fair warning as that is unverified as-of yet. Please report any issues that you encounter.
