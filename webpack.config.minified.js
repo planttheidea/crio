@@ -15,20 +15,14 @@ var path = require("path"),
                 compress:{
                     booleans:true,
                     conditionals:true,
-                    drop_console:true,
+                    drop_console:false,
                     drop_debugger:true,
                     join_vars:true,
                     screw_ie8:true,
                     sequences:true,
                     warnings:false
                 },
-                mangle:{
-                    except:[
-                        "CrioDate",
-                        "CrioList",
-                        "CrioMap"
-                    ]
-                },
+                mangle:true,
                 sourceMap:false
             })
         ])

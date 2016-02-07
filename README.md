@@ -69,18 +69,16 @@ crio attempts to solve the problem by closing the "immutable loop", meaning it a
 
 *Naturally mutable objects*
 * Arrays
-* Dates
 * Objects
 
 To create a new crio object, its pretty straightforward:
 ```
 const crioArray = crio([]);
-const crioDate = crio(new Date());
 const crioObject = crio({});
 ```
 These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
 
-The [API](API.md) is the same as you already know working with those objects, includes polyfills for all ES6 and some ES7 functions, and adds a few helpful crio-specific functions. The only difference is that any setting / getting happens via .get() or .set() rather than direct index / property setting. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
+The [API](API.md) is the same as you already know working with those objects, and adds a few helpful crio-specific functions. The only difference is that any setting happens via .set() or .setIn() rather than direct index / property setting. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). There is also no change to the prototypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
 
 #### Why not just use X immutable library?
 
@@ -97,34 +95,6 @@ There are a bunch of ones out there, but the three that people usually gravitate
 
 Bottom line, I support each one of these projects to the fullest because they are trying to create immutability in JavaScript, just with different approaches.
 
-#### Are there any drawbacks?
-
-Indeed ... performance, although it is thankfully controllable. **crio** leverages native code whereever possible, basically creating a wrapper around native functions rather than attempting to rewrite them, however the act of freezing the object by Object.freeze recursively can slow things down. The control of when objects should be auto-frozen is in your hands, though, so you could easily set things up to auto-freeze in development but not in testing or production.
-
-Additionally, interally crio performs a deep clone of your object so that you can continue using it outside of crio without worry of the pointer being frozen. As with any deep clone, this can have a performance impact (especially if creating or modifying a crio in a loop). There are many possible techniques to optimize this, but the simplest one is to avoid performing crio instantiations or modifications inside of a traditional loop. If you need to, you should use the .mutate() method and perform your loop inside the callback. For example, this...
-```
-const giantArray = buildArray(100000); // creates 100000 unique values
-
-let crioArray = crio(['foo', 'bar']);
-
-for (let i = 0, len = giantArray.length; i < len; i++) {
-  crioArray = crioArray.push(giantArray[i]);
-}
-```
-will perform much slower than this...
-```
-const giantArray = buildArray(100000); // creates 100000 unique values
-
-let crioArray = crio(['foo', 'bar']).mutate((mutatedArray) => {
-  for (let i = 0, len = giantArray.length; i < len; i++) {
-    mutatedArray.push(giantArray[i]);
-  }
-  
-  return mutatedArray;
-});
-```
-just because of the nature of constant assignment and the cloning of objects on each iteration. Hopefully the times you are building enormous arrays from loops like this are rare, but if you need to then approach it with this mindset.
-
 #### Browser support
 
 The only requirement is that your browser has a proper ES5 environment, which you can mostly shim with something like [es5-shim](https://github.com/es-shims/es5-shim), however certain things like Object.defineProperty cannot be shimmed, so IE8 and below cannot be supported.
@@ -135,4 +105,4 @@ crio has been tested on the following browsers:
 * Edge
 * IE11
 
-This is only because of the youth of the project, as the intended support should include Safari, Opera, and IE versions back to 9. Theoretically Opera should work out of the box, and the only thing that could impact Safari and IE9/10 is the setPrototypeOf polyfill that crio implements. Please report any issues that you encounter.
+This is only because of the youth of the project, as the intended support includes Safari, Opera, and IE versions back to 9. Theoretically these should all work out of the box, just giving fair warning as that is unverified as-of yet. Please report any issues that you encounter.
