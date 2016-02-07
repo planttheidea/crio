@@ -41,9 +41,9 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
     * Retrieve value at key
 * getIn {array} *keys*, returns {any}
     * Retrieve value in deeply nested object based on array of keys
-* merge {array[, array, arrary]} *objects*, returns {crio}
+* merge {array[, array, array]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
-* mergeIn {array} *keys*, {array[, array, arrary]} *objects*, returns {crio}
+* mergeIn {array} *keys*, {array[, array, array]} *objects*, returns {crio}
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate {function} *callback*, returns {crio}
     * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
