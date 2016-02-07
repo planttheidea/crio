@@ -35,50 +35,24 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
     * Returns new crio with new items added to beginning
 
 #### crio Methods
-* equals 
-    * returns {boolean}
-    
+* equals returns {boolean}
     * Determines whether array is deeply equal in value to another by comparing hashCodes
-* get 
-    * {number|string} *key*
-    * returns {any}
-    
+* get {number|string} *key*, returns {any}
     * Retrieve value at key
-* getIn 
-    * {array} *keys*
-    * returns {any}
-    
+* getIn {array} *keys*, returns {any}
     * Retrieve value in deeply nested object based on array of keys
-* merge 
-    * {array[, array2, ..., arrayN]} *objects*
-    * returns {crio}
-    
+* merge {array[, array2, ..., arrayN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
-* mergeIn 
-    * {array} *keys*
-    * {array[, array2, ..., arrayN]} *objects*
-    
-    * returns {crio}
+* mergeIn {array} *keys*, {array[, array2, ..., arrayN]} *objects*, returns {crio}
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
-* mutate 
-    * {function} *callback*
-    * returns {crio}
-    
+* mutate {function} *callback*, returns {crio}
     * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
     * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
-* set 
-    * {number|string} *key*
-    * returns {crio}
-    
+* set {number|string} *key*, returns {crio}
     * Sets value at key
-* setIn 
-    * {array} *keys*
-    * returns {crio}
-    
+* setIn {array} *keys*, returns {crio}
     * Sets value in deeply nested object based on array of keys
-* thaw 
-    * returns {array|object}
-    
+* thaw returns {array|object}
     * Recursively thaws array deeply and returns standard object version of itself
 
 ## Objects
@@ -92,64 +66,30 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
 * [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf)
 
 #### crio Methods
-* equals 
-    * returns {boolean}
-   
-    * Determines whether array is deeply equal in value to another by comparing hashCodes
-* filter 
-    * {function} *callback*
-    * returns {crio}
-    
-    * Loops over each item in the map, passing the value, key, and original object as parameters to callback
-    * If value returned in the callback iteration is false, then that key is removed from the object
-* forEach 
-    * {function} *callback*
-    
-    * Loops over each item in the map, passing the value, key, and original object as parameters to callback
-* get 
-    * {number|string} *key*
-    * returns {any}
-    
-    * Retrieve value at key
-* getIn 
-    * {array} *keys*
-    * returns {any}
-    
-    * Retrieve value in deeply nested object based on array of keys
-* map 
-    * {function} *callback*
-    * returns {crio}
-    
-    * Loops over each item in the map, passing the value, key, and original object as parameters to callback
-    * Value returned in each iteration of callback will be assigned to that iteration's key
-* merge 
-    * {object[, object2, ..., objectN]} *objects*
-    * returns {crio}
-    
+* equals returns {boolean}
+   * Determines whether array is deeply equal in value to another by comparing hashCodes
+* filter {function} *callback*, returns {crio}
+   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
+   * If value returned in the callback iteration is false, then that key is removed from the object
+* forEach {function} *callback*
+   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
+* get {number|string} *key*, returns {any}
+   * Retrieve value at key
+* getIn {array} *keys*, returns {any}
+   * Retrieve value in deeply nested object based on array of keys
+* map {function} *callback*, returns {crio}
+   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
+   * Value returned in each iteration of callback will be assigned to that iteration's key
+* merge {object[, object2, ..., objectN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
-* mergeIn 
-    * {array} *keys*
-    * {object[, object2, ..., objectN]} *objects*
-    * returns {crio}
-    
+* mergeIn {array} *keys*, {object[, object2, ..., objectN]} *objects*, returns {crio}
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
-* mutate 
-    * {function} *callback*
-    * returns {crio}
-    
-    * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
-    * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
-* set  
-    * {number|string} *key*
-    * returns {crio}
-    
-    * Sets value at key
-* setIn 
-    * {array} *keys*
-    * returns {crio}
-    
-    * Sets value in deeply nested object based on array of keys
-* thaw 
-    * returns {array|object}
-    
-    * Recursively thaws array deeply and returns standard object version of itself
+* mutate {function} *callback*, returns {crio}
+   * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
+   * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
+* set {number|string} *key*, returns {crio}
+   * Sets value at key
+* setIn {array} *keys*, returns {crio}
+   * Sets value in deeply nested object based on array of keys
+* thaw returns {array|object}
+   * Recursively thaws array deeply and returns standard object version of itself
