@@ -88,7 +88,9 @@ crioArrayWithValue.log(); // [1]
 
 Notice that *crioArray* did not change, instead a new array was stored in *crioArrayWithValue*.
 
-The [API](API.md) is the same as you already know working with those objects, and adds a few helpful crio-specific functions. The only difference is that any setting happens via .set() or .setIn() rather than direct index / property setting. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). There is also no change to the prototypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
+The [API](API.md) is the same as you already know working with those objects, and adds a few helpful crio-specific functions. The only difference is that any setting happens via .set() or .setIn() rather than direct index / property setting. You can even get values using the traditional object.property or array[index] syntax!
+
+The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). There is also no change to the prototypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
 
 #### Why not just use X immutable library?
 
