@@ -59,7 +59,7 @@ Basically, you have mutated *foo* so that it is no longer empty, and what the *.
 
 #### Enter crio
 
-crio attempts to solve the problem by closing the "immutable loop", meaning it applies immutability to objects that are normally mutable by nature by replacing mutating methods with immutable counterparts. As a point of reference:
+crio attempts to solve the problem by "closing the immutable loop", meaning it applies immutability to objects that are normally mutable by nature by replacing mutating methods with immutable counterparts. As a point of reference:
 
 *Naturally immutable objects*
 * Numbers,
@@ -76,7 +76,17 @@ To create a new crio object, its pretty straightforward:
 const crioArray = crio([]);
 const crioObject = crio({});
 ```
-These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
+These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype.
+
+After the initial instantiation, you can apply changes by methods, but you must assign them to a new variable:
+```
+const crioArrayWithValue = crioArray.push(1);
+
+crioArray.log(); // []
+crioArrayWithValue.log(); // [1]
+```
+
+Notice that *crioArray* did not change, instead a new array was stored in *crioArrayWithValue*.
 
 The [API](API.md) is the same as you already know working with those objects, and adds a few helpful crio-specific functions. The only difference is that any setting happens via .set() or .setIn() rather than direct index / property setting. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). There is also no change to the prototypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
 

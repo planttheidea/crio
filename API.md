@@ -1,6 +1,6 @@
 # crio API
 
-As most of these methods are native, most will be links to MDN to get what the default behavior is. Where any differences from the default behavior exist, they will be called out. 
+As most of these methods are native, most will be links to MDN to get what the default behavior is. Where any specific differences from the default behavior exist, they will be called out, however one broad difference is that all methods that return crios (which is basically all of them except for getters of primitve values) are chainable. 
 
 Keep in mind this is just a list of the ES5-compliant methods; if your browser supports ES6 methods you can use them as well.
 
@@ -41,6 +41,8 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
     * Retrieve value at key
 * getIn {array} *keys*, returns {any}
     * Retrieve value in deeply nested object based on array of keys
+* log {string} *title, optional*
+    * Convenience method to display the standard JavaScript array with values in console
 * merge {array[, array2, ..., arrayN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
 * mergeIn {array} *keys*, {array[, array2, ..., arrayN]} *objects*, returns {crio}
@@ -77,6 +79,8 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
    * Retrieve value at key
 * getIn {array} *keys*, returns {any}
    * Retrieve value in deeply nested object based on array of keys
+* log {string} *title, optional*
+    * Convenience method to display the standard JavaScript object with values in console
 * map {function} *callback*, returns {crio}
    * Loops over each item in the map, passing the value, key, and original object as parameters to callback
    * Value returned in each iteration of callback will be assigned to that iteration's key

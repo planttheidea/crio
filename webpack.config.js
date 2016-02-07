@@ -19,7 +19,7 @@ module.exports = {
     }
   },
 
-  devtool: "cheap-module-eval-source-map",
+  devtool: "#cheap-module-eval-source-map",
 
   entry: [
     path.resolve(__dirname, "src/index")
