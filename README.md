@@ -1,5 +1,5 @@
 # crio
-Immutable JS objects with a natural API
+Immutable JS that doesn't get in your way
 
 #### Jump to the API
 [API Documentation](API.md)
