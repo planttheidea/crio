@@ -2,7 +2,7 @@
 
 As most of these methods are native, most will be links to MDN to get what the default behavior is. Where any differences from the default behavior exist, they will be called out. 
 
-Keep in mind this is just a list of the ES5-compliant methods, and if your browser supports ES6 methods you can use them as you normally would; because those methods are not as universal as ES5 compliance, it didn't seem prudent to document them.
+Keep in mind this is just a list of the ES5-compliant methods; if your browser supports ES6 methods you can use them as well.
 
 ## Arrays
 
