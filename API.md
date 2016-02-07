@@ -41,9 +41,9 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
     * Retrieve value at key
 * getIn {array} *keys*, returns {any}
     * Retrieve value in deeply nested object based on array of keys
-* merge {array[, array, array]} *objects*, returns {crio}
+* merge {array[, array2, ..., arrayN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
-* mergeIn {array} *keys*, {array[, array, array]} *objects*, returns {crio}
+* mergeIn {array} *keys*, {array[, array2, ..., arrayN]} *objects*, returns {crio}
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate {function} *callback*, returns {crio}
     * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
@@ -80,9 +80,9 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
 * map {function} *callback*, returns {crio}
    * Loops over each item in the map, passing the value, key, and original object as parameters to callback
    * Value returned in each iteration of callback will be assigned to that iteration's key
-* merge {object[, object, object]} *objects*, returns {crio}
+* merge {object[, object2, ..., objectN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
-* mergeIn {array} *keys*, {object[, object, object]} *objects*, returns {crio}
+* mergeIn {array} *keys*, {object[, object2, ..., objectN]} *objects*, returns {crio}
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate {function} *callback*, returns {crio}
    * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
