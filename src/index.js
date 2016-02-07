@@ -1,3 +1,4 @@
+import CRIO_IDENTIFIER from './crioIdentifier';
 import {
   coerceToInteger,
   getMutableObject,
@@ -15,16 +16,24 @@ const immutableArrayMethods = {
     'slice'
   ],
   fullCrio: [
-    'concat',
     'join',
     'map',
-    'reduce'
+    'reduce',
+    'reduceRight'
   ]
 };
 
+const ASSIGN = Object.assign;
 const CREATE = Object.create;
+const DEFINE_PROPERTY = Object.defineProperty;
+const FREEZE = Object.freeze;
 const GET_OWN_PROPERTY_DESCRIPTOR = Object.getOwnPropertyDescriptor;
 const GET_OWN_PROPERTY_NAMES = Object.getOwnPropertyNames;
+const KEYS = Object.keys;
+
+const isCrio = (object) => {
+  return !!object[CRIO_IDENTIFIER];
+};
 
 const allAdditionalMethods = {
   delete(key) {
@@ -32,9 +41,9 @@ const allAdditionalMethods = {
       return getRestOfObject(this, key);
     }
 
-    return addObjectPrototypeMethods({
+    return returnFrozenWithMethods({
       ...getRestOfObject(this, key)
-    });
+    }, false);
   },
 
   deleteIn(keys) {
@@ -42,7 +51,28 @@ const allAdditionalMethods = {
       return this;
     }
 
-    return this;
+    const lastKeyIndex = keys.length - 1;
+
+    let currentObject = this.thaw(),
+        referenceToCurrentObject = currentObject;
+
+    for (let keyIndex = 0, length = lastKeyIndex + 1; keyIndex < length; keyIndex++) {
+      const key = keys[keyIndex];
+      const currentValue = currentObject[key];
+
+      if (keyIndex === lastKeyIndex) {
+        delete currentObject[key];
+        break;
+      }
+
+      if (!isArray(currentValue) && !isObject(currentValue)) {
+        return this;
+      }
+
+      currentObject = currentObject[key];
+    }
+
+    return crio(referenceToCurrentObject);
   },
 
   equals(object) {
@@ -96,11 +126,7 @@ const allAdditionalMethods = {
       }
     });
 
-    if (isThisArray) {
-      return addArrayPrototypeMethods(shallowClone);
-    }
-
-    return addObjectPrototypeMethods(shallowClone);
+    return returnFrozenWithMethods(shallowClone, isThisArray);
   },
 
   mergeIn(keys, ...objects) {
@@ -129,11 +155,13 @@ const allAdditionalMethods = {
       currentObject = currentObject[key];
     }
 
-    return crio(referenceToCurrentObject);
+    return crio(referenceToCurrentObject, isArray(this));
   },
 
   mutate(mutateMapFunction) {
-    return crio(this.map.call(this.thaw(), mutateMapFunction));
+    const result = mutateMapFunction.call(this, this.thaw());
+
+    return crio(result);
   },
 
   set(key, value) {
@@ -141,7 +169,9 @@ const allAdditionalMethods = {
       return this;
     }
 
-    if (isArray(this)) {
+    const isThisArray = isArray(this);
+
+    if (isThisArray) {
       return this.map((item, itemIndex) => {
         if (itemIndex === key) {
           return crio(value);
@@ -151,10 +181,10 @@ const allAdditionalMethods = {
       });
     }
 
-    return addObjectPrototypeMethods({
+    return returnFrozenWithMethods({
       ...getRestOfObject(this, key),
       [key]: crio(value)
-    });
+    }, isThisArray);
   },
 
   setIn(keys, value) {
@@ -191,6 +221,14 @@ const allAdditionalMethods = {
   }
 };
 const arrayAdditionalMethods = {
+  concat(...args) {
+    args.forEach((arg, argIndex) => {
+      args[argIndex] = crio(arg);
+    });
+
+    return returnFrozenWithMethods(Array.prototype.concat.apply(this, args), true);
+  },
+
   copyWithin(targetIndex, startIndex, endIndex = this.length) {
     targetIndex = coerceToInteger(targetIndex);
     startIndex = coerceToInteger(startIndex);
@@ -233,7 +271,7 @@ const arrayAdditionalMethods = {
       endIndex = this.length + endIndex;
     }
 
-    let tempArray = addArrayPrototypeMethods([]);
+    let tempArray = [];
 
     this.forEach((item, itemIndex) => {
       if (itemIndex >= startIndex && itemIndex < endIndex) {
@@ -243,7 +281,7 @@ const arrayAdditionalMethods = {
       }
     });
 
-    return tempArray;
+    return returnFrozenWithMethods(tempArray, true);
   },
 
   forEach(forEachFunction) {
@@ -251,11 +289,9 @@ const arrayAdditionalMethods = {
       const result = forEachFunction.call(this, this[index], index, this);
 
       if (result === false) {
-        break;
+        return this;
       }
     }
-
-    return this;
   },
 
   pop() {
@@ -263,11 +299,11 @@ const arrayAdditionalMethods = {
       ...this.slice(0, this.length - 1)
     ];
 
-    return addArrayPrototypeMethods(tempArray);
+    return returnFrozenWithMethods(tempArray, true);
   },
 
   push(...args) {
-    let tempArray = addArrayPrototypeMethods([...this]),
+    let tempArray = [...this],
         length = this.length;
 
     args.forEach((arg) => {
@@ -275,13 +311,13 @@ const arrayAdditionalMethods = {
       length++;
     });
 
-    return tempArray;
+    return returnFrozenWithMethods(tempArray, true);
   },
 
   reverse() {
     const tempArray = [...this].reverse();
 
-    return addArrayPrototypeMethods(tempArray);
+    return returnFrozenWithMethods(tempArray, true);
   },
 
   shift() {
@@ -289,7 +325,7 @@ const arrayAdditionalMethods = {
       ...this.slice(1, this.length)
     ];
 
-    return addArrayPrototypeMethods(tempArray);
+    return returnFrozenWithMethods(tempArray, true);
   },
 
   sort(sortFunction) {
@@ -314,7 +350,7 @@ const arrayAdditionalMethods = {
       ...this.slice(startIndex + deleteCount, this.length)
     ];
 
-    return addArrayPrototypeMethods(tempArray);
+    return returnFrozenWithMethods(tempArray, true);
   },
 
   unshift(...args) {
@@ -327,7 +363,7 @@ const arrayAdditionalMethods = {
       ...this
     ];
 
-    return addArrayPrototypeMethods(tempArray);
+    return returnFrozenWithMethods(tempArray, true);
   }
 };
 const objectAdditionalMethods = {
@@ -341,16 +377,16 @@ const objectAdditionalMethods = {
       const descriptor = GET_OWN_PROPERTY_DESCRIPTOR(this, property);
       const result = filterFunction.call(this, this[property], property, this);
 
-      if (result !== false) {
-        setImmutable(newObject, property, result, descriptor);
+      if (result !== false && property !== CRIO_IDENTIFIER) {
+        setImmutable(newObject, property, this[property], descriptor);
       }
     }
 
-    return newObject;
+    return FREEZE(newObject);
   },
 
   forEach(forEachFunction) {
-    const thisProperties = GET_OWN_PROPERTY_NAMES(this);
+    const thisProperties = KEYS(this);
 
     for (let index = 0, length = thisProperties.length; index < length; index++) {
       const property = thisProperties[index];
@@ -373,10 +409,12 @@ const objectAdditionalMethods = {
       const property = thisProperties[index];
       const descriptor = GET_OWN_PROPERTY_DESCRIPTOR(this, property);
 
-      setImmutable(newObject, property, mapFunction.call(this, this[property], property, this), descriptor);
+      if (property !== CRIO_IDENTIFIER) {
+        setImmutable(newObject, property, mapFunction.call(this, this[property], property, this), descriptor);
+      }
     }
 
-    return newObject;
+    return FREEZE(newObject);
   }
 };
 
@@ -391,7 +429,7 @@ immutableArrayMethods.onlyApplyMethods.forEach((method) => {
       args[argIndex] = crio(arg);
     });
 
-    return addArrayPrototypeMethods(Array.prototype[method].apply(this, args));
+    return returnFrozenWithMethods(Array.prototype[method].apply(this, args), true);
   };
 });
 
@@ -412,19 +450,48 @@ const objectMethods = {
 };
 
 const addArrayPrototypeMethods = (array) => {
-  return Object.assign([], array, arrayMethods);
+  if (isCrio(array)) {
+    return array;
+  }
+
+  let newArray = ASSIGN([], array, arrayMethods);
+
+  setCrioIdentifier(newArray);
+
+  return newArray;
 };
 
 const addObjectPrototypeMethods = (object) => {
+  if (isCrio(object)) {
+    return object;
+  }
+
   let newObject = CREATE(objectMethods);
+
+  setCrioIdentifier(newObject);
 
   GET_OWN_PROPERTY_NAMES(object).forEach((property) => {
     const descriptor = GET_OWN_PROPERTY_DESCRIPTOR(object, property);
 
-    Object.defineProperty(newObject, property, descriptor);
+    DEFINE_PROPERTY(newObject, property, descriptor);
   });
 
   return newObject;
+};
+
+const returnFrozenWithMethods = (object, isObjectArray) => {
+  const addMethods = isObjectArray ? addArrayPrototypeMethods : addObjectPrototypeMethods;
+
+  return FREEZE(addMethods(object));
+};
+
+const setCrioIdentifier = (object) => {
+  DEFINE_PROPERTY(object, CRIO_IDENTIFIER, {
+    configurable: false,
+    enumerable: false,
+    value: true,
+    writable: true
+  });
 };
 
 const crioArray = (array) => {
@@ -433,16 +500,20 @@ const crioArray = (array) => {
   array.forEach((item, itemIndex) => {
     let itemValue = item;
 
-    if (isArray(item)) {
-      itemValue = crioArray(item);
-    } else if (isObject(item)) {
-      itemValue = crioObject(item);
+    if (!isCrio(item)) {
+      if (isArray(item)) {
+        itemValue = crioArray(item);
+      } else if (isObject(item)) {
+        itemValue = crioObject(item);
+      }
     }
 
     setImmutable(crioedArray, itemIndex, itemValue);
   });
 
-  return crioedArray;
+  setCrioIdentifier(crioedArray);
+
+  return FREEZE(crioedArray);
 };
 
 const crioObject = (object) => {
@@ -451,19 +522,26 @@ const crioObject = (object) => {
   GET_OWN_PROPERTY_NAMES(object).forEach((property) => {
     let itemValue = object[property];
 
-    if (isArray(itemValue)) {
-      itemValue = crioArray(itemValue);
-    } else if (isObject(itemValue)) {
-      itemValue = crioObject(itemValue);
+    if (!isCrio(itemValue)) {
+      if (isArray(itemValue)) {
+        itemValue = crioArray(itemValue);
+      } else if (isObject(itemValue)) {
+        itemValue = crioObject(itemValue);
+      }
     }
 
+    setCrioIdentifier(crioedObject);
     setImmutable(crioedObject, property, itemValue, GET_OWN_PROPERTY_DESCRIPTOR(object, property));
   });
 
-  return crioedObject;
+  return FREEZE(crioedObject);
 };
 
 const crio = (object = {}) => {
+  if (isCrio(object)) {
+    return object;
+  }
+
   if (isArray(object)) {
     return crioArray(object);
   }
@@ -473,6 +551,14 @@ const crio = (object = {}) => {
   }
 
   return object;
+};
+
+crio.array = (array = []) => {
+  return crioArray(array);
+};
+
+crio.object = (object = {}) => {
+  return crioObject(object);
 };
 
 export default crio;

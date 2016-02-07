@@ -1,3 +1,5 @@
+import CRIO_IDENTIFIER from './crioIdentifier';
+
 const DEFINE_PROPERTY = Object.defineProperty;
 const GET_OWN_PROPERTY_NAMES = Object.getOwnPropertyNames;
 const TO_STRING = Object.prototype.toString;
@@ -48,25 +50,39 @@ export const isUndefined = (object) => {
   return object === void 0;
 };
 
-export const getMutableObject = (object) => {
-  let mutableObject = isArray(object) ? [] : {};
+const setMutableProperty = (object, property, targetObject) => {
+  const descriptor = Object.getOwnPropertyDescriptor(object, property) || {};
 
-  GET_OWN_PROPERTY_NAMES(object).forEach((property) => {
-    const value = object[property];
+  let value = object[property];
 
-    if (isArray(value) || isObject(value)) {
-      mutableObject[property] = getMutableObject(value);
-    } else {
-      const descriptor = Object.getOwnPropertyDescriptor(object, property);
+  if (isArray(value) || isObject(value)) {
+    value = getMutableObject(value);
+  }
 
-      DEFINE_PROPERTY(mutableObject, property, {
-        configurable: descriptor.configurable,
-        enumerable: descriptor.enumerable,
-        value,
-        writable: descriptor.writable
-      });
-    }
+  DEFINE_PROPERTY(targetObject, property, {
+    configurable: true,
+    enumerable: descriptor.enumerable || true,
+    value,
+    writable: true
   });
+};
+
+export const getMutableObject = (object) => {
+  const isObjectArray = isArray(object);
+
+  let mutableObject = isObjectArray ? [] : {};
+
+  if (isObjectArray) {
+    object.forEach((item, itemIndex) => {
+      setMutableProperty(object, itemIndex, mutableObject);
+    });
+  } else {
+    GET_OWN_PROPERTY_NAMES(object).forEach((property) => {
+      if (property !== CRIO_IDENTIFIER) {
+        setMutableProperty(object, property, mutableObject);
+      }
+    });
+  }
 
   return mutableObject;
 };

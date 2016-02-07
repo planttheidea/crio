@@ -4,12 +4,10 @@
  * @todo Add tests for lodash and moment
  */
 
-import crioArrayTests from './CrioArray';
-import crioDateTests from './CrioDate';
-import crioObjectTests from './CrioObject';
+import crioArrayTests from './crioArray';
+import crioObjectTests from './crioObject';
 
 export default {
-    crioArrayTests: crioArrayTests,
-    CrioDate: crioDateTests,
-    CrioObject: crioObjectTests
+    'crio Array Tests': crioArrayTests,
+    'crio Object Tests': crioObjectTests
 };
