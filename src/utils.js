@@ -34,8 +34,19 @@ export const isEqual = (object1, object2) => {
   }
 
   for (let index = 0; index < object1PropertiesLength; index++) {
-    if (object1Properties[index] !== object2Properties[index]) {
+    const object1Value = object1[object1Properties[index]];
+    const object2Value = object2[object2Properties[index]];
+
+    if (object1Value !== object2Value) {
       return false;
+    }
+
+    if (typeof object1Value !== typeof object2Value) {
+      return false;
+    }
+
+    if (isArray(object1Value) || isObject(object1Value)) {
+      return isEqual(object1Value, object2Value);
     }
   }
 

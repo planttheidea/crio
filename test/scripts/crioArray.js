@@ -330,10 +330,7 @@ const testReduce = (crioArray, array) => {
   expect(crioArray.reduce(reduceAddFunction)).toEqual(reducedAddArray);
   success++;
 
-  expect(crioArray.reduce(reduceConcatFunction, [])).toEqual(reducedConcatArray);
-  success++;
-
-  expect(crioArray.reduce(reduceConcatFunction, [])).toEqual(crio(reducedConcatArray));
+  expect(crioArray.reduce(reduceConcatFunction, crio([]))).toEqual(reducedConcatArray);
   success++;
 
   testedObj.reduce = true;
@@ -348,10 +345,7 @@ const testReduceRight = (crioArray, array) => {
   expect(crioArray.reduceRight(reduceAddFunction)).toEqual(reducedAddArray);
   success++;
 
-  expect(crioArray.reduceRight(reduceConcatFunction, [])).toEqual(reducedConcatArray);
-  success++;
-
-  expect(crioArray.reduceRight(reduceConcatFunction, [])).toEqual(crio(reducedConcatArray));
+  expect(crioArray.reduceRight(reduceConcatFunction, crio.array())).toEqual(reducedConcatArray);
   success++;
 
   testedObj.reduceRight = true;

@@ -501,11 +501,7 @@ const crioArray = (array) => {
     let itemValue = item;
 
     if (!isCrio(item)) {
-      if (isArray(item)) {
-        itemValue = crioArray(item);
-      } else if (isObject(item)) {
-        itemValue = crioObject(item);
-      }
+      itemValue = crio(item);
     }
 
     setImmutable(crioedArray, itemIndex, itemValue);
@@ -523,11 +519,7 @@ const crioObject = (object) => {
     let itemValue = object[property];
 
     if (!isCrio(itemValue)) {
-      if (isArray(itemValue)) {
-        itemValue = crioArray(itemValue);
-      } else if (isObject(itemValue)) {
-        itemValue = crioObject(itemValue);
-      }
+      itemValue = crio(itemValue);
     }
 
     setCrioIdentifier(crioedObject);
@@ -555,6 +547,10 @@ const crio = (object = {}) => {
 
 crio.array = (array = []) => {
   return crioArray(array);
+};
+
+crio.array.from = (...args) => {
+  return crioArray(args);
 };
 
 crio.object = (object = {}) => {
