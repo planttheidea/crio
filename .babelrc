@@ -1,11 +1,5 @@
 {
     "plugins":[
-        ["typecheck", {
-            "disable": {
-                "development": true,
-                "production": true
-            }
-        }],
         "add-module-exports"
     ],
     "presets":[
