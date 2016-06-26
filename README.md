@@ -71,7 +71,7 @@ To create a new crio object, its pretty straightforward:
 const crioArray = crio([]);
 const crioObject = crio({});
 ```
-These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
+These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores as a custom `CrioArray` or `CrioObject` with a prototypical methods that will return a new immutable version of the object with each update. 
 
 The [API](API.md) is the same as you already know working with those objects, includes polyfills for all ES6 and some ES7 functions, and adds a few helpful crio-specific functions. The only difference is that any setting / getting happens via .get() or .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
 
