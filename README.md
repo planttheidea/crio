@@ -4,6 +4,19 @@ Immutable JS objects with a natural API
 #### Jump to the API
 [API Documentation](API.md)
 
+#### Usage
+
+```javascript
+// ES2015
+import crio from 'crio';
+
+// CommonJS
+const crio = require('crio').default;
+
+// UMD
+const crio = window.crio;
+```
+
 #### What is immutable?
 
 When something is described as immutable, it means that it cannot change after it has been created. In JavaScript terms, this means that any attempted change to an object results in a brand new object being created, without changing the original object.
@@ -11,25 +24,25 @@ When something is described as immutable, it means that it cannot change after i
 #### Why do we need this in JavaScript?
 
 The concept of immutability already exists in a lot of places in JavaScript, for example:
-```
+```javascript
 const two = 2;
 const three = 3;
 const five = two + three;
 ```
 By adding together *two* and *three* you expect to get *five*, however you don't expect the value of *two* to change. You can continue working with it even after using it in an expression:
-```
+```javascript
 const two = 2;
 const three = 3;
 const five = two + three;
 const four = two * two;
 ```
 This is true of strings, numbers, undefined, and null, and is an expected behavior. The same idea, however, is not true for complex objects in JavaScfript. For example:
-```
+```javascript
 const foo = ['foo'];
 const bar = foo.push('bar');
 ```
 The expectation is that you have pushed the value of "bar" into *foo* and created a new array *bar* that contains "foo, bar", however in reality this is what happens:
-```
+```javascript
 const foo = ['foo'];
 const bar = foo.push('bar');
 
@@ -53,7 +66,7 @@ crio attempts to solve the problem by closing the "immutable loop", meaning it a
 * Objects
 
 To create a new crio object, its pretty straightforward:
-```
+```javascript
 const crioArray = crio([]);
 const crioObject = crio({});
 ```
