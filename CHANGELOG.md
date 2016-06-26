@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.0.1
+* Switch `CrioArray.prototype.includes` to use bitwise operation instead of index !== -1 (performance)
+
 #### 2.0.0
 * Complete rewrite for performance and sustainability
 * Full code coverage with AVA
