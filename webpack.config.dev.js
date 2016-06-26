@@ -1,15 +1,33 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const eslintFriendlyFormatter = require('eslint-friendly-formatter');
+
+const PORT = 3000;
 
 module.exports = {
     cache: true,
 
     debug: true,
 
-    devtool: '#eval-cheap-module-source-map',
+    devServer : {
+        contentBase: './dist',
+        host: 'localhost',
+        inline: true,
+        lazy: false,
+        noInfo: false,
+        quiet: false,
+        port: PORT,
+        stats: {
+            colors: true,
+            progress: true
+        }
+    },
+
+    devtool: 'eval-cheap-module-source-map',
 
     entry: [
-        path.resolve (__dirname, 'src', 'index.js')
+        path.resolve (__dirname, 'DEV_ONLY', 'App.js')
     ],
 
     eslint: {
@@ -17,16 +35,7 @@ module.exports = {
         emitError: true,
         failOnError: true,
         failOnWarning: false,
-        formatter: require('eslint-friendly-formatter')
-    },
-
-    externals: {
-        'murmurhash3js': {
-            amd: 'murmurhash3js',
-            commonjs: 'murmurhash3js',
-            commonjs2: 'murmurhash3js',
-            root: 'murmurHash3'
-        }
+        formatter: eslintFriendlyFormatter
     },
 
     module: {
@@ -56,13 +65,15 @@ module.exports = {
         filename: 'crio.js',
         library: 'crio',
         path: path.resolve(__dirname, 'dist'),
+        publicPath: `http://localhost:${PORT}/`,
         umdNamedDefine: true
     },
 
     plugins: [
         new webpack.EnvironmentPlugin([
             'NODE_ENV'
-        ])
+        ]),
+        new HtmlWebpackPlugin()
     ],
 
     resolve: {

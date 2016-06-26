@@ -1,33 +1,31 @@
-var path = require("path"),
-    webpack = require("webpack"),
-    defaultConfig = require("./webpack.config"),
-    productionConfig = Object.assign({}, defaultConfig, {
-        cache:false,
+const path = require('path');
+const webpack = require('webpack');
+const defaultConfig = require('./webpack.config');
 
-        debug:false,
+module.exports = Object.assign({}, defaultConfig, {
+    cache: false,
 
-        output: Object.assign({}, defaultConfig.output, {
-            filename:"dist/crio.min.js"
-        }),
+    debug: false,
 
-        plugins:defaultConfig.plugins.concat([
-            new webpack.optimize.UglifyJsPlugin({
-                compress:{
-                    booleans:true,
-                    conditionals:true,
-                    drop_console:false,
-                    drop_debugger:true,
-                    join_vars:true,
-                    screw_ie8:true,
-                    sequences:true,
-                    warnings:false
-                },
-                mangle:true,
-                sourceMap:false
-            })
-        ])
-    });
+    devtool: undefined,
 
-delete productionConfig.devtool;
+    output: Object.assign({}, defaultConfig.output, {
+        filename: 'crio.min.js'
+    }),
 
-module.exports = productionConfig;
+    plugins: defaultConfig.plugins.concat([
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                booleans: true,
+                conditionals: true,
+                drop_console: true,
+                drop_debugger: true,
+                join_vars: true,
+                screw_ie8: true,
+                sequences: true,
+                warnings: false
+            },
+            sourceMap: false
+        })
+    ])
+});;

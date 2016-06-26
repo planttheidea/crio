@@ -1,139 +1,129 @@
-import CRIO_IDENTIFIER from './crioIdentifier';
+import murmurHash3 from 'murmurhash3js';
 
-const DEFINE_PROPERTY = Object.defineProperty;
-const GET_OWN_PROPERTY_NAMES = Object.getOwnPropertyNames;
-const TO_STRING = Object.prototype.toString;
+const HASH_SEED = 13;
 
-export const coerceToInteger = (value) => {
-  return +value | 0;
+/**
+ * apply Object's prototypical toString to object
+ *
+ * @param {any} object
+ * @return {string}
+ */
+const toString = (object) => {
+    return Object.prototype.toString.call(object);
 };
 
-export const isArray = (object) => {
-  return TO_STRING.call(object) === '[object Array]';
+/**
+ * hash string using murmur3 hashing algorithm
+ *
+ * @param {string} string
+ * @returns {string}
+ */
+const hash = (string) => {
+    return murmurHash3.x86.hash32(string, HASH_SEED);
 };
 
-export const isEqual = (object1, object2) => {
-  if (object1 === object2) {
-    return true;
-  }
+/**
+ * determine if object is array
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isArray = (object) => {
+    return toString(object) === '[object Array]' ||
+        !!(object && object.$$type === 'CrioArray');
+};
 
-  if (!(isArray(object1) || isArray(object2)) && !(isObject(object1) || isObject(object2))) {
-    return false;
-  }
+/**
+ * determine if object is object
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isObject = (object) => {
+    return toString(object) === '[object Object]' && !!object && object.$$type !== 'CrioArray' ||
+        !!(object && object.$$type === 'CrioObject');
+};
 
-  if (object1.prototype !== object2.prototype) {
-    return false;
-  }
+/**
+ * determine if object is undefined
+ * 
+ * @param {any} object
+ * @return {boolean}
+ */
+const isUndefined = (object) => {
+    return object === void 0;  
+};
 
-  const object1Properties = GET_OWN_PROPERTY_NAMES(object1);
-  const object2Properties = GET_OWN_PROPERTY_NAMES(object2);
-  const object1PropertiesLength = object1Properties.length;
-
-  if (object1PropertiesLength !== object2Properties.length) {
-    return false;
-  }
-
-  for (let index = 0; index < object1PropertiesLength; index++) {
-    const object1Value = object1[object1Properties[index]];
-    const object2Value = object2[object2Properties[index]];
-
-    if (object1Value !== object2Value) {
-      return false;
+/**
+ * based on hashCodes, either return the current object or the newly generated on
+ *
+ * @param {object} currentObject={}
+ * @param {object} newObject={}
+ * @return {object<T>}
+ */
+const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
+    if (currentObject.$$hashCode !== newObject.$$hashCode) {
+        return newObject;
     }
 
-    if (typeof object1Value !== typeof object2Value) {
-      return false;
-    }
-
-    if (isArray(object1Value) || isObject(object1Value)) {
-      return isEqual(object1Value, object2Value);
-    }
-  }
-
-  return true;
+    return currentObject;
 };
 
-export const isObject = (object) => {
-  return TO_STRING.call(object) === '[object Object]' && !!object;
-};
-
-export const isUndefined = (object) => {
-  return object === void 0;
-};
-
-const setMutableProperty = (object, property, targetObject) => {
-  const descriptor = Object.getOwnPropertyDescriptor(object, property) || {};
-
-  let value = object[property];
-
-  if (isArray(value) || isObject(value)) {
-    value = getMutableObject(value);
-  }
-
-  DEFINE_PROPERTY(targetObject, property, {
-    configurable: true,
-    enumerable: descriptor.enumerable || true,
-    value,
-    writable: true
-  });
-};
-
-export const getMutableObject = (object) => {
-  const isObjectArray = isArray(object);
-
-  let mutableObject = isObjectArray ? [] : {};
-
-  if (isObjectArray) {
-    object.forEach((item, itemIndex) => {
-      setMutableProperty(object, itemIndex, mutableObject);
+/**
+ * set property in object to be non-enumerable
+ *
+ * @param {object} object
+ * @param {string} property
+ * @param {any} value
+ */
+const setNonEnumerable = (object, property, value) => {
+    Object.defineProperty(object, property, {
+        configurable: false,
+        enumerable: false,
+        value,
+        writable: false
     });
-  } else {
-    GET_OWN_PROPERTY_NAMES(object).forEach((property) => {
-      if (property !== CRIO_IDENTIFIER) {
-        setMutableProperty(object, property, mutableObject);
-      }
+};
+
+/**
+ * set property in object to be readonly (not configurable or writable)
+ *
+ * @param {object} object
+ * @param {string} property
+ * @param {any} value
+ * @param {boolean} enumerable=true
+ */
+const setReadOnly = (object, property, value, enumerable = true) => {
+    Object.defineProperty(object, property, {
+        configurable: false,
+        enumerable,
+        value,
+        writable: false
     });
-  }
-
-  return mutableObject;
 };
 
-export const getRestOfObject = (object, key) => {
-  if (isArray(object)) {
-    return object.filter((item, itemIndex) => {
-      return itemIndex !== key;
+/**
+ * set property in object to be standard (configurable and writable)
+ *
+ * @param {object} object
+ * @param {string} property
+ * @param {any} value
+ * @param {boolean} enumerable=true
+ */
+const setStandard = (object, property, value, enumerable = true) => {
+    Object.defineProperty(object, property, {
+        configurable: true,
+        enumerable,
+        value,
+        writable: true
     });
-  }
-
-  let tempObject = {...object};
-
-  delete tempObject[key];
-
-  return tempObject;
 };
 
-export const setImmutable = (object, property, value, descriptor = {}) => {
-  DEFINE_PROPERTY(object, property, {
-    get() {
-      return value;
-    },
-    set() {
-      throw new SyntaxError('Cannot set the value for this object property directly, please use either the .set() or .setIn() method.');
-    },
-    configurable: false,
-    enumerable: descriptor.enumerable || true
-  });
-
-  return object[property];
-};
-
-export default {
-  coerceToInteger,
-  getMutableObject,
-  getRestOfObject,
-  isArray,
-  isEqual,
-  isObject,
-  isUndefined,
-  setImmutable
-};
+export {hash};
+export {isArray};
+export {isObject};
+export {isUndefined};
+export {returnObjectOnlyIfNew};
+export {setNonEnumerable};
+export {setReadOnly};
+export {setStandard};

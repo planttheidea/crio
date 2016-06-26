@@ -41,8 +41,6 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
     * Retrieve value at key
 * getIn {array} *keys*, returns {any}
     * Retrieve value in deeply nested object based on array of keys
-* log {string} *title, optional*
-    * Convenience method to display the standard JavaScript array with values in console
 * merge {array[, array2, ..., arrayN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
 * mergeIn {array} *keys*, {array[, array2, ..., arrayN]} *objects*, returns {crio}
@@ -70,20 +68,10 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
 #### crio Methods
 * equals returns {boolean}
    * Determines whether array is deeply equal in value to another by comparing hashCodes
-* filter {function} *callback*, returns {crio}
-   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
-   * If value returned in the callback iteration is false, then that key is removed from the object
-* forEach {function} *callback*
-   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
 * get {number|string} *key*, returns {any}
    * Retrieve value at key
 * getIn {array} *keys*, returns {any}
    * Retrieve value in deeply nested object based on array of keys
-* log {string} *title, optional*
-    * Convenience method to display the standard JavaScript object with values in console
-* map {function} *callback*, returns {crio}
-   * Loops over each item in the map, passing the value, key, and original object as parameters to callback
-   * Value returned in each iteration of callback will be assigned to that iteration's key
 * merge {object[, object2, ..., objectN]} *objects*, returns {crio}
     * Shallow merge any number of items into existing crio
 * mergeIn {array} *keys*, {object[, object2, ..., objectN]} *objects*, returns {crio}
