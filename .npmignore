@@ -1,5 +1,5 @@
 .idea/
-dist/
+DEV_ONLY/
 node_modules/
 src/
 test/
@@ -10,4 +10,4 @@ test/
 server.js
 webpack.config.js
 webpack.config.minified.js
-webpack.config.test.js
+webpack.config.dev.js

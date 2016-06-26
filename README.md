@@ -50,13 +50,11 @@ crio attempts to solve the problem by closing the "immutable loop", meaning it a
 
 *Naturally mutable objects*
 * Arrays
-* Dates
 * Objects
 
 To create a new crio object, its pretty straightforward:
 ```
 const crioArray = crio([]);
-const crioDate = crio(new Date());
 const crioObject = crio({});
 ```
 These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
@@ -88,4 +86,4 @@ crio has been tested on the following browsers:
 * Edge
 * IE11
 
-This is only because of the youth of the project, as the intended support should include Safari, Opera, and IE versions back to 9. Theoretically Opera should work out of the box, and the only thing that could impact Safari and IE9/10 is the setPrototypeOf polyfill that crio implements. Please report any issues that you encounter.
+This is only because of the youth of the project, as the intended support should include Safari, Opera, and IE versions back to 9. Theoretically all of these browsers should work out of the box, I just have not verified it. Please report any issues that you encounter.
