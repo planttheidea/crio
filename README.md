@@ -53,7 +53,7 @@ Basically, you have mutated *foo* so that it is no longer empty, and what the *.
 
 #### Enter crio
 
-crio attempts to solve the problem by closing the "immutable loop", meaning it applies immutability to objects that are normally mutable by nature by replacing mutating methods with immutable counterparts. As a point of reference:
+crio attempts to solve the problem by closing the "immutable loop" on collection items, meaning it applies immutability to objects that are normally mutable by nature by replacing mutating methods with immutable counterparts. As a point of reference:
 
 *Naturally immutable objects*
 * Numbers,
@@ -63,6 +63,7 @@ crio attempts to solve the problem by closing the "immutable loop", meaning it a
 
 *Naturally mutable objects*
 * Arrays
+* Dates (not covered by crio)
 * Objects
 
 To create a new crio object, its pretty straightforward:
@@ -72,7 +73,7 @@ const crioObject = crio({});
 ```
 These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores it with the new crio prototype. 
 
-The [API](API.md) is the same as you already know working with those objects, includes polyfills for all ES6 and some ES7 functions, and adds a few helpful crio-specific functions. The only difference is that any setting / getting happens via .get() or .set() rather than direct index / property setting. The native constructors are preserved, and so you can work with the objects as you normally would with other libraries (lodash, moment, etc.). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
+The [API](API.md) is the same as you already know working with those objects, includes polyfills for all ES6 and some ES7 functions, and adds a few helpful crio-specific functions. The only difference is that any setting / getting happens via .get() or .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
 
 #### Why not just use X immutable library?
 
