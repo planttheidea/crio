@@ -337,7 +337,7 @@ class CrioArray {
      * @returns {boolean}
      */
     includes(item) {
-        return this.indexOf(item) !== -1;
+        return !!~this.indexOf(item);
     }
 
     /**
