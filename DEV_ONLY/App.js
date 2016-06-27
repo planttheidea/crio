@@ -5,31 +5,30 @@ import {
 
 import crio from '../src';
 
-const crioArray = crio(['foo', 'bar']);
+const crioArray = crio([{foo: 'bar'}]);
+const addedCrioArray = crioArray.push({foo: 'baz'});
 
-console.log(crioArray);
-console.log(crioArray.indexOf('bar'));
-console.log(crioArray.join('|'));
+console.log(crioArray[0] === addedCrioArray[0]); // true
 
-const reduced = crioArray.reduce((array, item, index) => {
-    return array.concat(index);
-}, []);
-
-console.log(Object.getPrototypeOf(reduced));
-
-console.log(reduced);;
-console.log(crioArray);
-console.log(crioArray.$$hashCode);
-
-const crioObject = crio({
-    foo: 'bar',
-    some: {
-        nested: 'thing'
-    }
+const mappedCrioArray = addedCrioArray.map((item) => {
+    return item.set('foo', 'bar');
 });
 
-console.log(crioObject);
-console.log('length', crioObject.length);
+console.log(crioArray[0] === mappedCrioArray[0]); // true
+
+const filteredCrioArray = addedCrioArray.filter((item, index) => {
+    return index === 0;
+});
+
+console.log(crioArray[0] === filteredCrioArray[0]); // true
+
+const concattedArray = crioArray.concat([{foo: 'baz'}]);
+
+console.log(crioArray[0] === concattedArray[0]); // true
+
+const test = crioArray.concat([{foo: 'baz'}], [{foo: 'baz'}]);
+
+console.log(test);
 
 const App = () => {
     return (

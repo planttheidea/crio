@@ -141,18 +141,28 @@ class CrioArray {
     /**
      * based on items passed, combine with this to create new CrioArray
      *
-     * @param {array<any>} items
+     * @param {array<array>} arrays
      * @returns {CrioArray}
      */
-    concat(...items) {
-        if (!items.length) {
+    concat(...arrays) {
+        if (!arrays.length) {
             return this;
         }
 
-        return new CrioArray([
-            ...this,
-            ...items
-        ]);
+        let clone = [
+            ...this
+        ];
+
+        arrays.forEach((array) => {
+            if (isArray(array)) {
+                clone = [
+                    ...clone,
+                    ...array
+                ];
+            }
+        });
+
+        return new CrioArray(clone);
     }
 
     /**
@@ -477,7 +487,7 @@ class CrioArray {
      * @returns {CrioArray}
      */
     push(...items) {
-        return this.concat(...items);
+        return this.concat(items);
     }
 
     /**
