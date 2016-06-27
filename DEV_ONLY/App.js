@@ -13,7 +13,7 @@ const crioStart = Date.now();
 
 console.log('create crio', crioStart);
 
-for (let i = 0, length = 10000; i < length; i++) {
+for (let i = 0, length = 1000; i < length; i++) {
     crioArray = crioArray.push({
         index: i
     });
