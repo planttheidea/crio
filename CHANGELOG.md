@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.0.2
+* Fix behavior difference between .concat() and .push()
+
 #### 2.0.1
 * Switch `CrioArray.prototype.includes` to use bitwise operation instead of index !== -1 (performance)
 
