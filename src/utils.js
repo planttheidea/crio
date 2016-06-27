@@ -3,11 +3,11 @@ import stringifier from 'stringifier';
 
 const HASH_SEED = 13;
 const STRINGIFIER_OPTIONS = {
-    maxDepth: 2
+  maxDepth: 25
 };
 const STRINGIFIER_PRETTY_OPTIONS = {
-    ...STRINGIFIER_OPTIONS,
-    indent: '  '
+  ...STRINGIFIER_OPTIONS,
+  indent: '  '
 };
 
 const stringifyForHash = stringifier(STRINGIFIER_OPTIONS);
@@ -15,15 +15,15 @@ const stringify = stringifier(STRINGIFIER_PRETTY_OPTIONS);
 
 /**
  * utility function (faster than native forEach)
- * 
+ *
  * @param {array<any>} array
  * @param {function} fn
  * @param {any} thisArg
  */
 const forEach = (array, fn, thisArg) => {
   for (let index = 0, length = array.length; index < length; index++) {
-      fn.call(thisArg, array[index], index, array);
-  }  
+    fn.call(thisArg, array[index], index, array);
+  }
 };
 
 /**
@@ -33,7 +33,20 @@ const forEach = (array, fn, thisArg) => {
  * @return {string}
  */
 const getType = (object) => {
-    return Object.prototype.toString.call(object).replace(/^\[object (.+)\]$/, '$1').toLowerCase();
+  return Object.prototype.toString.call(object).replace(/^\[object (.+)\]$/, '$1').toLowerCase();
+};
+
+/**
+ * determine if the values for newObject match those for the crioObject
+ *
+ * @param {CrioArray|CrioObject} crioObject
+ * @param {any} newObject
+ * @returns {boolean}
+ */
+const hasChanged = (crioObject, newObject) => {
+  const hashCode = hash(newObject);
+
+  return crioObject.$$hashCode !== hashCode;
 };
 
 /**
@@ -43,9 +56,9 @@ const getType = (object) => {
  * @returns {string}
  */
 const hash = (object) => {
-    const string = stringifyForHash(object);
+  const string = stringifyForHash(object);
 
-    return murmurHash3.x86.hash32(string, HASH_SEED);
+  return murmurHash3.x86.hash32(string, HASH_SEED);
 };
 
 /**
@@ -55,8 +68,7 @@ const hash = (object) => {
  * @return {boolean}
  */
 const isArray = (object) => {
-    return getType(object) === 'array' ||
-        !!(object && object.$$type === 'CrioArray');
+  return getType(object) === 'array' || !!(object && object.$$type === 'CrioArray');
 };
 
 /**
@@ -66,7 +78,7 @@ const isArray = (object) => {
  * @returns {boolean}
  */
 const isCrio = (object) => {
-    return !!(object && object.$$type);
+  return !!(object && object.$$type);
 };
 
 /**
@@ -76,8 +88,7 @@ const isCrio = (object) => {
  * @return {boolean}
  */
 const isObject = (object) => {
-    return getType(object) === 'object' && !!object && object.$$type !== 'CrioArray' ||
-        !!(object && object.$$type === 'CrioObject');
+  return getType(object) === 'object' && !!object && object.$$type !== 'CrioArray' || !!(object && object.$$type === 'CrioObject');
 };
 
 /**
@@ -87,7 +98,7 @@ const isObject = (object) => {
  * @return {boolean}
  */
 const isUndefined = (object) => {
-    return object === void 0;
+  return object === void 0;
 };
 
 /**
@@ -98,11 +109,27 @@ const isUndefined = (object) => {
  * @return {object<T>}
  */
 const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
-    if (currentObject.$$hashCode !== newObject.$$hashCode) {
-        return newObject;
-    }
+  if (currentObject.$$hashCode !== newObject.$$hashCode) {
+    return newObject;
+  }
 
-    return currentObject;
+  return currentObject;
+};
+
+/**
+ * return a new array from the existing CrioArray
+ *
+ * @param {CrioArray} crioArray
+ * @returns {array<any>}
+ */
+const shallowCloneArray = (crioArray) => {
+  let array = [];
+
+  forEach(crioArray, (item, index) => {
+    array[index] = item;
+  }, crioArray);
+
+  return array;
 };
 
 /**
@@ -113,12 +140,12 @@ const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
  * @param {any} value
  */
 const setNonEnumerable = (object, property, value) => {
-    Object.defineProperty(object, property, {
-        configurable: false,
-        enumerable: false,
-        value,
-        writable: false
-    });
+  Object.defineProperty(object, property, {
+    configurable: false,
+    enumerable: false,
+    value,
+    writable: false
+  });
 };
 
 /**
@@ -130,15 +157,16 @@ const setNonEnumerable = (object, property, value) => {
  * @param {boolean} enumerable=true
  */
 const setStandard = (object, property, value, enumerable = true) => {
-    Object.defineProperty(object, property, {
-        configurable: true,
-        enumerable,
-        value,
-        writable: true
-    });
+  Object.defineProperty(object, property, {
+    configurable: true,
+    enumerable,
+    value,
+    writable: true
+  });
 };
 
 export {forEach};
+export {hasChanged};
 export {hash};
 export {isArray};
 export {isCrio};
@@ -147,4 +175,5 @@ export {isUndefined};
 export {returnObjectOnlyIfNew};
 export {setNonEnumerable};
 export {setStandard};
+export {shallowCloneArray};
 export {stringify};
