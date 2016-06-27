@@ -1,24 +1,50 @@
 import murmurHash3 from 'murmurhash3js';
+import stringifier from 'stringifier';
 
 const HASH_SEED = 13;
+const STRINGIFIER_OPTIONS = {
+    maxDepth: 2
+};
+const STRINGIFIER_PRETTY_OPTIONS = {
+    ...STRINGIFIER_OPTIONS,
+    indent: '  '
+};
+
+const stringifyForHash = stringifier(STRINGIFIER_OPTIONS);
+const stringify = stringifier(STRINGIFIER_PRETTY_OPTIONS);
 
 /**
- * apply Object's prototypical toString to object
+ * utility function (faster than native forEach)
+ * 
+ * @param {array<any>} array
+ * @param {function} fn
+ * @param {any} thisArg
+ */
+const forEach = (array, fn, thisArg) => {
+  for (let index = 0, length = array.length; index < length; index++) {
+      fn.call(thisArg, array[index], index, array);
+  }  
+};
+
+/**
+ * based on object passed, get its type in lowercase string format
  *
  * @param {any} object
  * @return {string}
  */
-const toString = (object) => {
-    return Object.prototype.toString.call(object);
+const getType = (object) => {
+    return Object.prototype.toString.call(object).replace(/^\[object (.+)\]$/, '$1').toLowerCase();
 };
 
 /**
  * hash string using murmur3 hashing algorithm
  *
- * @param {string} string
+ * @param {object} object
  * @returns {string}
  */
-const hash = (string) => {
+const hash = (object) => {
+    const string = stringifyForHash(object);
+
     return murmurHash3.x86.hash32(string, HASH_SEED);
 };
 
@@ -29,8 +55,18 @@ const hash = (string) => {
  * @return {boolean}
  */
 const isArray = (object) => {
-    return toString(object) === '[object Array]' ||
+    return getType(object) === 'array' ||
         !!(object && object.$$type === 'CrioArray');
+};
+
+/**
+ * is object a CrioArray or CrioObject
+ *
+ * @param {any} object
+ * @returns {boolean}
+ */
+const isCrio = (object) => {
+    return !!(object && object.$$type);
 };
 
 /**
@@ -40,18 +76,18 @@ const isArray = (object) => {
  * @return {boolean}
  */
 const isObject = (object) => {
-    return toString(object) === '[object Object]' && !!object && object.$$type !== 'CrioArray' ||
+    return getType(object) === 'object' && !!object && object.$$type !== 'CrioArray' ||
         !!(object && object.$$type === 'CrioObject');
 };
 
 /**
  * determine if object is undefined
- * 
+ *
  * @param {any} object
  * @return {boolean}
  */
 const isUndefined = (object) => {
-    return object === void 0;  
+    return object === void 0;
 };
 
 /**
@@ -86,23 +122,6 @@ const setNonEnumerable = (object, property, value) => {
 };
 
 /**
- * set property in object to be readonly (not configurable or writable)
- *
- * @param {object} object
- * @param {string} property
- * @param {any} value
- * @param {boolean} enumerable=true
- */
-const setReadOnly = (object, property, value, enumerable = true) => {
-    Object.defineProperty(object, property, {
-        configurable: false,
-        enumerable,
-        value,
-        writable: false
-    });
-};
-
-/**
  * set property in object to be standard (configurable and writable)
  *
  * @param {object} object
@@ -119,11 +138,13 @@ const setStandard = (object, property, value, enumerable = true) => {
     });
 };
 
+export {forEach};
 export {hash};
 export {isArray};
+export {isCrio};
 export {isObject};
 export {isUndefined};
 export {returnObjectOnlyIfNew};
 export {setNonEnumerable};
-export {setReadOnly};
 export {setStandard};
+export {stringify};

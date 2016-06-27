@@ -7,7 +7,6 @@ import {
     isUndefined,
     returnObjectOnlyIfNew,
     setNonEnumerable,
-    setReadOnly,
     setStandard
 } from '../src/utils';
 
@@ -18,9 +17,9 @@ test('if hash will consistently has string values', (t) => {
     const stringTwo = 'STRING_TWO';
     const stringThree = 'STRING_THREE';
 
-    let previousHashOne = 1165232492,
-        previousHashTwo = 3517527737,
-        previousHashThree = 3342898364;
+    let previousHashOne = 1701019093,
+        previousHashTwo = 2206625557,
+        previousHashThree = 1061790870;
 
     for (let i = 10000; i--;) {
         const currentHashOne = hash(stringOne);
@@ -98,20 +97,6 @@ test('if setNonEnumerable adds a non-enumerable property to an object', (t) => {
     setNonEnumerable(object, 'foo', 'bar');
 
     t.false(object.propertyIsEnumerable('foo'));
-});
-
-test('if setReadOnly adds a property to an object that is not configurable or writable', (t) => {
-    let object = {};
-
-    setReadOnly(object, 'foo', 'bar');
-
-    const {
-        configurable,
-        writable
-    } = Object.getOwnPropertyDescriptor(object, 'foo');
-
-    t.false(configurable);
-    t.false(writable);
 });
 
 test('if setStandard adds a property to an object that is configurable or writable', (t) => {

@@ -5,14 +5,16 @@ import 'core-js/fn/object/keys';
 import 'core-js/fn/object/values';
 
 import {
+    forEach,
     hash,
     isArray,
+    isCrio,
     isObject,
     isUndefined,
     returnObjectOnlyIfNew,
     setNonEnumerable,
-    setReadOnly,
-    setStandard
+    setStandard,
+    stringify
 } from './utils';
 
 const ARRAY_PROTOTYPE = Array.prototype;
@@ -24,21 +26,14 @@ const OBJECT_OWN_PROPERTY_NAMES = Object.getOwnPropertyNames;
 const OBJECT_PROTOTYPE = Object.prototype;
 const OBJECT_VALUES = Object.values;
 
+const CRIO_ARRAY_TYPE = 'CrioArray';
+const CRIO_OBJECT_TYPE = 'CrioObject';
+
 const NATIVE_KEYS = [
     '$$hashCode',
     '$$type',
     'length'
 ];
-
-/**
- * is object a CrioArray or CrioObject
- *
- * @param {any} object
- * @returns {boolean}
- */
-const isCrio = (object) => {
-    return object instanceof CrioArray || object instanceof CrioObject;
-};
 
 /**
  * if the value is not a crio and is an array or object, convert
@@ -48,14 +43,16 @@ const isCrio = (object) => {
  * @returns {any}
  */
 const getRealValue = (value) => {
-    if (!isCrio(value)) {
-        if (isArray(value)) {
-            return new CrioArray(value);
-        }
+    if (isCrio(value)) {
+        return value;
+    }
 
-        if (isObject(value)) {
-            return new CrioObject(value);
-        }
+    if (isArray(value)) {
+        return new CrioArray(value);
+    }
+
+    if (isObject(value)) {
+        return new CrioObject(value);
     }
 
     return value;
@@ -79,22 +76,21 @@ const assignOnDeepMatch = (object, keys, value, isMerge = false) => {
         referenceToCurrentObject = currentObject,
         Crio;
 
-    for (let index = 0; index < length; index++) {
-        const key = keys[index] + '';
+    forEach(keys, (key, keyIndex) => {
         const currentValue = currentObject[key];
 
         if (!isArray(currentValue) && !isObject(currentValue)) {
             currentObject[key] = {};
         }
 
-        if (index === lastIndex) {
+        if (keyIndex === lastIndex) {
             Crio = isArray(currentObject) ? CrioArray : CrioObject;
 
             currentObject[key] = isMerge ? Crio.prototype.merge.apply(currentObject[key], value) : value;
         } else {
             currentObject = currentObject[key];
         }
-    }
+    });
 
     const crioedObject = new FinalCrio(referenceToCurrentObject);
 
@@ -109,11 +105,9 @@ class CrioArray {
 
         const length = array.length;
 
-        for (let index = 0; index < length; index++) {
-            const value = getRealValue(array[index]);
-
-            setReadOnly(this, index, value, array.propertyIsEnumerable(index));
-        }
+        forEach(array, (item, index) => {
+            this[index] = getRealValue(item);
+        }, this);
 
         setNonEnumerable(this, 'length', length);
 
@@ -126,7 +120,7 @@ class CrioArray {
      * @return {number}
      */
     get $$hashCode() {
-        return hash(this.toString());
+        return hash(this);
     }
 
     /**
@@ -135,7 +129,7 @@ class CrioArray {
      * @return {string}
      */
     get $$type() {
-        return 'CrioArray';
+        return CRIO_ARRAY_TYPE;
     }
 
     /**
@@ -153,16 +147,9 @@ class CrioArray {
             ...this
         ];
 
-        arrays.forEach((array) => {
-            if (isArray(array)) {
-                clone = [
-                    ...clone,
-                    ...array
-                ];
-            }
-        });
+        const concattedArray = ARRAY_PROTOTYPE.concat.apply(clone, arrays);
 
-        return new CrioArray(clone);
+        return new CrioArray(concattedArray);
     }
 
     /**
@@ -172,7 +159,10 @@ class CrioArray {
      * @returns {CrioArray}
      */
     copyWithin(...args) {
-        const copiedClone = this.thaw().copyWithin(...args);
+        const clone = [
+            ...this
+        ];
+        const copiedClone = ARRAY_PROTOTYPE.copyWithin.apply(clone, args);
         const crioedClone = new CrioArray(copiedClone);
 
         return returnObjectOnlyIfNew(this, crioedClone);
@@ -184,7 +174,7 @@ class CrioArray {
      * @returns {array<array>}
      */
     entries() {
-        return OBJECT_ENTRIES(this.thaw());
+        return OBJECT_ENTRIES(this);
     }
 
     /**
@@ -209,13 +199,7 @@ class CrioArray {
      * @returns {boolean}
      */
     every(fn, thisArg = this) {
-        for (let index = 0, length = this.length; index < length; index++) {
-            if (!fn.call(thisArg, this[index], index, this)) {
-                return false;
-            }
-        }
-
-        return true;
+        return ARRAY_PROTOTYPE.every.call(thisArg, fn);
     }
 
     /**
@@ -225,9 +209,11 @@ class CrioArray {
      * @returns {CrioArray}
      */
     fill(...args) {
-        const clone = this.thaw();
+        const clone = [
+            ...this
+        ];
 
-        clone.fill(...args);
+        ARRAY_PROTOTYPE.fill.apply(clone, args);
 
         return new CrioArray(clone);
     }
@@ -241,15 +227,7 @@ class CrioArray {
      * @returns {CrioArray}
      */
     filter(fn, thisArg = this) {
-        const filteredArray = OBJECT_KEYS(this).reduce((array, key) => {
-            const result = fn.call(thisArg, this[key], +key, this);
-
-            if (result) {
-                return array.concat(this[key]);
-            }
-
-            return array;
-        }, []);
+        const filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
         const crioedArray = new CrioArray(filteredArray);
 
         return returnObjectOnlyIfNew(this, crioedArray);
@@ -298,9 +276,7 @@ class CrioArray {
      * @param {any} thisArg
      */
     forEach(fn, thisArg = this) {
-        this.keys().forEach((key) => {
-            fn.call(thisArg, this[key], +key, this);
-        });
+        ARRAY_PROTOTYPE.forEach.call(this, fn, thisArg);
     }
 
     /**
@@ -367,17 +343,7 @@ class CrioArray {
      * @returns {string}
      */
     join(separator = ',') {
-        let string = '';
-
-        this.keys().forEach((key, keyIndex) => {
-            if (keyIndex !== 0) {
-                string += separator;
-            }
-
-            string += this[key].toString();
-        });
-
-        return string;
+        return ARRAY_PROTOTYPE.join.call(this, separator);
     }
 
     /**
@@ -408,9 +374,7 @@ class CrioArray {
      * @returns {CrioArray}
      */
     map(fn, thisArg = this) {
-        const mappedArray = this.keys().map((key) => {
-            return fn.call(thisArg, this[key], +key, this);
-        });
+        const mappedArray = ARRAY_PROTOTYPE.map.call(this, fn, thisArg);
         const crioedArray = new CrioArray(mappedArray);
 
         return returnObjectOnlyIfNew(this, crioedArray);
@@ -423,13 +387,15 @@ class CrioArray {
      * @returns {CrioArray}
      */
     merge(...objects) {
-        let clone = isCrio(this) ? this.thaw() : this;
+        let clone = !isCrio(this) ? this : [
+            ...this
+        ];
 
-        objects.forEach((object) => {
-            clone = clone.map((key, index) => {
-                return object[index] || clone[index];
+        forEach(objects, (object) => {
+            clone = clone.map((key, keyIndex) => {
+                return object[keyIndex] || clone[keyIndex];
             });
-        });
+        }, this);
 
         const crioedArray = new CrioArray(clone);
 
@@ -539,7 +505,9 @@ class CrioArray {
             throw new Error('Cannot set a key for sparsed array on crio objects.');
         }
 
-        const clone = this.thaw();
+        const clone = [
+            ...this
+        ];
 
         clone[index] = value;
 
@@ -583,7 +551,7 @@ class CrioArray {
             return this;
         }
 
-        return new CrioArray(ARRAY_PROTOTYPE.slice.call(this, ...args));
+        return new CrioArray(ARRAY_PROTOTYPE.slice.apply(this, args));
     };
 
     /**
@@ -594,13 +562,7 @@ class CrioArray {
      * @returns {boolean}
      */
     some(fn, thisArg = this) {
-        for (let index = 0, length = this.length; index < length; index++) {
-            if (fn.call(thisArg, this[index], index, this)) {
-                return true;
-            }
-        }
-
-        return false;
+        return ARRAY_PROTOTYPE.some.call(this, fn, thisArg);
     }
 
     /**
@@ -610,7 +572,10 @@ class CrioArray {
      * @returns {CrioArray}
      */
     sort(fn) {
-        const sortedArray = this.thaw().sort(fn);
+        const clone = [
+            ...this
+        ];
+        const sortedArray = ARRAY_PROTOTYPE.sort.call(clone, fn);
         const crioedArray = new CrioArray(sortedArray);
 
         return returnObjectOnlyIfNew(this, crioedArray);
@@ -623,7 +588,9 @@ class CrioArray {
      * @returns {CrioArray}
      */
     splice(...args) {
-        const clone = this.thaw();
+        const clone = [
+            ...this
+        ];
 
         clone.splice(...args);
 
@@ -658,22 +625,7 @@ class CrioArray {
      * @returns {string}
      */
     toString() {
-        let string = 'CrioArray {';
-
-        this.keys().forEach((key, keyIndex) => {
-            if (keyIndex !== 0) {
-                string += ', ';
-            }
-
-            const value = this[key];
-            const cleanValue = isCrio(value) ? value.toString() : `"${value}"`;
-
-            string += `${key}: ${cleanValue}`;
-        });
-
-        string += '}';
-
-        return string;
+        return stringify(this);
     }
 
     /**
@@ -732,17 +684,19 @@ class CrioObject {
             return object;
         }
 
-        const keys = OBJECT_OWN_PROPERTY_NAMES(object).filter((key) => {
-            return NATIVE_KEYS.indexOf(key) === -1;
-        });
-        const length = keys.length;
+        const keys = OBJECT_OWN_PROPERTY_NAMES(object);
 
-        for (let index = 0; index < length; index++) {
-            const key = keys[index];
-            const value = getRealValue(object[key]);
+        let length = 0;
 
-            setReadOnly(this, key, value, object.propertyIsEnumerable(key));
-        }
+        forEach(keys, (key) => {
+            if (!~NATIVE_KEYS.indexOf(key)) {
+                this[key] = getRealValue(object[key]);
+
+                length++;
+            }
+        }, this);
+
+        setNonEnumerable(this, 'length', length);
 
         return OBJECT_FREEZE(this);
     }
@@ -753,7 +707,7 @@ class CrioObject {
      * @return {number}
      */
     get $$hashCode() {
-        return hash(this.toString());
+        return hash(this);
     }
 
     /**
@@ -762,21 +716,7 @@ class CrioObject {
      * @return {string}
      */
     get $$type() {
-        return 'CrioObject';
-    }
-
-    /**
-     * return number of keys in object (getter here because it will show up in console,
-     * whereas for CrioArray it is an expected property and is appropriately hidden)
-     *
-     * @return {number}
-     */
-    get length() {
-        const keys = OBJECT_OWN_PROPERTY_NAMES(this).filter((key) => {
-            return NATIVE_KEYS.indexOf(key) === -1;
-        });
-
-        return keys.length;
+        return CRIO_OBJECT_TYPE;
     }
 
     /**
@@ -814,7 +754,7 @@ class CrioObject {
 
     /**
      * return value at nested point based on keys in this
-     * 
+     *
      * @param {array<string|number>} keys
      * @return {any}
      */
@@ -875,11 +815,13 @@ class CrioObject {
      * @returns {CrioObject}
      */
     merge(...objects) {
-        const clone = isCrio(this) ? this.thaw() : this;
+        const clone = !isCrio(this) ? this : {
+            ...this
+        };
 
-        objects.forEach((object) => {
+        forEach(objects, (object) => {
             Object.assign(clone, object);
-        });
+        }, clone);
 
         const crioedObject = new CrioObject(clone);
 
@@ -940,7 +882,9 @@ class CrioObject {
      * @returns {CrioObject}
      */
     set(key, value) {
-        const clone = this.thaw();
+        const clone = {
+            ...this
+        };
 
         clone[key] = value;
 
@@ -997,26 +941,7 @@ class CrioObject {
      * @returns {string}
      */
     toString() {
-        const startString = 'CrioObject {';
-
-        let string = startString;
-
-        OBJECT_OWN_PROPERTY_NAMES(this).forEach((key) => {
-            if (NATIVE_KEYS.indexOf(key) === -1) {
-                if (string !== startString) {
-                    string += ', ';
-                }
-
-                const value = this[key];
-                const cleanValue = isCrio(value) ? value.toString() : `"${value}"`;
-
-                string += `"${key}": ${cleanValue}`;
-            }
-        });
-
-        string += '}';
-
-        return string;
+        return stringify(this);
     }
 
     /**

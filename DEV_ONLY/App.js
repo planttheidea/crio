@@ -4,31 +4,34 @@ import {
 } from 'react-dom';
 
 import crio from '../src';
+import Immutable from 'immutable';
 
-const crioArray = crio([{foo: 'bar'}]);
-const addedCrioArray = crioArray.push({foo: 'baz'});
+let crioArray = crio([]),
+    immutableArray = Immutable.List([]);
 
-console.log(crioArray[0] === addedCrioArray[0]); // true
+const crioStart = Date.now();
 
-const mappedCrioArray = addedCrioArray.map((item) => {
-    return item.set('foo', 'bar');
-});
+console.log('create crio', crioStart);
 
-console.log(crioArray[0] === mappedCrioArray[0]); // true
+for (let i = 0, length = 10000; i < length; i++) {
+    crioArray = crioArray.push({
+        index: i
+    });
+}
 
-const filteredCrioArray = addedCrioArray.filter((item, index) => {
-    return index === 0;
-});
+console.log(Date.now() - crioStart);
 
-console.log(crioArray[0] === filteredCrioArray[0]); // true
+const immutableStart = Date.now();
 
-const concattedArray = crioArray.concat([{foo: 'baz'}]);
+console.log('create immutable', immutableStart);
 
-console.log(crioArray[0] === concattedArray[0]); // true
+for (let i = 0, length = 100000; i < length; i++) {
+    immutableArray = immutableArray.push({
+        index: i
+    });
+}
 
-const test = crioArray.concat([{foo: 'baz'}], [{foo: 'baz'}]);
-
-console.log(test);
+console.log(Date.now() - immutableStart);
 
 const App = () => {
     return (
