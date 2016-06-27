@@ -36,7 +36,7 @@ const three = 3;
 const five = two + three;
 const four = two * two;
 ```
-This is true of strings, numbers, undefined, and null, and is an expected behavior. The same idea, however, is not true for complex objects in JavaScfript. For example:
+This is true of strings, numbers, undefined, and null, and is an expected behavior. The same idea, however, is not true for complex objects in JavaScript. For example:
 ```javascript
 const foo = ['foo'];
 const fooBar = foo.push('bar');
