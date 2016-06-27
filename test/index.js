@@ -186,7 +186,7 @@ test('CrioArray methods', (t) => {
 
     t.deepEqual(crioArray.thaw(), ARRAY);
 
-    const concattedArray = crioArray.concat('baz');
+    const concattedArray = crioArray.concat(['baz']);
 
     t.deepEqual(concattedArray.thaw(), ['foo', 'bar', 'baz']);
 
@@ -286,11 +286,17 @@ test('CrioArray methods', (t) => {
     t.deepEqual(crioArray.push('baz').thaw(), ['foo', 'bar', 'baz']);
 
     t.deepEqual(crioArray.reduce((array, item) => {
-        return array.concat(`${item}BLAH`);
+        return [
+            ...array,
+            `${item}BLAH`
+        ];
     }, []), ['fooBLAH', 'barBLAH']);
 
     t.deepEqual(crioArray.reduceRight((array, item) => {
-        return array.concat(`${item}BLAH`);
+        return [
+            ...array,
+            `${item}BLAH`
+        ];
     }, []), ['barBLAH', 'fooBLAH']);
 
     t.deepEqual(crioArray.set(0, 'baz').thaw(), ['baz', 'bar']);
