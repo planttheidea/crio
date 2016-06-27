@@ -4,31 +4,74 @@ import {
 } from 'react-dom';
 
 import crio from '../src';
+import Immutable from 'immutable';
 
-const crioArray = crio([{foo: 'bar'}]);
-const addedCrioArray = crioArray.push({foo: 'baz'});
+const ARRAY_SIZE = 100;
 
-console.log(crioArray[0] === addedCrioArray[0]); // true
+let crioArray = crio([]),
+    immutableArray = Immutable.List([]);
 
-const mappedCrioArray = addedCrioArray.map((item) => {
-    return item.set('foo', 'bar');
+const crioStart = Date.now();
+
+console.log('crio push');
+
+for (let i = 0; i < ARRAY_SIZE; i++) {
+    crioArray = crioArray.push({
+        index: i
+    });
+}
+
+console.log(Date.now() - crioStart);
+
+const immutableStart = Date.now();
+
+console.log('immutable push');
+
+for (let i = 0; i < ARRAY_SIZE; i++) {
+    immutableArray = immutableArray.push({
+        index: i
+    });
+}
+
+console.log(Date.now() - immutableStart);
+
+const crioStartMap = Date.now();
+
+console.log('map crio');
+
+crioArray = crioArray.map((item, i) => {
+    return {
+        index: i
+    };
 });
 
-console.log(crioArray[0] === mappedCrioArray[0]); // true
+console.log(Date.now() - crioStartMap);
 
-const filteredCrioArray = addedCrioArray.filter((item, index) => {
-    return index === 0;
+const immutableStartMap = Date.now();
+
+console.log('map immutable');
+
+immutableArray = immutableArray.map((item, i) => {
+    return {
+        index: i
+    };
 });
 
-console.log(crioArray[0] === filteredCrioArray[0]); // true
+console.log(Date.now() - immutableStartMap);
 
-const concattedArray = crioArray.concat([{foo: 'baz'}]);
-
-console.log(crioArray[0] === concattedArray[0]); // true
-
-const test = crioArray.concat([{foo: 'baz'}], [{foo: 'baz'}]);
-
-console.log(test);
+// const crioArray = crio([{foo: 'bar'}]);
+// const changedArray = crioArray.map(() => {
+//    return {
+//        foo: 'baz'
+//    };
+// });
+// const sameArray = crioArray.map(() => {
+//    return {
+//        foo: 'bar'
+//    };
+// });
+//
+// console.log(crioArray);
 
 const App = () => {
     return (

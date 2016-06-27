@@ -26,6 +26,12 @@ module.exports = {
             commonjs: 'murmurhash3js',
             commonjs2: 'murmurhash3js',
             root: 'murmurHash3'
+        },
+        'stringifier': {
+            amd: 'stringifier',
+            commonjs: 'stringifier',
+            commonjs2: 'stringifier',
+            root: 'stringifier'
         }
     },
 
