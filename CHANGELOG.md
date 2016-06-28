@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.2.0
+* Turn of Object.freeze when NODE_ENV=production (performance)
+
 #### 2.1.3
 * Use try / catch with JSON.stringify for fastest and most consistent object-to-string conversion, will fallback to use stringifier when recursive
 * Write more tests for new functions

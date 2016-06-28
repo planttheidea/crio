@@ -5,51 +5,68 @@ import {
 
 import crio from '../src';
 
-import Immutable from 'immutable';
+let array = [],
+    index = -1;
 
-const ARRAY_SIZE = 1009;
+console.log('start');
 
-let arrayForCrio = [],
-    arrayForImmutable = [];
+const start = Date.now();
 
-for (let i = 0; i < ARRAY_SIZE; i++) {
-  arrayForCrio.push({
-      index: 'test'
-  });
-    arrayForImmutable.push({
-        index: i
-    });
+while (++index < 100000) {
+  array.push(index);
 }
 
-console.log('crio create');
+console.log('array push complete', (Date.now() - start));
 
-const crioCreateStart = Date.now();
+const crioArray = crio(array);
 
-const crioArray = crio(arrayForCrio);
+console.log('total time taken', (Date.now() - start));
 
-console.log(Date.now() - crioCreateStart);
-
-console.log('immutable create');
-
-const immutableCreateStart = Date.now();
-
-Immutable.List(arrayForImmutable);
-
-console.log(Date.now() - immutableCreateStart);
-
-console.log('crio push');
-
-const crioPushStart = Date.now();
-
-let crioPush = crio([]);
-
-for (let index = 0; index < ARRAY_SIZE; index++) {
-  crioPush = crioPush.push({
-    index
-  });
-}
-
-console.log(Date.now() - crioPushStart);
+// import Immutable from 'immutable';
+//
+// const ARRAY_SIZE = 1009;
+//
+// let arrayForCrio = [],
+//     arrayForImmutable = [];
+//
+// for (let i = 0; i < ARRAY_SIZE; i++) {
+//   arrayForCrio.push({
+//       index: 'test'
+//   });
+//     arrayForImmutable.push({
+//         index: i
+//     });
+// }
+//
+// console.log('crio create');
+//
+// const crioCreateStart = Date.now();
+//
+// const crioArray = crio(arrayForCrio);
+//
+// console.log(Date.now() - crioCreateStart);
+//
+// console.log('immutable create');
+//
+// const immutableCreateStart = Date.now();
+//
+// Immutable.List(arrayForImmutable);
+//
+// console.log(Date.now() - immutableCreateStart);
+//
+// console.log('crio push');
+//
+// const crioPushStart = Date.now();
+//
+// let crioPush = crio([]);
+//
+// for (let index = 0; index < ARRAY_SIZE; index++) {
+//   crioPush = crioPush.push({
+//     index
+//   });
+// }
+//
+// console.log(Date.now() - crioPushStart);
 
 const App = () => {
     return (

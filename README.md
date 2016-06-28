@@ -109,3 +109,65 @@ crio has been tested on the following browsers:
 * IE11
 
 This is only because of the youth of the project, as the intended support should include Safari, Opera, and IE versions back to 9. Theoretically all of these browsers should work out of the box, I just have not verified it. Please report any issues that you encounter.
+
+#### Performance
+
+There has been a lot of performance tuning (and hopefully more to come), however because new objects are being instantiated with each creation then inevitably things will be slower than the native methods. Additionally, because objects are frozen upon creation, the only way to produce a new object is to clone the existing object, so doing a bunch of assignment operations in a loop can add up. We're still talking milliseconds here (and [it probably won't be noticeable to you anyway](https://blog.getify.com/sanity-check-object-creation-performance/)), but who knows ... maybe 51ms to create an array of 1000 unique objects is way too slow for your application.
+
+Basically, if you're noticing a perceivable slowdown, check the implementation method. The majority of processing time is spent in the construction of the CrioArray / CrioObject, so optimizing for that will keep things performant.
+
+A silly and unrealistic example that micro-optimizers love to use:
+
+```javascript
+
+let crioArray = crio([]),
+    index = -1;
+    
+while (++index < 100000) {
+    crioArray = crioArray.push(index);
+}
+```
+
+This will take a while, but a small tweak makes it much faster:
+
+```javascript
+
+let array = [],
+    index = -1;
+    
+while (++index < 100000) {
+    array.push(index);
+}
+
+const crioArray = crio(array);
+```
+
+The difference here is we created the `CrioArray` in a single shot, whereas before a new `CrioArray` was instantiated with each `.push()`. Focusing your code on optimizing for the creation will keep things nice and snappy.
+
+Additionally, if you plan to do a bunch of manipulations to it, you can always use the `.mutate()` method:
+
+```javascript
+const crioObject = crioArray.mutate((array) => {
+    let object = {};
+    
+    array.forEach((item, index) => {
+        object[index] = item;
+    });
+    
+    return object;
+});
+```
+
+This is a simple example, but `mutate` will allow you to work with the standard (mutable) JS objects and maximize performance.
+
+#### Development
+
+Standard stuff, clone the repo and `npm install` dependencies. The npm scripts available:
+* `build` => run webpack to build crio.js with NODE_ENV=development
+* `build-minifed` => run webpack to build crio.min.js with NODE_ENV=production
+* `dev` => run webpack dev server to run example app (playground!)
+* `lint` => run ESLint against all files in the `src` folder
+* `prepublish` => run `lint`, `test`, `transpile`, `build`, and `build-minified`
+* `test` => run AVA test functions
+* `test:watch` => same as `test`, but runs persistent watcher
+* `transpile` => run babel against all files in `src` to create files in `lib`
