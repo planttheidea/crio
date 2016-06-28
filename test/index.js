@@ -96,7 +96,7 @@ test('if assignOnDeepMatch sets a deep value to the object', (t) => {
 test('CrioObject getters are correct values', (t) => {
     const crioObject = crio(OBJECT);
 
-    t.is(crioObject.$$hashCode, -444949127);
+    t.is(crioObject.$$hashCode, 785935555);
     t.is(crioObject.$$type, 'CrioObject');
     t.is(crioObject.length, 1);
 });
@@ -104,7 +104,7 @@ test('CrioObject getters are correct values', (t) => {
 test('CrioArray getters are correct values', (t) => {
     const crioArray = crio(ARRAY);
 
-    t.is(crioArray.$$hashCode, -1368064142);
+    t.is(crioArray.$$hashCode, 2044747509);
     t.is(crioArray.$$type, 'CrioArray');
     t.is(crioArray.length, 2);
 });
