@@ -1,26 +1,23 @@
-import murmurHash3 from 'murmurhash3js';
+import stringifier from 'stringifier';
 
-const HASH_SEED = 13;
-
-/**
- * apply Object's prototypical toString to object
- *
- * @param {any} object
- * @return {string}
- */
-const toString = (object) => {
-    return Object.prototype.toString.call(object);
+const STRINGIFIER_HASH_OPTIONS = {
+  handlers: {
+    'function': ({value}) => {
+      return value.toString();
+    }
+  },
+  maxDepth: 10
+};
+const STRINGIFIER_OPTIONS = {
+  maxDepth: 10,
+  indent: '  '
 };
 
-/**
- * hash string using murmur3 hashing algorithm
- *
- * @param {string} string
- * @returns {string}
- */
-const hash = (string) => {
-    return murmurHash3.x86.hash32(string, HASH_SEED);
-};
+const stringify = stringifier(STRINGIFIER_OPTIONS);
+const stringifyForHash = stringifier(STRINGIFIER_HASH_OPTIONS);
+
+const ARRAY_TYPE = '[object Array]';
+const OBJECT_TYPE = '[object Object]';
 
 /**
  * determine if object is array
@@ -29,8 +26,17 @@ const hash = (string) => {
  * @return {boolean}
  */
 const isArray = (object) => {
-    return toString(object) === '[object Array]' ||
-        !!(object && object.$$type === 'CrioArray');
+  return toString(object) === ARRAY_TYPE || !!(object && object.$$type === 'CrioArray');
+};
+
+/**
+ * is object a CrioArray or CrioObject
+ *
+ * @param {any} object
+ * @returns {boolean}
+ */
+const isCrio = (object) => {
+  return !!(object && object.$$type);
 };
 
 /**
@@ -40,33 +46,125 @@ const isArray = (object) => {
  * @return {boolean}
  */
 const isObject = (object) => {
-    return toString(object) === '[object Object]' && !!object && object.$$type !== 'CrioArray' ||
-        !!(object && object.$$type === 'CrioObject');
+  return toString(object) === OBJECT_TYPE && !!object && object.$$type !== 'CrioArray'
+    || !!(object && object.$$type === 'CrioObject');
 };
 
 /**
  * determine if object is undefined
- * 
+ *
  * @param {any} object
  * @return {boolean}
  */
 const isUndefined = (object) => {
-    return object === void 0;  
+  return object === void 0;
 };
 
 /**
- * based on hashCodes, either return the current object or the newly generated on
+ * utility function (faster than native forEach)
  *
- * @param {object} currentObject={}
- * @param {object} newObject={}
- * @return {object<T>}
+ * @param {array<any>} array
+ * @param {function} fn
+ * @param {any} thisArg
  */
-const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
-    if (currentObject.$$hashCode !== newObject.$$hashCode) {
-        return newObject;
-    }
+const forEach = (array, fn, thisArg) => {
+  const length = array.length;
 
-    return currentObject;
+  let index = -1;
+
+  while (++index < length) {
+    fn.call(thisArg, array[index], index, array);
+  }
+};
+
+/**
+ * based on object passed, get its type in lowercase string format
+ *
+ * @param {any} object
+ * @return {string}
+ */
+const toString = (object) => {
+  return Object.prototype.toString.call(object);
+};
+
+/**
+ * convert functions using toString to get actual value for JSON.stringify
+ * 
+ * @param {string} key
+ * @param {any} value
+ * @returns {string}
+ */
+const stringifySerializerForHash = (key, value) => {
+  if (typeof value === 'function') {
+    return value.toString();
+  }
+
+  return value;
+};
+
+/**
+ * convert object into unique hash value
+ *
+ * @param {CrioArray|CrioObject|array|object} object
+ * @return {string}
+ */
+const hash = (object) => {
+  let string;
+
+  try {
+    string = JSON.stringify(object, stringifySerializerForHash);
+  } catch (exception) {
+    string = stringifyForHash(object);
+  }
+
+  const length = string.length;
+
+  if (length === 0) {
+    return 0;
+  }
+
+  let hashValue = 0,
+      index = -1;
+
+  while (++index < length) {
+    hashValue = ((hashValue << 5) - hashValue) + string.charCodeAt(index);
+    hashValue = hashValue & hashValue;
+  }
+
+  return hashValue;
+};
+
+/**
+ * determine if the values for newObject match those for the crioObject
+ *
+ * @param {CrioArray|CrioObject} crioObject
+ * @param {any} newObject
+ * @returns {boolean}
+ */
+const getHashIfChanged = (crioObject, newObject) => {
+  const hashValue = hash(newObject);
+
+  if (crioObject.$$hashCode !== hashValue) {
+    return hashValue;
+  }
+
+  return false;
+};
+
+/**
+ * return a new array from the existing CrioArray
+ *
+ * @param {CrioArray} crioArray
+ * @returns {array<any>}
+ */
+const shallowCloneArray = (crioArray) => {
+  let array = [];
+
+  forEach(crioArray, (item, index) => {
+    array[index] = item;
+  }, crioArray);
+
+  return array;
 };
 
 /**
@@ -77,29 +175,12 @@ const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
  * @param {any} value
  */
 const setNonEnumerable = (object, property, value) => {
-    Object.defineProperty(object, property, {
-        configurable: false,
-        enumerable: false,
-        value,
-        writable: false
-    });
-};
-
-/**
- * set property in object to be readonly (not configurable or writable)
- *
- * @param {object} object
- * @param {string} property
- * @param {any} value
- * @param {boolean} enumerable=true
- */
-const setReadOnly = (object, property, value, enumerable = true) => {
-    Object.defineProperty(object, property, {
-        configurable: false,
-        enumerable,
-        value,
-        writable: false
-    });
+  Object.defineProperty(object, property, {
+    configurable: false,
+    enumerable: false,
+    value,
+    writable: false
+  });
 };
 
 /**
@@ -111,19 +192,23 @@ const setReadOnly = (object, property, value, enumerable = true) => {
  * @param {boolean} enumerable=true
  */
 const setStandard = (object, property, value, enumerable = true) => {
-    Object.defineProperty(object, property, {
-        configurable: true,
-        enumerable,
-        value,
-        writable: true
-    });
+  Object.defineProperty(object, property, {
+    configurable: true,
+    enumerable,
+    value,
+    writable: true
+  });
 };
 
+export {forEach};
+export {getHashIfChanged};
 export {hash};
 export {isArray};
+export {isCrio};
 export {isObject};
 export {isUndefined};
-export {returnObjectOnlyIfNew};
 export {setNonEnumerable};
-export {setReadOnly};
 export {setStandard};
+export {shallowCloneArray};
+export {stringify};
+export {stringifySerializerForHash};

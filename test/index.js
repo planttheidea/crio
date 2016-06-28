@@ -96,7 +96,7 @@ test('if assignOnDeepMatch sets a deep value to the object', (t) => {
 test('CrioObject getters are correct values', (t) => {
     const crioObject = crio(OBJECT);
 
-    t.is(crioObject.$$hashCode, 1801390290);
+    t.is(crioObject.$$hashCode, 785935555);
     t.is(crioObject.$$type, 'CrioObject');
     t.is(crioObject.length, 1);
 });
@@ -104,7 +104,7 @@ test('CrioObject getters are correct values', (t) => {
 test('CrioArray getters are correct values', (t) => {
     const crioArray = crio(ARRAY);
 
-    t.is(crioArray.$$hashCode, 2485558365);
+    t.is(crioArray.$$hashCode, 2044747509);
     t.is(crioArray.$$type, 'CrioArray');
     t.is(crioArray.length, 2);
 });
@@ -169,7 +169,10 @@ test('CrioObject methods', (t) => {
 
     t.deepEqual(crioObject.thaw(), OBJECT);
 
-    const string = 'CrioObject {"foo": "bar"}';
+    const string =
+`CrioObject{
+  foo: "bar"
+}`;
 
     t.is(crioObject.toLocaleString(), string);
     t.is(crioObject.toString(), string);
@@ -311,7 +314,11 @@ test('CrioArray methods', (t) => {
     t.deepEqual(crioArray.sort().thaw(), ['bar', 'foo']);
     t.deepEqual(crioArray.splice(0, 1).thaw(), ['bar']);
 
-    const arrayToString = 'CrioArray {0: "foo", 1: "bar"}';
+    const arrayToString =
+`CrioArray{
+  "0": "foo",
+  "1": "bar"
+}`;
 
     t.is(crioArray.toLocaleString(), arrayToString);
     t.is(crioArray.toString(), arrayToString);

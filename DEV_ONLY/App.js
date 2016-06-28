@@ -5,30 +5,32 @@ import {
 
 import crio from '../src';
 
-const crioArray = crio([{foo: 'bar'}]);
-const addedCrioArray = crioArray.push({foo: 'baz'});
+const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
 
-console.log(crioArray[0] === addedCrioArray[0]); // true
+const REPEATS = [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 5000000];
 
-const mappedCrioArray = addedCrioArray.map((item) => {
-    return item.set('foo', 'bar');
-});
+const crioArray = crio(array);
+const maxIndex = crioArray.length -1;
 
-console.log(crioArray[0] === mappedCrioArray[0]); // true
+const test = (cycles) => {
+    const start = Date.now();
 
-const filteredCrioArray = addedCrioArray.filter((item, index) => {
-    return index === 0;
-});
+    for (let index = 0; index < cycles; index++) {
+        const i = ~~(Math.random() * maxIndex);
+        const newVal = Math.random();
 
-console.log(crioArray[0] === filteredCrioArray[0]); // true
+        crioArray.setIn([0, i], newVal);
+    }
 
-const concattedArray = crioArray.concat([{foo: 'baz'}]);
+    return Date.now() - start;
+};
 
-console.log(crioArray[0] === concattedArray[0]); // true
+const results = REPEATS.map(test);
+const sum = results.reduce((total, result) => {
+    return total + result;
+}, 0);
 
-const test = crioArray.concat([{foo: 'baz'}], [{foo: 'baz'}]);
-
-console.log(test);
+console.log(sum);
 
 const App = () => {
     return (
