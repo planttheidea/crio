@@ -36,6 +36,12 @@ const NATIVE_KEYS = [
   'length'
 ];
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+
+const freezeIfNotProduction = (crio) => {
+  return IS_PRODUCTION ? crio : OBJECT_FREEZE(crio);
+};
+
 /**
  * if the value is not a crio and is an array or object, convert
  * it to crio and return it, else just return it
@@ -129,7 +135,7 @@ class CrioArray {
     setNonEnumerable(this, '$$hashCode', hashCode);
     setNonEnumerable(this, 'length', length);
 
-    return OBJECT_FREEZE(this);
+    return freezeIfNotProduction(this);
   }
 
   /**
@@ -604,9 +610,13 @@ class CrioArray {
    * @returns {array<any>}
    */
   thaw() {
-    return ARRAY_PROTOTYPE.map.call(this, (item) => {
-      return isCrio(item) ? item.thaw() : item;
+    let array = [];
+
+    forEach(this, (item, index) => {
+      array[index] = isCrio(item) ? item.thaw() : item;
     });
+
+    return array;
   }
 
   /**
@@ -700,7 +710,7 @@ class CrioObject {
     setNonEnumerable(this, '$$hashCode', hashCode);
     setNonEnumerable(this, 'length', length);
 
-    return OBJECT_FREEZE(this);
+    return freezeIfNotProduction(this);
   }
 
   /**
