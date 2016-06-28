@@ -1,17 +1,65 @@
-import murmurHash3 from 'murmurhash3js';
+import CryptoJS from 'crypto-js';
 import stringifier from 'stringifier';
 
-const HASH_SEED = 13;
+const SHA1 = CryptoJS.SHA1;
+
 const STRINGIFIER_OPTIONS = {
-  maxDepth: 25
-};
-const STRINGIFIER_PRETTY_OPTIONS = {
-  ...STRINGIFIER_OPTIONS,
+  maxDepth: 25,
   indent: '  '
 };
 
-const stringifyForHash = stringifier(STRINGIFIER_OPTIONS);
-const stringify = stringifier(STRINGIFIER_PRETTY_OPTIONS);
+const stringify = stringifier(STRINGIFIER_OPTIONS);
+
+const ARRAY_TYPE = '[object Array]';
+const OBJECT_TYPE = '[object Object]';
+
+/**
+ * convert object to readable string
+ * 
+ * @param {any} object
+ * @return {string}
+ */
+const buildStringForHash = (object) => {
+  if (!isArray(object) && !isObject(object)) {
+    return object.toString();
+  }
+
+  const keys = Object.keys(object);
+
+  let string = '',
+      length = keys.length,
+      index = -1,
+      elements,
+      key,
+      value,
+      valueLength,
+      valueIndex;
+
+  while (++index < length) {
+    key = keys[index];
+    value = object[key];
+
+    if (isObject(value)) {
+      string += `|${key}:${buildStringForHash(value)}|`;
+    } else if (isArray(value)) {
+      elements = [];
+      valueLength = value.length;
+      valueIndex = -1;
+
+      while (++valueIndex < valueLength) {
+        elements.push(buildStringForHash(value[valueIndex]));
+      }
+
+      if (elements.length > 0) {
+        string += `${key}:[${elements.join(',')}]`;
+      }
+    } else {
+      string += `|${key}:${value}|`;
+    }
+  }
+
+  return string;
+};
 
 /**
  * utility function (faster than native forEach)
@@ -21,7 +69,11 @@ const stringify = stringifier(STRINGIFIER_PRETTY_OPTIONS);
  * @param {any} thisArg
  */
 const forEach = (array, fn, thisArg) => {
-  for (let index = 0, length = array.length; index < length; index++) {
+  const length = array.length;
+
+  let index = -1;
+
+  while (++index < length) {
     fn.call(thisArg, array[index], index, array);
   }
 };
@@ -32,8 +84,8 @@ const forEach = (array, fn, thisArg) => {
  * @param {any} object
  * @return {string}
  */
-const getType = (object) => {
-  return Object.prototype.toString.call(object).replace(/^\[object (.+)\]$/, '$1').toLowerCase();
+const toString = (object) => {
+  return Object.prototype.toString.call(object);
 };
 
 /**
@@ -50,15 +102,15 @@ const hasChanged = (crioObject, newObject) => {
 };
 
 /**
- * hash string using murmur3 hashing algorithm
+ * convert object into unique hash value
  *
- * @param {object} object
- * @returns {string}
+ * @param {CrioArray|CrioObject|array|object} object
+ * @return {string}
  */
 const hash = (object) => {
-  const string = stringifyForHash(object);
+  const string = buildStringForHash(object);
 
-  return murmurHash3.x86.hash32(string, HASH_SEED);
+  return SHA1(string).toString();
 };
 
 /**
@@ -68,7 +120,7 @@ const hash = (object) => {
  * @return {boolean}
  */
 const isArray = (object) => {
-  return getType(object) === 'array' || !!(object && object.$$type === 'CrioArray');
+  return toString(object) === ARRAY_TYPE || !!(object && object.$$type === 'CrioArray');
 };
 
 /**
@@ -88,7 +140,8 @@ const isCrio = (object) => {
  * @return {boolean}
  */
 const isObject = (object) => {
-  return getType(object) === 'object' && !!object && object.$$type !== 'CrioArray' || !!(object && object.$$type === 'CrioObject');
+  return toString(object) === OBJECT_TYPE && !!object && object.$$type !== 'CrioArray'
+    || !!(object && object.$$type === 'CrioObject');
 };
 
 /**

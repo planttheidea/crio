@@ -6,7 +6,36 @@ import {
 import crio from '../src';
 import Immutable from 'immutable';
 
-const ARRAY_SIZE = 100;
+const ARRAY_SIZE = 1000;
+
+let arrayForCrio = [],
+    arrayForImmutable = [];
+
+for (let i = 0; i < ARRAY_SIZE; i++) {
+  arrayForCrio.push({
+      index: i
+  });
+    arrayForImmutable.push({
+        index: i
+    });
+}
+
+console.log('crio create');
+
+const crioCreateStart = Date.now();
+
+crio(arrayForCrio);
+
+console.log(Date.now() - crioCreateStart);
+
+console.log('immutable create');
+
+const immutableCreateStart = Date.now();
+
+Immutable.List(arrayForImmutable);
+
+console.log(Date.now() - immutableCreateStart);
+
 
 let crioArray = crio([]),
     immutableArray = Immutable.List([]);
@@ -59,19 +88,22 @@ immutableArray = immutableArray.map((item, i) => {
 
 console.log(Date.now() - immutableStartMap);
 
-// const crioArray = crio([{foo: 'bar'}]);
-// const changedArray = crioArray.map(() => {
-//    return {
-//        foo: 'baz'
-//    };
-// });
-// const sameArray = crioArray.map(() => {
-//    return {
-//        foo: 'bar'
-//    };
-// });
-//
-// console.log(crioArray);
+// const crioArray = crio([{
+//     arr: [
+//       'some',
+//       'array'
+//     ],
+//     date: new Date(),
+//     obj: {
+//       some: 'object'
+//     },
+//     num: 1,
+//     nil: null,
+//     str: 'string',
+//     undef: undefined
+// }]);
+
+console.log(crioArray);
 
 const App = () => {
     return (
