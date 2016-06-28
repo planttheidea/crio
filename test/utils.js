@@ -17,9 +17,9 @@ test('if hash will consistently has string values', (t) => {
     const stringTwo = 'STRING_TWO';
     const stringThree = 'STRING_THREE';
 
-    let previousHashOne = 1701019093,
-        previousHashTwo = 2206625557,
-        previousHashThree = 1061790870;
+    let previousHashOne = '43cdfc9a946da59bf2abd44b590c1b7656c571e7',
+        previousHashTwo = 'fe9cc8a3822290b8377a3a1d221a3473b5dc3759',
+        previousHashThree = '804aa9d7b29e72565e281fd82722759399845aee';
 
     for (let i = 10000; i--;) {
         const currentHashOne = hash(stringOne);

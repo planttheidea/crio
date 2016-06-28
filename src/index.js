@@ -122,7 +122,7 @@ class CrioArray {
 
     forEach(array, (item, index) => {
       this[index] = getRealValue(item);
-    }, this);
+    });
 
     const hashCode = hash(array);
 
@@ -242,8 +242,11 @@ class CrioArray {
    * @returns {any}
    */
   find(fn, thisArg = this) {
-    for (let index = 0; index < this.length; index++) {
-      const value = this[index];
+    let index = -1,
+        value;
+
+    while (++index < this.length) {
+      value = this[index];
 
       if (fn.call(thisArg, value, index, this)) {
         return value;
@@ -261,7 +264,9 @@ class CrioArray {
    * @returns {number}
    */
   findIndex(fn, thisArg = this) {
-    for (let index = 0; index < this.length; index++) {
+    let index = -1;
+
+    while (++index < this.length) {
       if (fn.call(thisArg, this[index], index, this)) {
         return index;
       }
@@ -304,10 +309,12 @@ class CrioArray {
     const length = keys.length;
     const lastIndex = length - 1;
 
-    let currentObject = this;
+    let currentObject = this,
+        index = -1,
+        key;
 
-    for (let index = 0; index < length; index++) {
-      const key = keys[index];
+    while (++index < length) {
+      key = keys[index];
 
       if (isUndefined(currentObject[key]) || index === lastIndex) {
         return currentObject[key];
@@ -752,10 +759,12 @@ class CrioObject {
     const length = keys.length;
     const lastIndex = length - 1;
 
-    let currentObject = this;
+    let currentObject = this,
+        index = -1,
+        key;
 
-    for (let index = 0; index < length; index++) {
-      const key = keys[index];
+    while (++index < length) {
+      key = keys[index];
 
       if (isUndefined(currentObject[key]) || index === lastIndex) {
         return currentObject[key];

@@ -21,11 +21,11 @@ module.exports = {
     },
 
     externals: {
-        'murmurhash3js': {
-            amd: 'murmurhash3js',
-            commonjs: 'murmurhash3js',
-            commonjs2: 'murmurhash3js',
-            root: 'murmurHash3'
+        'crypto-js': {
+            amd: 'crypto-js',
+            commonjs: 'crypto-js',
+            commonjs2: 'crypto-js',
+            root: 'CryptoJS'
         },
         'stringifier': {
             amd: 'stringifier',
