@@ -1,61 +1,74 @@
 import stringifier from 'stringifier';
 
+const STRINGIFIER_HASH_OPTIONS = {
+  handlers: {
+    'function': ({value}) => {
+      return value.toString();
+    }
+  },
+  maxDepth: 10
+};
 const STRINGIFIER_OPTIONS = {
-  maxDepth: 25,
+  maxDepth: 10,
   indent: '  '
 };
 
 const stringify = stringifier(STRINGIFIER_OPTIONS);
+const stringifyForHash = stringifier(STRINGIFIER_HASH_OPTIONS);
 
 const ARRAY_TYPE = '[object Array]';
 const OBJECT_TYPE = '[object Object]';
+const STRING_TYPE = '[object String]';
 
 /**
- * convert object to readable string
- * 
+ * determine if object is array
+ *
  * @param {any} object
- * @return {string}
+ * @return {boolean}
  */
-const buildStringForHash = (object) => {
-  if (!isArray(object) && !isObject(object)) {
-    return object.toString();
-  }
+const isArray = (object) => {
+  return toString(object) === ARRAY_TYPE || !!(object && object.$$type === 'CrioArray');
+};
 
-  const keys = Object.keys(object);
+/**
+ * is object a CrioArray or CrioObject
+ *
+ * @param {any} object
+ * @returns {boolean}
+ */
+const isCrio = (object) => {
+  return !!(object && object.$$type);
+};
 
-  let string = '',
-      length = keys.length,
-      index = -1,
-      elements,
-      key,
-      value,
-      valueLength,
-      valueIndex;
+/**
+ * determine if object is object
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isObject = (object) => {
+  return toString(object) === OBJECT_TYPE && !!object && object.$$type !== 'CrioArray'
+    || !!(object && object.$$type === 'CrioObject');
+};
 
-  while (++index < length) {
-    key = keys[index];
-    value = object[key];
+/**
+ * determine if object is string
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isString = (object) => {
+  return toString(object) === STRING_TYPE;
+};
 
-    if (isObject(value)) {
-      string += `|${key}:${buildStringForHash(value)}|`;
-    } else if (isArray(value)) {
-      elements = [];
-      valueLength = value.length;
-      valueIndex = -1;
-
-      while (++valueIndex < valueLength) {
-        elements.push(buildStringForHash(value[valueIndex]));
-      }
-
-      if (elements.length > 0) {
-        string += `${key}:[${elements.join(',')}]`;
-      }
-    } else {
-      string += `|${key}:${value}|`;
-    }
-  }
-
-  return string;
+/**
+ * determine if object is undefined
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isUndefined = (object) => {
+  return object === void 0;
 };
 
 /**
@@ -98,6 +111,14 @@ const hasChanged = (crioObject, newObject) => {
   return crioObject.$$hashCode !== hashCode;
 };
 
+const stringifySerializerForHash = (key, value) => {
+  if (typeof value === 'function') {
+    return value.toString();
+  }
+
+  return value;
+};
+
 /**
  * convert object into unique hash value
  *
@@ -105,7 +126,14 @@ const hasChanged = (crioObject, newObject) => {
  * @return {string}
  */
 const hash = (object) => {
-  const string = buildStringForHash(object);
+  let string;
+
+  try {
+    string = JSON.stringify(object, stringifySerializerForHash);
+  } catch (exception) {
+    string = stringifyForHash(object);
+  }
+
   const length = string.length;
 
   if (length === 0) {
@@ -121,62 +149,6 @@ const hash = (object) => {
   }
 
   return hash;
-};
-
-/**
- * determine if object is array
- *
- * @param {any} object
- * @return {boolean}
- */
-const isArray = (object) => {
-  return toString(object) === ARRAY_TYPE || !!(object && object.$$type === 'CrioArray');
-};
-
-/**
- * is object a CrioArray or CrioObject
- *
- * @param {any} object
- * @returns {boolean}
- */
-const isCrio = (object) => {
-  return !!(object && object.$$type);
-};
-
-/**
- * determine if object is object
- *
- * @param {any} object
- * @return {boolean}
- */
-const isObject = (object) => {
-  return toString(object) === OBJECT_TYPE && !!object && object.$$type !== 'CrioArray'
-    || !!(object && object.$$type === 'CrioObject');
-};
-
-/**
- * determine if object is undefined
- *
- * @param {any} object
- * @return {boolean}
- */
-const isUndefined = (object) => {
-  return object === void 0;
-};
-
-/**
- * based on hashCodes, either return the current object or the newly generated on
- *
- * @param {object} currentObject={}
- * @param {object} newObject={}
- * @return {object<T>}
- */
-const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
-  if (currentObject.$$hashCode !== newObject.$$hashCode) {
-    return newObject;
-  }
-
-  return currentObject;
 };
 
 /**
@@ -234,9 +206,10 @@ export {hash};
 export {isArray};
 export {isCrio};
 export {isObject};
+export {isString};
 export {isUndefined};
-export {returnObjectOnlyIfNew};
 export {setNonEnumerable};
 export {setStandard};
 export {shallowCloneArray};
 export {stringify};
+export {stringifySerializerForHash};

@@ -1,25 +1,58 @@
 import test from 'ava';
 
 import {
+    forEach,
+    hasChanged,
     hash,
     isArray,
     isObject,
+    isString,
     isUndefined,
-    returnObjectOnlyIfNew,
     setNonEnumerable,
-    setStandard
+    setStandard,
+    shallowCloneArray,
+    stringifySerializerForHash
 } from '../src/utils';
 
 import crio from '../src';
+
+test('if forEach will execute function as loop', (t) => {
+    const length = 10;
+
+    let array = [],
+        finalValue;
+
+    for (let index = 0; index < length; index++) {
+        array.push(index + 1);
+    }
+
+    forEach(array, (index) => {
+        finalValue = index;
+    });
+
+    t.is(length, finalValue);
+});
+
+test('if hasChanged will correctly identify if values have changed with hash', (t) => {
+    const object = {foo: 'bar'};
+    const crioObject = crio(object);
+
+    t.false(hasChanged(crioObject, {
+        foo: 'bar'
+    }));
+    t.true(hasChanged(crioObject, {
+        foo: 'baz'
+    }));
+});
 
 test('if hash will consistently has string values', (t) => {
     const stringOne = 'STRING_ONE';
     const stringTwo = 'STRING_TWO';
     const stringThree = 'STRING_THREE';
 
-    let previousHashOne = -1086700264,
-        previousHashTwo = -1086695170,
-        previousHashThree = -637447216;
+    let previousHashOne = 765875368,
+        previousHashTwo = 766033282,
+        previousHashThree = 1704848752;
 
     for (let i = 10000; i--;) {
         const currentHashOne = hash(stringOne);
@@ -66,6 +99,23 @@ test('if isObject properly checks if something is an object or CrioObject', (t) 
     t.false(isObject(null));
 });
 
+test('if isString properly checks if something is a string', (t) => {
+    const array = ['foo', 'bar'];
+    const crioArray = crio(array);
+    const object = {foo: 'bar'};
+    const crioObject = crio(object);
+
+    t.false(isString(array));
+    t.false(isString(crioArray));
+    t.false(isString(object));
+    t.false(isString(crioObject));
+    t.true(isString('string'));
+    t.false(isString(1));
+    t.false(isString(true));
+    t.false(isString(undefined));
+    t.false(isString(null));
+});
+
 test('if isUndefined properly checks if something is undefined', (t) => {
     const array = ['foo', 'bar'];
     const crioArray = crio(array);
@@ -81,14 +131,6 @@ test('if isUndefined properly checks if something is undefined', (t) => {
     t.false(isUndefined(true));
     t.true(isUndefined(undefined));
     t.false(isUndefined(null));
-});
-
-test('if returnObjectOnlyIfNew returns original crio when the values are the same', (t) => {
-    const originalCrioObject = crio({foo: 'bar'});
-    const otherCrioObject = crio({foo: 'bar'});
-    const newCrioObject = returnObjectOnlyIfNew(originalCrioObject, otherCrioObject);
-
-    t.is(originalCrioObject, newCrioObject);
 });
 
 test('if setNonEnumerable adds a non-enumerable property to an object', (t) => {
@@ -111,4 +153,22 @@ test('if setStandard adds a property to an object that is configurable or writab
 
     t.true(configurable);
     t.true(writable);
+});
+
+test('if shallowCloneArray produces a shallow clone', (t) => {
+    const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const crioArray = crio(array);
+    const shallowClone = shallowCloneArray(crioArray);
+
+    t.deepEqual(crioArray, shallowClone);
+    t.false(crioArray === shallowClone);
+    t.false(array === shallowClone);
+});
+
+test('if stringifySerializerForHash stringifies functions', (t) => {
+    const arrayWithFunction = [function() {}];
+    const stringifiedArray = JSON.stringify(arrayWithFunction, stringifySerializerForHash);
+    const expectedString = '["function () {}"]';
+
+    t.is(stringifiedArray, expectedString);
 });
