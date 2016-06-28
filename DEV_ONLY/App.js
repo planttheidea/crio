@@ -7,7 +7,7 @@ import crio from '../src';
 
 const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
 
-const REPEATS = [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 5000000];
+const REPEATS = [1000, 5000, 10000/*, 50000, 100000, 500000, 1000000, 5000000*/];
 
 const crioArray = crio(array);
 const maxIndex = crioArray.length -1;
@@ -31,6 +31,17 @@ const sum = results.reduce((total, result) => {
 }, 0);
 
 console.log(sum);
+
+// const crioObject = crio({
+//     foo: {
+//         bar: 'baz'
+//     },
+//     some: {
+//         other: 'object'
+//     }
+// });
+//
+// crioObject.setIn(['foo', 'bar'], 'baz');
 
 const App = () => {
     return (
