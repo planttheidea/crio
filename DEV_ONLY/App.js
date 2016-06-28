@@ -4,9 +4,10 @@ import {
 } from 'react-dom';
 
 import crio from '../src';
+
 import Immutable from 'immutable';
 
-const ARRAY_SIZE = 1000;
+const ARRAY_SIZE = 1009;
 
 let arrayForCrio = [],
     arrayForImmutable = [];
@@ -36,9 +37,19 @@ Immutable.List(arrayForImmutable);
 
 console.log(Date.now() - immutableCreateStart);
 
-crioArray.forEach((crioObject) => {
-  console.log(crioObject.$$hashCode);
-});
+console.log('crio push');
+
+const crioPushStart = Date.now();
+
+let crioPush = crio([]);
+
+for (let index = 0; index < ARRAY_SIZE; index++) {
+  crioPush = crioPush.push({
+    index
+  });
+}
+
+console.log(Date.now() - crioPushStart);
 
 const App = () => {
     return (

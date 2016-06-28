@@ -1,127 +1,23 @@
 import stringifier from 'stringifier';
 
+const STRINGIFIER_HASH_OPTIONS = {
+  handlers: {
+    'function': ({value}) => {
+      return value.toString();
+    }
+  },
+  maxDepth: 10
+};
 const STRINGIFIER_OPTIONS = {
-  maxDepth: 25,
+  maxDepth: 10,
   indent: '  '
 };
 
 const stringify = stringifier(STRINGIFIER_OPTIONS);
+const stringifyForHash = stringifier(STRINGIFIER_HASH_OPTIONS);
 
 const ARRAY_TYPE = '[object Array]';
 const OBJECT_TYPE = '[object Object]';
-
-/**
- * convert object to readable string
- * 
- * @param {any} object
- * @return {string}
- */
-const buildStringForHash = (object) => {
-  if (!isArray(object) && !isObject(object)) {
-    return object.toString();
-  }
-
-  const keys = Object.keys(object);
-
-  let string = '',
-      length = keys.length,
-      index = -1,
-      elements,
-      key,
-      value,
-      valueLength,
-      valueIndex;
-
-  while (++index < length) {
-    key = keys[index];
-    value = object[key];
-
-    if (isObject(value)) {
-      string += `|${key}:${buildStringForHash(value)}|`;
-    } else if (isArray(value)) {
-      elements = [];
-      valueLength = value.length;
-      valueIndex = -1;
-
-      while (++valueIndex < valueLength) {
-        elements.push(buildStringForHash(value[valueIndex]));
-      }
-
-      if (elements.length > 0) {
-        string += `${key}:[${elements.join(',')}]`;
-      }
-    } else {
-      string += `|${key}:${value}|`;
-    }
-  }
-
-  return string;
-};
-
-/**
- * utility function (faster than native forEach)
- *
- * @param {array<any>} array
- * @param {function} fn
- * @param {any} thisArg
- */
-const forEach = (array, fn, thisArg) => {
-  const length = array.length;
-
-  let index = -1;
-
-  while (++index < length) {
-    fn.call(thisArg, array[index], index, array);
-  }
-};
-
-/**
- * based on object passed, get its type in lowercase string format
- *
- * @param {any} object
- * @return {string}
- */
-const toString = (object) => {
-  return Object.prototype.toString.call(object);
-};
-
-/**
- * determine if the values for newObject match those for the crioObject
- *
- * @param {CrioArray|CrioObject} crioObject
- * @param {any} newObject
- * @returns {boolean}
- */
-const hasChanged = (crioObject, newObject) => {
-  const hashCode = hash(newObject);
-
-  return crioObject.$$hashCode !== hashCode;
-};
-
-/**
- * convert object into unique hash value
- *
- * @param {CrioArray|CrioObject|array|object} object
- * @return {string}
- */
-const hash = (object) => {
-  const string = buildStringForHash(object);
-  const length = string.length;
-
-  if (length === 0) {
-    return 0;
-  }
-
-  let hash = 0,
-      index = -1;
-
-  while (++index < length) {
-    hash = ((hash << 5) - hash) + string.charCodeAt(index);
-    hash = hash & hash;
-  }
-
-  return hash;
-};
 
 /**
  * determine if object is array
@@ -165,18 +61,83 @@ const isUndefined = (object) => {
 };
 
 /**
- * based on hashCodes, either return the current object or the newly generated on
+ * utility function (faster than native forEach)
  *
- * @param {object} currentObject={}
- * @param {object} newObject={}
- * @return {object<T>}
+ * @param {array<any>} array
+ * @param {function} fn
+ * @param {any} thisArg
  */
-const returnObjectOnlyIfNew = (currentObject = {}, newObject = {}) => {
-  if (currentObject.$$hashCode !== newObject.$$hashCode) {
-    return newObject;
+const forEach = (array, fn, thisArg) => {
+  const length = array.length;
+
+  let index = -1;
+
+  while (++index < length) {
+    fn.call(thisArg, array[index], index, array);
+  }
+};
+
+/**
+ * based on object passed, get its type in lowercase string format
+ *
+ * @param {any} object
+ * @return {string}
+ */
+const toString = (object) => {
+  return Object.prototype.toString.call(object);
+};
+
+/**
+ * determine if the values for newObject match those for the crioObject
+ *
+ * @param {CrioArray|CrioObject} crioObject
+ * @param {any} newObject
+ * @returns {boolean}
+ */
+const hasChanged = (crioObject, newObject) => {
+  const hashCode = hash(newObject);
+
+  return crioObject.$$hashCode !== hashCode;
+};
+
+const stringifySerializerForHash = (key, value) => {
+  if (typeof value === 'function') {
+    return value.toString();
   }
 
-  return currentObject;
+  return value;
+};
+
+/**
+ * convert object into unique hash value
+ *
+ * @param {CrioArray|CrioObject|array|object} object
+ * @return {string}
+ */
+const hash = (object) => {
+  let string;
+
+  try {
+    string = JSON.stringify(object, stringifySerializerForHash);
+  } catch (exception) {
+    string = stringifyForHash(object);
+  }
+
+  const length = string.length;
+
+  if (length === 0) {
+    return 0;
+  }
+
+  let hash = 0,
+      index = -1;
+
+  while (++index < length) {
+    hash = ((hash << 5) - hash) + string.charCodeAt(index);
+    hash = hash & hash;
+  }
+
+  return hash;
 };
 
 /**
@@ -235,8 +196,8 @@ export {isArray};
 export {isCrio};
 export {isObject};
 export {isUndefined};
-export {returnObjectOnlyIfNew};
 export {setNonEnumerable};
 export {setStandard};
 export {shallowCloneArray};
 export {stringify};
+export {stringifySerializerForHash};
