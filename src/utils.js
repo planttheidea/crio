@@ -18,7 +18,6 @@ const stringifyForHash = stringifier(STRINGIFIER_HASH_OPTIONS);
 
 const ARRAY_TYPE = '[object Array]';
 const OBJECT_TYPE = '[object Object]';
-const STRING_TYPE = '[object String]';
 
 /**
  * determine if object is array
@@ -49,16 +48,6 @@ const isCrio = (object) => {
 const isObject = (object) => {
   return toString(object) === OBJECT_TYPE && !!object && object.$$type !== 'CrioArray'
     || !!(object && object.$$type === 'CrioObject');
-};
-
-/**
- * determine if object is string
- *
- * @param {any} object
- * @return {boolean}
- */
-const isString = (object) => {
-  return toString(object) === STRING_TYPE;
 };
 
 /**
@@ -206,7 +195,6 @@ export {hash};
 export {isArray};
 export {isCrio};
 export {isObject};
-export {isString};
 export {isUndefined};
 export {setNonEnumerable};
 export {setStandard};

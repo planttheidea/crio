@@ -6,7 +6,6 @@ import {
     hash,
     isArray,
     isObject,
-    isString,
     isUndefined,
     setNonEnumerable,
     setStandard,
@@ -97,23 +96,6 @@ test('if isObject properly checks if something is an object or CrioObject', (t) 
     t.false(isObject(true));
     t.false(isObject(undefined));
     t.false(isObject(null));
-});
-
-test('if isString properly checks if something is a string', (t) => {
-    const array = ['foo', 'bar'];
-    const crioArray = crio(array);
-    const object = {foo: 'bar'};
-    const crioObject = crio(object);
-
-    t.false(isString(array));
-    t.false(isString(crioArray));
-    t.false(isString(object));
-    t.false(isString(crioObject));
-    t.true(isString('string'));
-    t.false(isString(1));
-    t.false(isString(true));
-    t.false(isString(undefined));
-    t.false(isString(null));
 });
 
 test('if isUndefined properly checks if something is undefined', (t) => {
