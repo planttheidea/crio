@@ -1,7 +1,4 @@
-import CryptoJS from 'crypto-js';
 import stringifier from 'stringifier';
-
-const SHA1 = CryptoJS.SHA1;
 
 const STRINGIFIER_OPTIONS = {
   maxDepth: 25,
@@ -109,8 +106,21 @@ const hasChanged = (crioObject, newObject) => {
  */
 const hash = (object) => {
   const string = buildStringForHash(object);
+  const length = string.length;
 
-  return SHA1(string).toString();
+  if (length === 0) {
+    return 0;
+  }
+
+  let hash = 0,
+      index = -1;
+
+  while (++index < length) {
+    hash = ((hash << 5) - hash) + string.charCodeAt(index);
+    hash = hash & hash;
+  }
+
+  return hash;
 };
 
 /**
