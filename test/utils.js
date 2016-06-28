@@ -2,7 +2,7 @@ import test from 'ava';
 
 import {
     forEach,
-    hasChanged,
+    getHashIfChanged,
     hash,
     isArray,
     isObject,
@@ -32,14 +32,14 @@ test('if forEach will execute function as loop', (t) => {
     t.is(length, finalValue);
 });
 
-test('if hasChanged will correctly identify if values have changed with hash', (t) => {
+test('if getHashIfChanged will correctly identify if values have changed with hash', (t) => {
     const object = {foo: 'bar'};
     const crioObject = crio(object);
 
-    t.false(hasChanged(crioObject, {
+    t.false(getHashIfChanged(crioObject, {
         foo: 'bar'
     }));
-    t.true(hasChanged(crioObject, {
+    t.truthy(getHashIfChanged(crioObject, {
         foo: 'baz'
     }));
 });

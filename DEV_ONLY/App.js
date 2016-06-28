@@ -5,68 +5,32 @@ import {
 
 import crio from '../src';
 
-let array = [],
-    index = -1;
+const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
 
-console.log('start');
-
-const start = Date.now();
-
-while (++index < 100000) {
-  array.push(index);
-}
-
-console.log('array push complete', (Date.now() - start));
+const REPEATS = [1000, 5000, 10000, 50000, 100000, 500000, 1000000, 5000000];
 
 const crioArray = crio(array);
+const maxIndex = crioArray.length -1;
 
-console.log('total time taken', (Date.now() - start));
+const test = (cycles) => {
+    const start = Date.now();
 
-// import Immutable from 'immutable';
-//
-// const ARRAY_SIZE = 1009;
-//
-// let arrayForCrio = [],
-//     arrayForImmutable = [];
-//
-// for (let i = 0; i < ARRAY_SIZE; i++) {
-//   arrayForCrio.push({
-//       index: 'test'
-//   });
-//     arrayForImmutable.push({
-//         index: i
-//     });
-// }
-//
-// console.log('crio create');
-//
-// const crioCreateStart = Date.now();
-//
-// const crioArray = crio(arrayForCrio);
-//
-// console.log(Date.now() - crioCreateStart);
-//
-// console.log('immutable create');
-//
-// const immutableCreateStart = Date.now();
-//
-// Immutable.List(arrayForImmutable);
-//
-// console.log(Date.now() - immutableCreateStart);
-//
-// console.log('crio push');
-//
-// const crioPushStart = Date.now();
-//
-// let crioPush = crio([]);
-//
-// for (let index = 0; index < ARRAY_SIZE; index++) {
-//   crioPush = crioPush.push({
-//     index
-//   });
-// }
-//
-// console.log(Date.now() - crioPushStart);
+    for (let index = 0; index < cycles; index++) {
+        const i = ~~(Math.random() * maxIndex);
+        const newVal = Math.random();
+
+        crioArray.setIn([0, i], newVal);
+    }
+
+    return Date.now() - start;
+};
+
+const results = REPEATS.map(test);
+const sum = results.reduce((total, result) => {
+    return total + result;
+}, 0);
+
+console.log(sum);
 
 const App = () => {
     return (

@@ -88,18 +88,12 @@ const toString = (object) => {
 };
 
 /**
- * determine if the values for newObject match those for the crioObject
- *
- * @param {CrioArray|CrioObject} crioObject
- * @param {any} newObject
- * @returns {boolean}
+ * convert functions using toString to get actual value for JSON.stringify
+ * 
+ * @param {string} key
+ * @param {any} value
+ * @returns {string}
  */
-const hasChanged = (crioObject, newObject) => {
-  const hashCode = hash(newObject);
-
-  return crioObject.$$hashCode !== hashCode;
-};
-
 const stringifySerializerForHash = (key, value) => {
   if (typeof value === 'function') {
     return value.toString();
@@ -129,15 +123,32 @@ const hash = (object) => {
     return 0;
   }
 
-  let hash = 0,
+  let hashValue = 0,
       index = -1;
 
   while (++index < length) {
-    hash = ((hash << 5) - hash) + string.charCodeAt(index);
-    hash = hash & hash;
+    hashValue = ((hashValue << 5) - hashValue) + string.charCodeAt(index);
+    hashValue = hashValue & hashValue;
   }
 
-  return hash;
+  return hashValue;
+};
+
+/**
+ * determine if the values for newObject match those for the crioObject
+ *
+ * @param {CrioArray|CrioObject} crioObject
+ * @param {any} newObject
+ * @returns {boolean}
+ */
+const getHashIfChanged = (crioObject, newObject) => {
+  const hashValue = hash(newObject);
+
+  if (crioObject.$$hashCode !== hashValue) {
+    return hashValue;
+  }
+
+  return false;
 };
 
 /**
@@ -190,7 +201,7 @@ const setStandard = (object, property, value, enumerable = true) => {
 };
 
 export {forEach};
-export {hasChanged};
+export {getHashIfChanged};
 export {hash};
 export {isArray};
 export {isCrio};
