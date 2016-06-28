@@ -21,12 +21,6 @@ module.exports = {
     },
 
     externals: {
-        'crypto-js': {
-            amd: 'crypto-js',
-            commonjs: 'crypto-js',
-            commonjs2: 'crypto-js',
-            root: 'CryptoJS'
-        },
         'stringifier': {
             amd: 'stringifier',
             commonjs: 'stringifier',
