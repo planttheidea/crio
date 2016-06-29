@@ -1,5 +1,9 @@
 # crio changelog
 
+#### 2.3.0
+* Add `delete` and `deleteIn` functions for both `CrioArray` and `CrioObject`
+* Add `has` function for both `CrioArray` and `CrioObject` (checks if key passed exists in the object)
+
 #### 2.2.2
 * Apply polyfills for `copyWithin` and `fill` (before they only leveraged the existing prototype method, which failed on IE)
 * Apparently `reverse` for `CrioArray`s got lost? Adding it back in

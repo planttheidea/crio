@@ -128,6 +128,54 @@ const assignOnDeepMatch = (object, keys, value, isMerge = false) => {
   return returnCorrectObject(object, referenceToCurrentObject, isObjectArray ? CrioArray : CrioObject);
 };
 
+/**
+ * delete key from object based on nested keys
+ *
+ * @param {CrioArray|CrioObject} object
+ * @param {array<string|number>} keys
+ * @return {CrioArray|CrioObject}
+ */
+const deleteOnDeepMatch = (object, keys) => {
+  const length = keys.length;
+  const lastIndex = length - 1;
+  const isObjectArray = isArray(object);
+
+  let currentObject = isObjectArray ? shallowCloneArray(object) : {...object},
+    referenceToCurrentObject = currentObject,
+    currentValue;
+
+  let index = -1,
+      matchFound = false;
+
+  while (++index < length) {
+    const key = keys[index];
+
+    if (index === lastIndex) {
+      matchFound = true;
+
+      delete currentObject[key];
+    }
+
+    if (isUndefined(currentObject[key])) {
+      break;
+    }
+
+    currentValue = currentObject[key];
+
+    if (isCrio(currentValue)) {
+      currentObject[key] = isArray(currentValue) ? shallowCloneArray(currentValue) : {...currentValue};
+    }
+
+    currentObject = currentObject[key];
+  }
+
+  if (matchFound) {
+    return returnCorrectObject(object, referenceToCurrentObject, isObjectArray ? CrioArray : CrioObject);
+  }
+
+  return object;
+};
+
 class CrioArray {
   constructor(array, hashValue) {
     if (isCrio(array)) {
@@ -192,6 +240,48 @@ class CrioArray {
     });
 
     return this.splice(target, replacements.length, ...replacements);
+  }
+
+  /**
+   * remove item from the array
+   *
+   * @param {number} key
+   * @return {CrioArray}
+   */
+  delete(key) {
+    if (!this.has(key)) {
+      return this;
+    }
+
+    const index = +key;
+
+    let clone = [];
+
+    forEach(this, (item, itemIndex) => {
+      if (itemIndex !== index) {
+        clone.push(item);
+      }
+    });
+
+    return new CrioArray(clone);
+  }
+
+  /**
+   * delete deeply-nested key in this based on keys passed
+   *
+   * @param {array<string|number>} keys
+   * @return {CrioObject}
+   */
+  deleteIn(keys) {
+    if (!isArray(keys)) {
+      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+    }
+
+    if (!keys.length) {
+      return this;
+    }
+
+    return deleteOnDeepMatch(this, keys);
   }
 
   /**
@@ -351,6 +441,16 @@ class CrioArray {
       currentObject = currentObject[key];
     }
   };
+
+  /**
+   * does the key passed exist in this
+   *
+   * @param {number} key
+   * @return {boolean}
+   */
+  has(key) {
+    return OBJECT_PROTOTYPE.hasOwnProperty.call(this, key);
+  }
 
   /**
    * does this have a value of item contained in it
@@ -764,6 +864,46 @@ class CrioObject {
   }
 
   /**
+   * remove key from this
+   *
+   * @param {string} key
+   * @return {CrioObject}
+   */
+  delete(key) {
+    if (!this.hasOwnProperty(key)) {
+      return this;
+    }
+
+    let clone = {};
+
+    forEachRight(this.keys(), (itemKey) => {
+      if (itemKey !== key) {
+        clone[itemKey] = this[itemKey];
+      }
+    });
+
+    return new CrioObject(clone);
+  }
+
+  /**
+   * delete deeply-nested key in this based on keys passed
+   *
+   * @param {array<string>} keys
+   * @return {CrioObject}
+   */
+  deleteIn(keys) {
+    if (!isArray(keys)) {
+      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+    }
+
+    if (!keys.length) {
+      return this;
+    }
+    
+    return deleteOnDeepMatch(this, keys);
+  }
+
+  /**
    * return iterable array of keys in this
    *
    * @returns {array<string>}
@@ -824,6 +964,16 @@ class CrioObject {
       currentObject = currentObject[key];
     }
   };
+
+  /**
+   * does the key passed exist in this
+   *
+   * @param {number} key
+   * @return {boolean}
+   */
+  has(key) {
+    return this.hasOwnProperty(key);
+  }
 
   /**
    * return if this has the property passed

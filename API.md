@@ -35,25 +35,28 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
     * Returns new crio with new items added to beginning
 
 #### crio Methods
-* equals returns {boolean}
-    * Determines whether array is deeply equal in value to another by comparing hashCodes
-* get {number|string} *key*, returns {any}
-    * Retrieve value at key
-* getIn {array} *keys*, returns {any}
-    * Retrieve value in deeply nested object based on array of keys
-* merge {array[, array2, ..., arrayN]} *objects*, returns {crio}
+* delete `{number}` *key*, returns `{CrioArray}`
+   * Deletes the key provided from the crio object
+* deleteIn `{array<number|string>}` *keys*, returns `{CrioArray}`
+   * Deletes the final key based on the array of keys nested inside of the crio object
+* equals returns `{boolean}`
+   * Determines whether array is deeply equal in value to another by comparing hashCodes
+* get `{number}` *key*, returns `{any}`
+   * Retrieve value at key
+* getIn `{array}` *keys*, returns `{any}`
+   * Retrieve value in deeply nested object based on array of keys
+* merge `{object[, object2, ..., objectN]}` *objects*, returns `{CrioArray}`
     * Shallow merge any number of items into existing crio
-* mergeIn {array} *keys*, {array[, array2, ..., arrayN]} *objects*, returns {crio}
+* mergeIn `{array}` *keys*, `{object[, object2, ..., objectN]}` *objects*, returns `{CrioArray}`
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
-* mutate {function} *callback*, returns {crio}
-    * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
-    * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
-* set {number|string} *key*, returns {crio}
-    * Sets value at key
-* setIn {array} *keys*, returns {crio}
-    * Sets value in deeply nested object based on array of keys
-* thaw returns {array|object}
-    * Recursively thaws array deeply and returns standard object version of itself
+* mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioArray}`
+   * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioArray`
+* set `{number}` *key*, returns `{CrioArray}`
+   * Sets value at key
+* setIn `{array<number|string>}` *keys*, returns `{CrioArray}`
+   * Sets value in deeply nested object based on array of keys
+* thaw returns `{array<any>}`
+   * Recursively thaws array deeply and returns standard object version of itself
 
 ## Objects
 
@@ -66,22 +69,25 @@ Keep in mind this is just a list of the ES5-compliant methods; if your browser s
 * [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf)
 
 #### crio Methods
-* equals returns {boolean}
+* delete `{tring}` *key*, returns `{CrioObject}`
+   * Deletes the key provided from the crio object
+* deleteIn `{array<number|string>}` *keys*, returns `{CrioObject}`
+   * Deletes the final key based on the array of keys nested inside of the crio object
+* equals returns `{boolean}`
    * Determines whether array is deeply equal in value to another by comparing hashCodes
-* get {number|string} *key*, returns {any}
+* get `{string}` *key*, returns `{any}`
    * Retrieve value at key
-* getIn {array} *keys*, returns {any}
+* getIn `{array}` *keys*, returns `{any}`
    * Retrieve value in deeply nested object based on array of keys
-* merge {object[, object2, ..., objectN]} *objects*, returns {crio}
+* merge `{object[, object2, ..., objectN]}` *objects*, returns `{CrioObject}`
     * Shallow merge any number of items into existing crio
-* mergeIn {array} *keys*, {object[, object2, ..., objectN]} *objects*, returns {crio}
+* mergeIn `{array}` *keys*, `{object[, object2, ..., objectN]}` *objects*, returns `{CrioObject}`
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
-* mutate {function} *callback*, returns {crio}
-   * Callback function accepts two parameters: mutated (plain JS) array, and the original CrioArray
-   * Whatever you return in the callback is what is returned, or if you return nothing it returns the original CrioArray
-* set {number|string} *key*, returns {crio}
+* mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioObject}`
+   * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioOjbect`
+* set `{string}` *key*, returns `{CrioObject}`
    * Sets value at key
-* setIn {array} *keys*, returns {crio}
+* setIn `{array}` *keys*, returns `{CrioObject}`
    * Sets value in deeply nested object based on array of keys
-* thaw returns {array|object}
+* thaw returns `{object}`
    * Recursively thaws array deeply and returns standard object version of itself

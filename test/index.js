@@ -113,11 +113,21 @@ test('CrioObject methods', (t) => {
     const crioObject = crio(OBJECT);
     const deepCrioObject = crio(DEEPLY_NESTED_OBJECT);
 
+    t.deepEqual(deepCrioObject.delete('some').thaw(), {});
+    t.deepEqual(deepCrioObject.deleteIn(['some', 'deeply', 'nested']).thaw(), {
+        some: {
+            deeply: {}
+        }
+    });
+
     t.deepEqual(crioObject.entries(), [['foo', 'bar']]);
     t.true(crioObject.equals(crio(OBJECT)));
     t.is(crioObject.get('foo'), 'bar');
 
     t.is(deepCrioObject.getIn(['some', 'deeply', 'nested']), 'object');
+
+    t.true(crioObject.has('foo'));
+    t.false(crioObject.has('bar'));
 
     t.true(crioObject.hasOwnProperty('foo'));
     t.is(crioObject.isPrototypeOf(CrioObject), OBJECT.isPrototypeOf(CrioObject));
@@ -198,6 +208,32 @@ test('CrioArray methods', (t) => {
 
     t.deepEqual(copyWithinArray.thaw(), [4, 5, 3, 4, 5]);
 
+    t.deepEqual(crioArray.delete(0).thaw(), ['bar']);
+
+    const deeplyNestedCrioArray = crio([{
+        some: {
+            really: {
+                deep: 'object'
+            }
+        },
+        another: {
+            untouched: {
+                deep: 'object'
+            }
+        }
+    }]);
+
+    t.deepEqual(deeplyNestedCrioArray.deleteIn([0, 'some', 'really', 'deep']).thaw(), [{
+        some: {
+            really: {}
+        },
+        another: {
+            untouched: {
+                deep: 'object'
+            }
+        }
+    }]);
+
     t.deepEqual(crioArray.entries(), [['0', 'foo'], ['1', 'bar']]);
 
     t.true(crioArray.equals(crio(ARRAY)));
@@ -241,6 +277,9 @@ test('CrioArray methods', (t) => {
     }]);
 
     t.is(deeplyNestedArray.getIn([0, 'foo']), 'bar');
+
+    t.true(crioArray.has(0));
+    t.false(crioArray.has(2));
 
     t.true(crioArray.includes('bar'));
     t.false(crioArray.includes('baz'));
