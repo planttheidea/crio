@@ -1,5 +1,11 @@
 # crio changelog
 
+#### 2.2.1
+* Prevent double-hashing when existing objects have changed
+* Improve deep setting / merging function
+* Fix several confusions with this vs thisArg in applied methods
+* Improve speed of bitwise hashing mechanism
+
 #### 2.2.0
 * Turn of Object.freeze when NODE_ENV=production (performance)
 

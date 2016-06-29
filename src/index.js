@@ -140,7 +140,7 @@ class CrioArray {
       this[index] = getRealValue(item);
     });
 
-    const hashCode = hashValue || hash(array);
+    const hashCode = isUndefined(hashValue) ? hash(array) : hashValue;
 
     setNonEnumerable(this, '$$hashCode', hashCode);
     setNonEnumerable(this, 'length', length);
@@ -718,7 +718,7 @@ class CrioObject {
       }
     });
 
-    const hashCode = hashValue || hash(object);
+    const hashCode = isUndefined(hashValue) ? hash(object) : hashValue;
 
     setNonEnumerable(this, '$$hashCode', hashCode);
     setNonEnumerable(this, 'length', length);
