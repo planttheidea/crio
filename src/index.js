@@ -6,7 +6,8 @@ import 'core-js/fn/object/values';
 
 import {
     forEach,
-    hasChanged,
+    forEachRight,
+    getHashIfChanged,
     hash,
     isArray,
     isCrio,
@@ -23,7 +24,6 @@ const ARRAY_PROTOTYPE = Array.prototype;
 const OBJECT_ENTRIES = Object.entries;
 const OBJECT_FREEZE = Object.freeze;
 const OBJECT_KEYS = Object.keys;
-const OBJECT_OWN_PROPERTY_NAMES = Object.getOwnPropertyNames;
 const OBJECT_PROTOTYPE = Object.prototype;
 const OBJECT_VALUES = Object.values;
 
@@ -38,6 +38,13 @@ const NATIVE_KEYS = [
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+/**
+ * if NODE_ENV is not production then don't freeze for
+ * performance reasons, else freeze the object
+ *
+ * @param {CrioArray|CrioObject} crio
+ * @returns {CrioArray|CrioObject}
+ */
 const freezeIfNotProduction = (crio) => {
   return IS_PRODUCTION ? crio : OBJECT_FREEZE(crio);
 };
@@ -47,19 +54,20 @@ const freezeIfNotProduction = (crio) => {
  * it to crio and return it, else just return it
  *
  * @param {any} value
+ * @param {string} hashValue
  * @returns {any}
  */
-const getRealValue = (value) => {
+const getRealValue = (value, hashValue) => {
   if (isCrio(value)) {
     return value;
   }
 
   if (isArray(value)) {
-    return new CrioArray(value);
+    return new CrioArray(value, hashValue);
   }
 
   if (isObject(value)) {
-    return new CrioObject(value);
+    return new CrioObject(value, hashValue);
   }
 
   return value;
@@ -70,12 +78,14 @@ const getRealValue = (value) => {
  *
  * @param {CrioArray|CrioObject} crio
  * @param {array<any>|object} newObject
- * @param {CrioArray|CrioObject} Constructor
+ * @param {CrioArray|CrioObject} CrioConstructor
  * @returns {CrioArray|CrioObject|array<any>|object}
  */
-const returnCorrectObject = (crio, newObject, Constructor) => {
-  if (hasChanged(crio, newObject)) {
-    return new Constructor(newObject);
+const returnCorrectObject = (crio, newObject, CrioConstructor) => {
+  const hashValue = getHashIfChanged(crio, newObject);
+
+  if (hashValue !== false) {
+    return new CrioConstructor(newObject, hashValue);
   }
 
   return crio;
@@ -93,33 +103,33 @@ const returnCorrectObject = (crio, newObject, Constructor) => {
 const assignOnDeepMatch = (object, keys, value, isMerge = false) => {
   const length = keys.length;
   const lastIndex = length - 1;
-  const FinalCrio = isArray(object) ? CrioArray : CrioObject;
+  const isObjectArray = isArray(object);
 
-  let currentObject = object.thaw(),
+  let currentObject = isObjectArray ? shallowCloneArray(object) : {...object},
       referenceToCurrentObject = currentObject,
-      Crio;
+      currentValue;
 
   forEach(keys, (key, keyIndex) => {
-    const currentValue = currentObject[key];
+    currentValue = currentObject[key];
 
-    if (!isArray(currentValue) && !isObject(currentValue)) {
+    if (isCrio(currentValue)) {
+      currentObject[key] = isArray(currentValue) ? shallowCloneArray(currentValue) : {...currentValue};
+    } else if (!isObject(currentValue)) {
       currentObject[key] = {};
     }
 
     if (keyIndex === lastIndex) {
-      Crio = isArray(currentObject) ? CrioArray : CrioObject;
-
-      currentObject[key] = isMerge ? Crio.prototype.merge.apply(currentObject[key], value) : value;
+      currentObject[key] = isMerge ? Object.assign(currentObject[key], ...value) : value;
     } else {
       currentObject = currentObject[key];
     }
   });
 
-  return returnCorrectObject(object, referenceToCurrentObject, FinalCrio);
+  return returnCorrectObject(object, referenceToCurrentObject, isObjectArray ? CrioArray : CrioObject);
 };
 
 class CrioArray {
-  constructor(array) {
+  constructor(array, hashValue) {
     if (isCrio(array)) {
       return array;
     }
@@ -130,7 +140,7 @@ class CrioArray {
       this[index] = getRealValue(item);
     });
 
-    const hashCode = hash(array);
+    const hashCode = hashValue || hash(array);
 
     setNonEnumerable(this, '$$hashCode', hashCode);
     setNonEnumerable(this, 'length', length);
@@ -158,8 +168,7 @@ class CrioArray {
       return this;
     }
 
-    let clone = shallowCloneArray(this);
-
+    const clone = shallowCloneArray(this);
     const concattedArray = ARRAY_PROTOTYPE.concat.apply(clone, arrays);
 
     return new CrioArray(concattedArray);
@@ -209,7 +218,7 @@ class CrioArray {
    * @returns {boolean}
    */
   every(fn, thisArg = this) {
-    return ARRAY_PROTOTYPE.every.call(thisArg, fn);
+    return ARRAY_PROTOTYPE.every.call(this, fn, thisArg);
   }
 
   /**
@@ -254,7 +263,7 @@ class CrioArray {
     while (++index < this.length) {
       value = this[index];
 
-      if (fn.call(thisArg, value, index, this)) {
+      if (fn.call(this, value, index, thisArg)) {
         return value;
       }
     }
@@ -273,7 +282,7 @@ class CrioArray {
     let index = -1;
 
     while (++index < this.length) {
-      if (fn.call(thisArg, this[index], index, this)) {
+      if (fn.call(this, this[index], index, thisArg)) {
         return index;
       }
     }
@@ -406,7 +415,7 @@ class CrioArray {
       clone = clone.map((key, keyIndex) => {
         return object[keyIndex] || clone[keyIndex];
       });
-    }, this);
+    });
 
     return returnCorrectObject(this, clone, CrioArray);
   }
@@ -436,14 +445,14 @@ class CrioArray {
    * is paramount
    *
    * @param {function} fn
-   * @param {any} thisArg
    * @returns {any}
    */
-  mutate(fn, thisArg = this) {
-    const result = fn.call(thisArg, this.thaw(), this);
+  mutate(fn) {
+    const result = fn.call(this, this.thaw(), this);
+    const hashValue = getHashIfChanged(this, result);
 
-    if (hasChanged(this, result)) {
-      return getRealValue(result);
+    if (hashValue !== false) {
+      return getRealValue(result, hashValue);
     }
 
     return this;
@@ -479,9 +488,10 @@ class CrioArray {
    */
   reduce(fn, object, thisArg = this) {
     const reduction = ARRAY_PROTOTYPE.reduce.call(this, fn, object, thisArg);
+    const hashValue = getHashIfChanged(this, reduction);
 
-    if (hasChanged(this, reduction)) {
-      return getRealValue(reduction);
+    if (hashValue !== false) {
+      return getRealValue(reduction, hashValue);
     }
 
     return this;
@@ -498,9 +508,10 @@ class CrioArray {
    */
   reduceRight(fn, object, thisArg = this) {
     const reduction = ARRAY_PROTOTYPE.reduceRight.call(this, fn, object, thisArg);
+    const hashValue = getHashIfChanged(this, reduction);
 
-    if (hasChanged(this, reduction)) {
-      return getRealValue(reduction);
+    if (hashValue !== false) {
+      return getRealValue(reduction, hashValue);
     }
 
     return this;
@@ -521,9 +532,11 @@ class CrioArray {
       throw new Error('Cannot set a key for sparsed array on crio objects.');
     }
 
-    let clone = shallowCloneArray(this);
+    let clone = [];
 
-    clone[index] = value;
+    forEach(this, (item, itemIndex) => {
+      clone.push(index === itemIndex ? value : item);
+    });
 
     return returnCorrectObject(this, clone, CrioArray);
   }
@@ -688,24 +701,24 @@ class CrioArray {
 }
 
 class CrioObject {
-  constructor(object) {
+  constructor(object, hashValue) {
     if (isCrio(object)) {
       return object;
     }
 
-    const keys = OBJECT_OWN_PROPERTY_NAMES(object);
+    const keys = OBJECT_KEYS(object);
 
     let length = 0;
 
-    forEach(keys, (key) => {
+    forEachRight(keys, (key) => {
       if (!~NATIVE_KEYS.indexOf(key)) {
         this[key] = getRealValue(object[key]);
 
         length++;
       }
-    }, this);
+    });
 
-    const hashCode = hash(object);
+    const hashCode = hashValue || hash(object);
 
     setNonEnumerable(this, '$$hashCode', hashCode);
     setNonEnumerable(this, 'length', length);
@@ -826,7 +839,7 @@ class CrioObject {
 
     forEach(objects, (object) => {
       Object.assign(clone, object);
-    }, clone);
+    });
 
     return returnCorrectObject(this, clone, CrioObject);
   }
@@ -857,14 +870,14 @@ class CrioObject {
    * is paramount
    *
    * @param {function} fn
-   * @param {any} thisArg
    * @returns {any}
    */
-  mutate(fn, thisArg = this) {
-    const result = fn.call(thisArg, this.thaw(), this);
+  mutate(fn) {
+    const result = fn.call(this, this.thaw(), this);
+    const hashValue = getHashIfChanged(this, result);
 
-    if (hasChanged(this, result)) {
-      return getRealValue(result);
+    if (hashValue !== false) {
+      return getRealValue(result, hashValue);
     }
 
     return this;
@@ -888,9 +901,13 @@ class CrioObject {
    * @returns {CrioObject}
    */
   set(key, value) {
-    let clone = {
-      ...this
-    };
+    let clone = {};
+
+    forEachRight(this.keys(), (currentKey) => {
+      if (currentKey !== key) {
+        clone[currentKey] = this[currentKey];
+      }
+    });
 
     clone[key] = value;
 
@@ -918,18 +935,18 @@ class CrioObject {
    * @returns {array<any>}
    */
   thaw() {
-    const propertyNames = OBJECT_OWN_PROPERTY_NAMES(this);
+    const propertyNames = OBJECT_KEYS(this);
 
     let object = {};
 
-    forEach(propertyNames, (key) => {
+    forEachRight(propertyNames, (key) => {
       if (NATIVE_KEYS.indexOf(key) === -1) {
         const value = this[key];
         const cleanValue = isCrio(value) ? value.thaw() : value;
 
         setStandard(object, key, cleanValue, this.propertyIsEnumerable(key));
       }
-    }, this);
+    });
 
     return object;
   }

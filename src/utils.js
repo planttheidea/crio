@@ -78,6 +78,22 @@ const forEach = (array, fn, thisArg) => {
 };
 
 /**
+ * same as forEach but decrementing (used for objects because its
+ * faster than incrementing)
+ *
+ * @param {array<any>} array
+ * @param {function} fn
+ * @param {any} thisArg
+ */
+const forEachRight = (array, fn, thisArg) => {
+  let index = array.length;
+
+  while (index--) {
+    fn.call(thisArg, array[index], index, array);
+  }
+};
+
+/**
  * based on object passed, get its type in lowercase string format
  *
  * @param {any} object
@@ -88,18 +104,12 @@ const toString = (object) => {
 };
 
 /**
- * determine if the values for newObject match those for the crioObject
+ * convert functions using toString to get actual value for JSON.stringify
  *
- * @param {CrioArray|CrioObject} crioObject
- * @param {any} newObject
- * @returns {boolean}
+ * @param {string} key
+ * @param {any} value
+ * @returns {string}
  */
-const hasChanged = (crioObject, newObject) => {
-  const hashCode = hash(newObject);
-
-  return crioObject.$$hashCode !== hashCode;
-};
-
 const stringifySerializerForHash = (key, value) => {
   if (typeof value === 'function') {
     return value.toString();
@@ -123,21 +133,31 @@ const hash = (object) => {
     string = stringifyForHash(object);
   }
 
-  const length = string.length;
+  let hashValue = 5381,
+      index = string.length;
 
-  if (length === 0) {
-    return 0;
+  while (index) {
+    hashValue = (hashValue * 33) ^ string.charCodeAt(--index);
   }
 
-  let hash = 0,
-      index = -1;
+  return hashValue >>> 0;
+};
 
-  while (++index < length) {
-    hash = ((hash << 5) - hash) + string.charCodeAt(index);
-    hash = hash & hash;
+/**
+ * determine if the values for newObject match those for the crioObject
+ *
+ * @param {CrioArray|CrioObject} crioObject
+ * @param {any} newObject
+ * @returns {boolean}
+ */
+const getHashIfChanged = (crioObject, newObject) => {
+  const hashValue = hash(newObject);
+
+  if (crioObject.$$hashCode !== hashValue) {
+    return hashValue;
   }
 
-  return hash;
+  return false;
 };
 
 /**
@@ -151,7 +171,7 @@ const shallowCloneArray = (crioArray) => {
 
   forEach(crioArray, (item, index) => {
     array[index] = item;
-  }, crioArray);
+  });
 
   return array;
 };
@@ -190,7 +210,8 @@ const setStandard = (object, property, value, enumerable = true) => {
 };
 
 export {forEach};
-export {hasChanged};
+export {forEachRight};
+export {getHashIfChanged};
 export {hash};
 export {isArray};
 export {isCrio};

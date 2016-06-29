@@ -2,7 +2,8 @@ import test from 'ava';
 
 import {
     forEach,
-    hasChanged,
+    forEachRight,
+    getHashIfChanged,
     hash,
     isArray,
     isObject,
@@ -15,14 +16,14 @@ import {
 
 import crio from '../src';
 
-test('if forEach will execute function as loop', (t) => {
+test('if forEach will execute function as loop that increments', (t) => {
     const length = 10;
 
     let array = [],
         finalValue;
 
-    for (let index = 0; index < length; index++) {
-        array.push(index + 1);
+    for (let index = 1; index <= length; index++) {
+        array.push(index);
     }
 
     forEach(array, (index) => {
@@ -32,14 +33,31 @@ test('if forEach will execute function as loop', (t) => {
     t.is(length, finalValue);
 });
 
-test('if hasChanged will correctly identify if values have changed with hash', (t) => {
+test('if forEach will execute function as loop that decrements', (t) => {
+    const length = 10;
+
+    let array = [],
+        finalValue;
+
+    for (let index = 0; index < length; index++) {
+        array.push(index);
+    }
+
+    forEachRight(array, (index) => {
+        finalValue = index;
+    });
+
+    t.is(0, finalValue);
+});
+
+test('if getHashIfChanged will correctly identify if values have changed with hash', (t) => {
     const object = {foo: 'bar'};
     const crioObject = crio(object);
 
-    t.false(hasChanged(crioObject, {
+    t.false(getHashIfChanged(crioObject, {
         foo: 'bar'
     }));
-    t.true(hasChanged(crioObject, {
+    t.truthy(getHashIfChanged(crioObject, {
         foo: 'baz'
     }));
 });
@@ -49,9 +67,9 @@ test('if hash will consistently has string values', (t) => {
     const stringTwo = 'STRING_TWO';
     const stringThree = 'STRING_THREE';
 
-    let previousHashOne = 765875368,
-        previousHashTwo = 766033282,
-        previousHashThree = 1704848752;
+    let previousHashOne = 1448377099,
+        previousHashTwo = 2789257699,
+        previousHashThree = 2091686369;
 
     for (let i = 10000; i--;) {
         const currentHashOne = hash(stringOne);
