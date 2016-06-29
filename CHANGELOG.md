@@ -1,5 +1,9 @@
 # crio changelog
 
+#### 2.2.2
+* Apply polyfills for `copyWithin` and `fill` (before they only leveraged the existing prototype method, which failed on IE)
+* Apparently `reverse` for `CrioArray`s got lost? Adding it back in
+
 #### 2.2.1
 * Prevent double-hashing when existing objects have changed
 * Improve deep setting / merging function

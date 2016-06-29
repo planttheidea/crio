@@ -177,14 +177,21 @@ class CrioArray {
   /**
    * based on arguments passed, return new CrioArray with copyWithin applied
    *
-   * @param {array<any>} args
+   * @param {number} target
+   * @param {number} start=0
+   * @param {number} end=this.length
    * @returns {CrioArray}
    */
-  copyWithin(...args) {
-    const clone = shallowCloneArray(this);
-    const copiedClone = ARRAY_PROTOTYPE.copyWithin.apply(clone, args);
+  copyWithin(target, start = 0, end = this.length) {
+    if (isUndefined(target)) {
+      return this;
+    }
 
-    return returnCorrectObject(this, copiedClone, CrioArray);
+    const replacements = ARRAY_PROTOTYPE.slice.call(this, start, end).filter(() => {
+      return true;
+    });
+
+    return this.splice(target, replacements.length, ...replacements);
   }
 
   /**
@@ -224,15 +231,21 @@ class CrioArray {
   /**
    * fill this based on arguments and return new CrioArray
    *
-   * @param {array<any>} args
+   * @param {any} value
+   * @param {number} start=0
+   * @param {number} end=this.length
    * @returns {CrioArray}
    */
-  fill(...args) {
-    const clone = shallowCloneArray(this);
+  fill(value, start = 0, end = this.length) {
+    const filledArray = ARRAY_PROTOTYPE.map.call(this, (currentValue, index) => {
+      if (index >= start && index < end) {
+        return value;
+      }
 
-    ARRAY_PROTOTYPE.fill.apply(clone, args);
+      return currentValue;
+    });
 
-    return returnCorrectObject(this, clone, CrioArray);
+    return returnCorrectObject(this, filledArray, CrioArray);
   }
 
   /**
@@ -515,6 +528,21 @@ class CrioArray {
     }
 
     return this;
+  }
+
+  /**
+   * reverse the order of elements in the CrioArray
+   *
+   * @return {CrioArray}
+   */
+  reverse() {
+    let clone = [];
+
+    forEachRight(this, (value) => {
+      clone.push(value);
+    });
+
+    return returnCorrectObject(this, clone, CrioArray);
   }
 
   /**

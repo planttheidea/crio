@@ -302,6 +302,8 @@ test('CrioArray methods', (t) => {
         ];
     }, []), ['barBLAH', 'fooBLAH']);
 
+    t.deepEqual(crioArray.reverse().thaw(), ['bar', 'foo']);
+
     t.deepEqual(crioArray.set(0, 'baz').thaw(), ['baz', 'bar']);
     t.deepEqual(deeplyNestedArray.setIn([0, 'foo'], 'baz').thaw(), [{
         foo: 'baz'
