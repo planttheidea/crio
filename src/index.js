@@ -128,7 +128,7 @@ const mergeOnDeepMatch = (object, keys, value) => {
 
     if (isCrio(currentValue)) {
       currentObject[key] = getShallowClone(currentValue);
-    } else if (!isObject(currentValue)) {
+    } else {
       currentObject[key] = {};
     }
 
@@ -701,17 +701,17 @@ class CrioArray {
         currentValue;
 
     forEach(keys, (key, keyIndex) => {
-      currentValue = currentObject[key];
-
-      if (isCrio(currentValue)) {
-        currentObject[key] = getShallowClone(currentValue);
-      } else if (!isObject(currentValue)) {
-        currentObject[key] = {};
-      }
-
       if (keyIndex === lastIndex) {
         currentObject[key] = value;
       } else {
+        currentValue = currentObject[key];
+
+        if (isCrio(currentValue)) {
+          currentObject[key] = getShallowClone(currentValue);
+        } else {
+          currentObject[key] = {};
+        }
+
         currentObject = currentObject[key];
       }
     });
@@ -1149,17 +1149,17 @@ class CrioObject {
         currentValue;
 
     forEach(keys, (key, keyIndex) => {
-      currentValue = currentObject[key];
-
-      if (isCrio(currentValue)) {
-        currentObject[key] = getShallowClone(currentValue);
-      } else if (!isObject(currentValue)) {
-        currentObject[key] = {};
-      }
-
       if (keyIndex === lastIndex) {
         currentObject[key] = value;
       } else {
+        currentValue = currentObject[key];
+
+        if (isCrio(currentValue)) {
+          currentObject[key] = getShallowClone(currentValue);
+        } else {
+          currentObject[key] = {};
+        }
+
         currentObject = currentObject[key];
       }
     });
