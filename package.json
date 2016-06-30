@@ -58,11 +58,14 @@
     "build": "NODE_ENV=development ./node_modules/webpack/bin/webpack.js --progress --colors",
     "build-minified": "NODE_ENV=production ./node_modules/webpack/bin/webpack.js --progress --colors --config=webpack.config.minified.js",
     "dev": "NODE_ENV=development ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --colors --config=webpack.config.dev.js",
+    "dev-production": "NODE_ENV=production ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --progress --colors --config=webpack.config.dev.js",
     "lint": "NODE_ENV=test ./node_modules/eslint/bin/eslint.js src",
-    "prepublish": "npm run lint && npm run test && npm run transpile && npm run build && npm run build-minified",
+    "prepublish": "npm run lint && npm run test && npm run test-production && npm run transpile && npm run build && npm run build-minified",
     "test": "NODE_ENV=test ava --no-cache",
+    "test-production": "NODE_ENV=production ava --no-cache",
     "test:watch": "NODE_ENV=test ava --no-cache --watch",
+    "test-production:watch": "NODE_ENV=production ava --no-cache --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "2.3.0"
+  "version": "2.3.1"
 }

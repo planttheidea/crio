@@ -168,6 +168,8 @@ Standard stuff, clone the repo and `npm install` dependencies. The npm scripts a
 * `dev` => run webpack dev server to run example app (playground!)
 * `lint` => run ESLint against all files in the `src` folder
 * `prepublish` => run `lint`, `test`, `transpile`, `build`, and `build-minified`
-* `test` => run AVA test functions
+* `test` => run AVA test functions with `NODE_ENV=test`
+* `test-production` => run AVA test functions with `NODE_ENV=production`
 * `test:watch` => same as `test`, but runs persistent watcher
+* `test-production:watch` => same as `test`, but runs persistent watcher
 * `transpile` => run babel against all files in `src` to create files in `lib`

@@ -1,7 +1,7 @@
 import test from 'ava';
 
 import crio, {
-    assignOnDeepMatch,
+    mergeOnDeepMatch,
     CrioArray,
     CrioObject,
     getRealValue,
@@ -58,17 +58,8 @@ test('if getRealValue returns crioed version of value when appropriate', (t) => 
     t.false(isCrio(number));
 });
 
-test('if assignOnDeepMatch sets a deep value to the object', (t) => {
+test('if mergeOnDeepMatch sets a deep value to the object', (t) => {
     const object = crio(DEEPLY_NESTED_OBJECT);
-
-    const objectToMergeShallowly = 'nested object';
-    const shallowlyNestedCrio = assignOnDeepMatch(object, ['some', 'deeply'], objectToMergeShallowly);
-
-    t.deepEqual(shallowlyNestedCrio.thaw(), {
-        some: {
-            deeply: 'nested object'
-        }
-    });
 
     const objectToMergeDeeply = {
         other: {
@@ -77,7 +68,7 @@ test('if assignOnDeepMatch sets a deep value to the object', (t) => {
             }
         }
     };
-    const deeplyNestedCrio = assignOnDeepMatch(object, ['some', 'deeply'], [objectToMergeDeeply], true);
+    const deeplyNestedCrio = mergeOnDeepMatch(object, ['some', 'deeply'], [objectToMergeDeeply], true);
 
     t.deepEqual(deeplyNestedCrio.thaw(), {
         some: {
