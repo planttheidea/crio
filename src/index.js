@@ -74,6 +74,23 @@ const getRealValue = (value, hashValue) => {
 };
 
 /**
+ * convenience function to get shallow clone of object
+ * based on whether its an array or object
+ *
+ * @param {CrioArray|CrioObject} object
+ * @return {array<any>|object}
+ */
+const getShallowClone = (object) => {
+  if (isArray(object)) {
+    return shallowCloneArray(object);
+  }
+
+  return {
+    ...object
+  };
+};
+
+/**
  * based on the hashCode, return a new Crio if things have changed, else return the original crio
  *
  * @param {CrioArray|CrioObject} crio
@@ -97,15 +114,12 @@ const returnCorrectObject = (crio, newObject, CrioConstructor) => {
  * @param {object} object
  * @param {array<string>} keys
  * @param {any} value
- * @param {boolean} isMerge=false
  * @returns {CrioArray|CrioObject}
  */
-const assignOnDeepMatch = (object, keys, value, isMerge = false) => {
-  const length = keys.length;
-  const lastIndex = length - 1;
-  const isObjectArray = isArray(object);
+const mergeOnDeepMatch = (object, keys, value) => {
+  const lastIndex = keys.length - 1;
 
-  let currentObject = isObjectArray ? shallowCloneArray(object) : {...object},
+  let currentObject = getShallowClone(object),
       referenceToCurrentObject = currentObject,
       currentValue;
 
@@ -113,19 +127,19 @@ const assignOnDeepMatch = (object, keys, value, isMerge = false) => {
     currentValue = currentObject[key];
 
     if (isCrio(currentValue)) {
-      currentObject[key] = isArray(currentValue) ? shallowCloneArray(currentValue) : {...currentValue};
+      currentObject[key] = getShallowClone(currentValue);
     } else if (!isObject(currentValue)) {
       currentObject[key] = {};
     }
 
     if (keyIndex === lastIndex) {
-      currentObject[key] = isMerge ? Object.assign(currentObject[key], ...value) : value;
+      currentObject[key] = Object.assign(currentObject[key], ...value);
     } else {
       currentObject = currentObject[key];
     }
   });
 
-  return returnCorrectObject(object, referenceToCurrentObject, isObjectArray ? CrioArray : CrioObject);
+  return returnCorrectObject(object, referenceToCurrentObject, isArray(object) ? CrioArray : CrioObject);
 };
 
 /**
@@ -138,11 +152,10 @@ const assignOnDeepMatch = (object, keys, value, isMerge = false) => {
 const deleteOnDeepMatch = (object, keys) => {
   const length = keys.length;
   const lastIndex = length - 1;
-  const isObjectArray = isArray(object);
 
-  let currentObject = isObjectArray ? shallowCloneArray(object) : {...object},
-    referenceToCurrentObject = currentObject,
-    currentValue;
+  let currentObject = getShallowClone(object),
+      referenceToCurrentObject = currentObject,
+      currentValue;
 
   let index = -1,
       matchFound = false;
@@ -163,14 +176,14 @@ const deleteOnDeepMatch = (object, keys) => {
     currentValue = currentObject[key];
 
     if (isCrio(currentValue)) {
-      currentObject[key] = isArray(currentValue) ? shallowCloneArray(currentValue) : {...currentValue};
+      currentObject[key] = getShallowClone(currentValue);
     }
 
     currentObject = currentObject[key];
   }
 
   if (matchFound) {
-    return returnCorrectObject(object, referenceToCurrentObject, isObjectArray ? CrioArray : CrioObject);
+    return returnCorrectObject(object, referenceToCurrentObject, isArray(object) ? CrioArray : CrioObject);
   }
 
   return object;
@@ -522,7 +535,7 @@ class CrioArray {
    * @returns {CrioArray}
    */
   merge(...objects) {
-    let clone = !isCrio(this) ? this : shallowCloneArray(this);
+    let clone = shallowCloneArray(this);
 
     forEach(objects, (object) => {
       clone = clone.map((key, keyIndex) => {
@@ -549,7 +562,7 @@ class CrioArray {
       return this;
     }
 
-    return assignOnDeepMatch(this, keys, objects, true);
+    return mergeOnDeepMatch(this, keys, objects);
   }
 
   /**
@@ -681,7 +694,29 @@ class CrioArray {
       throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
     }
 
-    return assignOnDeepMatch(this, keys, value);
+    const lastIndex = keys.length - 1;
+
+    let currentObject = shallowCloneArray(this),
+        referenceToCurrentObject = currentObject,
+        currentValue;
+
+    forEach(keys, (key, keyIndex) => {
+      currentValue = currentObject[key];
+
+      if (isCrio(currentValue)) {
+        currentObject[key] = getShallowClone(currentValue);
+      } else if (!isObject(currentValue)) {
+        currentObject[key] = {};
+      }
+
+      if (keyIndex === lastIndex) {
+        currentObject[key] = value;
+      } else {
+        currentObject = currentObject[key];
+      }
+    });
+
+    return returnCorrectObject(this, referenceToCurrentObject, CrioArray);
   }
 
   /**
@@ -789,10 +824,11 @@ class CrioArray {
       return this;
     }
 
-    return new CrioArray([
-      ...items,
-      ...this
-    ]);
+    forEach(this, (item) => {
+      items.push(item);
+    });
+
+    return new CrioArray(items);
   }
 
   /**
@@ -899,7 +935,7 @@ class CrioObject {
     if (!keys.length) {
       return this;
     }
-    
+
     return deleteOnDeepMatch(this, keys);
   }
 
@@ -1011,7 +1047,7 @@ class CrioObject {
    * @returns {CrioObject}
    */
   merge(...objects) {
-    const clone = !isCrio(this) ? this : {
+    const clone = {
       ...this
     };
 
@@ -1039,7 +1075,7 @@ class CrioObject {
       return this;
     }
 
-    return assignOnDeepMatch(this, keys, objects, true);
+    return mergeOnDeepMatch(this, keys, objects);
   }
 
   /**
@@ -1104,7 +1140,31 @@ class CrioObject {
       throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
     }
 
-    return assignOnDeepMatch(this, keys, value);
+    const lastIndex = keys.length - 1;
+
+    let currentObject = {
+          ...this
+        },
+        referenceToCurrentObject = currentObject,
+        currentValue;
+
+    forEach(keys, (key, keyIndex) => {
+      currentValue = currentObject[key];
+
+      if (isCrio(currentValue)) {
+        currentObject[key] = getShallowClone(currentValue);
+      } else if (!isObject(currentValue)) {
+        currentObject[key] = {};
+      }
+
+      if (keyIndex === lastIndex) {
+        currentObject[key] = value;
+      } else {
+        currentObject = currentObject[key];
+      }
+    });
+
+    return returnCorrectObject(this, referenceToCurrentObject, CrioObject);
   }
 
   /**
@@ -1210,7 +1270,7 @@ const crio = (object) => {
   return object;
 };
 
-export {assignOnDeepMatch};
+export {mergeOnDeepMatch};
 export {getRealValue};
 export {isCrio};
 
