@@ -219,6 +219,30 @@ class CrioArray {
   }
 
   /**
+   * return empty CrioArray
+   * 
+   * @return {CrioArray}
+   */
+  clear() {
+    if (!this.length) {
+      return this;
+    }
+    
+    return new CrioArray([]);
+  }
+
+  /**
+   * return new CrioArray with all falsy values removed
+   * 
+   * @return {CrioArray}
+   */
+  compact() {
+    return this.filter((value) => {
+      return !!value;
+    });
+  }
+
+  /**
    * based on items passed, combine with this to create new CrioArray
    *
    * @param {array<array>} arrays
@@ -585,6 +609,22 @@ class CrioArray {
   }
 
   /**
+   * return new CrioArray of values in collection for the property specified
+   * 
+   * @param {string} property
+   * @return {CrioArray}
+   */
+  pluck(property) {
+    return this.map((item) => {
+      if (!item) {
+        return undefined;
+      }
+      
+      return item[property];
+    });
+  }
+
+  /**
    * return array with last item removed
    *
    * @returns {CrioArray}
@@ -805,12 +845,43 @@ class CrioArray {
   }
 
   /**
+   * convert this to an object of index: value pairs
+   *
+   * @return {CrioObject}
+   */
+  toObject() {
+    return new CrioObject({
+      ...this
+    });
+  }
+
+  /**
    * convert this to a string showing key: value pair combos
    *
    * @returns {string}
    */
   toString() {
     return stringify(this);
+  }
+
+  /**
+   * get the unique values in the array and return new CrioArray of them
+   *
+   * @return {CrioArray}
+   */
+  unique() {
+    let valuesArray = [],
+        exists = false;
+    
+    return this.filter((item) => {
+      exists = !!~valuesArray.indexOf(item);
+      
+      if (!exists) {
+        valuesArray.push(item);
+      }
+      
+      return !exists;
+    });
   }
 
   /**
@@ -897,6 +968,19 @@ class CrioObject {
    */
   get $$type() {
     return CRIO_OBJECT_TYPE;
+  }
+
+  /**
+   * return empty CrioObject
+   * 
+   * @return {CrioObject}
+   */
+  clear() {
+    if (!this.length) {
+      return this;
+    }
+    
+    return new CrioObject({});
   }
 
   /**
@@ -1032,12 +1116,52 @@ class CrioObject {
   }
 
   /**
+   * iterate over object and filter any returns from functions
+   * that are falsy
+   * 
+   * @param {function} fn
+   * @param {any} thisArg
+   * @return {CrioObject}
+   */
+  filter(fn, thisArg = this) {
+    let newObject = {},
+        result;
+
+    forEach(this.keys(), (key) => {
+      result = fn.call(thisArg, this[key], key, this);
+
+      if (!!result) {
+        newObject[key] = this[key];
+      }
+    });
+
+    return returnCorrectObject(this, newObject, CrioObject);
+  }
+
+  /**
    * return iterable of keys in this
    *
    * @returns {array<string>}
    */
   keys() {
     return OBJECT_KEYS(this);
+  }
+
+  /**
+   * map results of function to new object and return it
+   * 
+   * @param {function} fn
+   * @param {any} thisArg
+   * @return {CrioObject}
+   */
+  map(fn, thisArg = this) {
+    let newObject = {};
+
+    forEach(this.keys(), (key) => {
+      newObject[key] = fn.call(thisArg, this[key], key, this);
+    });
+
+    return returnCorrectObject(this, newObject, CrioObject);
   }
 
   /**
@@ -1190,6 +1314,15 @@ class CrioObject {
   }
 
   /**
+   * convert the values in the object to an array
+   *
+   * @return {CrioArray}
+   */
+  toArray() {
+    return new CrioArray(this.values());
+  }
+
+  /**
    * convert this to a locale-specific string
    *
    * @returns {string}
@@ -1255,10 +1388,10 @@ class CrioObject {
 /**
  * entry function, assigning to either CrioArray or CrioObject or neither
  *
- * @param {any} object
+ * @param {any} object={}
  * @return {any}
  */
-const crio = (object) => {
+const crio = (object = {}) => {
   if (isArray(object)) {
     return new CrioArray(object);
   }
