@@ -1,5 +1,17 @@
 # crio changelog
 
+#### 2.4.0
+* Add `clear` to both `CrioArray` and `CrioObject` APIs
+* Add `compact`, `pluck`, `toObject`, and `unique` to `CrioArray` API
+* Add `filter`, `map`, and `toArray` to `CrioObject` API
+
+#### 2.3.2
+* Remove unneeded shallow clones for each instance of `mergeIn`
+
+#### 2.3.1
+* Performance improvements centered around `setIn`
+* Fix `delete` / `deleteIn` bug when `NODE_ENV=production`
+
 #### 2.3.0
 * Add `delete` and `deleteIn` functions for both `CrioArray` and `CrioObject`
 * Add `has` function for both `CrioArray` and `CrioObject` (checks if key passed exists in the object)
