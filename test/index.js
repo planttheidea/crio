@@ -117,6 +117,29 @@ test('CrioObject methods', (t) => {
 
     t.is(deepCrioObject.getIn(['some', 'deeply', 'nested']), 'object');
 
+    const forEachObject = crio({
+        foo: 'bar',
+        bar: 'baz'
+    });
+
+    let total = 0;
+
+    forEachObject.forEach((value, key) => {
+        if (key === 'foo') {
+            total += 1;
+        }
+
+        if (value === 'bar' || key === 'bar') {
+           total += 4;
+        }
+
+        if (value === 'baz') {
+           total += 17;
+        }
+    });
+
+    t.is(total, 26);
+
     t.true(crioObject.has('foo'));
     t.false(crioObject.has('bar'));
 

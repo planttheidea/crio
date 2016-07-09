@@ -51,7 +51,7 @@ As most of these methods replicate (or just use) the native method, most will be
     * Deletes the key provided from the crio object
 * deleteIn `{array<number|string>}` *keys*, returns `{CrioArray}`
     * Deletes the final key based on the array of keys nested inside of the crio object
-* equals returns `{boolean}`
+* equals `{CrioArray}` *crioArrayToCompare*, returns `{boolean}`
     * Determines whether array is deeply equal in value to another by comparing hashCodes
 * get `{number}` *key*, returns `{any}`
     * Retrieve value at key
@@ -93,16 +93,19 @@ As most of these methods replicate (or just use) the native method, most will be
     * Deletes the key provided from the crio object
 * deleteIn `{array<number|string>}` *keys*, returns `{CrioObject}`
     * Deletes the final key based on the array of keys nested inside of the crio object
-* equals returns `{boolean}`
+* equals `{CrioObject}` *crioObjectToCompare*, returns `{boolean}`
     * Determines whether array is deeply equal in value to another by comparing hashCodes
-* filter `{function}` *fn*, `{any}` thisArg, returns `{CrioObject}`
+* forEach `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
+    * Iterates over object executing *fn*
+    * Iteration order is not guaranteed
+* filter `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object and filters out any returned values that are falsy
     * Iteration order is not guaranteed
 * get `{string}` *key*, returns `{any}`
     * Retrieve value at key
 * getIn `{array}` *keys*, returns `{any}`
     * Retrieve value in deeply nested object based on array of keys
-* map `{function}` *fn*, `{any}` thisArg, returns `{CrioObject}`
+* map `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object and maps returned value to the respective key
     * Iteration order is not guaranteed
 * merge `{object[, object2, ..., objectN]}` *objects*, returns `{CrioObject}`

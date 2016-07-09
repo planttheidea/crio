@@ -1053,7 +1053,7 @@ class CrioObject {
    * @returns {any}
    */
   get(key) {
-    return this[key.toString()];
+    return this[key];
   }
 
   /**
@@ -1136,6 +1136,21 @@ class CrioObject {
     });
 
     return returnCorrectObject(this, newObject, CrioObject);
+  }
+
+  /**
+   * iterate over object executing fn
+   *
+   * @param {function} fn
+   * @param {any} thisArg
+   * @returns {CrioObject}
+   */
+  forEach(fn, thisArg = this) {
+    forEach(this.keys(), (key) => {
+      fn.call(thisArg, this[key], key, this);
+    });
+
+    return this;
   }
 
   /**

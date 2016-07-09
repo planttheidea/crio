@@ -24,7 +24,7 @@
     "ava": "0.15.2",
     "babel": "6.5.2",
     "babel-cli": "6.10.1",
-    "babel-eslint": "6.1.0",
+    "babel-eslint": "6.1.1",
     "babel-loader": "6.2.4",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-polyfill": "6.9.1",
@@ -35,11 +35,11 @@
     "ejs": "2.4.2",
     "eslint": "3.0.1",
     "eslint-friendly-formatter": "2.0.5",
-    "eslint-loader": "1.4.0",
+    "eslint-loader": "1.4.1",
     "html-webpack-plugin": "2.22.0",
     "in-publish": "^2.0.0",
-    "react": "15.2.0",
-    "react-dom": "15.2.0",
+    "react": "15.2.1",
+    "react-dom": "15.2.1",
     "webpack": "1.13.1",
     "webpack-dev-server": "1.14.1"
   },
@@ -70,5 +70,5 @@
     "test-production:watch": "NODE_ENV=production ava --no-cache --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "2.4.0"
+  "version": "2.5.0"
 }
