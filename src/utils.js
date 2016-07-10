@@ -1,11 +1,8 @@
 import stringifier from 'stringifier';
 
+const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
+
 const STRINGIFIER_HASH_OPTIONS = {
-  handlers: {
-    'function': ({value}) => {
-      return value.toString();
-    }
-  },
   maxDepth: 10
 };
 const STRINGIFIER_OPTIONS = {
@@ -40,14 +37,31 @@ const isCrio = (object) => {
 };
 
 /**
+ * determine if object is a React element
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isReactElement = (object) => {
+  return isObject(object) && object.$$typeof === REACT_ELEMENT_TYPE;
+};
+
+/**
  * determine if object is object
  *
  * @param {any} object
  * @return {boolean}
  */
 const isObject = (object) => {
-  return toString(object) === OBJECT_TYPE && !!object && object.$$type !== 'CrioArray'
-    || !!(object && object.$$type === 'CrioObject');
+  if (!object) {
+    return false;
+  }
+
+  if (object.$$type) {
+    return object.$$type === 'CrioObject';
+  }
+
+  return toString(object) === OBJECT_TYPE;
 };
 
 /**
@@ -215,6 +229,7 @@ export {getHashIfChanged};
 export {hash};
 export {isArray};
 export {isCrio};
+export {isReactElement};
 export {isObject};
 export {isUndefined};
 export {setNonEnumerable};
