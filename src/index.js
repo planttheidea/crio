@@ -11,6 +11,7 @@ import {
     hash,
     isArray,
     isCrio,
+    isReactElement,
     isObject,
     isUndefined,
     setNonEnumerable,
@@ -937,7 +938,7 @@ class CrioArray {
 
 class CrioObject {
   constructor(object, hashValue) {
-    if (isCrio(object)) {
+    if (isCrio(object) || isReactElement(object)) {
       return object;
     }
 
