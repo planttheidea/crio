@@ -5,19 +5,21 @@ import 'core-js/fn/object/keys';
 import 'core-js/fn/object/values';
 
 import {
-    forEach,
-    forEachRight,
-    getHashIfChanged,
-    hash,
-    isArray,
-    isCrio,
-    isReactElement,
-    isObject,
-    isUndefined,
-    setNonEnumerable,
-    setStandard,
-    shallowCloneArray,
-    stringify
+  CRIO_ARRAY_TYPE,
+  CRIO_OBJECT_TYPE,
+  forEach,
+  forEachRight,
+  getHashIfChanged,
+  hash,
+  isArray,
+  isCrio,
+  isReactElement,
+  isObject,
+  isUndefined,
+  setNonEnumerable,
+  setStandard,
+  shallowCloneArray,
+  stringify
 } from './utils';
 
 const ARRAY_PROTOTYPE = Array.prototype;
@@ -27,9 +29,6 @@ const OBJECT_FREEZE = Object.freeze;
 const OBJECT_KEYS = Object.keys;
 const OBJECT_PROTOTYPE = Object.prototype;
 const OBJECT_VALUES = Object.values;
-
-const CRIO_ARRAY_TYPE = 'CrioArray';
-const CRIO_OBJECT_TYPE = 'CrioObject';
 
 const NATIVE_KEYS = [
   '$$hashCode',
@@ -1318,7 +1317,7 @@ class CrioObject {
     let object = {};
 
     forEachRight(propertyNames, (key) => {
-      if (NATIVE_KEYS.indexOf(key) === -1) {
+      if (!~NATIVE_KEYS.indexOf(key)) {
         const value = this[key];
         const cleanValue = isCrio(value) ? value.thaw() : value;
 
