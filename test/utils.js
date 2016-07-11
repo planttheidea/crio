@@ -1,4 +1,5 @@
 import test from 'ava';
+import React from 'react';
 
 import {
     forEach,
@@ -7,6 +8,7 @@ import {
     hash,
     isArray,
     isObject,
+    isReactElement,
     isUndefined,
     setNonEnumerable,
     setStandard,
@@ -15,6 +17,8 @@ import {
 } from '../src/utils';
 
 import crio from '../src';
+
+const REACT_ELEMENT = React.createElement('div', {id: 'test'});
 
 test('if forEach will execute function as loop that increments', (t) => {
     const length = 10;
@@ -97,6 +101,7 @@ test('if isArray properly checks if something is an array or CrioArray', (t) => 
     t.false(isArray(true));
     t.false(isArray(undefined));
     t.false(isArray(null));
+    t.false(isArray(REACT_ELEMENT));
 });
 
 test('if isObject properly checks if something is an object or CrioObject', (t) => {
@@ -114,6 +119,25 @@ test('if isObject properly checks if something is an object or CrioObject', (t) 
     t.false(isObject(true));
     t.false(isObject(undefined));
     t.false(isObject(null));
+    t.true(isObject(REACT_ELEMENT));
+});
+
+test('if isReactElement properly checks if something is a React element', (t) => {
+    const array = ['foo', 'bar'];
+    const crioArray = crio(array);
+    const object = {foo: 'bar'};
+    const crioObject = crio(object);
+
+    t.false(isReactElement(array));
+    t.false(isReactElement(crioArray));
+    t.false(isReactElement(object));
+    t.false(isReactElement(crioObject));
+    t.false(isReactElement('string'));
+    t.false(isReactElement(1));
+    t.false(isReactElement(true));
+    t.false(isReactElement(undefined));
+    t.false(isReactElement(null));
+    t.true(isReactElement(REACT_ELEMENT));
 });
 
 test('if isUndefined properly checks if something is undefined', (t) => {
@@ -131,6 +155,7 @@ test('if isUndefined properly checks if something is undefined', (t) => {
     t.false(isUndefined(true));
     t.true(isUndefined(undefined));
     t.false(isUndefined(null));
+    t.false(isUndefined(REACT_ELEMENT));
 });
 
 test('if setNonEnumerable adds a non-enumerable property to an object', (t) => {

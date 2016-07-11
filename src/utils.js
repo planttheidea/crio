@@ -1,9 +1,11 @@
 import stringifier from 'stringifier';
 
+const CRIO_ARRAY_TYPE = 'CrioArray';
+const CRIO_OBJECT_TYPE = 'CrioObject';
 const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
 
 const STRINGIFIER_HASH_OPTIONS = {
-  maxDepth: 10
+  maxDepth: 3
 };
 const STRINGIFIER_OPTIONS = {
   maxDepth: 10,
@@ -16,6 +18,8 @@ const stringifyForHash = stringifier(STRINGIFIER_HASH_OPTIONS);
 const ARRAY_TYPE = '[object Array]';
 const OBJECT_TYPE = '[object Object]';
 
+let reactElementCounter = -1;
+
 /**
  * determine if object is array
  *
@@ -23,7 +27,11 @@ const OBJECT_TYPE = '[object Object]';
  * @return {boolean}
  */
 const isArray = (object) => {
-  return toString(object) === ARRAY_TYPE || !!(object && object.$$type === 'CrioArray');
+  if (!object) {
+    return false;
+  }
+
+  return toString(object) === ARRAY_TYPE || object.$$type === CRIO_ARRAY_TYPE;
 };
 
 /**
@@ -33,17 +41,11 @@ const isArray = (object) => {
  * @returns {boolean}
  */
 const isCrio = (object) => {
-  return !!(object && object.$$type);
-};
-
-/**
- * determine if object is a React element
- *
- * @param {any} object
- * @return {boolean}
- */
-const isReactElement = (object) => {
-  return isObject(object) && object.$$typeof === REACT_ELEMENT_TYPE;
+  if (!object) {
+    return false;
+  }
+  
+  return object.$$type === CRIO_ARRAY_TYPE || object.$$type === CRIO_OBJECT_TYPE;
 };
 
 /**
@@ -58,10 +60,20 @@ const isObject = (object) => {
   }
 
   if (object.$$type) {
-    return object.$$type === 'CrioObject';
+    return object.$$type === CRIO_OBJECT_TYPE;
   }
 
   return toString(object) === OBJECT_TYPE;
+};
+
+/**
+ * determine if object is a React element
+ *
+ * @param {any} object
+ * @return {boolean}
+ */
+const isReactElement = (object) => {
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
 /**
@@ -127,6 +139,10 @@ const toString = (object) => {
 const stringifySerializerForHash = (key, value) => {
   if (typeof value === 'function') {
     return value.toString();
+  }
+
+  if (isReactElement(value)) {
+    return `ReactElement${++reactElementCounter}`;
   }
 
   return value;
@@ -223,6 +239,8 @@ const setStandard = (object, property, value, enumerable = true) => {
   });
 };
 
+export {CRIO_ARRAY_TYPE};
+export {CRIO_OBJECT_TYPE};
 export {forEach};
 export {forEachRight};
 export {getHashIfChanged};
