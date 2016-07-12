@@ -19,11 +19,13 @@ import {
   setNonEnumerable,
   setStandard,
   shallowCloneArray,
+  shallowCloneObject,
   stringify
 } from './utils';
 
 const ARRAY_PROTOTYPE = Array.prototype;
 
+const OBJECT_ASSIGN = Object.assign;
 const OBJECT_ENTRIES = Object.entries;
 const OBJECT_FREEZE = Object.freeze;
 const OBJECT_KEYS = Object.keys;
@@ -85,9 +87,7 @@ const getShallowClone = (object) => {
     return shallowCloneArray(object);
   }
 
-  return {
-    ...object
-  };
+  return shallowCloneObject(object);
 };
 
 /**
@@ -113,10 +113,11 @@ const returnCorrectObject = (crio, newObject, CrioConstructor) => {
  *
  * @param {object} object
  * @param {array<string>} keys
- * @param {any} value
+ * @param {any} values
+ * @param {CrioArray|CrioObject} CrioConstructor
  * @returns {CrioArray|CrioObject}
  */
-const mergeOnDeepMatch = (object, keys, value) => {
+const mergeOnDeepMatch = (object, keys, values, CrioConstructor) => {
   const lastIndex = keys.length - 1;
 
   let currentObject = getShallowClone(object),
@@ -133,13 +134,13 @@ const mergeOnDeepMatch = (object, keys, value) => {
     }
 
     if (keyIndex === lastIndex) {
-      currentObject[key] = Object.assign(currentObject[key], ...value);
+      currentObject[key] = OBJECT_ASSIGN(currentObject[key], ...values);
     } else {
       currentObject = currentObject[key];
     }
   });
 
-  return returnCorrectObject(object, referenceToCurrentObject, isArray(object) ? CrioArray : CrioObject);
+  return returnCorrectObject(object, referenceToCurrentObject, CrioConstructor);
 };
 
 /**
@@ -586,7 +587,7 @@ class CrioArray {
       return this;
     }
 
-    return mergeOnDeepMatch(this, keys, objects);
+    return mergeOnDeepMatch(this, keys, objects, CrioArray);
   }
 
   /**
@@ -745,13 +746,7 @@ class CrioArray {
         currentObject[key] = value;
       } else {
         currentValue = currentObject[key];
-
-        if (isCrio(currentValue)) {
-          currentObject[key] = getShallowClone(currentValue);
-        } else {
-          currentObject[key] = {};
-        }
-
+        currentObject[key] = isCrio(currentValue) ? getShallowClone(currentValue) : {};
         currentObject = currentObject[key];
       }
     });
@@ -850,9 +845,7 @@ class CrioArray {
    * @return {CrioObject}
    */
   toObject() {
-    return new CrioObject({
-      ...this
-    });
+    return new CrioObject(shallowCloneObject(this));
   }
 
   /**
@@ -1186,12 +1179,10 @@ class CrioObject {
    * @returns {CrioObject}
    */
   merge(...objects) {
-    const clone = {
-      ...this
-    };
+    const clone = shallowCloneObject(this);
 
     forEach(objects, (object) => {
-      Object.assign(clone, object);
+      OBJECT_ASSIGN(clone, object);
     });
 
     return returnCorrectObject(this, clone, CrioObject);
@@ -1214,7 +1205,7 @@ class CrioObject {
       return this;
     }
 
-    return mergeOnDeepMatch(this, keys, objects);
+    return mergeOnDeepMatch(this, keys, objects, CrioObject);
   }
 
   /**
@@ -1281,9 +1272,7 @@ class CrioObject {
 
     const lastIndex = keys.length - 1;
 
-    let currentObject = {
-          ...this
-        },
+    let currentObject = shallowCloneObject(this),
         referenceToCurrentObject = currentObject,
         currentValue;
 
@@ -1292,13 +1281,7 @@ class CrioObject {
         currentObject[key] = value;
       } else {
         currentValue = currentObject[key];
-
-        if (isCrio(currentValue)) {
-          currentObject[key] = getShallowClone(currentValue);
-        } else {
-          currentObject[key] = {};
-        }
-
+        currentObject[key] = isCrio(currentValue) ? getShallowClone(currentValue) : {};
         currentObject = currentObject[key];
       }
     });

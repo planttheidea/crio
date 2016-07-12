@@ -8,54 +8,42 @@ import crio from '../src';
 let index = -1,
     items = [];
 
-while (++index < 100) {
+while (++index < 1000) {
   items.push({
-    id: index
+    some: {
+      deeply: {
+        nested: 'object'
+      }
+    }
   });
 }
 
-const crioItems = crio(items);
+let crioItems = crio(items);
 
 const App = () => {
-  console.time('createElements');
+  console.time('crio');
 
-  const elements = crioItems.map((item) => {
-    return (
-      <div key={item.id}>
-        This is for item with id {item.id}.
-      </div>
-    );
+  crioItems.forEach(() => {
+    crioItems = crioItems.setIn([0, 'some', 'deeply', 'nested'], 'thing');
   });
   
-  console.timeEnd('createElements');
+  console.timeEnd('crio');
 
-  const thawedItems = crioItems.thaw();
+  console.log(crioItems);
 
-  console.time('createThawedElements');
+  console.time('native');
 
-  const thawedElements = thawedItems.map((item) => {
-    return (
-      <div key={item.id}>
-        This is for item with id {item.id}.
-      </div>
-    );
+  items.forEach((item, index) => {
+    items[index].some.deeply.nested = 'thing';
   });
 
-  console.timeEnd('createThawedElements');
+  console.timeEnd('native');
 
   return (
     <div>
       <h1>
         App
       </h1>
-
-      <div>
-        {elements}
-      </div>
-
-      <div>
-        {thawedElements}
-      </div>
     </div>
   );
 };
