@@ -1,5 +1,17 @@
 # crio changelog
 
+#### 2.5.3
+* Micro-optimizations for cloning / merging arrays and objects
+
+#### 2.5.2
+* Improve performance of mapping ReactElements by not attempting to stringify it (recursive object, just assume its always new)
+
+#### 2.5.1
+* Fix ReactElements not being treated as immutable and attempting to be crioed
+
+#### 2.5.0
+* Add `forEach` to `CrioObject` API
+
 #### 2.4.0
 * Add `clear` to both `CrioArray` and `CrioObject` APIs
 * Add `compact`, `pluck`, `toObject`, and `unique` to `CrioArray` API
