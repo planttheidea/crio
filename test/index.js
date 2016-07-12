@@ -68,7 +68,7 @@ test('if mergeOnDeepMatch sets a deep value to the object', (t) => {
             }
         }
     };
-    const deeplyNestedCrio = mergeOnDeepMatch(object, ['some', 'deeply'], [objectToMergeDeeply], true);
+    const deeplyNestedCrio = mergeOnDeepMatch(object, ['some', 'deeply'], [objectToMergeDeeply], CrioObject);
 
     t.deepEqual(deeplyNestedCrio.thaw(), {
         some: {

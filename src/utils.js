@@ -194,16 +194,36 @@ const getHashIfChanged = (crioObject, newObject) => {
  * return a new array from the existing CrioArray
  *
  * @param {CrioArray} crioArray
+ * @param {number} [crioArray.length]
  * @returns {array<any>}
  */
 const shallowCloneArray = (crioArray) => {
-  let array = [];
+  let array = new Array(crioArray.length);
 
   forEach(crioArray, (item, index) => {
     array[index] = item;
   });
 
   return array;
+};
+
+/**
+ * return a new object from the existing CrioObject
+ *
+ * @param {CrioObject} crioObject
+ * @param {number} [crioObject.length]
+ * @returns {object}
+ */
+const shallowCloneObject = (crioObject) => {
+  const keys = Object.keys(crioObject);
+
+  let target = {};
+
+  forEachRight(keys, (key) => {
+    target[key] = crioObject[key];
+  });
+
+  return target;
 };
 
 /**
@@ -253,5 +273,6 @@ export {isUndefined};
 export {setNonEnumerable};
 export {setStandard};
 export {shallowCloneArray};
+export {shallowCloneObject};
 export {stringify};
 export {stringifySerializerForHash};
