@@ -25,6 +25,7 @@ import {
 
 const ARRAY_PROTOTYPE = Array.prototype;
 
+const OBJECT_ASSIGN = Object.assign;
 const OBJECT_ENTRIES = Object.entries;
 const OBJECT_FREEZE = Object.freeze;
 const OBJECT_KEYS = Object.keys;
@@ -133,7 +134,7 @@ const mergeOnDeepMatch = (object, keys, values, CrioConstructor) => {
     }
 
     if (keyIndex === lastIndex) {
-      currentObject[key] = Object.assign(currentObject[key], ...values);
+      currentObject[key] = OBJECT_ASSIGN(currentObject[key], ...values);
     } else {
       currentObject = currentObject[key];
     }
@@ -1181,7 +1182,7 @@ class CrioObject {
     const clone = shallowCloneObject(this);
 
     forEach(objects, (object) => {
-      Object.assign(clone, object);
+      OBJECT_ASSIGN(clone, object);
     });
 
     return returnCorrectObject(this, clone, CrioObject);
