@@ -156,12 +156,6 @@ The difference here is we created the `CrioArray` in a single shot, whereas befo
 
 Additionally, if you plan to do a bunch of manipulations to it, you can always use the `.mutate()` method:
 
-#### Gotchas
-
-**Recursive objects are not allowed**
-
-Immutable objects with recursive values are basically impossible, and trying them will cause a stack overflow, so be mindful of that!
-
 ```javascript
 const crioObject = crioArray.mutate((array) => {
     let object = {};
@@ -175,6 +169,12 @@ const crioObject = crioArray.mutate((array) => {
 ```
 
 This is a simple example, but `mutate` will allow you to work with the standard (mutable) JS objects and maximize performance.
+
+#### Gotchas
+
+**Recursive objects are not allowed**
+
+Immutable objects with recursive values are basically impossible, and trying them will cause a stack overflow, so be mindful of that!
 
 #### Development
 
