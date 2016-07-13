@@ -1,5 +1,9 @@
 # crio changelog
 
+#### 2.5.4
+* Remove try / catch from hash function (performance improvement of ~11% across the board)
+* Change native key checker to use map instead of array to avoid usage of indexOf
+
 #### 2.5.3
 * Micro-optimizations for cloning / merging arrays and objects
 
