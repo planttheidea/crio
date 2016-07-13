@@ -69,7 +69,7 @@ const isObject = (object) => {
  * @return {boolean}
  */
 const isReactElement = (object) => {
-  return typeof object === 'object' && !!object && object.$$typeof === REACT_ELEMENT_TYPE;
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
 /**
@@ -144,6 +144,12 @@ const stringifySerializerForHash = (key, value) => {
   return value;
 };
 
+/**
+ * function to abstract the stringification process
+ *
+ * @param {array<any>|object} object
+ * @returns {string}
+ */
 const stringifyObject = (object) => {
   return JSON.stringify(object, stringifySerializerForHash);
 };
