@@ -23,20 +23,20 @@ import {
   stringify
 } from './utils';
 
+const objectAssign = Object.assign;
+const objectEntries = Object.entries;
+const objectFreeze = Object.freeze;
+const objectKeys = Object.keys;
+const objectValues = Object.values;
+
 const ARRAY_PROTOTYPE = Array.prototype;
-
-const OBJECT_ASSIGN = Object.assign;
-const OBJECT_ENTRIES = Object.entries;
-const OBJECT_FREEZE = Object.freeze;
-const OBJECT_KEYS = Object.keys;
 const OBJECT_PROTOTYPE = Object.prototype;
-const OBJECT_VALUES = Object.values;
 
-const NATIVE_KEYS = [
-  '$$hashCode',
-  '$$type',
-  'length'
-];
+const NATIVE_KEYS = {
+  $$hashCode: true,
+  $$type: true,
+  length: true
+};
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -48,7 +48,7 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
  * @returns {CrioArray|CrioObject}
  */
 const freezeIfNotProduction = (crio) => {
-  return IS_PRODUCTION ? crio : OBJECT_FREEZE(crio);
+  return IS_PRODUCTION ? crio : objectFreeze(crio);
 };
 
 /**
@@ -134,7 +134,7 @@ const mergeOnDeepMatch = (object, keys, values, CrioConstructor) => {
     }
 
     if (keyIndex === lastIndex) {
-      currentObject[key] = OBJECT_ASSIGN(currentObject[key], ...values);
+      currentObject[key] = objectAssign(currentObject[key], ...values);
     } else {
       currentObject = currentObject[key];
     }
@@ -196,8 +196,6 @@ class CrioArray {
       return array;
     }
 
-    const length = array.length;
-
     forEach(array, (item, index) => {
       this[index] = getRealValue(item);
     });
@@ -205,7 +203,7 @@ class CrioArray {
     const hashCode = isUndefined(hashValue) ? hash(array) : hashValue;
 
     setNonEnumerable(this, '$$hashCode', hashCode);
-    setNonEnumerable(this, 'length', length);
+    setNonEnumerable(this, 'length', array.length);
 
     return freezeIfNotProduction(this);
   }
@@ -328,7 +326,7 @@ class CrioArray {
    * @returns {array<array>}
    */
   entries() {
-    return OBJECT_ENTRIES(this);
+    return objectEntries(this);
   }
 
   /**
@@ -526,7 +524,7 @@ class CrioArray {
    * @returns {array<string>}
    */
   keys() {
-    return OBJECT_KEYS(this);
+    return objectKeys(this);
   }
 
   /**
@@ -901,7 +899,7 @@ class CrioArray {
    * @returns {array<any>}
    */
   values() {
-    return OBJECT_VALUES(this);
+    return objectValues(this);
   }
 
   /**
@@ -934,12 +932,12 @@ class CrioObject {
       return object;
     }
 
-    const keys = OBJECT_KEYS(object);
+    const keys = objectKeys(object);
 
     let length = 0;
 
     forEachRight(keys, (key) => {
-      if (!~NATIVE_KEYS.indexOf(key)) {
+      if (!NATIVE_KEYS[key]) {
         this[key] = getRealValue(object[key]);
 
         length++;
@@ -1022,7 +1020,7 @@ class CrioObject {
    * @returns {array<string>}
    */
   entries() {
-    return OBJECT_ENTRIES(this);
+    return objectEntries(this);
   }
 
   /**
@@ -1152,7 +1150,7 @@ class CrioObject {
    * @returns {array<string>}
    */
   keys() {
-    return OBJECT_KEYS(this);
+    return objectKeys(this);
   }
 
   /**
@@ -1182,7 +1180,7 @@ class CrioObject {
     const clone = shallowCloneObject(this);
 
     forEach(objects, (object) => {
-      OBJECT_ASSIGN(clone, object);
+      objectAssign(clone, object);
     });
 
     return returnCorrectObject(this, clone, CrioObject);
@@ -1295,12 +1293,12 @@ class CrioObject {
    * @returns {array<any>}
    */
   thaw() {
-    const propertyNames = OBJECT_KEYS(this);
+    const propertyNames = objectKeys(this);
 
     let object = {};
 
     forEachRight(propertyNames, (key) => {
-      if (!~NATIVE_KEYS.indexOf(key)) {
+      if (!NATIVE_KEYS[key]) {
         const value = this[key];
         const cleanValue = isCrio(value) ? value.thaw() : value;
 
@@ -1353,7 +1351,7 @@ class CrioObject {
    * @returns {array<any>}
    */
   values() {
-    return OBJECT_VALUES(this);
+    return objectValues(this);
   }
 
   /**
@@ -1362,7 +1360,7 @@ class CrioObject {
    * @returns {{next: (function(): {value: any, done: boolean})}}
    */
   [Symbol.iterator]() {
-    const keys = OBJECT_KEYS(this);
+    const keys = objectKeys(this);
 
     let index = 0;
 

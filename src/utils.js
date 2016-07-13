@@ -4,16 +4,12 @@ const CRIO_ARRAY_TYPE = 'CrioArray';
 const CRIO_OBJECT_TYPE = 'CrioObject';
 const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;
 
-const STRINGIFIER_HASH_OPTIONS = {
-  maxDepth: 3
-};
 const STRINGIFIER_OPTIONS = {
   maxDepth: 10,
   indent: '  '
 };
 
 const stringify = stringifier(STRINGIFIER_OPTIONS);
-const stringifyForHash = stringifier(STRINGIFIER_HASH_OPTIONS);
 
 const ARRAY_TYPE = '[object Array]';
 const OBJECT_TYPE = '[object Object]';
@@ -137,15 +133,25 @@ const toString = (object) => {
  * @returns {string}
  */
 const stringifySerializerForHash = (key, value) => {
-  if (typeof value === 'function') {
-    return value.toString();
-  }
-
   if (isReactElement(value)) {
     return `ReactElement${++reactElementCounter}`;
   }
 
+  if (typeof value === 'function') {
+    return value.toString();
+  }
+
   return value;
+};
+
+/**
+ * function to abstract the stringification process
+ *
+ * @param {array<any>|object} object
+ * @returns {string}
+ */
+const stringifyObject = (object) => {
+  return JSON.stringify(object, stringifySerializerForHash);
 };
 
 /**
@@ -155,13 +161,7 @@ const stringifySerializerForHash = (key, value) => {
  * @return {string}
  */
 const hash = (object) => {
-  let string;
-
-  try {
-    string = JSON.stringify(object, stringifySerializerForHash);
-  } catch (exception) {
-    string = stringifyForHash(object);
-  }
+  const string = stringifyObject(object);
 
   let hashValue = 5381,
       index = string.length;
