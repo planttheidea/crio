@@ -34,7 +34,7 @@
     "babel-register": "6.9.0",
     "ejs": "2.4.2",
     "eslint": "3.0.1",
-    "eslint-friendly-formatter": "2.0.5",
+    "eslint-friendly-formatter": "2.0.6",
     "eslint-loader": "1.4.1",
     "html-webpack-plugin": "2.22.0",
     "in-publish": "^2.0.0",
@@ -70,5 +70,5 @@
     "test-production:watch": "NODE_ENV=production ava --no-cache --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "2.5.4"
+  "version": "2.5.5"
 }

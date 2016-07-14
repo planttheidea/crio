@@ -148,9 +148,10 @@ const mergeOnDeepMatch = (object, keys, values, CrioConstructor) => {
  *
  * @param {CrioArray|CrioObject} object
  * @param {array<string|number>} keys
+ * @param {CrioArray|CrioObject} CrioConstructor
  * @return {CrioArray|CrioObject}
  */
-const deleteOnDeepMatch = (object, keys) => {
+const deleteOnDeepMatch = (object, keys, CrioConstructor) => {
   const length = keys.length;
   const lastIndex = length - 1;
 
@@ -184,7 +185,7 @@ const deleteOnDeepMatch = (object, keys) => {
   }
 
   if (matchFound) {
-    return returnCorrectObject(object, referenceToCurrentObject, isArray(object) ? CrioArray : CrioObject);
+    return returnCorrectObject(object, referenceToCurrentObject, CrioConstructor);
   }
 
   return object;
@@ -317,7 +318,7 @@ class CrioArray {
       return this;
     }
 
-    return deleteOnDeepMatch(this, keys);
+    return deleteOnDeepMatch(this, keys, CrioArray);
   }
 
   /**
@@ -1011,7 +1012,7 @@ class CrioObject {
       return this;
     }
 
-    return deleteOnDeepMatch(this, keys);
+    return deleteOnDeepMatch(this, keys, CrioObject);
   }
 
   /**

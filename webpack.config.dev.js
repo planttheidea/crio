@@ -24,7 +24,7 @@ module.exports = {
         }
     },
 
-    devtool: 'eval-cheap-module-source-map',
+    devtool: '#eval-cheap-module-source-map',
 
     entry: [
         path.resolve (__dirname, 'DEV_ONLY', 'App.js')
