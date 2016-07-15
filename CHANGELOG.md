@@ -1,5 +1,13 @@
 # crio changelog
 
+#### 2.6.0
+* Add `first` and `last` functions to `CrioArray`
+* Hashing optimizations by only using replacer function if ReactElement is included
+* Fix a couple typos in README
+
+#### 2.5.5
+* Improve performance of `deleteIn`
+
 #### 2.5.4
 * Remove try / catch from hash function (performance improvement of ~11% across the board)
 * Change native key checker to use map instead of array to avoid usage of indexOf

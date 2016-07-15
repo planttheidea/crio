@@ -191,9 +191,9 @@ test('if shallowCloneArray produces a shallow clone', (t) => {
 });
 
 test('if stringifySerializerForHash stringifies functions', (t) => {
-    const arrayWithFunction = [function() {}];
-    const stringifiedArray = JSON.stringify(arrayWithFunction, stringifySerializerForHash);
-    const expectedString = '["function () {}"]';
+    const arrayWithReactElement = [<div/>];
+    const stringifiedArray = JSON.stringify(arrayWithReactElement, stringifySerializerForHash);
+    const expectedString = '[0]';
 
     t.is(stringifiedArray, expectedString);
 });

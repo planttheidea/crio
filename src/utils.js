@@ -133,35 +133,29 @@ const toString = (object) => {
  * @returns {string}
  */
 const stringifySerializerForHash = (key, value) => {
-  if (isReactElement(value)) {
-    return `ReactElement${++reactElementCounter}`;
-  }
-
-  if (typeof value === 'function') {
-    return value.toString();
-  }
-
-  return value;
+  return isReactElement(value) ? ++reactElementCounter : value;
 };
 
 /**
  * function to abstract the stringification process
  *
  * @param {array<any>|object} object
+ * @param {boolean} needsReplacer
  * @returns {string}
  */
-const stringifyObject = (object) => {
-  return JSON.stringify(object, stringifySerializerForHash);
+const stringifyObject = (object, needsReplacer) => {
+  return needsReplacer ? JSON.stringify(object, stringifySerializerForHash) : JSON.stringify(object);
 };
 
 /**
  * convert object into unique hash value
  *
- * @param {CrioArray|CrioObject|array|object} object
- * @return {string}
+ * @param {array|object} object
+ * @param {boolean} needsReplacer=true
+ * @return {number}
  */
-const hash = (object) => {
-  const string = stringifyObject(object);
+const hash = (object, needsReplacer = true) => {
+  const string = stringifyObject(object, needsReplacer);
 
   let hashValue = 5381,
       index = string.length;
@@ -178,10 +172,11 @@ const hash = (object) => {
  *
  * @param {CrioArray|CrioObject} crioObject
  * @param {any} newObject
+ * @param {boolean} needsReplacer
  * @returns {boolean}
  */
-const getHashIfChanged = (crioObject, newObject) => {
-  const hashValue = hash(newObject);
+const getHashIfChanged = (crioObject, newObject, needsReplacer) => {
+  const hashValue = hash(newObject, needsReplacer);
 
   if (crioObject.$$hashCode !== hashValue) {
     return hashValue;
