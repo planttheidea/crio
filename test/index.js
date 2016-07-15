@@ -1,11 +1,13 @@
 import test from 'ava';
+import React from 'react';
 
 import crio, {
-    mergeOnDeepMatch,
     CrioArray,
     CrioObject,
+    getNeedsReplacer,
     getRealValue,
-    isCrio
+    isCrio,
+    mergeOnDeepMatch
 } from '../src';
 
 const OBJECT = {
@@ -42,6 +44,31 @@ test('if isCrio determines whether object isCrio or not', (t) => {
     t.false(isCrio('string'));
     t.false(isCrio(crio(1)));
     t.false(isCrio(1));
+});
+
+test('if deleteOnDeepMatch deletes a deep value on the object', (t) => {
+    const crioToDeleteFrom = crio({
+        some: {
+            deeply: {
+                nested: 'object'
+            }
+        }
+    });
+
+    t.deepEqual(crioToDeleteFrom.deleteIn(['some', 'deeply', 'nested']), {
+        some: {
+            deeply: {}
+        }
+    });
+});
+
+test('if getNeedsReplacer returns the correct value', (t) => {
+    t.true(getNeedsReplacer(<div/>));
+    t.true(getNeedsReplacer(null, {
+        $$needsReplacer: true
+    }));
+    t.false(getNeedsReplacer(null));
+    t.false(getNeedsReplacer(crio({})));
 });
 
 test('if getRealValue returns crioed version of value when appropriate', (t) => {
@@ -432,4 +459,7 @@ test('CrioArray methods', (t) => {
     t.deepEqual(collection.pluck('foo').thaw(), [undefined, 'bar', undefined, undefined, undefined, 'baz']);
 
     t.deepEqual(collection.clear().thaw(), []);
+
+    t.deepEqual(collection.first(2), ['bar', {foo: 'bar'}]);
+    t.deepEqual(collection.last(3), [1, true, {foo: 'baz'}]);
 });

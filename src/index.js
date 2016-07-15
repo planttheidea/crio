@@ -60,7 +60,7 @@ const freezeIfNotProduction = (crio) => {
  * @returns {any}
  */
 const getRealValue = (value, hashValue) => {
-  if (isCrio(value)) {
+  if (isCrio(value) || isReactElement(value)) {
     return value;
   }
 
@@ -96,10 +96,11 @@ const getShallowClone = (object) => {
  * @param {CrioArray|CrioObject} crio
  * @param {array<any>|object} newObject
  * @param {CrioArray|CrioObject} CrioConstructor
+ * @param {boolean} needsReplacer
  * @returns {CrioArray|CrioObject|array<any>|object}
  */
-const returnCorrectObject = (crio, newObject, CrioConstructor) => {
-  const hashValue = getHashIfChanged(crio, newObject);
+const returnCorrectObject = (crio, newObject, CrioConstructor, needsReplacer) => {
+  const hashValue = getHashIfChanged(crio, newObject, needsReplacer);
 
   if (hashValue !== false) {
     return new CrioConstructor(newObject, hashValue);
@@ -191,19 +192,34 @@ const deleteOnDeepMatch = (object, keys, CrioConstructor) => {
   return object;
 };
 
+const getNeedsReplacer = (item, object = item) => {
+  if (!item && !object) {
+    return false;
+  }
+
+  return isReactElement(item) || !!object.$$needsReplacer;
+};
+
 class CrioArray {
   constructor(array, hashValue) {
     if (isCrio(array)) {
       return array;
     }
 
+    let needsReplacer = false;
+
     forEach(array, (item, index) => {
       this[index] = getRealValue(item);
+
+      if (!needsReplacer) {
+        needsReplacer = getNeedsReplacer(this[index]);
+      }
     });
 
-    const hashCode = isUndefined(hashValue) ? hash(array) : hashValue;
+    const hashCode = isUndefined(hashValue) ? hash(array, needsReplacer) : hashValue;
 
     setNonEnumerable(this, '$$hashCode', hashCode);
+    setNonEnumerable(this, '$$needsReplacer', needsReplacer);
     setNonEnumerable(this, 'length', array.length);
 
     return freezeIfNotProduction(this);
@@ -386,7 +402,7 @@ class CrioArray {
   filter(fn, thisArg = this) {
     const filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
 
-    return returnCorrectObject(this, filteredArray, CrioArray);
+    return returnCorrectObject(this, filteredArray, CrioArray, this.$$needsReplacer);
   }
 
   /**
@@ -428,6 +444,20 @@ class CrioArray {
     }
 
     return -1;
+  }
+
+  /**
+   * get the first n number of values from the array
+   *
+   * @param {number} num=1
+   * @return {CrioArray}
+   */
+  first(num = 1) {
+    if (num === this.length) {
+      return this;
+    }
+
+    return this.slice(0, num);
   }
 
   /**
@@ -529,6 +559,20 @@ class CrioArray {
   }
 
   /**
+   * returns the last n number of items in the array
+   *
+   * @param {number} num=1
+   * @return {CrioArray}
+   */
+  last(num = 1) {
+    if (num === this.length) {
+      return this;
+    }
+
+    return this.slice(this.length - num, this.length);
+  }
+
+  /**
    * last index of item in this
    *
    * @param {any} item
@@ -547,7 +591,19 @@ class CrioArray {
    * @returns {CrioArray}
    */
   map(fn, thisArg = this) {
-    const mappedArray = ARRAY_PROTOTYPE.map.call(this, fn, thisArg);
+    let mappedArray = new Array(this.length),
+        needsReplacer = false,
+        result;
+
+    forEach(this, (item, index) => {
+      result = fn.call(thisArg, this[index], index, this);
+
+      if (!needsReplacer) {
+        needsReplacer = getNeedsReplacer(result);
+      }
+
+      mappedArray[index] = result;
+    });
 
     return returnCorrectObject(this, mappedArray, CrioArray);
   }
@@ -559,15 +615,23 @@ class CrioArray {
    * @returns {CrioArray}
    */
   merge(...objects) {
-    let clone = shallowCloneArray(this);
+    let clone = shallowCloneArray(this),
+        needsReplacer = false,
+        value;
 
     forEach(objects, (object) => {
       clone = clone.map((key, keyIndex) => {
-        return object[keyIndex] || clone[keyIndex];
+        value = object[keyIndex] || clone[keyIndex];
+
+        if (!needsReplacer) {
+          needsReplacer = getNeedsReplacer(value);
+        }
+
+        return value;
       });
     });
 
-    return returnCorrectObject(this, clone, CrioArray);
+    return returnCorrectObject(this, clone, CrioArray, needsReplacer);
   }
 
   /**
@@ -599,7 +663,7 @@ class CrioArray {
    */
   mutate(fn) {
     const result = fn.call(this, this.thaw(), this);
-    const hashValue = getHashIfChanged(this, result);
+    const hashValue = getHashIfChanged(this, result, getNeedsReplacer(result));
 
     if (hashValue !== false) {
       return getRealValue(result, hashValue);
@@ -654,7 +718,7 @@ class CrioArray {
    */
   reduce(fn, object, thisArg = this) {
     const reduction = ARRAY_PROTOTYPE.reduce.call(this, fn, object, thisArg);
-    const hashValue = getHashIfChanged(this, reduction);
+    const hashValue = getHashIfChanged(this, reduction, getNeedsReplacer(reduction));
 
     if (hashValue !== false) {
       return getRealValue(reduction, hashValue);
@@ -674,7 +738,7 @@ class CrioArray {
    */
   reduceRight(fn, object, thisArg = this) {
     const reduction = ARRAY_PROTOTYPE.reduceRight.call(this, fn, object, thisArg);
-    const hashValue = getHashIfChanged(this, reduction);
+    const hashValue = getHashIfChanged(this, reduction, getNeedsReplacer(reduction));
 
     if (hashValue !== false) {
       return getRealValue(reduction, hashValue);
@@ -695,7 +759,7 @@ class CrioArray {
       clone.push(value);
     });
 
-    return returnCorrectObject(this, clone, CrioArray);
+    return returnCorrectObject(this, clone, CrioArray, this.$$needsReplacer);
   }
 
   /**
@@ -719,7 +783,7 @@ class CrioArray {
       clone.push(index === itemIndex ? value : item);
     });
 
-    return returnCorrectObject(this, clone, CrioArray);
+    return returnCorrectObject(this, clone, CrioArray, getNeedsReplacer(value, this));
   }
 
   /**
@@ -738,6 +802,7 @@ class CrioArray {
 
     let currentObject = shallowCloneArray(this),
         referenceToCurrentObject = currentObject,
+        needsReplacer = getNeedsReplacer(value, this),
         currentValue;
 
     forEach(keys, (key, keyIndex) => {
@@ -750,7 +815,7 @@ class CrioArray {
       }
     });
 
-    return returnCorrectObject(this, referenceToCurrentObject, CrioArray);
+    return returnCorrectObject(this, referenceToCurrentObject, CrioArray, needsReplacer);
   }
 
   /**
@@ -797,7 +862,7 @@ class CrioArray {
     const clone = shallowCloneArray(this);
     const sortedArray = ARRAY_PROTOTYPE.sort.call(clone, fn);
 
-    return returnCorrectObject(this, sortedArray, CrioArray);
+    return returnCorrectObject(this, sortedArray, CrioArray, this.$$needsReplacer);
   }
 
   /**
@@ -935,19 +1000,25 @@ class CrioObject {
 
     const keys = objectKeys(object);
 
-    let length = 0;
+    let length = 0,
+        needsReplacer = false;
 
     forEachRight(keys, (key) => {
       if (!NATIVE_KEYS[key]) {
         this[key] = getRealValue(object[key]);
 
+        if (!needsReplacer) {
+          needsReplacer = getNeedsReplacer(this[key]);
+        }
+
         length++;
       }
     });
 
-    const hashCode = isUndefined(hashValue) ? hash(object) : hashValue;
+    const hashCode = isUndefined(hashValue) ? hash(object, needsReplacer) : hashValue;
 
     setNonEnumerable(this, '$$hashCode', hashCode);
+    setNonEnumerable(this, '$$needsReplacer', needsReplacer);
     setNonEnumerable(this, 'length', length);
 
     return freezeIfNotProduction(this);
@@ -1127,7 +1198,7 @@ class CrioObject {
       }
     });
 
-    return returnCorrectObject(this, newObject, CrioObject);
+    return returnCorrectObject(this, newObject, CrioObject, this.$$needsReplacer);
   }
 
   /**
@@ -1162,10 +1233,15 @@ class CrioObject {
    * @return {CrioObject}
    */
   map(fn, thisArg = this) {
-    let newObject = {};
+    let newObject = {},
+        needsReplacer = false;
 
     forEach(this.keys(), (key) => {
       newObject[key] = fn.call(thisArg, this[key], key, this);
+
+      if (!needsReplacer) {
+        needsReplacer = getNeedsReplacer(newObject[key]);
+      }
     });
 
     return returnCorrectObject(this, newObject, CrioObject);
@@ -1180,11 +1256,19 @@ class CrioObject {
   merge(...objects) {
     const clone = shallowCloneObject(this);
 
+    let needsReplacer = this.$$needsReplacer;
+
     forEach(objects, (object) => {
       objectAssign(clone, object);
+
+      forEach(objectKeys(object), (key) => {
+        if (!needsReplacer) {
+          needsReplacer = getNeedsReplacer(object[key]);
+        }
+      });
     });
 
-    return returnCorrectObject(this, clone, CrioObject);
+    return returnCorrectObject(this, clone, CrioObject, needsReplacer);
   }
 
   /**
@@ -1217,7 +1301,7 @@ class CrioObject {
    */
   mutate(fn) {
     const result = fn.call(this, this.thaw(), this);
-    const hashValue = getHashIfChanged(this, result);
+    const hashValue = getHashIfChanged(this, result, getNeedsReplacer(result));
 
     if (hashValue !== false) {
       return getRealValue(result, hashValue);
@@ -1244,17 +1328,26 @@ class CrioObject {
    * @returns {CrioObject}
    */
   set(key, value) {
-    let clone = {};
+    let clone = {},
+        needsReplacer = false;
 
     forEachRight(this.keys(), (currentKey) => {
       if (currentKey !== key) {
         clone[currentKey] = this[currentKey];
+
+        if (!needsReplacer) {
+          needsReplacer = getNeedsReplacer(this[currentKey]);
+        }
       }
     });
 
     clone[key] = value;
 
-    return returnCorrectObject(this, clone, CrioObject);
+    if (!needsReplacer) {
+      needsReplacer = getNeedsReplacer(value);
+    }
+
+    return returnCorrectObject(this, clone, CrioObject, needsReplacer);
   }
 
   /**
@@ -1273,6 +1366,7 @@ class CrioObject {
 
     let currentObject = shallowCloneObject(this),
         referenceToCurrentObject = currentObject,
+        needsReplacer = getNeedsReplacer(value, this),
         currentValue;
 
     forEach(keys, (key, keyIndex) => {
@@ -1285,7 +1379,7 @@ class CrioObject {
       }
     });
 
-    return returnCorrectObject(this, referenceToCurrentObject, CrioObject);
+    return returnCorrectObject(this, referenceToCurrentObject, CrioObject, needsReplacer);
   }
 
   /**
@@ -1400,9 +1494,11 @@ const crio = (object = {}) => {
   return object;
 };
 
-export {mergeOnDeepMatch};
+export {deleteOnDeepMatch};
+export {getNeedsReplacer};
 export {getRealValue};
 export {isCrio};
+export {mergeOnDeepMatch};
 
 export {CrioArray};
 export {CrioObject};

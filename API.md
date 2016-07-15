@@ -43,20 +43,24 @@ As most of these methods replicate (or just use) the native method, most will be
 * [values](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values) 
 
 #### crio Methods
-* clear, returns `{CrioObject}`
-    * returns an empty `CrioObject`
-* compact, returns `{CrioObject}`
-    * returns a new `CrioObject` with all falsy values filtered out
+* clear, returns `{CrioArray}`
+    * returns an empty `CrioArray`
+* compact, returns `{CrioArray}`
+    * returns a new `CrioArray` with all falsy values filtered out
 * delete `{number}` *key*, returns `{CrioArray}`
     * Deletes the key provided from the crio object
 * deleteIn `{array<number|string>}` *keys*, returns `{CrioArray}`
     * Deletes the final key based on the array of keys nested inside of the crio object
 * equals `{CrioArray}` *crioArrayToCompare*, returns `{boolean}`
     * Determines whether array is deeply equal in value to another by comparing hashCodes
+* first `{number}` *num*, returns `{CrioArray}`
+    * Returns a new array of the first *num* number of items in the array
 * get `{number}` *key*, returns `{any}`
     * Retrieve value at key
 * getIn `{array}` *keys*, returns `{any}`
     * Retrieve value in deeply nested object based on array of keys
+* last `{number}` *num*, returns `{CrioArray}`
+    * Returns a new array of the last *num* number of items in the array
 * merge `{object[, object2, ..., objectN]}` *objects*, returns `{CrioArray}`
     * Shallow merge any number of items into existing crio
 * mergeIn `{array}` *keys*, `{object[, object2, ..., objectN]}` *objects*, returns `{CrioArray}`
