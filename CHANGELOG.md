@@ -1,5 +1,9 @@
 # crio changelog
 
+#### 2.6.1
+* Updates to reduce the filesize of dist files
+* Use standard source map for dev dist file
+
 #### 2.6.0
 * Add `first` and `last` functions to `CrioArray`
 * Hashing optimizations by only using replacer function if ReactElement is included
