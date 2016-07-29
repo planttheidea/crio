@@ -55,7 +55,7 @@ var crio =
 	'use strict';
 	
 	exports.__esModule = true;
-	exports.CrioObject = exports.CrioArray = exports.mergeOnDeepMatch = exports.isCrio = exports.getRealValue = exports.getNeedsReplacer = exports.deleteOnDeepMatch = undefined;
+	exports.CrioObject = exports.CrioArray = exports.mergeOnDeepMatch = exports.isCrio = exports.getRealValue = exports.deleteOnDeepMatch = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -67,7 +67,13 @@ var crio =
 	
 	__webpack_require__(63);
 	
-	var _utils = __webpack_require__(65);
+	var _hashIt = __webpack_require__(65);
+	
+	var _hashIt2 = _interopRequireDefault(_hashIt);
+	
+	var _utils = __webpack_require__(66);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -144,11 +150,10 @@ var crio =
 	 * @param {CrioArray|CrioObject} crio
 	 * @param {array<any>|object} newObject
 	 * @param {CrioArray|CrioObject} CrioConstructor
-	 * @param {boolean} needsReplacer
 	 * @returns {CrioArray|CrioObject|array<any>|object}
 	 */
-	var returnCorrectObject = function returnCorrectObject(crio, newObject, CrioConstructor, needsReplacer) {
-	  var hashValue = (0, _utils.getHashIfChanged)(crio, newObject, needsReplacer);
+	var returnCorrectObject = function returnCorrectObject(crio, newObject, CrioConstructor) {
+	  var hashValue = (0, _utils.getHashIfChanged)(crio, newObject);
 	
 	  if (hashValue !== false) {
 	    return new CrioConstructor(newObject, hashValue);
@@ -240,16 +245,6 @@ var crio =
 	  return object;
 	};
 	
-	var getNeedsReplacer = function getNeedsReplacer(item) {
-	  var object = arguments.length <= 1 || arguments[1] === undefined ? item : arguments[1];
-	
-	  if (!item && !object) {
-	    return false;
-	  }
-	
-	  return (0, _utils.isReactElement)(item) || !!object.$$needsReplacer;
-	};
-	
 	var CrioArray = function () {
 	  function CrioArray(array, hashValue) {
 	    var _this = this;
@@ -260,20 +255,13 @@ var crio =
 	      return array;
 	    }
 	
-	    var needsReplacer = false;
-	
 	    (0, _utils.forEach)(array, function (item, index) {
 	      _this[index] = getRealValue(item);
-	
-	      if (!needsReplacer) {
-	        needsReplacer = getNeedsReplacer(_this[index]);
-	      }
 	    });
 	
-	    var hashCode = (0, _utils.isUndefined)(hashValue) ? (0, _utils.hash)(array, needsReplacer) : hashValue;
+	    var hashCode = (0, _utils.isUndefined)(hashValue) ? (0, _hashIt2.default)(array) : hashValue;
 	
 	    (0, _utils.setNonEnumerable)(this, '$$hashCode', hashCode);
-	    (0, _utils.setNonEnumerable)(this, '$$needsReplacer', needsReplacer);
 	    (0, _utils.setNonEnumerable)(this, 'length', array.length);
 	
 	    return freezeIfNotProduction(this);
@@ -721,18 +709,10 @@ var crio =
 	
 	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
-	    var mappedArray = new Array(this.length),
-	        needsReplacer = false,
-	        result = void 0;
+	    var mappedArray = new Array(this.length);
 	
 	    (0, _utils.forEach)(this, function (item, index) {
-	      result = fn.call(thisArg, _this2[index], index, _this2);
-	
-	      if (!needsReplacer) {
-	        needsReplacer = getNeedsReplacer(result);
-	      }
-	
-	      mappedArray[index] = result;
+	      mappedArray[index] = fn.call(thisArg, _this2[index], index, _this2);
 	    });
 	
 	    return returnCorrectObject(this, mappedArray, CrioArray);
@@ -747,9 +727,7 @@ var crio =
 	
 	
 	  CrioArray.prototype.merge = function merge() {
-	    var clone = (0, _utils.shallowCloneArray)(this),
-	        needsReplacer = false,
-	        value = void 0;
+	    var clone = (0, _utils.shallowCloneArray)(this);
 	
 	    for (var _len2 = arguments.length, objects = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 	      objects[_key2] = arguments[_key2];
@@ -757,17 +735,11 @@ var crio =
 	
 	    (0, _utils.forEach)(objects, function (object) {
 	      clone = clone.map(function (key, keyIndex) {
-	        value = object[keyIndex] || clone[keyIndex];
-	
-	        if (!needsReplacer) {
-	          needsReplacer = getNeedsReplacer(value);
-	        }
-	
-	        return value;
+	        return object[keyIndex] || clone[keyIndex];
 	      });
 	    });
 	
-	    return returnCorrectObject(this, clone, CrioArray, needsReplacer);
+	    return returnCorrectObject(this, clone, CrioArray);
 	  };
 	
 	  /**
@@ -807,7 +779,7 @@ var crio =
 	
 	  CrioArray.prototype.mutate = function mutate(fn) {
 	    var result = fn.call(this, this.thaw(), this);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, result, getNeedsReplacer(result));
+	    var hashValue = (0, _utils.getHashIfChanged)(this, result);
 	
 	    if (hashValue !== false) {
 	      return getRealValue(result, hashValue);
@@ -876,7 +848,7 @@ var crio =
 	    var thisArg = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
 	
 	    var reduction = ARRAY_PROTOTYPE.reduce.call(this, fn, object, thisArg);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, reduction, getNeedsReplacer(reduction));
+	    var hashValue = (0, _utils.getHashIfChanged)(this, reduction);
 	
 	    if (hashValue !== false) {
 	      return getRealValue(reduction, hashValue);
@@ -900,7 +872,7 @@ var crio =
 	    var thisArg = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
 	
 	    var reduction = ARRAY_PROTOTYPE.reduceRight.call(this, fn, object, thisArg);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, reduction, getNeedsReplacer(reduction));
+	    var hashValue = (0, _utils.getHashIfChanged)(this, reduction);
 	
 	    if (hashValue !== false) {
 	      return getRealValue(reduction, hashValue);
@@ -949,7 +921,7 @@ var crio =
 	      clone.push(index === itemIndex ? value : item);
 	    });
 	
-	    return returnCorrectObject(this, clone, CrioArray, getNeedsReplacer(value, this));
+	    return returnCorrectObject(this, clone, CrioArray);
 	  };
 	
 	  /**
@@ -970,7 +942,6 @@ var crio =
 	
 	    var currentObject = (0, _utils.shallowCloneArray)(this),
 	        referenceToCurrentObject = currentObject,
-	        needsReplacer = getNeedsReplacer(value, this),
 	        currentValue = void 0;
 	
 	    (0, _utils.forEach)(keys, function (key, keyIndex) {
@@ -983,7 +954,7 @@ var crio =
 	      }
 	    });
 	
-	    return returnCorrectObject(this, referenceToCurrentObject, CrioArray, needsReplacer);
+	    return returnCorrectObject(this, referenceToCurrentObject, CrioArray);
 	  };
 	
 	  /**
@@ -1218,25 +1189,19 @@ var crio =
 	
 	    var keys = objectKeys(object);
 	
-	    var length = 0,
-	        needsReplacer = false;
+	    var length = 0;
 	
 	    (0, _utils.forEachRight)(keys, function (key) {
 	      if (!NATIVE_KEYS[key]) {
 	        _this4[key] = getRealValue(object[key]);
 	
-	        if (!needsReplacer) {
-	          needsReplacer = getNeedsReplacer(_this4[key]);
-	        }
-	
 	        length++;
 	      }
 	    });
 	
-	    var hashCode = (0, _utils.isUndefined)(hashValue) ? (0, _utils.hash)(object, needsReplacer) : hashValue;
+	    var hashCode = (0, _utils.isUndefined)(hashValue) ? (0, _hashIt2.default)(object) : hashValue;
 	
 	    (0, _utils.setNonEnumerable)(this, '$$hashCode', hashCode);
-	    (0, _utils.setNonEnumerable)(this, '$$needsReplacer', needsReplacer);
 	    (0, _utils.setNonEnumerable)(this, 'length', length);
 	
 	    return freezeIfNotProduction(this);
@@ -1489,15 +1454,10 @@ var crio =
 	
 	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
-	    var newObject = {},
-	        needsReplacer = false;
+	    var newObject = {};
 	
 	    (0, _utils.forEach)(this.keys(), function (key) {
 	      newObject[key] = fn.call(thisArg, _this8[key], key, _this8);
-	
-	      if (!needsReplacer) {
-	        needsReplacer = getNeedsReplacer(newObject[key]);
-	      }
 	    });
 	
 	    return returnCorrectObject(this, newObject, CrioObject);
@@ -1514,23 +1474,15 @@ var crio =
 	  CrioObject.prototype.merge = function merge() {
 	    var clone = (0, _utils.shallowCloneObject)(this);
 	
-	    var needsReplacer = this.$$needsReplacer;
-	
 	    for (var _len7 = arguments.length, objects = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
 	      objects[_key7] = arguments[_key7];
 	    }
 	
 	    (0, _utils.forEach)(objects, function (object) {
 	      objectAssign(clone, object);
-	
-	      (0, _utils.forEach)(objectKeys(object), function (key) {
-	        if (!needsReplacer) {
-	          needsReplacer = getNeedsReplacer(object[key]);
-	        }
-	      });
 	    });
 	
-	    return returnCorrectObject(this, clone, CrioObject, needsReplacer);
+	    return returnCorrectObject(this, clone, CrioObject);
 	  };
 	
 	  /**
@@ -1571,7 +1523,7 @@ var crio =
 	
 	  CrioObject.prototype.mutate = function mutate(fn) {
 	    var result = fn.call(this, this.thaw(), this);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, result, getNeedsReplacer(result));
+	    var hashValue = (0, _utils.getHashIfChanged)(this, result);
 	
 	    if (hashValue !== false) {
 	      return getRealValue(result, hashValue);
@@ -1604,26 +1556,17 @@ var crio =
 	  CrioObject.prototype.set = function set(key, value) {
 	    var _this9 = this;
 	
-	    var clone = {},
-	        needsReplacer = false;
+	    var clone = {};
 	
 	    (0, _utils.forEachRight)(this.keys(), function (currentKey) {
 	      if (currentKey !== key) {
 	        clone[currentKey] = _this9[currentKey];
-	
-	        if (!needsReplacer) {
-	          needsReplacer = getNeedsReplacer(_this9[currentKey]);
-	        }
 	      }
 	    });
 	
 	    clone[key] = value;
 	
-	    if (!needsReplacer) {
-	      needsReplacer = getNeedsReplacer(value);
-	    }
-	
-	    return returnCorrectObject(this, clone, CrioObject, needsReplacer);
+	    return returnCorrectObject(this, clone, CrioObject);
 	  };
 	
 	  /**
@@ -1644,7 +1587,6 @@ var crio =
 	
 	    var currentObject = (0, _utils.shallowCloneObject)(this),
 	        referenceToCurrentObject = currentObject,
-	        needsReplacer = getNeedsReplacer(value, this),
 	        currentValue = void 0;
 	
 	    (0, _utils.forEach)(keys, function (key, keyIndex) {
@@ -1657,7 +1599,7 @@ var crio =
 	      }
 	    });
 	
-	    return returnCorrectObject(this, referenceToCurrentObject, CrioObject, needsReplacer);
+	    return returnCorrectObject(this, referenceToCurrentObject, CrioObject);
 	  };
 	
 	  /**
@@ -1804,7 +1746,6 @@ var crio =
 	};
 	
 	exports.deleteOnDeepMatch = deleteOnDeepMatch;
-	exports.getNeedsReplacer = getNeedsReplacer;
 	exports.getRealValue = getRealValue;
 	exports.isCrio = _utils.isCrio;
 	exports.mergeOnDeepMatch = mergeOnDeepMatch;
@@ -2966,18 +2907,28 @@ var crio =
 
 /***/ },
 /* 65 */
+/***/ function(module, exports) {
+
+	module.exports = undefined;
+
+/***/ },
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
-	exports.stringifySerializerForHash = exports.stringify = exports.shallowCloneObject = exports.shallowCloneArray = exports.setStandard = exports.setNonEnumerable = exports.isUndefined = exports.isObject = exports.isReactElement = exports.isCrio = exports.isArray = exports.hash = exports.getHashIfChanged = exports.forEachRight = exports.forEach = exports.CRIO_OBJECT_TYPE = exports.CRIO_ARRAY_TYPE = undefined;
+	exports.stringifySerializerForHash = exports.stringify = exports.shallowCloneObject = exports.shallowCloneArray = exports.setStandard = exports.setNonEnumerable = exports.isUndefined = exports.isObject = exports.isReactElement = exports.isCrio = exports.isArray = exports.getHashIfChanged = exports.forEachRight = exports.forEach = exports.CRIO_OBJECT_TYPE = exports.CRIO_ARRAY_TYPE = undefined;
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
-	var _stringifier = __webpack_require__(66);
+	var _stringifier = __webpack_require__(67);
 	
 	var _stringifier2 = _interopRequireDefault(_stringifier);
+	
+	var _hashIt = __webpack_require__(65);
+	
+	var _hashIt2 = _interopRequireDefault(_hashIt);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3118,48 +3069,14 @@ var crio =
 	};
 	
 	/**
-	 * function to abstract the stringification process
-	 *
-	 * @param {array<any>|object} object
-	 * @param {boolean} needsReplacer
-	 * @returns {string}
-	 */
-	var stringifyObject = function stringifyObject(object, needsReplacer) {
-	  return needsReplacer ? JSON.stringify(object, stringifySerializerForHash) : JSON.stringify(object);
-	};
-	
-	/**
-	 * convert object into unique hash value
-	 *
-	 * @param {array|object} object
-	 * @param {boolean} needsReplacer=true
-	 * @return {number}
-	 */
-	var hash = function hash(object) {
-	  var needsReplacer = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-	
-	  var string = stringifyObject(object, needsReplacer);
-	
-	  var hashValue = 5381,
-	      index = string.length;
-	
-	  while (index) {
-	    hashValue = hashValue * 33 ^ string.charCodeAt(--index);
-	  }
-	
-	  return hashValue >>> 0;
-	};
-	
-	/**
 	 * determine if the values for newObject match those for the crioObject
 	 *
 	 * @param {CrioArray|CrioObject} crioObject
 	 * @param {any} newObject
-	 * @param {boolean} needsReplacer
 	 * @returns {boolean}
 	 */
-	var getHashIfChanged = function getHashIfChanged(crioObject, newObject, needsReplacer) {
-	  var hashValue = hash(newObject, needsReplacer);
+	var getHashIfChanged = function getHashIfChanged(crioObject, newObject) {
+	  var hashValue = (0, _hashIt2.default)(newObject);
 	
 	  if (crioObject.$$hashCode !== hashValue) {
 	    return hashValue;
@@ -3244,7 +3161,6 @@ var crio =
 	exports.forEach = forEach;
 	exports.forEachRight = forEachRight;
 	exports.getHashIfChanged = getHashIfChanged;
-	exports.hash = hash;
 	exports.isArray = isArray;
 	exports.isCrio = isCrio;
 	exports.isReactElement = isReactElement;
@@ -3258,7 +3174,7 @@ var crio =
 	exports.stringifySerializerForHash = stringifySerializerForHash;
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports) {
 
 	module.exports = undefined;

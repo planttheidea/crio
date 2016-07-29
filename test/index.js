@@ -4,7 +4,6 @@ import React from 'react';
 import crio, {
     CrioArray,
     CrioObject,
-    getNeedsReplacer,
     getRealValue,
     isCrio,
     mergeOnDeepMatch
@@ -60,15 +59,6 @@ test('if deleteOnDeepMatch deletes a deep value on the object', (t) => {
             deeply: {}
         }
     });
-});
-
-test('if getNeedsReplacer returns the correct value', (t) => {
-    t.true(getNeedsReplacer(<div/>));
-    t.true(getNeedsReplacer(null, {
-        $$needsReplacer: true
-    }));
-    t.false(getNeedsReplacer(null));
-    t.false(getNeedsReplacer(crio({})));
 });
 
 test('if getRealValue returns crioed version of value when appropriate', (t) => {

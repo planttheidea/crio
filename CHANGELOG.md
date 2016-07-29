@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.7.0
+* Replace native hashing with [hash-it](https://github.com/planttheidea/hash-it)
+
 #### 2.6.1
 * Updates to reduce the filesize of dist files
 * Use standard source map for dev dist file

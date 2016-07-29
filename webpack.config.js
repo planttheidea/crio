@@ -21,6 +21,12 @@ module.exports = {
     },
 
     externals: {
+        'hash-it': {
+            amd: 'hash-it',
+            commonjs: 'hash-it',
+            commonjs2: 'hash-it',
+            root: 'hashIt'
+        },
         'stringifier': {
             amd: 'stringifier',
             commonjs: 'stringifier',
