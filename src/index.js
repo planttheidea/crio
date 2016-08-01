@@ -9,6 +9,8 @@ import hashIt from 'hash-it';
 import {
   CRIO_ARRAY_TYPE,
   CRIO_OBJECT_TYPE,
+  HASH_CODE_SYMBOL,
+  TYPE_SYMBOL,
   forEach,
   forEachRight,
   getHashIfChanged,
@@ -32,12 +34,6 @@ const objectValues = Object.values;
 
 const ARRAY_PROTOTYPE = Array.prototype;
 const OBJECT_PROTOTYPE = Object.prototype;
-
-const NATIVE_KEYS = {
-  $$hashCode: true,
-  $$type: true,
-  length: true
-};
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -204,7 +200,7 @@ class CrioArray {
 
     const hashCode = isUndefined(hashValue) ? hashIt(array) : hashValue;
 
-    setNonEnumerable(this, '$$hashCode', hashCode);
+    setNonEnumerable(this, HASH_CODE_SYMBOL, hashCode);
     setNonEnumerable(this, 'length', array.length);
 
     return freezeIfNotProduction(this);
@@ -215,7 +211,7 @@ class CrioArray {
    *
    * @return {string}
    */
-  get $$type() {
+  get [TYPE_SYMBOL]() {
     return CRIO_ARRAY_TYPE;
   }
 
@@ -342,7 +338,7 @@ class CrioArray {
       return false;
     }
 
-    return this.$$hashCode === object.$$hashCode;
+    return this[HASH_CODE_SYMBOL] === object[HASH_CODE_SYMBOL];
   }
 
   /**
@@ -387,7 +383,7 @@ class CrioArray {
   filter(fn, thisArg = this) {
     const filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
 
-    return returnCorrectObject(this, filteredArray, CrioArray, this.$$needsReplacer);
+    return returnCorrectObject(this, filteredArray, CrioArray);
   }
 
   /**
@@ -728,7 +724,7 @@ class CrioArray {
       clone.push(value);
     });
 
-    return returnCorrectObject(this, clone, CrioArray, this.$$needsReplacer);
+    return returnCorrectObject(this, clone, CrioArray);
   }
 
   /**
@@ -830,7 +826,7 @@ class CrioArray {
     const clone = shallowCloneArray(this);
     const sortedArray = ARRAY_PROTOTYPE.sort.call(clone, fn);
 
-    return returnCorrectObject(this, sortedArray, CrioArray, this.$$needsReplacer);
+    return returnCorrectObject(this, sortedArray, CrioArray);
   }
 
   /**
@@ -971,16 +967,14 @@ class CrioObject {
     let length = 0;
 
     forEachRight(keys, (key) => {
-      if (!NATIVE_KEYS[key]) {
-        this[key] = getRealValue(object[key]);
+      this[key] = getRealValue(object[key]);
 
-        length++;
-      }
+      length++;
     });
 
     const hashCode = isUndefined(hashValue) ? hashIt(object) : hashValue;
 
-    setNonEnumerable(this, '$$hashCode', hashCode);
+    setNonEnumerable(this, HASH_CODE_SYMBOL, hashCode);
     setNonEnumerable(this, 'length', length);
 
     return freezeIfNotProduction(this);
@@ -991,7 +985,7 @@ class CrioObject {
    *
    * @return {string}
    */
-  get $$type() {
+  get [TYPE_SYMBOL]() {
     return CRIO_OBJECT_TYPE;
   }
 
@@ -1068,7 +1062,7 @@ class CrioObject {
       return false;
     }
 
-    return this.$$hashCode === object.$$hashCode;
+    return this[HASH_CODE_SYMBOL] === object[HASH_CODE_SYMBOL];
   }
 
   /**
@@ -1160,7 +1154,7 @@ class CrioObject {
       }
     });
 
-    return returnCorrectObject(this, newObject, CrioObject, this.$$needsReplacer);
+    return returnCorrectObject(this, newObject, CrioObject);
   }
 
   /**
@@ -1332,12 +1326,10 @@ class CrioObject {
     let object = {};
 
     forEachRight(propertyNames, (key) => {
-      if (!NATIVE_KEYS[key]) {
-        const value = this[key];
-        const cleanValue = isCrio(value) ? value.thaw() : value;
+      const value = this[key];
+      const cleanValue = isCrio(value) ? value.thaw() : value;
 
-        setStandard(object, key, cleanValue, this.propertyIsEnumerable(key));
-      }
+      setStandard(object, key, cleanValue, this.propertyIsEnumerable(key));
     });
 
     return object;

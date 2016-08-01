@@ -86,12 +86,6 @@ var crio =
 	var ARRAY_PROTOTYPE = Array.prototype;
 	var OBJECT_PROTOTYPE = Object.prototype;
 	
-	var NATIVE_KEYS = {
-	  $$hashCode: true,
-	  $$type: true,
-	  length: true
-	};
-	
 	var IS_PRODUCTION = ("development") === 'production';
 	
 	/**
@@ -261,7 +255,7 @@ var crio =
 	
 	    var hashCode = (0, _utils.isUndefined)(hashValue) ? (0, _hashIt2.default)(array) : hashValue;
 	
-	    (0, _utils.setNonEnumerable)(this, '$$hashCode', hashCode);
+	    (0, _utils.setNonEnumerable)(this, _utils.HASH_CODE_SYMBOL, hashCode);
 	    (0, _utils.setNonEnumerable)(this, 'length', array.length);
 	
 	    return freezeIfNotProduction(this);
@@ -419,7 +413,7 @@ var crio =
 	      return false;
 	    }
 	
-	    return this.$$hashCode === object.$$hashCode;
+	    return this[_utils.HASH_CODE_SYMBOL] === object[_utils.HASH_CODE_SYMBOL];
 	  };
 	
 	  /**
@@ -477,7 +471,7 @@ var crio =
 	
 	    var filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
 	
-	    return returnCorrectObject(this, filteredArray, CrioArray, this.$$needsReplacer);
+	    return returnCorrectObject(this, filteredArray, CrioArray);
 	  };
 	
 	  /**
@@ -895,7 +889,7 @@ var crio =
 	      clone.push(value);
 	    });
 	
-	    return returnCorrectObject(this, clone, CrioArray, this.$$needsReplacer);
+	    return returnCorrectObject(this, clone, CrioArray);
 	  };
 	
 	  /**
@@ -1014,7 +1008,7 @@ var crio =
 	    var clone = (0, _utils.shallowCloneArray)(this);
 	    var sortedArray = ARRAY_PROTOTYPE.sort.call(clone, fn);
 	
-	    return returnCorrectObject(this, sortedArray, CrioArray, this.$$needsReplacer);
+	    return returnCorrectObject(this, sortedArray, CrioArray);
 	  };
 	
 	  /**
@@ -1168,7 +1162,7 @@ var crio =
 	  };
 	
 	  _createClass(CrioArray, [{
-	    key: '$$type',
+	    key: _utils.TYPE_SYMBOL,
 	    get: function get() {
 	      return _utils.CRIO_ARRAY_TYPE;
 	    }
@@ -1192,16 +1186,14 @@ var crio =
 	    var length = 0;
 	
 	    (0, _utils.forEachRight)(keys, function (key) {
-	      if (!NATIVE_KEYS[key]) {
-	        _this4[key] = getRealValue(object[key]);
+	      _this4[key] = getRealValue(object[key]);
 	
-	        length++;
-	      }
+	      length++;
 	    });
 	
 	    var hashCode = (0, _utils.isUndefined)(hashValue) ? (0, _hashIt2.default)(object) : hashValue;
 	
-	    (0, _utils.setNonEnumerable)(this, '$$hashCode', hashCode);
+	    (0, _utils.setNonEnumerable)(this, _utils.HASH_CODE_SYMBOL, hashCode);
 	    (0, _utils.setNonEnumerable)(this, 'length', length);
 	
 	    return freezeIfNotProduction(this);
@@ -1298,7 +1290,7 @@ var crio =
 	      return false;
 	    }
 	
-	    return this.$$hashCode === object.$$hashCode;
+	    return this[_utils.HASH_CODE_SYMBOL] === object[_utils.HASH_CODE_SYMBOL];
 	  };
 	
 	  /**
@@ -1405,7 +1397,7 @@ var crio =
 	      }
 	    });
 	
-	    return returnCorrectObject(this, newObject, CrioObject, this.$$needsReplacer);
+	    return returnCorrectObject(this, newObject, CrioObject);
 	  };
 	
 	  /**
@@ -1617,12 +1609,10 @@ var crio =
 	    var object = {};
 	
 	    (0, _utils.forEachRight)(propertyNames, function (key) {
-	      if (!NATIVE_KEYS[key]) {
-	        var value = _this10[key];
-	        var cleanValue = (0, _utils.isCrio)(value) ? value.thaw() : value;
+	      var value = _this10[key];
+	      var cleanValue = (0, _utils.isCrio)(value) ? value.thaw() : value;
 	
-	        (0, _utils.setStandard)(object, key, cleanValue, _this10.propertyIsEnumerable(key));
-	      }
+	      (0, _utils.setStandard)(object, key, cleanValue, _this10.propertyIsEnumerable(key));
 	    });
 	
 	    return object;
@@ -1714,7 +1704,7 @@ var crio =
 	  };
 	
 	  _createClass(CrioObject, [{
-	    key: '$$type',
+	    key: _utils.TYPE_SYMBOL,
 	    get: function get() {
 	      return _utils.CRIO_OBJECT_TYPE;
 	    }
@@ -2920,7 +2910,7 @@ var crio =
 	'use strict';
 	
 	exports.__esModule = true;
-	exports.stringifySerializerForHash = exports.stringify = exports.shallowCloneObject = exports.shallowCloneArray = exports.setStandard = exports.setNonEnumerable = exports.isUndefined = exports.isObject = exports.isReactElement = exports.isCrio = exports.isArray = exports.getHashIfChanged = exports.forEachRight = exports.forEach = exports.CRIO_OBJECT_TYPE = exports.CRIO_ARRAY_TYPE = undefined;
+	exports.stringifySerializerForHash = exports.stringify = exports.shallowCloneObject = exports.shallowCloneArray = exports.setStandard = exports.setNonEnumerable = exports.isUndefined = exports.isObject = exports.isReactElement = exports.isCrio = exports.isArray = exports.getHashIfChanged = exports.forEachRight = exports.forEach = exports.TYPE_SYMBOL = exports.HASH_CODE_SYMBOL = exports.CRIO_OBJECT_TYPE = exports.CRIO_ARRAY_TYPE = undefined;
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
@@ -2948,6 +2938,9 @@ var crio =
 	var ARRAY_TYPE = '[object Array]';
 	var OBJECT_TYPE = '[object Object]';
 	
+	var HASH_CODE_SYMBOL = Symbol('hashCode');
+	var TYPE_SYMBOL = Symbol('type');
+	
 	var reactElementCounter = -1;
 	
 	/**
@@ -2961,7 +2954,7 @@ var crio =
 	    return false;
 	  }
 	
-	  return toString(object) === ARRAY_TYPE || object.$$type === CRIO_ARRAY_TYPE;
+	  return toString(object) === ARRAY_TYPE || object[TYPE_SYMBOL] === CRIO_ARRAY_TYPE;
 	};
 	
 	/**
@@ -2975,7 +2968,7 @@ var crio =
 	    return false;
 	  }
 	
-	  return object.$$type === CRIO_ARRAY_TYPE || object.$$type === CRIO_OBJECT_TYPE;
+	  return object[TYPE_SYMBOL] === CRIO_ARRAY_TYPE || object[TYPE_SYMBOL] === CRIO_OBJECT_TYPE;
 	};
 	
 	/**
@@ -2989,8 +2982,8 @@ var crio =
 	    return false;
 	  }
 	
-	  if (object.$$type) {
-	    return object.$$type === CRIO_OBJECT_TYPE;
+	  if (object[TYPE_SYMBOL]) {
+	    return object[TYPE_SYMBOL] === CRIO_OBJECT_TYPE;
 	  }
 	
 	  return toString(object) === OBJECT_TYPE;
@@ -3080,7 +3073,7 @@ var crio =
 	var getHashIfChanged = function getHashIfChanged(crioObject, newObject) {
 	  var hashValue = (0, _hashIt2.default)(newObject);
 	
-	  if (crioObject.$$hashCode !== hashValue) {
+	  if (crioObject[HASH_CODE_SYMBOL] !== hashValue) {
 	    return hashValue;
 	  }
 	
@@ -3160,6 +3153,8 @@ var crio =
 	
 	exports.CRIO_ARRAY_TYPE = CRIO_ARRAY_TYPE;
 	exports.CRIO_OBJECT_TYPE = CRIO_OBJECT_TYPE;
+	exports.HASH_CODE_SYMBOL = HASH_CODE_SYMBOL;
+	exports.TYPE_SYMBOL = TYPE_SYMBOL;
 	exports.forEach = forEach;
 	exports.forEachRight = forEachRight;
 	exports.getHashIfChanged = getHashIfChanged;
