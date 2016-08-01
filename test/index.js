@@ -9,6 +9,11 @@ import crio, {
     mergeOnDeepMatch
 } from '../src';
 
+import {
+    HASH_CODE_SYMBOL,
+    TYPE_SYMBOL
+} from '../src/utils';
+
 const OBJECT = {
     foo: 'bar'
 };
@@ -104,16 +109,16 @@ test('if mergeOnDeepMatch sets a deep value to the object', (t) => {
 test('CrioObject getters are correct values', (t) => {
     const crioObject = crio(OBJECT);
 
-    t.is(crioObject.$$hashCode, 2196683918);
-    t.is(crioObject.$$type, 'CrioObject');
+    t.is(crioObject[HASH_CODE_SYMBOL], 2196683918);
+    t.is(crioObject[TYPE_SYMBOL], 'CrioObject');
     t.is(crioObject.length, 1);
 });
 
 test('CrioArray getters are correct values', (t) => {
     const crioArray = crio(ARRAY);
 
-    t.is(crioArray.$$hashCode, 2259920920);
-    t.is(crioArray.$$type, 'CrioArray');
+    t.is(crioArray[HASH_CODE_SYMBOL], 2259920920);
+    t.is(crioArray[TYPE_SYMBOL], 'CrioArray');
     t.is(crioArray.length, 2);
 });
 
