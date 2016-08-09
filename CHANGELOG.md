@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.8.1
+* Fix a couple issues centered around `.entries()` for both `CrioArray` and `CrioObject`
+
 #### 2.8.0
 * Switch to using `Symbol` instead of string key creation for internal `hashCode` and `type` properties to prevent potential naming conflicts
 

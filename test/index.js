@@ -133,7 +133,15 @@ test('CrioObject methods', (t) => {
         }
     });
 
-    t.deepEqual(crioObject.entries(), [['foo', 'bar']]);
+    const entries = crioObject.entries();
+
+    t.is(typeof entries.next, 'function');
+
+    const next = entries.next();
+
+    t.is(next.key, 'foo');
+    t.is(next.value, 'bar');
+
     t.true(crioObject.equals(crio(OBJECT)));
     t.is(crioObject.get('foo'), 'bar');
 
@@ -295,7 +303,19 @@ test('CrioArray methods', (t) => {
         }
     }]);
 
-    t.deepEqual(crioArray.entries(), [['0', 'foo'], ['1', 'bar']]);
+    const entries = crioArray.entries();
+
+    t.is(typeof entries.next, 'function');
+
+    const nextOne = entries.next();
+
+    t.is(nextOne.key, 0);
+    t.is(nextOne.value, 'foo');
+
+    const nextTwo = entries.next();
+
+    t.is(nextTwo.key, 1);
+    t.is(nextTwo.value, 'bar');
 
     t.true(crioArray.equals(crio(ARRAY)));
     t.true(crioArray.every((value) => {

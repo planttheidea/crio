@@ -397,7 +397,34 @@ var crio =
 	
 	
 	  CrioArray.prototype.entries = function entries() {
-	    return objectEntries(this);
+	    var _this2 = this;
+	
+	    var entries = objectEntries(this);
+	
+	    var index = 0,
+	        key = void 0,
+	        value = void 0;
+	
+	    entries.next = function () {
+	      key = index;
+	      value = _this2[index];
+	
+	      if (index < _this2.length) {
+	        index++;
+	
+	        return {
+	          done: false,
+	          key: key,
+	          value: value
+	        };
+	      } else {
+	        return {
+	          done: true
+	        };
+	      }
+	    };
+	
+	    return entries;
 	  };
 	
 	  /**
@@ -699,14 +726,14 @@ var crio =
 	
 	
 	  CrioArray.prototype.map = function map(fn) {
-	    var _this2 = this;
+	    var _this3 = this;
 	
 	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
 	    var mappedArray = new Array(this.length);
 	
 	    (0, _utils.forEach)(this, function (item, index) {
-	      mappedArray[index] = fn.call(thisArg, _this2[index], index, _this2);
+	      mappedArray[index] = fn.call(thisArg, _this3[index], index, _this3);
 	    });
 	
 	    return returnCorrectObject(this, mappedArray, CrioArray);
@@ -1142,21 +1169,28 @@ var crio =
 	
 	
 	  CrioArray.prototype[Symbol.iterator] = function () {
-	    var _this3 = this;
+	    var _this4 = this;
 	
 	    var index = 0;
 	
 	    return {
 	      next: function next() {
-	        var value = _this3[index];
-	        var done = index >= _this3.length;
+	        var key = index;
+	        var value = _this4[index];
 	
-	        index++;
+	        if (index < _this4.length) {
+	          index++;
 	
-	        return {
-	          value: value,
-	          done: done
-	        };
+	          return {
+	            done: false,
+	            key: key,
+	            value: value
+	          };
+	        } else {
+	          return {
+	            done: true
+	          };
+	        }
 	      }
 	    };
 	  };
@@ -1173,7 +1207,7 @@ var crio =
 	
 	var CrioObject = function () {
 	  function CrioObject(object, hashValue) {
-	    var _this4 = this;
+	    var _this5 = this;
 	
 	    _classCallCheck(this, CrioObject);
 	
@@ -1186,7 +1220,7 @@ var crio =
 	    var length = 0;
 	
 	    (0, _utils.forEachRight)(keys, function (key) {
-	      _this4[key] = getRealValue(object[key]);
+	      _this5[key] = getRealValue(object[key]);
 	
 	      length++;
 	    });
@@ -1229,7 +1263,7 @@ var crio =
 	
 	
 	  CrioObject.prototype.delete = function _delete(key) {
-	    var _this5 = this;
+	    var _this6 = this;
 	
 	    if (!this.hasOwnProperty(key)) {
 	      return this;
@@ -1239,7 +1273,7 @@ var crio =
 	
 	    (0, _utils.forEachRight)(this.keys(), function (itemKey) {
 	      if (itemKey !== key) {
-	        clone[itemKey] = _this5[itemKey];
+	        clone[itemKey] = _this6[itemKey];
 	      }
 	    });
 	
@@ -1274,7 +1308,35 @@ var crio =
 	
 	
 	  CrioObject.prototype.entries = function entries() {
-	    return objectEntries(this);
+	    var _this7 = this;
+	
+	    var keys = objectKeys(this);
+	    var entries = objectEntries(this);
+	
+	    var index = 0,
+	        key = void 0,
+	        value = void 0;
+	
+	    entries.next = function () {
+	      key = keys[index];
+	      value = _this7[key];
+	
+	      if (index < _this7.length) {
+	        index++;
+	
+	        return {
+	          done: false,
+	          key: key,
+	          value: value
+	        };
+	      } else {
+	        return {
+	          done: true
+	        };
+	      }
+	    };
+	
+	    return entries;
 	  };
 	
 	  /**
@@ -1382,7 +1444,7 @@ var crio =
 	
 	
 	  CrioObject.prototype.filter = function filter(fn) {
-	    var _this6 = this;
+	    var _this8 = this;
 	
 	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
@@ -1390,10 +1452,10 @@ var crio =
 	        result = void 0;
 	
 	    (0, _utils.forEach)(this.keys(), function (key) {
-	      result = fn.call(thisArg, _this6[key], key, _this6);
+	      result = fn.call(thisArg, _this8[key], key, _this8);
 	
 	      if (!!result) {
-	        newObject[key] = _this6[key];
+	        newObject[key] = _this8[key];
 	      }
 	    });
 	
@@ -1410,12 +1472,12 @@ var crio =
 	
 	
 	  CrioObject.prototype.forEach = function forEach(fn) {
-	    var _this7 = this;
+	    var _this9 = this;
 	
 	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
 	    (0, _utils.forEach)(this.keys(), function (key) {
-	      fn.call(thisArg, _this7[key], key, _this7);
+	      fn.call(thisArg, _this9[key], key, _this9);
 	    });
 	
 	    return this;
@@ -1442,14 +1504,14 @@ var crio =
 	
 	
 	  CrioObject.prototype.map = function map(fn) {
-	    var _this8 = this;
+	    var _this10 = this;
 	
 	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
 	    var newObject = {};
 	
 	    (0, _utils.forEach)(this.keys(), function (key) {
-	      newObject[key] = fn.call(thisArg, _this8[key], key, _this8);
+	      newObject[key] = fn.call(thisArg, _this10[key], key, _this10);
 	    });
 	
 	    return returnCorrectObject(this, newObject, CrioObject);
@@ -1546,13 +1608,13 @@ var crio =
 	
 	
 	  CrioObject.prototype.set = function set(key, value) {
-	    var _this9 = this;
+	    var _this11 = this;
 	
 	    var clone = {};
 	
 	    (0, _utils.forEachRight)(this.keys(), function (currentKey) {
 	      if (currentKey !== key) {
-	        clone[currentKey] = _this9[currentKey];
+	        clone[currentKey] = _this11[currentKey];
 	      }
 	    });
 	
@@ -1602,17 +1664,17 @@ var crio =
 	
 	
 	  CrioObject.prototype.thaw = function thaw() {
-	    var _this10 = this;
+	    var _this12 = this;
 	
 	    var propertyNames = objectKeys(this);
 	
 	    var object = {};
 	
 	    (0, _utils.forEachRight)(propertyNames, function (key) {
-	      var value = _this10[key];
+	      var value = _this12[key];
 	      var cleanValue = (0, _utils.isCrio)(value) ? value.thaw() : value;
 	
-	      (0, _utils.setStandard)(object, key, cleanValue, _this10.propertyIsEnumerable(key));
+	      (0, _utils.setStandard)(object, key, cleanValue, _this12.propertyIsEnumerable(key));
 	    });
 	
 	    return object;
@@ -1681,24 +1743,32 @@ var crio =
 	
 	
 	  CrioObject.prototype[Symbol.iterator] = function () {
-	    var _this11 = this;
+	    var _this13 = this;
 	
 	    var keys = objectKeys(this);
 	
-	    var index = 0;
+	    var index = 0,
+	        key = void 0,
+	        value = void 0;
 	
 	    return {
 	      next: function next() {
-	        var key = keys[index];
-	        var value = _this11[key];
-	        var done = index >= _this11.length;
+	        key = keys[index];
+	        value = _this13[key];
 	
-	        index++;
+	        if (index < _this13.length) {
+	          index++;
 	
-	        return {
-	          value: value,
-	          done: done
-	        };
+	          return {
+	            done: false,
+	            key: key,
+	            value: value
+	          };
+	        } else {
+	          return {
+	            done: true
+	          };
+	        }
 	      }
 	    };
 	  };

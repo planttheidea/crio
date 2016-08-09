@@ -324,7 +324,31 @@ class CrioArray {
    * @returns {array<array>}
    */
   entries() {
-    return objectEntries(this);
+    const entries = objectEntries(this);
+
+    let index = 0,
+        key, value;
+
+    entries.next = () => {
+      key = index;
+      value = this[index];
+
+      if (index < this.length) {
+        index++;
+
+        return {
+          done: false,
+          key,
+          value
+        };
+      } else {
+        return {
+          done: true
+        };
+      }
+    };
+
+    return entries;
   }
 
   /**
@@ -942,15 +966,22 @@ class CrioArray {
 
     return {
       next: () => {
+        const key = index;
         const value = this[index];
-        const done = index >= this.length;
 
-        index++;
+        if (index < this.length) {
+          index++;
 
-        return {
-          value,
-          done
-        };
+          return {
+            done: false,
+            key,
+            value
+          };
+        } else {
+          return {
+            done: true
+          };
+        }
       }
     };
   }
@@ -1048,7 +1079,32 @@ class CrioObject {
    * @returns {array<string>}
    */
   entries() {
-    return objectEntries(this);
+    const keys = objectKeys(this);
+    const entries = objectEntries(this);
+
+    let index = 0,
+        key, value;
+
+    entries.next = () => {
+      key = keys[index];
+      value = this[key];
+
+      if (index < this.length) {
+        index++;
+
+        return {
+          done: false,
+          key,
+          value
+        };
+      } else {
+        return {
+          done: true
+        };
+      }
+    };
+
+    return entries;
   }
 
   /**
@@ -1388,20 +1444,27 @@ class CrioObject {
   [Symbol.iterator]() {
     const keys = objectKeys(this);
 
-    let index = 0;
+    let index = 0,
+        key, value;
 
     return {
       next: () => {
-        const key = keys[index];
-        const value = this[key];
-        const done = index >= this.length;
+        key = keys[index];
+        value = this[key];
 
-        index++;
+        if (index < this.length) {
+          index++;
 
-        return {
-          value,
-          done
-        };
+          return {
+            done: false,
+            key,
+            value
+          };
+        } else {
+          return {
+            done: true
+          };
+        }
       }
     };
   }
