@@ -45,8 +45,10 @@
   },
   "homepage": "https://github.com/planttheidea/crio#readme",
   "keywords": [
-    "immutable",
-    "crio"
+    "css",
+    "sass",
+    "scss",
+    "styles"
   ],
   "license": "MIT",
   "main": "lib/index.js",
