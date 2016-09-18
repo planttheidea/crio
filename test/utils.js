@@ -5,7 +5,6 @@ import {
     forEach,
     forEachRight,
     getHashIfChanged,
-    hash,
     isArray,
     isObject,
     isReactElement,
@@ -64,26 +63,6 @@ test('if getHashIfChanged will correctly identify if values have changed with ha
     t.truthy(getHashIfChanged(crioObject, {
         foo: 'baz'
     }));
-});
-
-test('if hash will consistently has string values', (t) => {
-    const stringOne = 'STRING_ONE';
-    const stringTwo = 'STRING_TWO';
-    const stringThree = 'STRING_THREE';
-
-    let previousHashOne = 1448377099,
-        previousHashTwo = 2789257699,
-        previousHashThree = 2091686369;
-
-    for (let i = 10000; i--;) {
-        const currentHashOne = hash(stringOne);
-        const currentHashTwo = hash(stringTwo);
-        const currentHashThree = hash(stringThree);
-
-        t.is(previousHashOne, currentHashOne);
-        t.is(previousHashTwo, currentHashTwo);
-        t.is(previousHashThree, currentHashThree);
-    }
 });
 
 test('if isArray properly checks if something is an array or CrioArray', (t) => {

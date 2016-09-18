@@ -56,6 +56,11 @@ module.exports = {
                     path.resolve(__dirname, 'DEV_ONLY')
                 ],
                 loader: 'babel',
+                query: {
+                    presets: [
+                        "react"
+                    ]
+                },
                 test: /\.js$/
             }
         ]

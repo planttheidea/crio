@@ -4,11 +4,15 @@ import React from 'react';
 import crio, {
     CrioArray,
     CrioObject,
-    getNeedsReplacer,
     getRealValue,
     isCrio,
     mergeOnDeepMatch
 } from '../src';
+
+import {
+    HASH_CODE_SYMBOL,
+    TYPE_SYMBOL
+} from '../src/utils';
 
 const OBJECT = {
     foo: 'bar'
@@ -62,15 +66,6 @@ test('if deleteOnDeepMatch deletes a deep value on the object', (t) => {
     });
 });
 
-test('if getNeedsReplacer returns the correct value', (t) => {
-    t.true(getNeedsReplacer(<div/>));
-    t.true(getNeedsReplacer(null, {
-        $$needsReplacer: true
-    }));
-    t.false(getNeedsReplacer(null));
-    t.false(getNeedsReplacer(crio({})));
-});
-
 test('if getRealValue returns crioed version of value when appropriate', (t) => {
     const object = getRealValue(OBJECT);
     const array = getRealValue(ARRAY);
@@ -114,16 +109,16 @@ test('if mergeOnDeepMatch sets a deep value to the object', (t) => {
 test('CrioObject getters are correct values', (t) => {
     const crioObject = crio(OBJECT);
 
-    t.is(crioObject.$$hashCode, 2196683918);
-    t.is(crioObject.$$type, 'CrioObject');
+    t.is(crioObject[HASH_CODE_SYMBOL], 2196683918);
+    t.is(crioObject[TYPE_SYMBOL], 'CrioObject');
     t.is(crioObject.length, 1);
 });
 
 test('CrioArray getters are correct values', (t) => {
     const crioArray = crio(ARRAY);
 
-    t.is(crioArray.$$hashCode, 2259920920);
-    t.is(crioArray.$$type, 'CrioArray');
+    t.is(crioArray[HASH_CODE_SYMBOL], 2259920920);
+    t.is(crioArray[TYPE_SYMBOL], 'CrioArray');
     t.is(crioArray.length, 2);
 });
 
@@ -138,7 +133,15 @@ test('CrioObject methods', (t) => {
         }
     });
 
-    t.deepEqual(crioObject.entries(), [['foo', 'bar']]);
+    const entries = crioObject.entries();
+
+    t.is(typeof entries.next, 'function');
+
+    const next = entries.next();
+
+    t.is(next.key, 'foo');
+    t.is(next.value, 'bar');
+
     t.true(crioObject.equals(crio(OBJECT)));
     t.is(crioObject.get('foo'), 'bar');
 
@@ -300,7 +303,19 @@ test('CrioArray methods', (t) => {
         }
     }]);
 
-    t.deepEqual(crioArray.entries(), [['0', 'foo'], ['1', 'bar']]);
+    const entries = crioArray.entries();
+
+    t.is(typeof entries.next, 'function');
+
+    const nextOne = entries.next();
+
+    t.is(nextOne.key, 0);
+    t.is(nextOne.value, 'foo');
+
+    const nextTwo = entries.next();
+
+    t.is(nextTwo.key, 1);
+    t.is(nextTwo.value, 'bar');
 
     t.true(crioArray.equals(crio(ARRAY)));
     t.true(crioArray.every((value) => {

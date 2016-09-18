@@ -1,4 +1,5 @@
 import stringifier from 'stringifier';
+import hashIt from 'hash-it';
 
 const CRIO_ARRAY_TYPE = 'CrioArray';
 const CRIO_OBJECT_TYPE = 'CrioObject';
@@ -14,6 +15,9 @@ const stringify = stringifier(STRINGIFIER_OPTIONS);
 const ARRAY_TYPE = '[object Array]';
 const OBJECT_TYPE = '[object Object]';
 
+const HASH_CODE_SYMBOL = Symbol('hashCode');
+const TYPE_SYMBOL = Symbol('type');
+
 let reactElementCounter = -1;
 
 /**
@@ -27,7 +31,7 @@ const isArray = (object) => {
     return false;
   }
 
-  return toString(object) === ARRAY_TYPE || object.$$type === CRIO_ARRAY_TYPE;
+  return toString(object) === ARRAY_TYPE || object[TYPE_SYMBOL] === CRIO_ARRAY_TYPE;
 };
 
 /**
@@ -41,7 +45,7 @@ const isCrio = (object) => {
     return false;
   }
   
-  return object.$$type === CRIO_ARRAY_TYPE || object.$$type === CRIO_OBJECT_TYPE;
+  return object[TYPE_SYMBOL] === CRIO_ARRAY_TYPE || object[TYPE_SYMBOL] === CRIO_OBJECT_TYPE;
 };
 
 /**
@@ -55,8 +59,8 @@ const isObject = (object) => {
     return false;
   }
 
-  if (object.$$type) {
-    return object.$$type === CRIO_OBJECT_TYPE;
+  if (object[TYPE_SYMBOL]) {
+    return object[TYPE_SYMBOL] === CRIO_OBJECT_TYPE;
   }
 
   return toString(object) === OBJECT_TYPE;
@@ -137,48 +141,16 @@ const stringifySerializerForHash = (key, value) => {
 };
 
 /**
- * function to abstract the stringification process
- *
- * @param {array<any>|object} object
- * @param {boolean} needsReplacer
- * @returns {string}
- */
-const stringifyObject = (object, needsReplacer) => {
-  return needsReplacer ? JSON.stringify(object, stringifySerializerForHash) : JSON.stringify(object);
-};
-
-/**
- * convert object into unique hash value
- *
- * @param {array|object} object
- * @param {boolean} needsReplacer=true
- * @return {number}
- */
-const hash = (object, needsReplacer = true) => {
-  const string = stringifyObject(object, needsReplacer);
-
-  let hashValue = 5381,
-      index = string.length;
-
-  while (index) {
-    hashValue = (hashValue * 33) ^ string.charCodeAt(--index);
-  }
-
-  return hashValue >>> 0;
-};
-
-/**
  * determine if the values for newObject match those for the crioObject
  *
  * @param {CrioArray|CrioObject} crioObject
  * @param {any} newObject
- * @param {boolean} needsReplacer
  * @returns {boolean}
  */
-const getHashIfChanged = (crioObject, newObject, needsReplacer) => {
-  const hashValue = hash(newObject, needsReplacer);
+const getHashIfChanged = (crioObject, newObject) => {
+  const hashValue = hashIt(newObject);
 
-  if (crioObject.$$hashCode !== hashValue) {
+  if (crioObject[HASH_CODE_SYMBOL] !== hashValue) {
     return hashValue;
   }
 
@@ -256,10 +228,11 @@ const setStandard = (object, property, value, enumerable = true) => {
 
 export {CRIO_ARRAY_TYPE};
 export {CRIO_OBJECT_TYPE};
+export {HASH_CODE_SYMBOL};
+export {TYPE_SYMBOL};
 export {forEach};
 export {forEachRight};
 export {getHashIfChanged};
-export {hash};
 export {isArray};
 export {isCrio};
 export {isReactElement};
