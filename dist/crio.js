@@ -54,7 +54,9 @@ var crio =
 
 	'use strict';
 	
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.CrioObject = exports.CrioArray = exports.mergeOnDeepMatch = exports.isCrio = exports.getRealValue = exports.deleteOnDeepMatch = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -76,6 +78,8 @@ var crio =
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	var objectAssign = Object.assign;
 	var objectEntries = Object.entries;
@@ -182,7 +186,7 @@ var crio =
 	    }
 	
 	    if (keyIndex === lastIndex) {
-	      currentObject[key] = objectAssign.apply(undefined, [currentObject[key]].concat(values));
+	      currentObject[key] = objectAssign.apply(undefined, [currentObject[key]].concat(_toConsumableArray(values)));
 	    } else {
 	      currentObject = currentObject[key];
 	    }
@@ -268,917 +272,157 @@ var crio =
 	   */
 	
 	
-	  /**
-	   * return empty CrioArray
-	   * 
-	   * @return {CrioArray}
-	   */
-	
-	  CrioArray.prototype.clear = function clear() {
-	    if (!this.length) {
-	      return this;
-	    }
-	
-	    return new CrioArray([]);
-	  };
-	
-	  /**
-	   * return new CrioArray with all falsy values removed
-	   * 
-	   * @return {CrioArray}
-	   */
+	  _createClass(CrioArray, [{
+	    key: 'clear',
 	
 	
-	  CrioArray.prototype.compact = function compact() {
-	    return this.filter(function (value) {
-	      return !!value;
-	    });
-	  };
-	
-	  /**
-	   * based on items passed, combine with this to create new CrioArray
-	   *
-	   * @param {array<array>} arrays
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.concat = function concat() {
-	    for (var _len = arguments.length, arrays = Array(_len), _key = 0; _key < _len; _key++) {
-	      arrays[_key] = arguments[_key];
-	    }
-	
-	    if (!arrays.length) {
-	      return this;
-	    }
-	
-	    var clone = (0, _utils.shallowCloneArray)(this);
-	    var concattedArray = ARRAY_PROTOTYPE.concat.apply(clone, arrays);
-	
-	    return new CrioArray(concattedArray);
-	  };
-	
-	  /**
-	   * based on arguments passed, return new CrioArray with copyWithin applied
-	   *
-	   * @param {number} target
-	   * @param {number} start=0
-	   * @param {number} end=this.length
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.copyWithin = function copyWithin(target) {
-	    var start = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-	    var end = arguments.length <= 2 || arguments[2] === undefined ? this.length : arguments[2];
-	
-	    if ((0, _utils.isUndefined)(target)) {
-	      return this;
-	    }
-	
-	    var replacements = ARRAY_PROTOTYPE.slice.call(this, start, end).filter(function () {
-	      return true;
-	    });
-	
-	    return this.splice.apply(this, [target, replacements.length].concat(replacements));
-	  };
-	
-	  /**
-	   * remove item from the array
-	   *
-	   * @param {number} key
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.delete = function _delete(key) {
-	    if (!this.has(key)) {
-	      return this;
-	    }
-	
-	    var index = +key;
-	
-	    var clone = [];
-	
-	    (0, _utils.forEach)(this, function (item, itemIndex) {
-	      if (itemIndex !== index) {
-	        clone.push(item);
-	      }
-	    });
-	
-	    return new CrioArray(clone);
-	  };
-	
-	  /**
-	   * delete deeply-nested key in this based on keys passed
-	   *
-	   * @param {array<string|number>} keys
-	   * @return {CrioObject}
-	   */
-	
-	
-	  CrioArray.prototype.deleteIn = function deleteIn(keys) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
-	    }
-	
-	    if (!keys.length) {
-	      return this;
-	    }
-	
-	    return deleteOnDeepMatch(this, keys, CrioArray);
-	  };
-	
-	  /**
-	   * returns an oterable array of [index, value] pairs
-	   *
-	   * @returns {array<array>}
-	   */
-	
-	
-	  CrioArray.prototype.entries = function entries() {
-	    var _this2 = this;
-	
-	    var entries = objectEntries(this);
-	
-	    var index = 0,
-	        key = void 0,
-	        value = void 0;
-	
-	    entries.next = function () {
-	      key = index;
-	      value = _this2[index];
-	
-	      if (index < _this2.length) {
-	        index++;
-	
-	        return {
-	          done: false,
-	          key: key,
-	          value: value
-	        };
-	      } else {
-	        return {
-	          done: true
-	        };
-	      }
-	    };
-	
-	    return entries;
-	  };
-	
-	  /**
-	   * is the object passed equal in value to this
-	   *
-	   * @param {any} object
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioArray.prototype.equals = function equals(object) {
-	    if (!(0, _utils.isCrio)(object)) {
-	      return false;
-	    }
-	
-	    return this[_utils.HASH_CODE_SYMBOL] === object[_utils.HASH_CODE_SYMBOL];
-	  };
-	
-	  /**
-	   * does the function applied to every value in this return truthy
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioArray.prototype.every = function every(fn) {
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    return ARRAY_PROTOTYPE.every.call(this, fn, thisArg);
-	  };
-	
-	  /**
-	   * fill this based on arguments and return new CrioArray
-	   *
-	   * @param {any} value
-	   * @param {number} start=0
-	   * @param {number} end=this.length
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.fill = function fill(value) {
-	    var start = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-	    var end = arguments.length <= 2 || arguments[2] === undefined ? this.length : arguments[2];
-	
-	    var filledArray = ARRAY_PROTOTYPE.map.call(this, function (currentValue, index) {
-	      if (index >= start && index < end) {
-	        return value;
+	    /**
+	     * return empty CrioArray
+	     * 
+	     * @return {CrioArray}
+	     */
+	    value: function clear() {
+	      if (!this.length) {
+	        return this;
 	      }
 	
-	      return currentValue;
-	    });
-	
-	    return returnCorrectObject(this, filledArray, CrioArray);
-	  };
-	
-	  /**
-	   * based on return values of fn being truthy, return a new reduced CrioArray
-	   * from this
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.filter = function filter(fn) {
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    var filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
-	
-	    return returnCorrectObject(this, filteredArray, CrioArray);
-	  };
-	
-	  /**
-	   * find a specific value in the CrioArray and return it, else return undefined
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {any}
-	   */
-	
-	
-	  CrioArray.prototype.find = function find(fn) {
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    var index = -1,
-	        value = void 0;
-	
-	    while (++index < this.length) {
-	      value = this[index];
-	
-	      if (fn.call(this, value, index, thisArg)) {
-	        return value;
-	      }
+	      return new CrioArray([]);
 	    }
 	
-	    return undefined;
-	  };
+	    /**
+	     * return new CrioArray with all falsy values removed
+	     * 
+	     * @return {CrioArray}
+	     */
 	
-	  /**
-	   * find a specific value in the CrioArray and return its index, else return -1
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {number}
-	   */
-	
-	
-	  CrioArray.prototype.findIndex = function findIndex(fn) {
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    var index = -1;
-	
-	    while (++index < this.length) {
-	      if (fn.call(this, this[index], index, thisArg)) {
-	        return index;
-	      }
-	    }
-	
-	    return -1;
-	  };
-	
-	  /**
-	   * get the first n number of values from the array
-	   *
-	   * @param {number} num=1
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.first = function first() {
-	    var num = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
-	
-	    if (num === this.length) {
-	      return this;
-	    }
-	
-	    return this.slice(0, num);
-	  };
-	
-	  /**
-	   * iterate over this and execute fn for each value
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   */
-	
-	
-	  CrioArray.prototype.forEach = function forEach(fn) {
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    ARRAY_PROTOTYPE.forEach.call(this, fn, thisArg);
-	  };
-	
-	  /**
-	   * retrieve the value at index from this
-	   *
-	   * @param {number} index
-	   * @returns {any}
-	   */
-	
-	
-	  CrioArray.prototype.get = function get(index) {
-	    return this[index];
-	  };
-	
-	  /**
-	   * return value at nested point based on keys in this
-	   *
-	   * @param {array<string|number>} keys
-	   * @return {any}
-	   */
-	
-	
-	  CrioArray.prototype.getIn = function getIn(keys) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
-	    }
-	
-	    var length = keys.length;
-	    var lastIndex = length - 1;
-	
-	    var currentObject = this,
-	        index = -1,
-	        key = void 0;
-	
-	    while (++index < length) {
-	      key = keys[index];
-	
-	      if ((0, _utils.isUndefined)(currentObject[key]) || index === lastIndex) {
-	        return currentObject[key];
-	      }
-	
-	      currentObject = currentObject[key];
-	    }
-	  };
-	
-	  /**
-	   * does the key passed exist in this
-	   *
-	   * @param {number} key
-	   * @return {boolean}
-	   */
-	
-	  CrioArray.prototype.has = function has(key) {
-	    return OBJECT_PROTOTYPE.hasOwnProperty.call(this, key);
-	  };
-	
-	  /**
-	   * does this have a value of item contained in it
-	   *
-	   * @param {any} item
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioArray.prototype.includes = function includes(item) {
-	    return !!~this.indexOf(item);
-	  };
-	
-	  /**
-	   * what is the index of item in this (if not found, defaults to -1)
-	   *
-	   * @param {any} item
-	   * @returns {number}
-	   */
-	
-	
-	  CrioArray.prototype.indexOf = function indexOf(item) {
-	    return ARRAY_PROTOTYPE.indexOf.call(this, item);
-	  };
-	
-	  /**
-	   * joins this into string based on separator delimiting between values
-	   *
-	   * @param {string} separator
-	   * @returns {string}
-	   */
-	
-	
-	  CrioArray.prototype.join = function join() {
-	    var separator = arguments.length <= 0 || arguments[0] === undefined ? ',' : arguments[0];
-	
-	    return ARRAY_PROTOTYPE.join.call(this, separator);
-	  };
-	
-	  /**
-	   * returns keys of array (list of indices)
-	   *
-	   * @returns {array<string>}
-	   */
-	
-	
-	  CrioArray.prototype.keys = function keys() {
-	    return objectKeys(this);
-	  };
-	
-	  /**
-	   * returns the last n number of items in the array
-	   *
-	   * @param {number} num=1
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.last = function last() {
-	    var num = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
-	
-	    if (num === this.length) {
-	      return this;
-	    }
-	
-	    return this.slice(this.length - num, this.length);
-	  };
-	
-	  /**
-	   * last index of item in this
-	   *
-	   * @param {any} item
-	   * @returns {number}
-	   */
-	
-	
-	  CrioArray.prototype.lastIndexOf = function lastIndexOf(item) {
-	    return ARRAY_PROTOTYPE.lastIndexOf.call(this, item);
-	  };
-	
-	  /**
-	   * iterate over this and assign values returned from calling
-	   * fn to a new CrioArray
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.map = function map(fn) {
-	    var _this3 = this;
-	
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    var mappedArray = new Array(this.length);
-	
-	    (0, _utils.forEach)(this, function (item, index) {
-	      mappedArray[index] = fn.call(thisArg, _this3[index], index, _this3);
-	    });
-	
-	    return returnCorrectObject(this, mappedArray, CrioArray);
-	  };
-	
-	  /**
-	   * shallowly merge each object into this
-	   *
-	   * @param {array<any>} objects
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.merge = function merge() {
-	    var clone = (0, _utils.shallowCloneArray)(this);
-	
-	    for (var _len2 = arguments.length, objects = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	      objects[_key2] = arguments[_key2];
-	    }
-	
-	    (0, _utils.forEach)(objects, function (object) {
-	      clone = clone.map(function (key, keyIndex) {
-	        return object[keyIndex] || clone[keyIndex];
+	  }, {
+	    key: 'compact',
+	    value: function compact() {
+	      return this.filter(function (value) {
+	        return !!value;
 	      });
-	    });
-	
-	    return returnCorrectObject(this, clone, CrioArray);
-	  };
-	
-	  /**
-	   * deeply merge all objects into location specified by keys
-	   *
-	   * @param {array<string|number>} keys
-	   * @param {array<any>} objects
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.mergeIn = function mergeIn(keys) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
 	    }
 	
-	    for (var _len3 = arguments.length, objects = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-	      objects[_key3 - 1] = arguments[_key3];
-	    }
+	    /**
+	     * based on items passed, combine with this to create new CrioArray
+	     *
+	     * @param {array<array>} arrays
+	     * @returns {CrioArray}
+	     */
 	
-	    if (!objects.length) {
-	      return this;
-	    }
-	
-	    return mergeOnDeepMatch(this, keys, objects, CrioArray);
-	  };
-	
-	  /**
-	   * convenience function to work with mutable version of this,
-	   * in case many modifications need to be made and performance
-	   * is paramount
-	   *
-	   * @param {function} fn
-	   * @returns {any}
-	   */
-	
-	
-	  CrioArray.prototype.mutate = function mutate(fn) {
-	    var result = fn.call(this, this.thaw(), this);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, result);
-	
-	    if (hashValue !== false) {
-	      return getRealValue(result, hashValue);
-	    }
-	
-	    return this;
-	  };
-	
-	  /**
-	   * return new CrioArray of values in collection for the property specified
-	   * 
-	   * @param {string} property
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.pluck = function pluck(property) {
-	    return this.map(function (item) {
-	      if (!item) {
-	        return undefined;
+	  }, {
+	    key: 'concat',
+	    value: function concat() {
+	      for (var _len = arguments.length, arrays = Array(_len), _key = 0; _key < _len; _key++) {
+	        arrays[_key] = arguments[_key];
 	      }
 	
-	      return item[property];
-	    });
-	  };
-	
-	  /**
-	   * return array with last item removed
-	   *
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.pop = function pop() {
-	    return this.slice(0, this.length - 1);
-	  };
-	
-	  /**
-	   * return new CrioArray with items pushed to it
-	   *
-	   * @param {array<any>} items
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.push = function push() {
-	    for (var _len4 = arguments.length, items = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-	      items[_key4] = arguments[_key4];
-	    }
-	
-	    return this.concat(items);
-	  };
-	
-	  /**
-	   * based on fn, reduce the CrioArray and return either the crio of the reduced object
-	   * or the object itself
-	   *
-	   * @param {function} fn
-	   * @param {any} object
-	   * @param {any} thisArg
-	   * @returns {any}
-	   */
-	
-	
-	  CrioArray.prototype.reduce = function reduce(fn, object) {
-	    var thisArg = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
-	
-	    var reduction = ARRAY_PROTOTYPE.reduce.call(this, fn, object, thisArg);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, reduction);
-	
-	    if (hashValue !== false) {
-	      return getRealValue(reduction, hashValue);
-	    }
-	
-	    return this;
-	  };
-	
-	  /**
-	   * based on fn, reduceRight the CrioArray and return either the crio of the reduced object
-	   * or the object itself
-	   *
-	   * @param {function} fn
-	   * @param {any} object
-	   * @param {any} thisArg
-	   * @returns {any}
-	   */
-	
-	
-	  CrioArray.prototype.reduceRight = function reduceRight(fn, object) {
-	    var thisArg = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
-	
-	    var reduction = ARRAY_PROTOTYPE.reduceRight.call(this, fn, object, thisArg);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, reduction);
-	
-	    if (hashValue !== false) {
-	      return getRealValue(reduction, hashValue);
-	    }
-	
-	    return this;
-	  };
-	
-	  /**
-	   * reverse the order of elements in the CrioArray
-	   *
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.reverse = function reverse() {
-	    var clone = [];
-	
-	    (0, _utils.forEachRight)(this, function (value) {
-	      clone.push(value);
-	    });
-	
-	    return returnCorrectObject(this, clone, CrioArray);
-	  };
-	
-	  /**
-	   * set key to value in this and return new CrioArray
-	   *
-	   * @param {number} key
-	   * @param {any} value
-	   *
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.set = function set(key, value) {
-	    var index = +key;
-	
-	    if (index > this.length) {
-	      throw new Error('Cannot set a key for sparsed array on crio objects.');
-	    }
-	
-	    var clone = [];
-	
-	    (0, _utils.forEach)(this, function (item, itemIndex) {
-	      clone.push(index === itemIndex ? value : item);
-	    });
-	
-	    return returnCorrectObject(this, clone, CrioArray);
-	  };
-	
-	  /**
-	   * deeply assign value to key in this and return new CrioArray
-	   *
-	   * @param {array<string|number>} keys
-	   * @param {any} value
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.setIn = function setIn(keys, value) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
-	    }
-	
-	    var lastIndex = keys.length - 1;
-	
-	    var currentObject = (0, _utils.shallowCloneArray)(this),
-	        referenceToCurrentObject = currentObject,
-	        currentValue = void 0;
-	
-	    (0, _utils.forEach)(keys, function (key, keyIndex) {
-	      if (keyIndex === lastIndex) {
-	        currentObject[key] = value;
-	      } else {
-	        currentValue = currentObject[key];
-	        currentObject[key] = (0, _utils.isCrio)(currentValue) ? getShallowClone(currentValue) : {};
-	        currentObject = currentObject[key];
-	      }
-	    });
-	
-	    return returnCorrectObject(this, referenceToCurrentObject, CrioArray);
-	  };
-	
-	  /**
-	   * return this with first item removed as new CrioArray
-	   *
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.shift = function shift() {
-	    return this.slice(1, this.length);
-	  };
-	
-	  /**
-	   * return a section of this as a new CrioArray
-	   *
-	   * @param {array<number>} args
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.slice = function slice() {
-	    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-	      args[_key5] = arguments[_key5];
-	    }
-	
-	    if (!args.length) {
-	      return this;
-	    }
-	
-	    return new CrioArray(ARRAY_PROTOTYPE.slice.apply(this, args));
-	  };
-	
-	  /**
-	   * does some of the returns from fn return truthy
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {boolean}
-	   */
-	
-	  CrioArray.prototype.some = function some(fn) {
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    return ARRAY_PROTOTYPE.some.call(this, fn, thisArg);
-	  };
-	
-	  /**
-	   * sort this and return it as a new CrioArray
-	   *
-	   * @param {function} fn
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.sort = function sort(fn) {
-	    var clone = (0, _utils.shallowCloneArray)(this);
-	    var sortedArray = ARRAY_PROTOTYPE.sort.call(clone, fn);
-	
-	    return returnCorrectObject(this, sortedArray, CrioArray);
-	  };
-	
-	  /**
-	   * based on args passed, splice this and return it as a new CrioArray
-	   *
-	   * @param {any} args
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.splice = function splice() {
-	    var clone = (0, _utils.shallowCloneArray)(this);
-	
-	    clone.splice.apply(clone, arguments);
-	
-	    return returnCorrectObject(this, clone, CrioArray);
-	  };
-	
-	  /**
-	   * convert this back to a vanilla array
-	   *
-	   * @returns {array<any>}
-	   */
-	
-	
-	  CrioArray.prototype.thaw = function thaw() {
-	    var array = [];
-	
-	    (0, _utils.forEach)(this, function (item, index) {
-	      array[index] = (0, _utils.isCrio)(item) ? item.thaw() : item;
-	    });
-	
-	    return array;
-	  };
-	
-	  /**
-	   * convert this to a locale-specific string
-	   *
-	   * @returns {string}
-	   */
-	
-	
-	  CrioArray.prototype.toLocaleString = function toLocaleString() {
-	    return (0, _utils.stringify)(this);
-	  };
-	
-	  /**
-	   * convert this to an object of index: value pairs
-	   *
-	   * @return {CrioObject}
-	   */
-	
-	
-	  CrioArray.prototype.toObject = function toObject() {
-	    return new CrioObject((0, _utils.shallowCloneObject)(this));
-	  };
-	
-	  /**
-	   * convert this to a string showing key: value pair combos
-	   *
-	   * @returns {string}
-	   */
-	
-	
-	  CrioArray.prototype.toString = function toString() {
-	    return (0, _utils.stringify)(this);
-	  };
-	
-	  /**
-	   * get the unique values in the array and return new CrioArray of them
-	   *
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.unique = function unique() {
-	    var valuesArray = [],
-	        exists = false;
-	
-	    return this.filter(function (item) {
-	      exists = !!~valuesArray.indexOf(item);
-	
-	      if (!exists) {
-	        valuesArray.push(item);
+	      if (!arrays.length) {
+	        return this;
 	      }
 	
-	      return !exists;
-	    });
-	  };
+	      var clone = (0, _utils.shallowCloneArray)(this);
+	      var concattedArray = ARRAY_PROTOTYPE.concat.apply(clone, arrays);
 	
-	  /**
-	   * add items to the beginning of this and return it as a new CrioArray
-	   *
-	   * @param {array<any>} items
-	   * @returns {CrioArray}
-	   */
-	
-	
-	  CrioArray.prototype.unshift = function unshift() {
-	    for (var _len6 = arguments.length, items = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-	      items[_key6] = arguments[_key6];
+	      return new CrioArray(concattedArray);
 	    }
 	
-	    if (!items.length) {
-	      return this;
+	    /**
+	     * based on arguments passed, return new CrioArray with copyWithin applied
+	     *
+	     * @param {number} target
+	     * @param {number} start=0
+	     * @param {number} end=this.length
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'copyWithin',
+	    value: function copyWithin(target) {
+	      var start = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+	      var end = arguments.length <= 2 || arguments[2] === undefined ? this.length : arguments[2];
+	
+	      if ((0, _utils.isUndefined)(target)) {
+	        return this;
+	      }
+	
+	      var replacements = ARRAY_PROTOTYPE.slice.call(this, start, end).filter(function () {
+	        return true;
+	      });
+	
+	      return this.splice.apply(this, [target, replacements.length].concat(_toConsumableArray(replacements)));
 	    }
 	
-	    (0, _utils.forEach)(this, function (item) {
-	      items.push(item);
-	    });
+	    /**
+	     * remove item from the array
+	     *
+	     * @param {number} key
+	     * @return {CrioArray}
+	     */
 	
-	    return new CrioArray(items);
-	  };
+	  }, {
+	    key: 'delete',
+	    value: function _delete(key) {
+	      if (!this.has(key)) {
+	        return this;
+	      }
 	
-	  /**
-	   * get the iterable array of values for this
-	   *
-	   * @returns {array<any>}
-	   */
+	      var index = +key;
 	
+	      var clone = [];
 	
-	  CrioArray.prototype.values = function values() {
-	    return objectValues(this);
-	  };
+	      (0, _utils.forEach)(this, function (item, itemIndex) {
+	        if (itemIndex !== index) {
+	          clone.push(item);
+	        }
+	      });
 	
-	  /**
-	   * make CrioArray into an iterable
-	   *
-	   * @returns {{next: (function(): {value: any, done: boolean})}}
-	   */
+	      return new CrioArray(clone);
+	    }
 	
+	    /**
+	     * delete deeply-nested key in this based on keys passed
+	     *
+	     * @param {array<string|number>} keys
+	     * @return {CrioObject}
+	     */
 	
-	  CrioArray.prototype[Symbol.iterator] = function () {
-	    var _this4 = this;
+	  }, {
+	    key: 'deleteIn',
+	    value: function deleteIn(keys) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
 	
-	    var index = 0;
+	      if (!keys.length) {
+	        return this;
+	      }
 	
-	    return {
-	      next: function next() {
-	        var key = index;
-	        var value = _this4[index];
+	      return deleteOnDeepMatch(this, keys, CrioArray);
+	    }
 	
-	        if (index < _this4.length) {
+	    /**
+	     * returns an oterable array of [index, value] pairs
+	     *
+	     * @returns {array<array>}
+	     */
+	
+	  }, {
+	    key: 'entries',
+	    value: function entries() {
+	      var _this2 = this;
+	
+	      var entries = objectEntries(this);
+	
+	      var index = 0,
+	          key = void 0,
+	          value = void 0;
+	
+	      entries.next = function () {
+	        key = index;
+	        value = _this2[index];
+	
+	        if (index < _this2.length) {
 	          index++;
 	
 	          return {
@@ -1191,11 +435,823 @@ var crio =
 	            done: true
 	          };
 	        }
-	      }
-	    };
-	  };
+	      };
 	
-	  _createClass(CrioArray, [{
+	      return entries;
+	    }
+	
+	    /**
+	     * is the object passed equal in value to this
+	     *
+	     * @param {any} object
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'equals',
+	    value: function equals(object) {
+	      if (!(0, _utils.isCrio)(object)) {
+	        return false;
+	      }
+	
+	      return this[_utils.HASH_CODE_SYMBOL] === object[_utils.HASH_CODE_SYMBOL];
+	    }
+	
+	    /**
+	     * does the function applied to every value in this return truthy
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'every',
+	    value: function every(fn) {
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      return ARRAY_PROTOTYPE.every.call(this, fn, thisArg);
+	    }
+	
+	    /**
+	     * fill this based on arguments and return new CrioArray
+	     *
+	     * @param {any} value
+	     * @param {number} start=0
+	     * @param {number} end=this.length
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'fill',
+	    value: function fill(value) {
+	      var start = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+	      var end = arguments.length <= 2 || arguments[2] === undefined ? this.length : arguments[2];
+	
+	      var filledArray = ARRAY_PROTOTYPE.map.call(this, function (currentValue, index) {
+	        if (index >= start && index < end) {
+	          return value;
+	        }
+	
+	        return currentValue;
+	      });
+	
+	      return returnCorrectObject(this, filledArray, CrioArray);
+	    }
+	
+	    /**
+	     * based on return values of fn being truthy, return a new reduced CrioArray
+	     * from this
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'filter',
+	    value: function filter(fn) {
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      var filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
+	
+	      return returnCorrectObject(this, filteredArray, CrioArray);
+	    }
+	
+	    /**
+	     * find a specific value in the CrioArray and return it, else return undefined
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'find',
+	    value: function find(fn) {
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      var index = -1,
+	          value = void 0;
+	
+	      while (++index < this.length) {
+	        value = this[index];
+	
+	        if (fn.call(this, value, index, thisArg)) {
+	          return value;
+	        }
+	      }
+	
+	      return undefined;
+	    }
+	
+	    /**
+	     * find a specific value in the CrioArray and return its index, else return -1
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {number}
+	     */
+	
+	  }, {
+	    key: 'findIndex',
+	    value: function findIndex(fn) {
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      var index = -1;
+	
+	      while (++index < this.length) {
+	        if (fn.call(this, this[index], index, thisArg)) {
+	          return index;
+	        }
+	      }
+	
+	      return -1;
+	    }
+	
+	    /**
+	     * get the first n number of values from the array
+	     *
+	     * @param {number} num=1
+	     * @return {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'first',
+	    value: function first() {
+	      var num = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+	
+	      if (num === this.length) {
+	        return this;
+	      }
+	
+	      return this.slice(0, num);
+	    }
+	
+	    /**
+	     * iterate over this and execute fn for each value
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     */
+	
+	  }, {
+	    key: 'forEach',
+	    value: function forEach(fn) {
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      ARRAY_PROTOTYPE.forEach.call(this, fn, thisArg);
+	    }
+	
+	    /**
+	     * retrieve the value at index from this
+	     *
+	     * @param {number} index
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'get',
+	    value: function get(index) {
+	      return this[index];
+	    }
+	
+	    /**
+	     * return value at nested point based on keys in this
+	     *
+	     * @param {array<string|number>} keys
+	     * @return {any}
+	     */
+	
+	  }, {
+	    key: 'getIn',
+	    value: function getIn(keys) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
+	
+	      var length = keys.length;
+	      var lastIndex = length - 1;
+	
+	      var currentObject = this,
+	          index = -1,
+	          key = void 0;
+	
+	      while (++index < length) {
+	        key = keys[index];
+	
+	        if ((0, _utils.isUndefined)(currentObject[key]) || index === lastIndex) {
+	          return currentObject[key];
+	        }
+	
+	        currentObject = currentObject[key];
+	      }
+	    }
+	  }, {
+	    key: 'has',
+	
+	
+	    /**
+	     * does the key passed exist in this
+	     *
+	     * @param {number} key
+	     * @return {boolean}
+	     */
+	    value: function has(key) {
+	      return OBJECT_PROTOTYPE.hasOwnProperty.call(this, key);
+	    }
+	
+	    /**
+	     * does this have a value of item contained in it
+	     *
+	     * @param {any} item
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'includes',
+	    value: function includes(item) {
+	      return !!~this.indexOf(item);
+	    }
+	
+	    /**
+	     * what is the index of item in this (if not found, defaults to -1)
+	     *
+	     * @param {any} item
+	     * @returns {number}
+	     */
+	
+	  }, {
+	    key: 'indexOf',
+	    value: function indexOf(item) {
+	      return ARRAY_PROTOTYPE.indexOf.call(this, item);
+	    }
+	
+	    /**
+	     * joins this into string based on separator delimiting between values
+	     *
+	     * @param {string} separator
+	     * @returns {string}
+	     */
+	
+	  }, {
+	    key: 'join',
+	    value: function join() {
+	      var separator = arguments.length <= 0 || arguments[0] === undefined ? ',' : arguments[0];
+	
+	      return ARRAY_PROTOTYPE.join.call(this, separator);
+	    }
+	
+	    /**
+	     * returns keys of array (list of indices)
+	     *
+	     * @returns {array<string>}
+	     */
+	
+	  }, {
+	    key: 'keys',
+	    value: function keys() {
+	      return objectKeys(this);
+	    }
+	
+	    /**
+	     * returns the last n number of items in the array
+	     *
+	     * @param {number} num=1
+	     * @return {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'last',
+	    value: function last() {
+	      var num = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+	
+	      if (num === this.length) {
+	        return this;
+	      }
+	
+	      return this.slice(this.length - num, this.length);
+	    }
+	
+	    /**
+	     * last index of item in this
+	     *
+	     * @param {any} item
+	     * @returns {number}
+	     */
+	
+	  }, {
+	    key: 'lastIndexOf',
+	    value: function lastIndexOf(item) {
+	      return ARRAY_PROTOTYPE.lastIndexOf.call(this, item);
+	    }
+	
+	    /**
+	     * iterate over this and assign values returned from calling
+	     * fn to a new CrioArray
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'map',
+	    value: function map(fn) {
+	      var _this3 = this;
+	
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      var mappedArray = new Array(this.length);
+	
+	      (0, _utils.forEach)(this, function (item, index) {
+	        mappedArray[index] = fn.call(thisArg, _this3[index], index, _this3);
+	      });
+	
+	      return returnCorrectObject(this, mappedArray, CrioArray);
+	    }
+	
+	    /**
+	     * shallowly merge each object into this
+	     *
+	     * @param {array<any>} objects
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'merge',
+	    value: function merge() {
+	      var clone = (0, _utils.shallowCloneArray)(this);
+	
+	      for (var _len2 = arguments.length, objects = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	        objects[_key2] = arguments[_key2];
+	      }
+	
+	      (0, _utils.forEach)(objects, function (object) {
+	        clone = clone.map(function (key, keyIndex) {
+	          return object[keyIndex] || clone[keyIndex];
+	        });
+	      });
+	
+	      return returnCorrectObject(this, clone, CrioArray);
+	    }
+	
+	    /**
+	     * deeply merge all objects into location specified by keys
+	     *
+	     * @param {array<string|number>} keys
+	     * @param {array<any>} objects
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'mergeIn',
+	    value: function mergeIn(keys) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
+	
+	      for (var _len3 = arguments.length, objects = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+	        objects[_key3 - 1] = arguments[_key3];
+	      }
+	
+	      if (!objects.length) {
+	        return this;
+	      }
+	
+	      return mergeOnDeepMatch(this, keys, objects, CrioArray);
+	    }
+	
+	    /**
+	     * convenience function to work with mutable version of this,
+	     * in case many modifications need to be made and performance
+	     * is paramount
+	     *
+	     * @param {function} fn
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'mutate',
+	    value: function mutate(fn) {
+	      var result = fn.call(this, this.thaw(), this);
+	      var hashValue = (0, _utils.getHashIfChanged)(this, result);
+	
+	      if (hashValue !== false) {
+	        return getRealValue(result, hashValue);
+	      }
+	
+	      return this;
+	    }
+	
+	    /**
+	     * return new CrioArray of values in collection for the property specified
+	     * 
+	     * @param {string} property
+	     * @return {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'pluck',
+	    value: function pluck(property) {
+	      return this.map(function (item) {
+	        if (!item) {
+	          return undefined;
+	        }
+	
+	        return item[property];
+	      });
+	    }
+	
+	    /**
+	     * return array with last item removed
+	     *
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'pop',
+	    value: function pop() {
+	      return this.slice(0, this.length - 1);
+	    }
+	
+	    /**
+	     * return new CrioArray with items pushed to it
+	     *
+	     * @param {array<any>} items
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'push',
+	    value: function push() {
+	      for (var _len4 = arguments.length, items = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	        items[_key4] = arguments[_key4];
+	      }
+	
+	      return this.concat(items);
+	    }
+	
+	    /**
+	     * based on fn, reduce the CrioArray and return either the crio of the reduced object
+	     * or the object itself
+	     *
+	     * @param {function} fn
+	     * @param {any} object
+	     * @param {any} thisArg
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'reduce',
+	    value: function reduce(fn, object) {
+	      var thisArg = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
+	
+	      var reduction = ARRAY_PROTOTYPE.reduce.call(this, fn, object, thisArg);
+	      var hashValue = (0, _utils.getHashIfChanged)(this, reduction);
+	
+	      if (hashValue !== false) {
+	        return getRealValue(reduction, hashValue);
+	      }
+	
+	      return this;
+	    }
+	
+	    /**
+	     * based on fn, reduceRight the CrioArray and return either the crio of the reduced object
+	     * or the object itself
+	     *
+	     * @param {function} fn
+	     * @param {any} object
+	     * @param {any} thisArg
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'reduceRight',
+	    value: function reduceRight(fn, object) {
+	      var thisArg = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
+	
+	      var reduction = ARRAY_PROTOTYPE.reduceRight.call(this, fn, object, thisArg);
+	      var hashValue = (0, _utils.getHashIfChanged)(this, reduction);
+	
+	      if (hashValue !== false) {
+	        return getRealValue(reduction, hashValue);
+	      }
+	
+	      return this;
+	    }
+	
+	    /**
+	     * reverse the order of elements in the CrioArray
+	     *
+	     * @return {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'reverse',
+	    value: function reverse() {
+	      var clone = [];
+	
+	      (0, _utils.forEachRight)(this, function (value) {
+	        clone.push(value);
+	      });
+	
+	      return returnCorrectObject(this, clone, CrioArray);
+	    }
+	
+	    /**
+	     * set key to value in this and return new CrioArray
+	     *
+	     * @param {number} key
+	     * @param {any} value
+	     *
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'set',
+	    value: function set(key, value) {
+	      var index = +key;
+	
+	      if (index > this.length) {
+	        throw new Error('Cannot set a key for sparsed array on crio objects.');
+	      }
+	
+	      var clone = [];
+	
+	      (0, _utils.forEach)(this, function (item, itemIndex) {
+	        clone.push(index === itemIndex ? value : item);
+	      });
+	
+	      return returnCorrectObject(this, clone, CrioArray);
+	    }
+	
+	    /**
+	     * deeply assign value to key in this and return new CrioArray
+	     *
+	     * @param {array<string|number>} keys
+	     * @param {any} value
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'setIn',
+	    value: function setIn(keys, value) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
+	
+	      var lastIndex = keys.length - 1;
+	
+	      var currentObject = (0, _utils.shallowCloneArray)(this),
+	          referenceToCurrentObject = currentObject,
+	          currentValue = void 0;
+	
+	      (0, _utils.forEach)(keys, function (key, keyIndex) {
+	        if (keyIndex === lastIndex) {
+	          currentObject[key] = value;
+	        } else {
+	          currentValue = currentObject[key];
+	          currentObject[key] = (0, _utils.isCrio)(currentValue) ? getShallowClone(currentValue) : {};
+	          currentObject = currentObject[key];
+	        }
+	      });
+	
+	      return returnCorrectObject(this, referenceToCurrentObject, CrioArray);
+	    }
+	
+	    /**
+	     * return this with first item removed as new CrioArray
+	     *
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'shift',
+	    value: function shift() {
+	      return this.slice(1, this.length);
+	    }
+	
+	    /**
+	     * return a section of this as a new CrioArray
+	     *
+	     * @param {array<number>} args
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'slice',
+	    value: function slice() {
+	      for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+	        args[_key5] = arguments[_key5];
+	      }
+	
+	      if (!args.length) {
+	        return this;
+	      }
+	
+	      return new CrioArray(ARRAY_PROTOTYPE.slice.apply(this, args));
+	    }
+	  }, {
+	    key: 'some',
+	
+	
+	    /**
+	     * does some of the returns from fn return truthy
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {boolean}
+	     */
+	    value: function some(fn) {
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      return ARRAY_PROTOTYPE.some.call(this, fn, thisArg);
+	    }
+	
+	    /**
+	     * sort this and return it as a new CrioArray
+	     *
+	     * @param {function} fn
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'sort',
+	    value: function sort(fn) {
+	      var clone = (0, _utils.shallowCloneArray)(this);
+	      var sortedArray = ARRAY_PROTOTYPE.sort.call(clone, fn);
+	
+	      return returnCorrectObject(this, sortedArray, CrioArray);
+	    }
+	
+	    /**
+	     * based on args passed, splice this and return it as a new CrioArray
+	     *
+	     * @param {any} args
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'splice',
+	    value: function splice() {
+	      var clone = (0, _utils.shallowCloneArray)(this);
+	
+	      clone.splice.apply(clone, arguments);
+	
+	      return returnCorrectObject(this, clone, CrioArray);
+	    }
+	
+	    /**
+	     * convert this back to a vanilla array
+	     *
+	     * @returns {array<any>}
+	     */
+	
+	  }, {
+	    key: 'thaw',
+	    value: function thaw() {
+	      var array = [];
+	
+	      (0, _utils.forEach)(this, function (item, index) {
+	        array[index] = (0, _utils.isCrio)(item) ? item.thaw() : item;
+	      });
+	
+	      return array;
+	    }
+	
+	    /**
+	     * convert this to a locale-specific string
+	     *
+	     * @returns {string}
+	     */
+	
+	  }, {
+	    key: 'toLocaleString',
+	    value: function toLocaleString() {
+	      return (0, _utils.stringify)(this);
+	    }
+	
+	    /**
+	     * convert this to an object of index: value pairs
+	     *
+	     * @return {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'toObject',
+	    value: function toObject() {
+	      return new CrioObject((0, _utils.shallowCloneObject)(this));
+	    }
+	
+	    /**
+	     * convert this to a string showing key: value pair combos
+	     *
+	     * @returns {string}
+	     */
+	
+	  }, {
+	    key: 'toString',
+	    value: function toString() {
+	      return (0, _utils.stringify)(this);
+	    }
+	
+	    /**
+	     * get the unique values in the array and return new CrioArray of them
+	     *
+	     * @return {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'unique',
+	    value: function unique() {
+	      var valuesArray = [],
+	          exists = false;
+	
+	      return this.filter(function (item) {
+	        exists = !!~valuesArray.indexOf(item);
+	
+	        if (!exists) {
+	          valuesArray.push(item);
+	        }
+	
+	        return !exists;
+	      });
+	    }
+	
+	    /**
+	     * add items to the beginning of this and return it as a new CrioArray
+	     *
+	     * @param {array<any>} items
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'unshift',
+	    value: function unshift() {
+	      for (var _len6 = arguments.length, items = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+	        items[_key6] = arguments[_key6];
+	      }
+	
+	      if (!items.length) {
+	        return this;
+	      }
+	
+	      (0, _utils.forEach)(this, function (item) {
+	        items.push(item);
+	      });
+	
+	      return new CrioArray(items);
+	    }
+	
+	    /**
+	     * get the iterable array of values for this
+	     *
+	     * @returns {array<any>}
+	     */
+	
+	  }, {
+	    key: 'values',
+	    value: function values() {
+	      return objectValues(this);
+	    }
+	
+	    /**
+	     * make CrioArray into an iterable
+	     *
+	     * @returns {{next: (function(): {value: any, done: boolean})}}
+	     */
+	
+	  }, {
+	    key: Symbol.iterator,
+	    value: function value() {
+	      var _this4 = this;
+	
+	      var index = 0;
+	
+	      return {
+	        next: function next() {
+	          var key = index;
+	          var value = _this4[index];
+	
+	          if (index < _this4.length) {
+	            index++;
+	
+	            return {
+	              done: false,
+	              key: key,
+	              value: value
+	            };
+	          } else {
+	            return {
+	              done: true
+	            };
+	          }
+	        }
+	      };
+	    }
+	  }, {
 	    key: _utils.TYPE_SYMBOL,
 	    get: function get() {
 	      return _utils.CRIO_ARRAY_TYPE;
@@ -1240,523 +1296,94 @@ var crio =
 	   */
 	
 	
-	  /**
-	   * return empty CrioObject
-	   * 
-	   * @return {CrioObject}
-	   */
-	
-	  CrioObject.prototype.clear = function clear() {
-	    if (!this.length) {
-	      return this;
-	    }
-	
-	    return new CrioObject({});
-	  };
-	
-	  /**
-	   * remove key from this
-	   *
-	   * @param {string} key
-	   * @return {CrioObject}
-	   */
+	  _createClass(CrioObject, [{
+	    key: 'clear',
 	
 	
-	  CrioObject.prototype.delete = function _delete(key) {
-	    var _this6 = this;
-	
-	    if (!this.hasOwnProperty(key)) {
-	      return this;
-	    }
-	
-	    var clone = {};
-	
-	    (0, _utils.forEachRight)(this.keys(), function (itemKey) {
-	      if (itemKey !== key) {
-	        clone[itemKey] = _this6[itemKey];
-	      }
-	    });
-	
-	    return new CrioObject(clone);
-	  };
-	
-	  /**
-	   * delete deeply-nested key in this based on keys passed
-	   *
-	   * @param {array<string>} keys
-	   * @return {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.deleteIn = function deleteIn(keys) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
-	    }
-	
-	    if (!keys.length) {
-	      return this;
-	    }
-	
-	    return deleteOnDeepMatch(this, keys, CrioObject);
-	  };
-	
-	  /**
-	   * return iterable array of keys in this
-	   *
-	   * @returns {array<string>}
-	   */
-	
-	
-	  CrioObject.prototype.entries = function entries() {
-	    var _this7 = this;
-	
-	    var keys = objectKeys(this);
-	    var entries = objectEntries(this);
-	
-	    var index = 0,
-	        key = void 0,
-	        value = void 0;
-	
-	    entries.next = function () {
-	      key = keys[index];
-	      value = _this7[key];
-	
-	      if (index < _this7.length) {
-	        index++;
-	
-	        return {
-	          done: false,
-	          key: key,
-	          value: value
-	        };
-	      } else {
-	        return {
-	          done: true
-	        };
-	      }
-	    };
-	
-	    return entries;
-	  };
-	
-	  /**
-	   * is the object passed equal in value to this
-	   *
-	   * @param {any} object
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioObject.prototype.equals = function equals(object) {
-	    if (!(0, _utils.isCrio)(object)) {
-	      return false;
-	    }
-	
-	    return this[_utils.HASH_CODE_SYMBOL] === object[_utils.HASH_CODE_SYMBOL];
-	  };
-	
-	  /**
-	   * return value at key in this
-	   *
-	   * @param {string} key
-	   * @returns {any}
-	   */
-	
-	
-	  CrioObject.prototype.get = function get(key) {
-	    return this[key];
-	  };
-	
-	  /**
-	   * return value at nested point based on keys in this
-	   *
-	   * @param {array<string|number>} keys
-	   * @return {any}
-	   */
-	
-	
-	  CrioObject.prototype.getIn = function getIn(keys) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
-	    }
-	
-	    var length = keys.length;
-	    var lastIndex = length - 1;
-	
-	    var currentObject = this,
-	        index = -1,
-	        key = void 0;
-	
-	    while (++index < length) {
-	      key = keys[index];
-	
-	      if ((0, _utils.isUndefined)(currentObject[key]) || index === lastIndex) {
-	        return currentObject[key];
+	    /**
+	     * return empty CrioObject
+	     * 
+	     * @return {CrioObject}
+	     */
+	    value: function clear() {
+	      if (!this.length) {
+	        return this;
 	      }
 	
-	      currentObject = currentObject[key];
+	      return new CrioObject({});
 	    }
-	  };
 	
-	  /**
-	   * does the key passed exist in this
-	   *
-	   * @param {number} key
-	   * @return {boolean}
-	   */
+	    /**
+	     * remove key from this
+	     *
+	     * @param {string} key
+	     * @return {CrioObject}
+	     */
 	
-	  CrioObject.prototype.has = function has(key) {
-	    return this.hasOwnProperty(key);
-	  };
+	  }, {
+	    key: 'delete',
+	    value: function _delete(key) {
+	      var _this6 = this;
 	
-	  /**
-	   * return if this has the property passed
-	   *
-	   * @param {string} property
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioObject.prototype.hasOwnProperty = function hasOwnProperty(property) {
-	    return OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
-	  };
-	
-	  /**
-	   * return if this has the prototype of object passed
-	   *
-	   * @param {any} object
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioObject.prototype.isPrototypeOf = function isPrototypeOf(object) {
-	    return OBJECT_PROTOTYPE.isPrototypeOf.call(this, object);
-	  };
-	
-	  /**
-	   * iterate over object and filter any returns from functions
-	   * that are falsy
-	   * 
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @return {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.filter = function filter(fn) {
-	    var _this8 = this;
-	
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    var newObject = {},
-	        result = void 0;
-	
-	    (0, _utils.forEach)(this.keys(), function (key) {
-	      result = fn.call(thisArg, _this8[key], key, _this8);
-	
-	      if (!!result) {
-	        newObject[key] = _this8[key];
+	      if (!this.hasOwnProperty(key)) {
+	        return this;
 	      }
-	    });
 	
-	    return returnCorrectObject(this, newObject, CrioObject);
-	  };
+	      var clone = {};
 	
-	  /**
-	   * iterate over object executing fn
-	   *
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @returns {CrioObject}
-	   */
+	      (0, _utils.forEachRight)(this.keys(), function (itemKey) {
+	        if (itemKey !== key) {
+	          clone[itemKey] = _this6[itemKey];
+	        }
+	      });
 	
-	
-	  CrioObject.prototype.forEach = function forEach(fn) {
-	    var _this9 = this;
-	
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    (0, _utils.forEach)(this.keys(), function (key) {
-	      fn.call(thisArg, _this9[key], key, _this9);
-	    });
-	
-	    return this;
-	  };
-	
-	  /**
-	   * return iterable of keys in this
-	   *
-	   * @returns {array<string>}
-	   */
-	
-	
-	  CrioObject.prototype.keys = function keys() {
-	    return objectKeys(this);
-	  };
-	
-	  /**
-	   * map results of function to new object and return it
-	   * 
-	   * @param {function} fn
-	   * @param {any} thisArg
-	   * @return {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.map = function map(fn) {
-	    var _this10 = this;
-	
-	    var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
-	
-	    var newObject = {};
-	
-	    (0, _utils.forEach)(this.keys(), function (key) {
-	      newObject[key] = fn.call(thisArg, _this10[key], key, _this10);
-	    });
-	
-	    return returnCorrectObject(this, newObject, CrioObject);
-	  };
-	
-	  /**
-	   * shallowly merge all objects into this and return as new CrioObject
-	   *
-	   * @param {array<any>} objects
-	   * @returns {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.merge = function merge() {
-	    var clone = (0, _utils.shallowCloneObject)(this);
-	
-	    for (var _len7 = arguments.length, objects = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-	      objects[_key7] = arguments[_key7];
+	      return new CrioObject(clone);
 	    }
 	
-	    (0, _utils.forEach)(objects, function (object) {
-	      objectAssign(clone, object);
-	    });
+	    /**
+	     * delete deeply-nested key in this based on keys passed
+	     *
+	     * @param {array<string>} keys
+	     * @return {CrioObject}
+	     */
 	
-	    return returnCorrectObject(this, clone, CrioObject);
-	  };
-	
-	  /**
-	   * deeply merge all objects into this at key value determined by keys,
-	   * and return as a new CrioObject
-	   *
-	   * @param {array<string|number>} keys
-	   * @param {array<any>} objects
-	   * @returns {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.mergeIn = function mergeIn(keys) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
-	    }
-	
-	    for (var _len8 = arguments.length, objects = Array(_len8 > 1 ? _len8 - 1 : 0), _key8 = 1; _key8 < _len8; _key8++) {
-	      objects[_key8 - 1] = arguments[_key8];
-	    }
-	
-	    if (!objects.length) {
-	      return this;
-	    }
-	
-	    return mergeOnDeepMatch(this, keys, objects, CrioObject);
-	  };
-	
-	  /**
-	   * convenience function to work with mutable version of this,
-	   * in case many modifications need to be made and performance
-	   * is paramount
-	   *
-	   * @param {function} fn
-	   * @returns {any}
-	   */
-	
-	
-	  CrioObject.prototype.mutate = function mutate(fn) {
-	    var result = fn.call(this, this.thaw(), this);
-	    var hashValue = (0, _utils.getHashIfChanged)(this, result);
-	
-	    if (hashValue !== false) {
-	      return getRealValue(result, hashValue);
-	    }
-	
-	    return this;
-	  };
-	
-	  /**
-	   * determine if property passed is enumerable in this
-	   *
-	   * @param {string} property
-	   * @returns {boolean}
-	   */
-	
-	
-	  CrioObject.prototype.propertyIsEnumerable = function propertyIsEnumerable(property) {
-	    return OBJECT_PROTOTYPE.propertyIsEnumerable.call(this, property);
-	  };
-	
-	  /**
-	   * set value at key in this
-	   *
-	   * @param {string} key
-	   * @param {any} value
-	   * @returns {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.set = function set(key, value) {
-	    var _this11 = this;
-	
-	    var clone = {};
-	
-	    (0, _utils.forEachRight)(this.keys(), function (currentKey) {
-	      if (currentKey !== key) {
-	        clone[currentKey] = _this11[currentKey];
+	  }, {
+	    key: 'deleteIn',
+	    value: function deleteIn(keys) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
 	      }
-	    });
 	
-	    clone[key] = value;
+	      if (!keys.length) {
+	        return this;
+	      }
 	
-	    return returnCorrectObject(this, clone, CrioObject);
-	  };
-	
-	  /**
-	   * deeply set value at location determined by keys in this
-	   *
-	   * @param {array<string|number>} keys
-	   * @param {any} value
-	   * @returns {CrioObject}
-	   */
-	
-	
-	  CrioObject.prototype.setIn = function setIn(keys, value) {
-	    if (!(0, _utils.isArray)(keys)) {
-	      throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      return deleteOnDeepMatch(this, keys, CrioObject);
 	    }
 	
-	    var lastIndex = keys.length - 1;
+	    /**
+	     * return iterable array of keys in this
+	     *
+	     * @returns {array<string>}
+	     */
 	
-	    var currentObject = (0, _utils.shallowCloneObject)(this),
-	        referenceToCurrentObject = currentObject,
-	        currentValue = void 0;
+	  }, {
+	    key: 'entries',
+	    value: function entries() {
+	      var _this7 = this;
 	
-	    (0, _utils.forEach)(keys, function (key, keyIndex) {
-	      if (keyIndex === lastIndex) {
-	        currentObject[key] = value;
-	      } else {
-	        currentValue = currentObject[key];
-	        currentObject[key] = (0, _utils.isCrio)(currentValue) ? getShallowClone(currentValue) : {};
-	        currentObject = currentObject[key];
-	      }
-	    });
+	      var keys = objectKeys(this);
+	      var entries = objectEntries(this);
 	
-	    return returnCorrectObject(this, referenceToCurrentObject, CrioObject);
-	  };
+	      var index = 0,
+	          key = void 0,
+	          value = void 0;
 	
-	  /**
-	   * convert this back to a vanilla array
-	   *
-	   * @returns {array<any>}
-	   */
-	
-	
-	  CrioObject.prototype.thaw = function thaw() {
-	    var _this12 = this;
-	
-	    var propertyNames = objectKeys(this);
-	
-	    var object = {};
-	
-	    (0, _utils.forEachRight)(propertyNames, function (key) {
-	      var value = _this12[key];
-	      var cleanValue = (0, _utils.isCrio)(value) ? value.thaw() : value;
-	
-	      (0, _utils.setStandard)(object, key, cleanValue, _this12.propertyIsEnumerable(key));
-	    });
-	
-	    return object;
-	  };
-	
-	  /**
-	   * convert the values in the object to an array
-	   *
-	   * @return {CrioArray}
-	   */
-	
-	
-	  CrioObject.prototype.toArray = function toArray() {
-	    return new CrioArray(this.values());
-	  };
-	
-	  /**
-	   * convert this to a locale-specific string
-	   *
-	   * @returns {string}
-	   */
-	
-	
-	  CrioObject.prototype.toLocaleString = function toLocaleString() {
-	    return (0, _utils.stringify)(this);
-	  };
-	
-	  /**
-	   * convert this to a string showing key: value pair combos
-	   *
-	   * @returns {string}
-	   */
-	
-	
-	  CrioObject.prototype.toString = function toString() {
-	    return (0, _utils.stringify)(this);
-	  };
-	
-	  /**
-	   * get the valueOf for this
-	   *
-	   * @return {any}
-	   */
-	
-	
-	  CrioObject.prototype.valueOf = function valueOf() {
-	    return OBJECT_PROTOTYPE.valueOf.call(this);
-	  };
-	
-	  /**
-	   * get the iterable array of values for this
-	   *
-	   * @returns {array<any>}
-	   */
-	
-	
-	  CrioObject.prototype.values = function values() {
-	    return objectValues(this);
-	  };
-	
-	  /**
-	   * make CrioObject into an iterable
-	   *
-	   * @returns {{next: (function(): {value: any, done: boolean})}}
-	   */
-	
-	
-	  CrioObject.prototype[Symbol.iterator] = function () {
-	    var _this13 = this;
-	
-	    var keys = objectKeys(this);
-	
-	    var index = 0,
-	        key = void 0,
-	        value = void 0;
-	
-	    return {
-	      next: function next() {
+	      entries.next = function () {
 	        key = keys[index];
-	        value = _this13[key];
+	        value = _this7[key];
 	
-	        if (index < _this13.length) {
+	        if (index < _this7.length) {
 	          index++;
 	
 	          return {
@@ -1769,11 +1396,469 @@ var crio =
 	            done: true
 	          };
 	        }
-	      }
-	    };
-	  };
+	      };
 	
-	  _createClass(CrioObject, [{
+	      return entries;
+	    }
+	
+	    /**
+	     * is the object passed equal in value to this
+	     *
+	     * @param {any} object
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'equals',
+	    value: function equals(object) {
+	      if (!(0, _utils.isCrio)(object)) {
+	        return false;
+	      }
+	
+	      return this[_utils.HASH_CODE_SYMBOL] === object[_utils.HASH_CODE_SYMBOL];
+	    }
+	
+	    /**
+	     * return value at key in this
+	     *
+	     * @param {string} key
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'get',
+	    value: function get(key) {
+	      return this[key];
+	    }
+	
+	    /**
+	     * return value at nested point based on keys in this
+	     *
+	     * @param {array<string|number>} keys
+	     * @return {any}
+	     */
+	
+	  }, {
+	    key: 'getIn',
+	    value: function getIn(keys) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
+	
+	      var length = keys.length;
+	      var lastIndex = length - 1;
+	
+	      var currentObject = this,
+	          index = -1,
+	          key = void 0;
+	
+	      while (++index < length) {
+	        key = keys[index];
+	
+	        if ((0, _utils.isUndefined)(currentObject[key]) || index === lastIndex) {
+	          return currentObject[key];
+	        }
+	
+	        currentObject = currentObject[key];
+	      }
+	    }
+	  }, {
+	    key: 'has',
+	
+	
+	    /**
+	     * does the key passed exist in this
+	     *
+	     * @param {number} key
+	     * @return {boolean}
+	     */
+	    value: function has(key) {
+	      return this.hasOwnProperty(key);
+	    }
+	
+	    /**
+	     * return if this has the property passed
+	     *
+	     * @param {string} property
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'hasOwnProperty',
+	    value: function hasOwnProperty(property) {
+	      return OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
+	    }
+	
+	    /**
+	     * return if this has the prototype of object passed
+	     *
+	     * @param {any} object
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'isPrototypeOf',
+	    value: function isPrototypeOf(object) {
+	      return OBJECT_PROTOTYPE.isPrototypeOf.call(this, object);
+	    }
+	
+	    /**
+	     * iterate over object and filter any returns from functions
+	     * that are falsy
+	     * 
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @return {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'filter',
+	    value: function filter(fn) {
+	      var _this8 = this;
+	
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      var newObject = {},
+	          result = void 0;
+	
+	      (0, _utils.forEach)(this.keys(), function (key) {
+	        result = fn.call(thisArg, _this8[key], key, _this8);
+	
+	        if (!!result) {
+	          newObject[key] = _this8[key];
+	        }
+	      });
+	
+	      return returnCorrectObject(this, newObject, CrioObject);
+	    }
+	
+	    /**
+	     * iterate over object executing fn
+	     *
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @returns {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'forEach',
+	    value: function forEach(fn) {
+	      var _this9 = this;
+	
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      (0, _utils.forEach)(this.keys(), function (key) {
+	        fn.call(thisArg, _this9[key], key, _this9);
+	      });
+	
+	      return this;
+	    }
+	
+	    /**
+	     * return iterable of keys in this
+	     *
+	     * @returns {array<string>}
+	     */
+	
+	  }, {
+	    key: 'keys',
+	    value: function keys() {
+	      return objectKeys(this);
+	    }
+	
+	    /**
+	     * map results of function to new object and return it
+	     * 
+	     * @param {function} fn
+	     * @param {any} thisArg
+	     * @return {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'map',
+	    value: function map(fn) {
+	      var _this10 = this;
+	
+	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
+	
+	      var newObject = {};
+	
+	      (0, _utils.forEach)(this.keys(), function (key) {
+	        newObject[key] = fn.call(thisArg, _this10[key], key, _this10);
+	      });
+	
+	      return returnCorrectObject(this, newObject, CrioObject);
+	    }
+	
+	    /**
+	     * shallowly merge all objects into this and return as new CrioObject
+	     *
+	     * @param {array<any>} objects
+	     * @returns {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'merge',
+	    value: function merge() {
+	      var clone = (0, _utils.shallowCloneObject)(this);
+	
+	      for (var _len7 = arguments.length, objects = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+	        objects[_key7] = arguments[_key7];
+	      }
+	
+	      (0, _utils.forEach)(objects, function (object) {
+	        objectAssign(clone, object);
+	      });
+	
+	      return returnCorrectObject(this, clone, CrioObject);
+	    }
+	
+	    /**
+	     * deeply merge all objects into this at key value determined by keys,
+	     * and return as a new CrioObject
+	     *
+	     * @param {array<string|number>} keys
+	     * @param {array<any>} objects
+	     * @returns {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'mergeIn',
+	    value: function mergeIn(keys) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
+	
+	      for (var _len8 = arguments.length, objects = Array(_len8 > 1 ? _len8 - 1 : 0), _key8 = 1; _key8 < _len8; _key8++) {
+	        objects[_key8 - 1] = arguments[_key8];
+	      }
+	
+	      if (!objects.length) {
+	        return this;
+	      }
+	
+	      return mergeOnDeepMatch(this, keys, objects, CrioObject);
+	    }
+	
+	    /**
+	     * convenience function to work with mutable version of this,
+	     * in case many modifications need to be made and performance
+	     * is paramount
+	     *
+	     * @param {function} fn
+	     * @returns {any}
+	     */
+	
+	  }, {
+	    key: 'mutate',
+	    value: function mutate(fn) {
+	      var result = fn.call(this, this.thaw(), this);
+	      var hashValue = (0, _utils.getHashIfChanged)(this, result);
+	
+	      if (hashValue !== false) {
+	        return getRealValue(result, hashValue);
+	      }
+	
+	      return this;
+	    }
+	
+	    /**
+	     * determine if property passed is enumerable in this
+	     *
+	     * @param {string} property
+	     * @returns {boolean}
+	     */
+	
+	  }, {
+	    key: 'propertyIsEnumerable',
+	    value: function propertyIsEnumerable(property) {
+	      return OBJECT_PROTOTYPE.propertyIsEnumerable.call(this, property);
+	    }
+	
+	    /**
+	     * set value at key in this
+	     *
+	     * @param {string} key
+	     * @param {any} value
+	     * @returns {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'set',
+	    value: function set(key, value) {
+	      var _this11 = this;
+	
+	      var clone = {};
+	
+	      (0, _utils.forEachRight)(this.keys(), function (currentKey) {
+	        if (currentKey !== key) {
+	          clone[currentKey] = _this11[currentKey];
+	        }
+	      });
+	
+	      clone[key] = value;
+	
+	      return returnCorrectObject(this, clone, CrioObject);
+	    }
+	
+	    /**
+	     * deeply set value at location determined by keys in this
+	     *
+	     * @param {array<string|number>} keys
+	     * @param {any} value
+	     * @returns {CrioObject}
+	     */
+	
+	  }, {
+	    key: 'setIn',
+	    value: function setIn(keys, value) {
+	      if (!(0, _utils.isArray)(keys)) {
+	        throw new Error('Must provide keys as an array, such as ["foo", "bar"].');
+	      }
+	
+	      var lastIndex = keys.length - 1;
+	
+	      var currentObject = (0, _utils.shallowCloneObject)(this),
+	          referenceToCurrentObject = currentObject,
+	          currentValue = void 0;
+	
+	      (0, _utils.forEach)(keys, function (key, keyIndex) {
+	        if (keyIndex === lastIndex) {
+	          currentObject[key] = value;
+	        } else {
+	          currentValue = currentObject[key];
+	          currentObject[key] = (0, _utils.isCrio)(currentValue) ? getShallowClone(currentValue) : {};
+	          currentObject = currentObject[key];
+	        }
+	      });
+	
+	      return returnCorrectObject(this, referenceToCurrentObject, CrioObject);
+	    }
+	
+	    /**
+	     * convert this back to a vanilla array
+	     *
+	     * @returns {array<any>}
+	     */
+	
+	  }, {
+	    key: 'thaw',
+	    value: function thaw() {
+	      var _this12 = this;
+	
+	      var propertyNames = objectKeys(this);
+	
+	      var object = {};
+	
+	      (0, _utils.forEachRight)(propertyNames, function (key) {
+	        var value = _this12[key];
+	        var cleanValue = (0, _utils.isCrio)(value) ? value.thaw() : value;
+	
+	        (0, _utils.setStandard)(object, key, cleanValue, _this12.propertyIsEnumerable(key));
+	      });
+	
+	      return object;
+	    }
+	
+	    /**
+	     * convert the values in the object to an array
+	     *
+	     * @return {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'toArray',
+	    value: function toArray() {
+	      return new CrioArray(this.values());
+	    }
+	
+	    /**
+	     * convert this to a locale-specific string
+	     *
+	     * @returns {string}
+	     */
+	
+	  }, {
+	    key: 'toLocaleString',
+	    value: function toLocaleString() {
+	      return (0, _utils.stringify)(this);
+	    }
+	
+	    /**
+	     * convert this to a string showing key: value pair combos
+	     *
+	     * @returns {string}
+	     */
+	
+	  }, {
+	    key: 'toString',
+	    value: function toString() {
+	      return (0, _utils.stringify)(this);
+	    }
+	
+	    /**
+	     * get the valueOf for this
+	     *
+	     * @return {any}
+	     */
+	
+	  }, {
+	    key: 'valueOf',
+	    value: function valueOf() {
+	      return OBJECT_PROTOTYPE.valueOf.call(this);
+	    }
+	
+	    /**
+	     * get the iterable array of values for this
+	     *
+	     * @returns {array<any>}
+	     */
+	
+	  }, {
+	    key: 'values',
+	    value: function values() {
+	      return objectValues(this);
+	    }
+	
+	    /**
+	     * make CrioObject into an iterable
+	     *
+	     * @returns {{next: (function(): {value: any, done: boolean})}}
+	     */
+	
+	  }, {
+	    key: Symbol.iterator,
+	    value: function value() {
+	      var _this13 = this;
+	
+	      var keys = objectKeys(this);
+	
+	      var index = 0,
+	          key = void 0,
+	          value = void 0;
+	
+	      return {
+	        next: function next() {
+	          key = keys[index];
+	          value = _this13[key];
+	
+	          if (index < _this13.length) {
+	            index++;
+	
+	            return {
+	              done: false,
+	              key: key,
+	              value: value
+	            };
+	          } else {
+	            return {
+	              done: true
+	            };
+	          }
+	        }
+	      };
+	    }
+	  }, {
 	    key: _utils.TYPE_SYMBOL,
 	    get: function get() {
 	      return _utils.CRIO_OBJECT_TYPE;
@@ -2979,7 +3064,9 @@ var crio =
 
 	'use strict';
 	
-	exports.__esModule = true;
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.stringifySerializerForHash = exports.stringify = exports.shallowCloneObject = exports.shallowCloneArray = exports.setStandard = exports.setNonEnumerable = exports.isUndefined = exports.isObject = exports.isReactElement = exports.isCrio = exports.isArray = exports.getHashIfChanged = exports.forEachRight = exports.forEach = exports.TYPE_SYMBOL = exports.HASH_CODE_SYMBOL = exports.CRIO_OBJECT_TYPE = exports.CRIO_ARRAY_TYPE = undefined;
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
