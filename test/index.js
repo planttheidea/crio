@@ -231,7 +231,7 @@ test('CrioObject methods', (t) => {
     t.is(crioObject.toLocaleString(), string);
     t.is(crioObject.toString(), string);
 
-    t.deepEqual(deeplySetObject.toArray(), [{
+    t.deepEqual(deeplySetObject.toArray().thaw(), [{
         deeply: {
             nested: 'thing'
         }
@@ -378,7 +378,7 @@ test('CrioArray methods', (t) => {
 
     t.deepEqual(crioArray.map(() => {
         return true;
-    }), [true, true]);
+    }).thaw(), [true, true]);
 
     t.deepEqual(crioArray.merge(['baz']).thaw(), ['baz', 'bar']);
 
@@ -413,14 +413,14 @@ test('CrioArray methods', (t) => {
             ...array,
             `${item}BLAH`
         ];
-    }, []), ['fooBLAH', 'barBLAH']);
+    }, []).thaw(), ['fooBLAH', 'barBLAH']);
 
     t.deepEqual(crioArray.reduceRight((array, item) => {
         return [
             ...array,
             `${item}BLAH`
         ];
-    }, []), ['barBLAH', 'fooBLAH']);
+    }, []).thaw(), ['barBLAH', 'fooBLAH']);
 
     t.deepEqual(crioArray.reverse().thaw(), ['bar', 'foo']);
 
@@ -456,7 +456,7 @@ test('CrioArray methods', (t) => {
 
     const arrayWithFalsyValues = crio([0, 'blah', undefined, false, {}, [], '']);
 
-    t.deepEqual(arrayWithFalsyValues.compact(), ['blah', {}, []]);
+    t.deepEqual(arrayWithFalsyValues.compact().thaw(), ['blah', {}, []]);
 
     const arrayWithDuplicateValues = crio(['same', 'same', 'different', 'same', 'also different']);
 
@@ -475,6 +475,6 @@ test('CrioArray methods', (t) => {
 
     t.deepEqual(collection.clear().thaw(), []);
 
-    t.deepEqual(collection.first(2), ['bar', {foo: 'bar'}]);
-    t.deepEqual(collection.last(3), [1, true, {foo: 'baz'}]);
+    t.deepEqual(collection.first(2).thaw(), ['bar', {foo: 'bar'}]);
+    t.deepEqual(collection.last(3).thaw(), [1, true, {foo: 'baz'}]);
 });

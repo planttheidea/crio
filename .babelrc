@@ -3,7 +3,7 @@
         "add-module-exports"
     ],
     "presets":[
-        "es2015-loose",
+        "latest",
         "stage-0"
     ]
 }
