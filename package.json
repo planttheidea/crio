@@ -76,5 +76,5 @@
     "test-production:watch": "NODE_ENV=production ava --no-cache --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "2.6.1"
+  "version": "2.6.2"
 }
