@@ -600,7 +600,7 @@ var crio =
 	    value: function forEach(fn) {
 	      var thisArg = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 	
-	      ARRAY_PROTOTYPE.forEach.call(this, fn, thisArg);
+	      (0, _utils.forEach)(this, fn, thisArg);
 	    }
 	
 	    /**
@@ -3172,15 +3172,20 @@ var crio =
 	 * @param {array<any>} array
 	 * @param {function} fn
 	 * @param {any} thisArg
+	 * @param {number} index=0
+	 * @param {number} length=array.length
 	 */
 	var forEach = function forEach(array, fn, thisArg) {
-	  var length = array.length;
+	  var index = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
+	  var length = arguments.length <= 4 || arguments[4] === undefined ? array.length : arguments[4];
 	
-	  var index = -1;
-	
-	  while (++index < length) {
-	    fn.call(thisArg, array[index], index, array);
+	  if (index === length) {
+	    return;
 	  }
+	
+	  fn.call(thisArg, array[index], index, array);
+	
+	  forEach(array, fn, thisArg, index + 1, length);
 	};
 	
 	/**
@@ -3190,13 +3195,18 @@ var crio =
 	 * @param {array<any>} array
 	 * @param {function} fn
 	 * @param {any} thisArg
+	 * @param {number} index=0
 	 */
 	var forEachRight = function forEachRight(array, fn, thisArg) {
-	  var index = array.length;
+	  var index = arguments.length <= 3 || arguments[3] === undefined ? array.length - 1 : arguments[3];
 	
-	  while (index--) {
-	    fn.call(thisArg, array[index], index, array);
+	  if (index === -1) {
+	    return;
 	  }
+	
+	  fn.call(thisArg, array[index], index, array);
+	
+	  forEachRight(array, fn, thisArg, index - 1);
 	};
 	
 	/**
