@@ -2,6 +2,7 @@
 
 #### 2.8.2
 * Fix issue where `hash-it` was not being included as a dependency
+* Modify `forEach` and `forEachRight` to be recursive functions instead of `while` loops
 
 #### 2.8.1
 * Fix a couple issues centered around `.entries()` for both `CrioArray` and `CrioObject`

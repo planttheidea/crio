@@ -2,31 +2,31 @@ import test from 'ava';
 import React from 'react';
 
 import crio, {
-    CrioArray,
-    CrioObject,
-    getRealValue,
-    isCrio,
-    mergeOnDeepMatch
+  CrioArray,
+  CrioObject,
+  getRealValue,
+  isCrio,
+  mergeOnDeepMatch
 } from '../src';
 
 import {
-    HASH_CODE_SYMBOL,
-    TYPE_SYMBOL
+  HASH_CODE_SYMBOL,
+  TYPE_SYMBOL
 } from '../src/utils';
 
 const OBJECT = {
-    foo: 'bar'
+  foo: 'bar'
 };
 const DEEPLY_NESTED_OBJECT = {
-    some: {
-        deeply: {
-            nested: 'object'
-        }
+  some: {
+    deeply: {
+      nested: 'object'
     }
+  }
 };
 const ARRAY = [
-    'foo',
-    'bar'
+  'foo',
+  'bar'
 ];
 
 test('if crio returns a CrioArray or CrioObject', (t) => {
@@ -51,19 +51,19 @@ test('if isCrio determines whether object isCrio or not', (t) => {
 });
 
 test('if deleteOnDeepMatch deletes a deep value on the object', (t) => {
-    const crioToDeleteFrom = crio({
-        some: {
-            deeply: {
-                nested: 'object'
-            }
-        }
-    });
+  const crioToDeleteFrom = crio({
+    some: {
+      deeply: {
+        nested: 'object'
+      }
+    }
+  });
 
-    t.deepEqual(crioToDeleteFrom.deleteIn(['some', 'deeply', 'nested']), {
-        some: {
-            deeply: {}
-        }
-    });
+  t.deepEqual(crioToDeleteFrom.deleteIn(['some', 'deeply', 'nested']), {
+    some: {
+      deeply: {}
+    }
+  });
 });
 
 test('if getRealValue returns crioed version of value when appropriate', (t) => {

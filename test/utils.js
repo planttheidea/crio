@@ -23,7 +23,7 @@ test('if forEach will execute function as loop that increments', (t) => {
     const length = 10;
 
     let array = [],
-        finalValue;
+        finalValue = length;
 
     for (let index = 1; index <= length; index++) {
         array.push(index);
@@ -36,11 +36,11 @@ test('if forEach will execute function as loop that increments', (t) => {
     t.is(length, finalValue);
 });
 
-test('if forEach will execute function as loop that decrements', (t) => {
+test('if forEachRight will execute function as loop that decrements', (t) => {
     const length = 10;
 
     let array = [],
-        finalValue;
+        finalValue = length;
 
     for (let index = 0; index < length; index++) {
         array.push(index);

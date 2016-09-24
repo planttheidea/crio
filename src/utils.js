@@ -92,15 +92,17 @@ const isUndefined = (object) => {
  * @param {array<any>} array
  * @param {function} fn
  * @param {any} thisArg
+ * @param {number} index=0
+ * @param {number} length=array.length
  */
-const forEach = (array, fn, thisArg) => {
-  const length = array.length;
-
-  let index = -1;
-
-  while (++index < length) {
-    fn.call(thisArg, array[index], index, array);
+const forEach = (array, fn, thisArg, index = 0, length = array.length) => {
+  if (index === length) {
+    return;
   }
+
+  fn.call(thisArg, array[index], index, array);
+
+  forEach(array, fn, thisArg, index + 1, length);
 };
 
 /**
@@ -110,13 +112,16 @@ const forEach = (array, fn, thisArg) => {
  * @param {array<any>} array
  * @param {function} fn
  * @param {any} thisArg
+ * @param {number} index=0
  */
-const forEachRight = (array, fn, thisArg) => {
-  let index = array.length;
-
-  while (index--) {
-    fn.call(thisArg, array[index], index, array);
+const forEachRight = (array, fn, thisArg, index = array.length - 1) => {
+  if (index === -1) {
+    return;
   }
+
+  fn.call(thisArg, array[index], index, array);
+
+  forEachRight(array, fn, thisArg, index - 1);
 };
 
 /**

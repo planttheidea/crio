@@ -472,7 +472,7 @@ class CrioArray {
    * @param {any} thisArg
    */
   forEach(fn, thisArg = this) {
-    ARRAY_PROTOTYPE.forEach.call(this, fn, thisArg);
+    forEach(this, fn, thisArg);
   }
 
   /**
