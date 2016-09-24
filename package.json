@@ -29,24 +29,24 @@
   "devDependencies": {
     "ava": "0.16.0",
     "babel": "6.5.2",
-    "babel-cli": "6.11.4",
+    "babel-cli": "6.14.0",
     "babel-eslint": "6.1.2",
-    "babel-loader": "6.2.4",
+    "babel-loader": "6.2.5",
     "babel-plugin-add-module-exports": "0.2.1",
     "babel-polyfill": "6.13.0",
-    "babel-preset-es2015-loose": "^7.0.0",
+    "babel-preset-latest": "6.14.0",
     "babel-preset-react": "6.11.1",
-    "babel-preset-stage-0": "6.5.0",
-    "babel-register": "6.11.6",
-    "eslint": "3.2.2",
+    "babel-preset-stage-2": "6.13.0",
+    "babel-register": "6.14.0",
+    "eslint": "3.6.0",
     "eslint-friendly-formatter": "2.0.6",
     "eslint-loader": "1.5.0",
     "html-webpack-plugin": "2.22.0",
     "in-publish": "^2.0.0",
-    "react": "15.3.0",
-    "react-dom": "15.3.0",
-    "webpack": "1.13.1",
-    "webpack-dev-server": "1.14.1"
+    "react": "15.3.2",
+    "react-dom": "15.3.2",
+    "webpack": "1.13.2",
+    "webpack-dev-server": "1.16.1"
   },
   "homepage": "https://github.com/planttheidea/crio#readme",
   "keywords": [
@@ -75,5 +75,5 @@
     "test-production:watch": "NODE_ENV=production ava --no-cache --verbose --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "2.8.1"
+  "version": "2.8.2"
 }
