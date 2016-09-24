@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.8.2
+* Fix issue where `hash-it` was not being included as a dependency
+
 #### 2.8.1
 * Fix a couple issues centered around `.entries()` for both `CrioArray` and `CrioObject`
 

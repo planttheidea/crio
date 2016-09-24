@@ -164,7 +164,12 @@ test('if shallowCloneArray produces a shallow clone', (t) => {
     const crioArray = crio(array);
     const shallowClone = shallowCloneArray(crioArray);
 
-    t.deepEqual(crioArray.thaw(), shallowClone);
+    t.is(crioArray.length, shallowClone.length);
+
+    crioArray.forEach((value, index) => {
+        t.is(value, shallowClone[index]);
+    });
+
     t.false(crioArray === shallowClone);
     t.false(array === shallowClone);
 });
