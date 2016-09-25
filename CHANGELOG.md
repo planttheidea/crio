@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 2.8.3
+* Revert `forEach` and `forEachRight` to use `while` loops to avoid stack overflows on large loops
+
 #### 2.8.2
 * Fix issue where `hash-it` was not being included as a dependency
 * Modify `forEach` and `forEachRight` to be recursive functions instead of `while` loops

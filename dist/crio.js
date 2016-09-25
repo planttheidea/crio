@@ -3172,20 +3172,15 @@ var crio =
 	 * @param {array<any>} array
 	 * @param {function} fn
 	 * @param {any} thisArg
-	 * @param {number} index=0
-	 * @param {number} length=array.length
 	 */
 	var forEach = function forEach(array, fn, thisArg) {
-	  var index = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
-	  var length = arguments.length <= 4 || arguments[4] === undefined ? array.length : arguments[4];
+	  var length = array.length;
 	
-	  if (index === length) {
-	    return;
+	  var index = -1;
+	
+	  while (++index < length) {
+	    fn.call(thisArg, array[index], index, array);
 	  }
-	
-	  fn.call(thisArg, array[index], index, array);
-	
-	  forEach(array, fn, thisArg, index + 1, length);
 	};
 	
 	/**
@@ -3195,18 +3190,13 @@ var crio =
 	 * @param {array<any>} array
 	 * @param {function} fn
 	 * @param {any} thisArg
-	 * @param {number} index=0
 	 */
 	var forEachRight = function forEachRight(array, fn, thisArg) {
-	  var index = arguments.length <= 3 || arguments[3] === undefined ? array.length - 1 : arguments[3];
+	  var index = array.length;
 	
-	  if (index === -1) {
-	    return;
+	  while (--index > -1) {
+	    fn.call(thisArg, array[index], index, array);
 	  }
-	
-	  fn.call(thisArg, array[index], index, array);
-	
-	  forEachRight(array, fn, thisArg, index - 1);
 	};
 	
 	/**
