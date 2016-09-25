@@ -3,63 +3,96 @@ import {
   render
 } from 'react-dom';
 
-import crio from '../src';
+import crio from '../src-new/index';
+import crioOld from '../src/index';
 
-let index = -1,
-    items = [];
+let array = [];
 
-while (++index < 100) {
-  items.push({
-    some: {
-      deeply: {
-        nested: 'object'
-      }
-    }
+for (let index = 0, length = 1000; index < length; index++) {
+  array.push({
+    value: Math.random() * index
   });
 }
 
-let crioItems = crio(items);
+console.log(array);
+
+console.time('create');
+
+const crioArray = crio(array);
+
+console.timeEnd('create');
+
+console.time('create old');
+
+const crioOldArray = crioOld(array);
+
+console.timeEnd('create old');
+
+console.time('map');
+
+const mapped = crioArray.map(({value}) => {
+  return {
+    rand: Math.random() * value
+  };
+});
+
+console.timeEnd('map');
+
+console.time('map old');
+
+const mappedOld = crioOldArray.map(({value}) => {
+  return {
+    rand: Math.random() * value
+  };
+});
+
+console.timeEnd('map old');
+
+console.log(mappedOld);
+
+console.time('filter');
+
+const filtered = mapped.filter((value, index) => {
+  return index % 2;
+});
+
+console.timeEnd('filter');
+
+console.log(filtered);
+
+console.time('filter old');
+
+const filteredOld = mappedOld.filter((value, index) => {
+  return index % 2;
+});
+
+console.timeEnd('filter old');
+
+console.log(filteredOld);
+
+
+
+
+
+
+
+
+
+
+
+const crioObject = crio({
+  foo: 'bar',
+  bar: 'baz'
+});
+
+console.log(crioObject);
 
 const App = () => {
-  console.time('crio');
-
-  crioItems = crioItems.map((item) => {
-    return item.setIn(['some', 'deeply', 'nested'], 'thing');
-  });
-
-  // crioItems.forEach((item, index) => {
-  //   crioItems = crioItems.setIn([index, 'some', 'deeply', 'nested'], 'thing');
-  // });
-  
-  console.timeEnd('crio');
-
-  console.log(crioItems);
-
-  console.time('native');
-
-  // items.forEach((item, index) => {
-  //   items[index].some.deeply.nested = <div/>;
-  // });
-
-  items = items.map((item) => {
-    return item.some.deeply.nested = 'thing';
-  });
-
-  console.timeEnd('native');
-
   return (
     <div>
       <h1>
         App
       </h1>
-
-      {crioItems.map((item, index) => {
-        return (
-          <div key={`item-${index}`}>
-            {item.toString()}
-          </div>
-        );
-      })}
     </div>
   );
 };
