@@ -1,8 +1,8 @@
 .idea/
 DEV_ONLY/
 node_modules/
-src/
-test/
+src-old/
+test-old/
 .babelrc
 .eslintrc
 .gitignore
