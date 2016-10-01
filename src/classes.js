@@ -3,7 +3,6 @@ import hashIt from 'hash-it';
 import {
   ARRAY_PROTOTYPE,
   CRIO_ARRAY,
-  CRIO_CONSTRUCTOR,
   CRIO_OBJECT,
   CRIO_HASH_CODE,
   CRIO_TYPE,
@@ -140,7 +139,7 @@ const mergeCrioedObjects = (target, ...sources) => {
   });
 
   if (plainObject.length < target.length) {
-    let index = plainObject.length -1;
+    let index = plainObject.length - 1;
 
     while (++index < target.length) {
       plainObject[index] = target[index];
@@ -179,11 +178,6 @@ class Crio {
       [CRIO_HASH_CODE]: {
         enumerable: false,
         value: hashIt(object)
-      },
-
-      [CRIO_CONSTRUCTOR]: {
-        enumerable: false,
-        value: isThisObject ? CrioObject : CrioArray
       }
     });
 
@@ -204,7 +198,7 @@ const CRIO_PROTOTYPE = {
 
     const plainObject = getPlainObject(this);
 
-    return new this[CRIO_CONSTRUCTOR](plainObject);
+    return new this.constructor(plainObject);
   },
 
   /**
@@ -219,6 +213,8 @@ const CRIO_PROTOTYPE = {
 
     return getSameCrioIfUnchanged(this, compactedCrio);
   },
+
+  constructor: Crio,
 
   /**
    * remove key from this
@@ -242,7 +238,7 @@ const CRIO_PROTOTYPE = {
       }
     });
 
-    return getSameCrioIfUnchanged(this, new this[CRIO_CONSTRUCTOR](plainObject));
+    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
   },
 
   /**
@@ -278,7 +274,7 @@ const CRIO_PROTOTYPE = {
       }
     });
 
-    return getSameCrioIfUnchanged(this, new this[CRIO_CONSTRUCTOR](plainObject));
+    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
   },
 
   /**
@@ -406,7 +402,7 @@ const CRIO_PROTOTYPE = {
       plainObject[key] = mergeCrioedObjects(object, ...restOfObjects);
     }
 
-    return getSameCrioIfUnchanged(this, new this[CRIO_CONSTRUCTOR](plainObject));
+    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
   },
 
   /**
@@ -450,7 +446,7 @@ const CRIO_PROTOTYPE = {
       plainObject[key] = value;
     }
 
-    return getSameCrioIfUnchanged(this, new this[CRIO_CONSTRUCTOR](plainObject));
+    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
   },
 
   /**
@@ -493,7 +489,7 @@ const CRIO_PROTOTYPE = {
       plainObject[key] = isCrio(value) ? value : createDeeplyNestedObject(restOfKeys, value);
     }
 
-    return getSameCrioIfUnchanged(this, new this[CRIO_CONSTRUCTOR](plainObject));
+    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
   },
 
   /**
@@ -604,6 +600,8 @@ const CRIO_ARRAY_PROTOTYPE = {
 
     return getSameCrioIfUnchanged(this, new CrioArray(ARRAY_PROTOTYPE.concat.apply(shallowClone, args)));
   },
+
+  constructor: CrioArray,
 
   /**
    * return a new array with the appropriate arguments for copyWithin applied
@@ -998,6 +996,8 @@ class CrioObject extends Crio {
 }
 
 const CRIO_OBJECT_PROTOTYPE = {
+  constructor: CrioObject,
+
   /**
    * get the entries of this
    *

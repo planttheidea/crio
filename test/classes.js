@@ -291,11 +291,11 @@ test('if toLocaleString converts the item to the correct string', (t) => {
   const object = new CrioObject({foo: 'bar'});
 
   const expectedArrayString =
-`Object{
+`CrioArray{
   "0": "foo"
 }`;
   const expectedObjectString =
-`Object{
+`CrioObject{
   foo: "bar"
 }`;
 
@@ -316,11 +316,11 @@ test('if toString converts the item to the correct string', (t) => {
   const object = new CrioObject({foo: 'bar'});
 
   const expectedArrayString =
-`Object{
+`CrioArray{
   "0": "foo"
 }`;
   const expectedObjectString =
-`Object{
+`CrioObject{
   foo: "bar"
 }`;
 

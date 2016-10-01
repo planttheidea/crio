@@ -1336,8 +1336,7 @@ var crio =
 	 */
 	
 	var Crio = function Crio(object) {
-	  var _this = this,
-	      _Object$definePropert;
+	  var _this = this;
 	
 	  _classCallCheck(this, Crio);
 	
@@ -1355,19 +1354,16 @@ var crio =
 	    length++;
 	  }, this, isThisObject);
 	
-	  Object.defineProperties(this, (_Object$definePropert = {
+	  Object.defineProperties(this, _defineProperty({
 	    length: {
 	      enumerable: false,
 	      value: length
 	    }
 	
-	  }, _defineProperty(_Object$definePropert, _constants.CRIO_HASH_CODE, {
+	  }, _constants.CRIO_HASH_CODE, {
 	    enumerable: false,
 	    value: (0, _hashIt2.default)(object)
-	  }), _defineProperty(_Object$definePropert, _constants.CRIO_CONSTRUCTOR, {
-	    enumerable: false,
-	    value: isThisObject ? CrioObject : CrioArray
-	  }), _Object$definePropert));
+	  }));
 	
 	  return Object.freeze(this);
 	};
@@ -1385,7 +1381,7 @@ var crio =
 	
 	    var plainObject = getPlainObject(this);
 	
-	    return new this[_constants.CRIO_CONSTRUCTOR](plainObject);
+	    return new this.constructor(plainObject);
 	  },
 	
 	
@@ -1402,6 +1398,8 @@ var crio =
 	    return getSameCrioIfUnchanged(this, compactedCrio);
 	  },
 	
+	
+	  constructor: Crio,
 	
 	  /**
 	   * remove key from this
@@ -1427,7 +1425,7 @@ var crio =
 	      }
 	    });
 	
-	    return getSameCrioIfUnchanged(this, new this[_constants.CRIO_CONSTRUCTOR](plainObject));
+	    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
 	  },
 	
 	
@@ -1466,7 +1464,7 @@ var crio =
 	      }
 	    });
 	
-	    return getSameCrioIfUnchanged(this, new this[_constants.CRIO_CONSTRUCTOR](plainObject));
+	    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
 	  },
 	
 	
@@ -1602,7 +1600,7 @@ var crio =
 	      plainObject[key] = mergeCrioedObjects.apply(undefined, [_object].concat(_toConsumableArray(_restOfObjects)));
 	    }
 	
-	    return getSameCrioIfUnchanged(this, new this[_constants.CRIO_CONSTRUCTOR](plainObject));
+	    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
 	  },
 	
 	
@@ -1650,7 +1648,7 @@ var crio =
 	      plainObject[key] = value;
 	    }
 	
-	    return getSameCrioIfUnchanged(this, new this[_constants.CRIO_CONSTRUCTOR](plainObject));
+	    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
 	  },
 	
 	
@@ -1694,7 +1692,7 @@ var crio =
 	      plainObject[key] = (0, _is.isCrio)(value) ? value : (0, _loops.createDeeplyNestedObject)(restOfKeys, value);
 	    }
 	
-	    return getSameCrioIfUnchanged(this, new this[_constants.CRIO_CONSTRUCTOR](plainObject));
+	    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
 	  },
 	
 	
@@ -1823,6 +1821,8 @@ var crio =
 	    return getSameCrioIfUnchanged(this, new CrioArray(_constants.ARRAY_PROTOTYPE.concat.apply(shallowClone, args)));
 	  },
 	
+	
+	  constructor: CrioArray,
 	
 	  /**
 	   * return a new array with the appropriate arguments for copyWithin applied
@@ -2296,6 +2296,8 @@ var crio =
 	}(Crio);
 	
 	var CRIO_OBJECT_PROTOTYPE = (_CRIO_OBJECT_PROTOTYP = {
+	  constructor: CrioObject,
+	
 	  /**
 	   * get the entries of this
 	   *
