@@ -1414,6 +1414,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return newCrio;
 	};
 	
+	/**
+	 * shallowly merge sources into target
+	 *
+	 * @param {CrioArray|CrioObject} target
+	 * @param {array<array|object>} sources
+	 * @returns {CrioArray|CrioObject}
+	 */
 	var mergeCrioedObjects = function mergeCrioedObjects(target) {
 	  for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
 	    sources[_key - 1] = arguments[_key];
@@ -1468,8 +1475,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Crio = function Crio(object) {
 	  var _this = this;
 	
-	  var hashCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : (0, _hashIt2.default)(object);
-	
 	  _classCallCheck(this, Crio);
 	
 	  if ((0, _is.isCrio)(object)) {
@@ -1492,7 +1497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  }, _constants.CRIO_HASH_CODE, {
 	    enumerable: false,
-	    value: hashCode
+	    value: (0, _hashIt2.default)(object)
 	  }));
 	
 	  return freezeIfNotProduction(this);
@@ -2471,11 +2476,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var newObject = {};
 	
-	    (0, _loops.forEachObject)(this, this.keys(), function (value, key) {
+	    this.forEach(function (value, key) {
 	      if (fn.call(thisArg, value, key, _this6)) {
 	        newObject[key] = value;
 	      }
-	    }, this.length);
+	    });
 	
 	    return getSameCrioIfUnchanged(this, new CrioObject(newObject));
 	  },
@@ -2546,7 +2551,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  forEach: function forEach(fn) {
 	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 	
-	    (0, _loops.forEachObject)(this, this.keys(), fn, thisArg, this.length);
+	    (0, _loops.forEachObject)(this, fn, thisArg);
 	  },
 	
 	
@@ -2586,11 +2591,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var newObject = {},
 	        result = void 0;
 	
-	    (0, _loops.forEachObject)(this, this.keys(), function (value, key) {
+	    this.forEach(function (value, key) {
 	      result = fn.call(thisArg, value, key, _this7);
 	
 	      newObject[key] = getCrioedValue(result);
-	    }, this.length);
+	    });
 	
 	    return getSameCrioIfUnchanged(this, new CrioObject(newObject));
 	  },
@@ -6618,6 +6623,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.shallowCloneArray = exports.forEachObject = exports.createDeeplyNestedObject = exports.convertToNumber = undefined;
 	
+	var _forEach = __webpack_require__(67);
+	
+	var _forEach2 = _interopRequireDefault(_forEach);
+	
 	var _isNumber = __webpack_require__(186);
 	
 	var _isNumber2 = _interopRequireDefault(_isNumber);
@@ -6642,23 +6651,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * forEach loop specific to objects
 	 *
-	 * @param {object} object
-	 * @param {array<*>} keys
+	 * @param {CrioObject} crio
 	 * @param {function} fn
 	 * @param {*} thisArg
-	 * @param {number} length
 	 */
-	var forEachObject = function forEachObject(object, keys, fn, thisArg) {
-	  var length = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Object.keys(object).length;
-	
-	  var index = length,
-	      key = void 0;
-	
-	  while (--index > -1) {
-	    key = keys[index];
-	
-	    fn.call(thisArg, object[key], key, object);
-	  }
+	var forEachObject = function forEachObject(crio, fn, thisArg) {
+	  (0, _forEach2.default)(crio.keys(), function (key) {
+	    fn.call(thisArg, crio[key], key, crio);
+	  });
 	};
 	
 	/* eslint-disable valid-jsdoc */

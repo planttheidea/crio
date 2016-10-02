@@ -20,22 +20,22 @@ test('if createDeeplyNestedObject creates the correct deeply-nested object', (t)
 });
 
 test('if forEachObject loops over object correctly', (t) => {
-  const object = {
+  const object = crio({
     foo: 'bar',
     bar: 'baz',
     baz: 'foo'
-  };
+  });
 
   let keys = [],
       values = [];
 
-  forEachObject(object, Object.keys(object), (value, key) => {
+  forEachObject(object, (value, key) => {
     keys.push(key);
     values.push(value);
   });
 
-  const expectedKeys = ['baz', 'bar', 'foo'];
-  const expectedValues = ['foo', 'baz', 'bar'];
+  const expectedKeys = ['foo', 'bar', 'baz'];
+  const expectedValues = ['bar', 'baz', 'foo'];
 
   t.deepEqual(keys, expectedKeys);
   t.deepEqual(values, expectedValues);

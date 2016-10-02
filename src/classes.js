@@ -125,6 +125,13 @@ const getSameCrioIfUnchanged = (crio, newCrio) => {
   return newCrio;
 };
 
+/**
+ * shallowly merge sources into target
+ *
+ * @param {CrioArray|CrioObject} target
+ * @param {array<array|object>} sources
+ * @returns {CrioArray|CrioObject}
+ */
 const mergeCrioedObjects = (target, ...sources) => {
   if (!sources.length) {
     return target;
@@ -175,7 +182,7 @@ const mergeCrioedObjects = (target, ...sources) => {
  * the values passed to itself
  */
 class Crio {
-  constructor(object, hashCode = hashIt(object)) {
+  constructor(object) {
     if (isCrio(object)) {
       return object;
     }
@@ -196,7 +203,7 @@ class Crio {
 
       [CRIO_HASH_CODE]: {
         enumerable: false,
-        value: hashCode
+        value: hashIt(object)
       }
     });
 
@@ -1050,11 +1057,11 @@ const CRIO_OBJECT_PROTOTYPE = {
   filter(fn, thisArg = this) {
     let newObject = {};
 
-    forEachObject(this, this.keys(), (value, key) => {
+    this.forEach((value, key) => {
       if (fn.call(thisArg, value, key, this)) {
         newObject[key] = value;
       }
-    }, this.length);
+    });
 
     return getSameCrioIfUnchanged(this, new CrioObject(newObject));
   },
@@ -1116,7 +1123,7 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @param {*} thisArg
    */
   forEach(fn, thisArg = this) {
-    forEachObject(this, this.keys(), fn, thisArg, this.length);
+    forEachObject(this, fn, thisArg);
   },
 
   /**
@@ -1149,11 +1156,11 @@ const CRIO_OBJECT_PROTOTYPE = {
     let newObject = {},
         result;
 
-    forEachObject(this, this.keys(), (value, key) => {
+    this.forEach((value, key) => {
       result = fn.call(thisArg, value, key, this);
 
       newObject[key] = getCrioedValue(result);
-    }, this.length);
+    });
 
     return getSameCrioIfUnchanged(this, new CrioObject(newObject));
   },

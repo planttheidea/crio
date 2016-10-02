@@ -1,4 +1,5 @@
 // external dependencies
+import forEach from 'lodash/forEach';
 import isNumber from 'lodash/isNumber';
 
 import {
@@ -18,21 +19,14 @@ const convertToNumber = (value) => {
 /**
  * forEach loop specific to objects
  *
- * @param {object} object
- * @param {array<*>} keys
+ * @param {CrioObject} crio
  * @param {function} fn
  * @param {*} thisArg
- * @param {number} length
  */
-const forEachObject = (object, keys, fn, thisArg, length = Object.keys(object).length) => {
-  let index = length,
-      key;
-
-  while (--index > -1) {
-    key = keys[index];
-
-    fn.call(thisArg, object[key], key, object);
-  }
+const forEachObject = (crio, fn, thisArg) => {
+  forEach(crio.keys(), (key) => {
+    fn.call(thisArg, crio[key], key, crio);
+  });
 };
 
 /* eslint-disable valid-jsdoc */
