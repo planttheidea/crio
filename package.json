@@ -43,6 +43,7 @@
     "eslint-loader": "1.5.0",
     "html-webpack-plugin": "2.22.0",
     "in-publish": "^2.0.0",
+    "optimize-js-plugin": "0.0.4",
     "react": "15.3.2",
     "react-dom": "15.3.2",
     "sinon": "^1.17.6",
@@ -64,16 +65,16 @@
   },
   "scripts": {
     "build": "NODE_ENV=development webpack --progress --colors",
-    "build-minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
+    "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
     "compile-for-publish": "npm run lint && npm run test && npm run transpile && npm run dist",
     "dev": "NODE_ENV=development webpack-dev-server --profile --colors --config=webpack.config.dev.js",
-    "dev-production": "NODE_ENV=production webpack-dev-server --progress --colors --config=webpack.config.dev.js",
-    "dist": "npm run build && npm run build-minified",
+    "dev:production": "NODE_ENV=production webpack-dev-server --progress --colors --config=webpack.config.dev.js",
+    "dist": "npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "in-publish && npm run compile-for-publish || in-install",
     "test": "NODE_ENV=test ava --verbose --no-cache",
     "test:watch": "NODE_ENV=production ava --verbose --no-cache --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "3.0.0-beta1"
+  "version": "3.0.0-beta2"
 }

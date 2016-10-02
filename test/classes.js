@@ -486,7 +486,7 @@ test('if keys returns an array of indices for all values in the CrioArray', (t) 
   const keys = crioArray.keys();
 
   t.is(keys.length, array.length);
-  t.deepEqual(keys, ['0', '1', '2']);
+  t.deepEqual(keys, [0, 1, 2]);
 });
 
 test('if last returns the last n number of items in the CrioArray', (t) => {

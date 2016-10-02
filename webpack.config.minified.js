@@ -1,5 +1,6 @@
-const path = require('path');
 const webpack = require('webpack');
+const OptimizeJsPlugin = require('optimize-js-plugin');
+
 const defaultConfig = require('./webpack.config');
 
 module.exports = Object.assign({}, defaultConfig, {
@@ -26,7 +27,9 @@ module.exports = Object.assign({}, defaultConfig, {
         warnings: false
       },
       sourceMap: false
+    }),
+    new OptimizeJsPlugin({
+      sourceMap: false
     })
   ])
 });
-;

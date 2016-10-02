@@ -61,6 +61,7 @@ module.exports = {
   output: {
     filename: 'crio.js',
     library: 'crio',
+    libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
     umdNamedDefine: true
   },

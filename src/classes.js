@@ -6,10 +6,13 @@ import {
   CRIO_OBJECT,
   CRIO_HASH_CODE,
   CRIO_TYPE,
+  IS_PRODUCTION,
+  OBJECT,
   OBJECT_PROTOTYPE
 } from './utils/constants';
 
 import {
+  convertToNumber,
   createDeeplyNestedObject,
   forEach,
   forEachArray,
@@ -29,6 +32,10 @@ import {
 
 import stringify from './utils/stringify';
 
+const OBJECT_CREATE = OBJECT.create;
+const OBJECT_ENTRIES = OBJECT.entries;
+const OBJECT_KEYS = OBJECT.keys;
+
 /**
  * build prototype object to add to default prototype
  *
@@ -36,8 +43,8 @@ import stringify from './utils/stringify';
  * @returns {object}
  */
 const createPrototypeObject = (prototype) => {
-  const keys = Object.keys(prototype);
-  const propertySymbols = Object.getOwnPropertySymbols(prototype);
+  const keys = OBJECT_KEYS(prototype);
+  const propertySymbols = OBJECT.getOwnPropertySymbols(prototype);
   const allPropertyItems = [
     ...keys,
     ...propertySymbols
@@ -54,6 +61,20 @@ const createPrototypeObject = (prototype) => {
       }
     };
   }, {});
+};
+
+/**
+ * run Object.freeze on the crio only in non-production environments
+ *
+ * @param {CrioArray|CrioObject} crio
+ * @returns {CrioArray|CrioObject}
+ */
+const freezeIfNotProduction = (crio) => {
+  if (IS_PRODUCTION) {
+    return crio;
+  }
+
+  return Object.freeze(crio);
 };
 
 /**
@@ -169,7 +190,7 @@ class Crio {
       length++;
     }, this, isThisObject);
 
-    Object.defineProperties(this, {
+    OBJECT.defineProperties(this, {
       length: {
         enumerable: false,
         value: length
@@ -181,7 +202,7 @@ class Crio {
       }
     });
 
-    return Object.freeze(this);
+    return freezeIfNotProduction(this);
   }
 }
 
@@ -223,13 +244,11 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   delete(key) {
-    const keyString = `${key}`;
-
     let plainObject = getPlainObject(this),
         isThisArray = isArray(plainObject);
 
     forEachArray(this.keys(), (currentKey) => {
-      if (currentKey !== keyString) {
+      if (currentKey !== key) {
         if (isThisArray) {
           plainObject.push(this[currentKey]);
         } else {
@@ -349,10 +368,23 @@ const CRIO_PROTOTYPE = {
     return OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
   },
 
+  /**
+   * shallowly merge the objects passed with this
+   *
+   * @param {array<object>} objects
+   * @returns {CrioObject}
+   */
   merge(...objects) {
     return mergeCrioedObjects(this, ...objects);
   },
 
+  /**
+   * shallowly merge the objects passed with the deeply-nested location determined by keys
+   *
+   * @param {array<string|number>} keys
+   * @param {array<object>} objects
+   * @returns {CrioObject}
+   */
   mergeIn(keys, ...objects) {
     if (!keys.length) {
       return this;
@@ -426,14 +458,12 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   set(key, value) {
-    const keyString = `${key}`;
-
     let plainObject = getPlainObject(this),
         isKeySet = false,
         isTargetKey = false;
 
     this.forEach((currentValue, currentKey) => {
-      isTargetKey = currentKey === keyString;
+      isTargetKey = currentKey === key;
 
       if (isTargetKey) {
         isKeySet = true;
@@ -573,7 +603,7 @@ const CRIO_PROTOTYPE = {
   }
 };
 
-Crio.prototype = Object.create(null, createPrototypeObject(CRIO_PROTOTYPE));
+Crio.prototype = OBJECT_CREATE(null, createPrototypeObject(CRIO_PROTOTYPE));
 
 /**
  * create CrioArray class extending Crio with built prototype
@@ -626,7 +656,7 @@ const CRIO_ARRAY_PROTOTYPE = {
    * @returns {array<array>}
    */
   entries() {
-    return Object.entries(this);
+    return OBJECT_ENTRIES(this);
   },
 
   /**
@@ -753,7 +783,7 @@ const CRIO_ARRAY_PROTOTYPE = {
    * @returns {array<string>}
    */
   keys() {
-    return Object.keys(this);
+    return OBJECT_KEYS(this).map(convertToNumber);
   },
 
   /**
@@ -984,7 +1014,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   [Symbol.iterator]: ARRAY_PROTOTYPE[Symbol.iterator]
 };
 
-CrioArray.prototype = Object.create(Crio.prototype, createPrototypeObject(CRIO_ARRAY_PROTOTYPE));
+CrioArray.prototype = OBJECT_CREATE(Crio.prototype, createPrototypeObject(CRIO_ARRAY_PROTOTYPE));
 
 /**
  * create CrioObject class extending Crio with built prototype
@@ -1004,7 +1034,7 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {array<array>}
    */
   entries() {
-    return Object.entries(this);
+    return OBJECT_ENTRIES(this);
   },
 
   /**
@@ -1102,7 +1132,7 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {array<string>}
    */
   keys() {
-    return Object.keys(this);
+    return OBJECT_KEYS(this);
   },
 
   /**
@@ -1174,7 +1204,7 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {array<*>}
    */
   values() {
-    return Object.values(this);
+    return OBJECT.values(this);
   },
 
   [CRIO_TYPE]: CRIO_OBJECT,
@@ -1208,7 +1238,7 @@ const CRIO_OBJECT_PROTOTYPE = {
   }
 };
 
-CrioObject.prototype = Object.create(Crio.prototype, createPrototypeObject(CRIO_OBJECT_PROTOTYPE));
+CrioObject.prototype = OBJECT_CREATE(Crio.prototype, createPrototypeObject(CRIO_OBJECT_PROTOTYPE));
 
 export {CrioArray};
 export {CrioObject};

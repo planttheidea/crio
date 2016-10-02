@@ -1,5 +1,14 @@
-var crio =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory(require("hash-it"), require("stringifier"));
+	else if(typeof define === 'function' && define.amd)
+		define("crio", ["hash-it", "stringifier"], factory);
+	else if(typeof exports === 'object')
+		exports["crio"] = factory(require("hash-it"), require("stringifier"));
+	else
+		root["crio"] = factory(root["hashIt"], root["stringifier"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_65__, __WEBPACK_EXTERNAL_MODULE_71__) {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -82,7 +91,7 @@ var crio =
 	
 	var _classes = __webpack_require__(64);
 	
-	var _is = __webpack_require__(68);
+	var _is = __webpack_require__(69);
 	
 	/**
 	 * generate a new CrioArray or CrioObject
@@ -1193,11 +1202,11 @@ var crio =
 	
 	var _constants = __webpack_require__(66);
 	
-	var _loops = __webpack_require__(67);
+	var _loops = __webpack_require__(68);
 	
-	var _is = __webpack_require__(68);
+	var _is = __webpack_require__(69);
 	
-	var _stringify = __webpack_require__(69);
+	var _stringify = __webpack_require__(70);
 	
 	var _stringify2 = _interopRequireDefault(_stringify);
 	
@@ -1215,6 +1224,10 @@ var crio =
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
+	var OBJECT_CREATE = _constants.OBJECT.create;
+	var OBJECT_ENTRIES = _constants.OBJECT.entries;
+	var OBJECT_KEYS = _constants.OBJECT.keys;
+	
 	/**
 	 * build prototype object to add to default prototype
 	 *
@@ -1222,8 +1235,8 @@ var crio =
 	 * @returns {object}
 	 */
 	var createPrototypeObject = function createPrototypeObject(prototype) {
-	  var keys = Object.keys(prototype);
-	  var propertySymbols = Object.getOwnPropertySymbols(prototype);
+	  var keys = OBJECT_KEYS(prototype);
+	  var propertySymbols = _constants.OBJECT.getOwnPropertySymbols(prototype);
 	  var allPropertyItems = [].concat(_toConsumableArray(keys), _toConsumableArray(propertySymbols));
 	
 	  return allPropertyItems.reduce(function (accumulatedPrototype, key) {
@@ -1234,6 +1247,20 @@ var crio =
 	      value: value
 	    }));
 	  }, {});
+	};
+	
+	/**
+	 * run Object.freeze on the crio only in non-production environments
+	 *
+	 * @param {CrioArray|CrioObject} crio
+	 * @returns {CrioArray|CrioObject}
+	 */
+	var freezeIfNotProduction = function freezeIfNotProduction(crio) {
+	  if (_constants.IS_PRODUCTION) {
+	    return crio;
+	  }
+	
+	  return Object.freeze(crio);
 	};
 	
 	/**
@@ -1354,7 +1381,7 @@ var crio =
 	    length++;
 	  }, this, isThisObject);
 	
-	  Object.defineProperties(this, _defineProperty({
+	  _constants.OBJECT.defineProperties(this, _defineProperty({
 	    length: {
 	      enumerable: false,
 	      value: length
@@ -1365,7 +1392,7 @@ var crio =
 	    value: (0, _hashIt2.default)(object)
 	  }));
 	
-	  return Object.freeze(this);
+	  return freezeIfNotProduction(this);
 	};
 	
 	var CRIO_PROTOTYPE = {
@@ -1410,13 +1437,11 @@ var crio =
 	  delete: function _delete(key) {
 	    var _this2 = this;
 	
-	    var keyString = '' + key;
-	
 	    var plainObject = getPlainObject(this),
 	        isThisArray = (0, _is.isArray)(plainObject);
 	
 	    (0, _loops.forEachArray)(this.keys(), function (currentKey) {
-	      if (currentKey !== keyString) {
+	      if (currentKey !== key) {
 	        if (isThisArray) {
 	          plainObject.push(_this2[currentKey]);
 	        } else {
@@ -1542,6 +1567,14 @@ var crio =
 	  hasOwnProperty: function hasOwnProperty(property) {
 	    return _constants.OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
 	  },
+	
+	
+	  /**
+	   * shallowly merge the objects passed with this
+	   *
+	   * @param {array<object>} objects
+	   * @returns {CrioObject}
+	   */
 	  merge: function merge() {
 	    for (var _len2 = arguments.length, objects = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 	      objects[_key2] = arguments[_key2];
@@ -1549,6 +1582,15 @@ var crio =
 	
 	    return mergeCrioedObjects.apply(undefined, [this].concat(objects));
 	  },
+	
+	
+	  /**
+	   * shallowly merge the objects passed with the deeply-nested location determined by keys
+	   *
+	   * @param {array<string|number>} keys
+	   * @param {array<object>} objects
+	   * @returns {CrioObject}
+	   */
 	  mergeIn: function mergeIn(keys) {
 	    for (var _len3 = arguments.length, objects = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
 	      objects[_key3 - 1] = arguments[_key3];
@@ -1628,14 +1670,12 @@ var crio =
 	   * @returns {CrioArray|CrioObject}
 	   */
 	  set: function set(key, value) {
-	    var keyString = '' + key;
-	
 	    var plainObject = getPlainObject(this),
 	        isKeySet = false,
 	        isTargetKey = false;
 	
 	    this.forEach(function (currentValue, currentKey) {
-	      isTargetKey = currentKey === keyString;
+	      isTargetKey = currentKey === key;
 	
 	      if (isTargetKey) {
 	        isKeySet = true;
@@ -1782,7 +1822,7 @@ var crio =
 	  }
 	};
 	
-	Crio.prototype = Object.create(null, createPrototypeObject(CRIO_PROTOTYPE));
+	Crio.prototype = OBJECT_CREATE(null, createPrototypeObject(CRIO_PROTOTYPE));
 	
 	/**
 	 * create CrioArray class extending Crio with built prototype
@@ -1852,7 +1892,7 @@ var crio =
 	   * @returns {array<array>}
 	   */
 	  entries: function entries() {
-	    return Object.entries(this);
+	    return OBJECT_ENTRIES(this);
 	  },
 	
 	
@@ -2008,7 +2048,7 @@ var crio =
 	   * @returns {array<string>}
 	   */
 	  keys: function keys() {
-	    return Object.keys(this);
+	    return OBJECT_KEYS(this).map(_loops.convertToNumber);
 	  },
 	
 	
@@ -2277,7 +2317,7 @@ var crio =
 	  }
 	}, _defineProperty(_CRIO_ARRAY_PROTOTYPE, _constants.CRIO_TYPE, _constants.CRIO_ARRAY), _defineProperty(_CRIO_ARRAY_PROTOTYPE, Symbol.iterator, _constants.ARRAY_PROTOTYPE[Symbol.iterator]), _CRIO_ARRAY_PROTOTYPE);
 	
-	CrioArray.prototype = Object.create(Crio.prototype, createPrototypeObject(CRIO_ARRAY_PROTOTYPE));
+	CrioArray.prototype = OBJECT_CREATE(Crio.prototype, createPrototypeObject(CRIO_ARRAY_PROTOTYPE));
 	
 	/**
 	 * create CrioObject class extending Crio with built prototype
@@ -2304,7 +2344,7 @@ var crio =
 	   * @returns {array<array>}
 	   */
 	  entries: function entries() {
-	    return Object.entries(this);
+	    return OBJECT_ENTRIES(this);
 	  },
 	
 	
@@ -2418,7 +2458,7 @@ var crio =
 	   * @returns {array<string>}
 	   */
 	  keys: function keys() {
-	    return Object.keys(this);
+	    return OBJECT_KEYS(this);
 	  },
 	
 	
@@ -2507,7 +2547,7 @@ var crio =
 	   * @returns {array<*>}
 	   */
 	  values: function values() {
-	    return Object.values(this);
+	    return _constants.OBJECT.values(this);
 	  }
 	}, _defineProperty(_CRIO_OBJECT_PROTOTYP, _constants.CRIO_TYPE, _constants.CRIO_OBJECT), _defineProperty(_CRIO_OBJECT_PROTOTYP, Symbol.iterator, function () {
 	  var _this10 = this;
@@ -2540,7 +2580,7 @@ var crio =
 	  };
 	}), _CRIO_OBJECT_PROTOTYP);
 	
-	CrioObject.prototype = Object.create(Crio.prototype, createPrototypeObject(CRIO_OBJECT_PROTOTYPE));
+	CrioObject.prototype = OBJECT_CREATE(Crio.prototype, createPrototypeObject(CRIO_OBJECT_PROTOTYPE));
 	
 	exports.CrioArray = CrioArray;
 	exports.CrioObject = CrioObject;
@@ -2549,19 +2589,21 @@ var crio =
 /* 65 */
 /***/ function(module, exports) {
 
-	module.exports = undefined;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_65__;
 
 /***/ },
 /* 66 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var OBJECT = Object;
+	
 	var ARRAY_PROTOTYPE = Array.prototype;
-	var OBJECT_PROTOTYPE = Object.prototype;
+	var OBJECT_PROTOTYPE = OBJECT.prototype;
 	
 	var CRIO_CONSTRUCTOR = Symbol('constructor');
 	var CRIO_HASH_CODE = Symbol('hashcode');
@@ -2569,6 +2611,8 @@ var crio =
 	
 	var CRIO_ARRAY = 'CRIO_ARRAY';
 	var CRIO_OBJECT = 'CRIO_OBJECT';
+	
+	var IS_PRODUCTION = !!(process && process.env && ("development") === 'production');
 	
 	var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element') || 0xeac7;
 	
@@ -2579,10 +2623,199 @@ var crio =
 	exports.CRIO_CONSTRUCTOR = CRIO_CONSTRUCTOR;
 	exports.CRIO_HASH_CODE = CRIO_HASH_CODE;
 	exports.CRIO_TYPE = CRIO_TYPE;
+	exports.IS_PRODUCTION = IS_PRODUCTION;
+	exports.OBJECT = OBJECT;
 	exports.REACT_ELEMENT_TYPE = REACT_ELEMENT_TYPE;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(67)))
 
 /***/ },
 /* 67 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+	var process = module.exports = {};
+	
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+	
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+	
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
+	(function () {
+	    try {
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
+	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
+	    }
+	    try {
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
+	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
+	    }
+	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
+	        return setTimeout(fun, 0);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+	
+	
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
+	        return clearTimeout(marker);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+	
+	
+	
+	}
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = runTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    runClearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        runTimeout(drainQueue);
+	    }
+	};
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2590,14 +2823,32 @@ var crio =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.shallowCloneArray = exports.forEachObject = exports.forEachArrayRight = exports.forEachArray = exports.forEach = exports.createDeeplyNestedObject = undefined;
+	exports.shallowCloneArray = exports.forEachObject = exports.forEachArrayRight = exports.forEachArray = exports.forEach = exports.createDeeplyNestedObject = exports.convertToNumber = undefined;
 	
 	var _constants = __webpack_require__(66);
 	
-	var _is = __webpack_require__(68);
+	var _is = __webpack_require__(69);
 	
 	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 	
+	/**
+	 * convert the value passed into its numeric form
+	 *
+	 * @param {*} value
+	 * @returns {number}
+	 */
+	var convertToNumber = function convertToNumber(value) {
+	  return +value;
+	};
+	
+	/**
+	 * forEach loop specific to arrays
+	 *
+	 * @param {array<*>} array
+	 * @param {function} fn
+	 * @param {*} thisArg
+	 * @param {number} length
+	 */
 	var forEachArray = function forEachArray(array, fn, thisArg) {
 	  var length = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : array.length;
 	
@@ -2608,6 +2859,14 @@ var crio =
 	  }
 	};
 	
+	/**
+	 * forEach loop specific to arrays, but in descending order
+	 *
+	 * @param {array<*>} array
+	 * @param {function} fn
+	 * @param {*} thisArg
+	 * @param {number} length
+	 */
 	var forEachArrayRight = function forEachArrayRight(array, fn, thisArg) {
 	  var length = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : array.length;
 	
@@ -2618,6 +2877,15 @@ var crio =
 	  }
 	};
 	
+	/**
+	 * forEach loop specific to objects
+	 *
+	 * @param {object} object
+	 * @param {array<*>} keys
+	 * @param {function} fn
+	 * @param {*} thisArg
+	 * @param {number} length
+	 */
 	var forEachObject = function forEachObject(object, keys, fn, thisArg) {
 	  var length = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Object.keys(object).length;
 	
@@ -2684,12 +2952,19 @@ var crio =
 	  return plainObject;
 	};
 	
+	/**
+	 * shallowly clone an array
+	 *
+	 * @param {array<*>} array
+	 * @returns {array<T>}
+	 */
 	var shallowCloneArray = function shallowCloneArray(array) {
 	  return _constants.ARRAY_PROTOTYPE.map.call(array, function (value) {
 	    return value;
 	  });
 	};
 	
+	exports.convertToNumber = convertToNumber;
 	exports.createDeeplyNestedObject = createDeeplyNestedObject;
 	exports.forEach = forEach;
 	exports.forEachArray = forEachArray;
@@ -2698,7 +2973,7 @@ var crio =
 	exports.shallowCloneArray = shallowCloneArray;
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2710,9 +2985,19 @@ var crio =
 	
 	var _constants = __webpack_require__(66);
 	
-	var ARRAY_CLASS = '[object Array]';
-	var NUMBER_CLASS = '[object Number]';
-	var OBJECT_CLASS = '[object Object]';
+	/**
+	 * get the full object class name based on type passed
+	 *
+	 * @param {string} type
+	 * @returns {string}
+	 */
+	var getObjectClassName = function getObjectClassName(type) {
+	  return '[object ' + type + ']';
+	};
+	
+	var ARRAY_CLASS = getObjectClassName('Array');
+	var NUMBER_CLASS = getObjectClassName('Number');
+	var OBJECT_CLASS = getObjectClassName('Object');
 	
 	/**
 	 * get the object class of the object passed
@@ -2805,7 +3090,7 @@ var crio =
 	exports.isUndefined = isUndefined;
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2814,7 +3099,7 @@ var crio =
 	  value: true
 	});
 	
-	var _stringifier = __webpack_require__(70);
+	var _stringifier = __webpack_require__(71);
 	
 	var _stringifier2 = _interopRequireDefault(_stringifier);
 	
@@ -2831,11 +3116,13 @@ var crio =
 	module.exports = exports['default'];
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports) {
 
-	module.exports = undefined;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_71__;
 
 /***/ }
-/******/ ]);
+/******/ ])
+});
+;
 //# sourceMappingURL=crio.js.map

@@ -3,9 +3,19 @@ import {
   REACT_ELEMENT_TYPE
 } from './constants';
 
-const ARRAY_CLASS = '[object Array]';
-const NUMBER_CLASS = '[object Number]';
-const OBJECT_CLASS = '[object Object]';
+/**
+ * get the full object class name based on type passed
+ *
+ * @param {string} type
+ * @returns {string}
+ */
+const getObjectClassName = (type) => {
+  return `[object ${type}]`;
+};
+
+const ARRAY_CLASS = getObjectClassName('Array');
+const NUMBER_CLASS = getObjectClassName('Number');
+const OBJECT_CLASS = getObjectClassName('Object');
 
 /**
  * get the object class of the object passed

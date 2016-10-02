@@ -6,6 +6,24 @@ import {
   isNumber
 } from './is';
 
+/**
+ * convert the value passed into its numeric form
+ *
+ * @param {*} value
+ * @returns {number}
+ */
+const convertToNumber = (value) => {
+  return +value;
+};
+
+/**
+ * forEach loop specific to arrays
+ *
+ * @param {array<*>} array
+ * @param {function} fn
+ * @param {*} thisArg
+ * @param {number} length
+ */
 const forEachArray = (array, fn, thisArg, length = array.length) => {
   let index = -1;
 
@@ -14,6 +32,14 @@ const forEachArray = (array, fn, thisArg, length = array.length) => {
   }
 };
 
+/**
+ * forEach loop specific to arrays, but in descending order
+ *
+ * @param {array<*>} array
+ * @param {function} fn
+ * @param {*} thisArg
+ * @param {number} length
+ */
 const forEachArrayRight = (array, fn, thisArg, length = array.length) => {
   let index = length;
 
@@ -22,6 +48,15 @@ const forEachArrayRight = (array, fn, thisArg, length = array.length) => {
   }
 };
 
+/**
+ * forEach loop specific to objects
+ *
+ * @param {object} object
+ * @param {array<*>} keys
+ * @param {function} fn
+ * @param {*} thisArg
+ * @param {number} length
+ */
 const forEachObject = (object, keys, fn, thisArg, length = Object.keys(object).length) => {
   let index = length,
       key;
@@ -77,12 +112,19 @@ const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
   return plainObject;
 };
 
+/**
+ * shallowly clone an array
+ *
+ * @param {array<*>} array
+ * @returns {array<T>}
+ */
 const shallowCloneArray = (array) => {
   return ARRAY_PROTOTYPE.map.call(array, (value) => {
     return value;
   });
 };
 
+export {convertToNumber};
 export {createDeeplyNestedObject};
 export {forEach};
 export {forEachArray};

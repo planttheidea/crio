@@ -7,7 +7,7 @@ import crio from '../src/index';
 
 let array = [];
 
-for (let index = 0, length = 1000; index < length; index++) {
+for (let index = 0, length = 500; index < length; index++) {
   array.push({
     value: Math.random() * index
   });
