@@ -21,7 +21,9 @@ import {
   convertToNumber,
   createDeeplyNestedObject,
   forEachObject,
-  shallowCloneArray
+  shallowCloneArray,
+  shallowCloneArrayWithValue,
+  shallowCloneObjectWithValue
 } from './utils/loops';
 
 import {
@@ -126,37 +128,14 @@ const getSameCrioIfUnchanged = (crio, newCrio) => {
 };
 
 /**
- * shallowly merge sources into target
- *
- * @param {CrioArray|CrioObject} target
- * @param {array<array|object>} sources
- * @returns {CrioArray|CrioObject}
+ * shallowly merge source arrays into target array
+ * 
+ * @param {array<*>} target
+ * @param {array<array>} sources
+ * @returns {array<*>}
  */
-const mergeCrioedObjects = (target, ...sources) => {
-  if (!sources.length) {
-    return target;
-  }
-
-  const isTargetCrio = isCrio(target);
-
-  let plainObject;
-
-  if (!isTargetCrio || target[CRIO_TYPE] === CRIO_OBJECT) {
-    plainObject = isTargetCrio ? {...target} : {};
-
-    forEach(sources, (object) => {
-      if (isObject(object)) {
-        plainObject = {
-          ...plainObject,
-          ...object
-        };
-      }
-    });
-
-    return getSameCrioIfUnchanged(target, new CrioObject(plainObject));
-  }
-
-  plainObject = [];
+const mergeArrays = (target, sources) => {
+  let plainObject = [];
 
   forEach(sources, (array) => {
     if (isArray(array)) {
@@ -166,15 +145,102 @@ const mergeCrioedObjects = (target, ...sources) => {
     }
   });
 
-  if (plainObject.length < target.length) {
+  const targetLength = target.length;
+
+  if (plainObject.length < targetLength) {
     let index = plainObject.length - 1;
 
-    while (++index < target.length) {
+    while (++index < targetLength) {
       plainObject[index] = target[index];
     }
   }
 
-  return getSameCrioIfUnchanged(target, new CrioArray(plainObject));
+  return plainObject;
+};
+
+/**
+ * shallowly merge source objects into target object
+ *
+ * @param {object} target
+ * @param {array<object>} sources
+ * @param {boolean} isTargetCrio
+ * @returns {array<*>|object}
+ */
+const mergeObjects = (target, sources, isTargetCrio) => {
+  let plainObject = isTargetCrio ? {...target} : {};
+
+  forEach(sources, (object) => {
+    if (isObject(object)) {
+      plainObject = {
+        ...plainObject,
+        ...object
+      };
+    }
+  });
+
+  return plainObject;
+};
+
+/**
+ * shallowly merge sources into target
+ *
+ * @param {CrioArray|CrioObject} target
+ * @param {array<array|object>} sources
+ * @returns {CrioArray|CrioObject}
+ */
+const mergeCrios = (target, ...sources) => {
+  if (!sources.length) {
+    return target;
+  }
+
+  const isTargetCrio = isCrio(target);
+
+  if (!isTargetCrio || target[CRIO_TYPE] === CRIO_OBJECT) {
+    return getSameCrioIfUnchanged(target, new CrioObject(mergeObjects(target, sources, isTargetCrio)));
+  }
+
+  return getSameCrioIfUnchanged(target, new CrioArray(mergeArrays(target, sources)));
+};
+
+const setCrio = (crio, key, value) => {
+  const plainObject = crio[CRIO_TYPE] === CRIO_ARRAY ? shallowCloneArrayWithValue(crio, key, value) :
+    shallowCloneObjectWithValue(crio, key, value);
+
+  return getSameCrioIfUnchanged(crio, new crio.constructor(plainObject));
+};
+
+const setInCrio = (crio, keys, value) => {
+  const length = keys.length;
+
+  if (length === 0) {
+    return this;
+  }
+
+  if (length === 1) {
+    return setCrio(crio, keys[0], value);
+  }
+
+  const [
+    key,
+    ...restOfKeys
+  ] = keys;
+
+  if (!crio[key]) {
+    return setCrio(crio, key, createDeeplyNestedObject(restOfKeys, value));
+  }
+
+  let plainObject = getPlainObject(crio);
+
+  crio.forEach((currentValue, currentKey) => {
+    if (currentKey === key) {
+      plainObject[currentKey] = isObject(currentValue) ? setInCrio(currentValue, restOfKeys, value) :
+        createDeeplyNestedObject(restOfKeys, value);
+    } else {
+      plainObject[currentKey] = currentValue;
+    }
+  });
+
+  return getSameCrioIfUnchanged(crio, new crio.constructor(plainObject));
 };
 
 /**
@@ -290,7 +356,7 @@ const CRIO_PROTOTYPE = {
       currentValue = this[currentKey];
 
       if (isTargetKey) {
-        if (isCrio(currentValue)) {
+        if (isObject(currentValue)) {
           plainObject[currentKey] = currentValue.deleteIn(keys);
         }
       } else {
@@ -334,12 +400,12 @@ const CRIO_PROTOTYPE = {
   getIn(keys) {
     const length = keys.length;
 
-    switch (length) {
-      case 0:
-        return this;
+    if (length === 0) {
+      return this;
+    }
 
-      case 1:
-        return this[keys[0]];
+    if (length === 1) {
+      return this[keys[0]];
     }
 
     let currentObject = this,
@@ -390,7 +456,7 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioObject}
    */
   merge(...objects) {
-    return mergeCrioedObjects(this, ...objects);
+    return mergeCrios(this, ...objects);
   },
 
   /**
@@ -412,7 +478,7 @@ const CRIO_PROTOTYPE = {
 
     if (!restOfKeys.length) {
       if (isCrio(this[key])) {
-        return this.set(key, mergeCrioedObjects(this[key], ...objects));
+        return this.set(key, mergeCrios(this[key], ...objects));
       }
 
       const [
@@ -420,7 +486,7 @@ const CRIO_PROTOTYPE = {
         ...restOfObjects
       ] = objects;
 
-      return this.set(key, mergeCrioedObjects(object, ...restOfObjects));
+      return this.set(key, mergeCrios(object, ...restOfObjects));
     }
 
     let plainObject = getPlainObject(this),
@@ -433,7 +499,7 @@ const CRIO_PROTOTYPE = {
       if (isTargetKey) {
         isKeySet = true;
 
-        plainObject[currentKey] = isCrio(currentValue) ? currentValue.mergeIn(restOfKeys, ...objects) :
+        plainObject[currentKey] = isObject(currentValue) ? currentValue.mergeIn(restOfKeys, ...objects) :
           createDeeplyNestedObject(restOfKeys, ...objects);
       } else {
         plainObject[currentKey] = currentValue;
@@ -446,7 +512,7 @@ const CRIO_PROTOTYPE = {
         ...restOfObjects
       ] = objects;
 
-      plainObject[key] = mergeCrioedObjects(object, ...restOfObjects);
+      plainObject[key] = mergeCrios(object, ...restOfObjects);
     }
 
     return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
@@ -473,17 +539,7 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   set(key, value) {
-    let plainObject = getPlainObject(this);
-
-    plainObject[key] = value;
-
-    this.forEach((currentValue, currentKey) => {
-      if (currentKey !== key) {
-        plainObject[currentKey] = currentValue;
-      }
-    });
-
-    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
+    return setCrio(this, key, value);
   },
 
   /**
@@ -495,37 +551,7 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   setIn(keys, value) {
-    if (!keys.length) {
-      return this;
-    }
-
-    const [
-      key,
-      ...restOfKeys
-    ] = keys;
-
-    if (!restOfKeys.length) {
-      return this.set(key, value);
-    }
-
-    const hasKey = this.has(key);
-
-    let plainObject = getPlainObject(this);
-
-    if (!hasKey) {
-      plainObject[key] = isCrio(value) ? value : createDeeplyNestedObject(restOfKeys, value);
-    }
-
-    this.forEach((currentValue, currentKey) => {
-      if (hasKey && currentKey === key) {
-        plainObject[currentKey] = isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
-          createDeeplyNestedObject(restOfKeys, value);
-      } else {
-        plainObject[currentKey] = currentValue;
-      }
-    });
-
-    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
+    return setInCrio(this, keys, value);
   },
 
   /**
@@ -537,7 +563,7 @@ const CRIO_PROTOTYPE = {
     const plainObject = getPlainObject(this);
 
     this.forEach((value, key) => {
-      plainObject[key] = isCrio(value) ? value.thaw() : value;
+      plainObject[key] = isObject(value) ? value.thaw() : value;
     });
 
     return plainObject;

@@ -1,4 +1,5 @@
 .idea/
+benchmarks/
 DEV_ONLY/
 node_modules/
 src/
@@ -7,6 +8,8 @@ test/
 .eslintrc
 .gitignore
 .npmignore
+results.csv
+results-v2.csv
 webpack.config.js
 webpack.config.minified.js
 webpack.config.dev.js

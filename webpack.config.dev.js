@@ -64,6 +64,10 @@ module.exports = {
     ]
   },
 
+  node: {
+    fs: 'empty'
+  },
+
   output: {
     filename: 'crio.js',
     library: 'crio',

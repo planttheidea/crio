@@ -42,9 +42,8 @@ const forEachObject = (crio, fn, thisArg) => {
 /* eslint-enable */
 const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
   const isPlainItemArray = isNumber(key);
-  const plainObject = isPlainItemArray ? [] : {};
-
   const valueToSave = restOfKeys.length ? createDeeplyNestedObject(restOfKeys, value) : value;
+  const plainObject = isPlainItemArray ? [] : {};
 
   if (isPlainItemArray) {
     plainObject.push(valueToSave);
@@ -67,7 +66,53 @@ const shallowCloneArray = (array) => {
   });
 };
 
+/**
+ * shallowly clone an array, but setting the value at indexToSet
+ *
+ * @param {CrioArray} crioArray
+ * @param {number} indexToSet
+ * @param {*} valueToSet
+ * @returns {array<*>}
+ */
+const shallowCloneArrayWithValue = (crioArray, indexToSet, valueToSet) => {
+  let plainObject = [];
+
+  plainObject[indexToSet] = valueToSet;
+
+  forEach(crioArray, (value, index) => {
+    if (index !== indexToSet) {
+      plainObject[index] = value;
+    }
+  });
+
+  return plainObject;
+};
+
+/**
+ * shallowly clone an object, but setting the value at key
+ *
+ * @param {CrioObject} crioObject
+ * @param {string} key
+ * @param {*} value
+ * @returns {object}
+ */
+const shallowCloneObjectWithValue = (crioObject, key, value) => {
+  let plainObject = {
+    [key]: value
+  };
+
+  forEachObject(crioObject, (currentValue, currentKey) => {
+    if (currentKey !== key) {
+      plainObject[currentKey] = currentValue;
+    }
+  });
+
+  return plainObject;
+};
+
 export {convertToNumber};
 export {createDeeplyNestedObject};
 export {forEachObject};
 export {shallowCloneArray};
+export {shallowCloneArrayWithValue};
+export {shallowCloneObjectWithValue};

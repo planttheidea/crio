@@ -45,6 +45,7 @@
     "html-webpack-plugin": "2.22.0",
     "immutable": "^3.8.1",
     "in-publish": "^2.0.0",
+    "mori": "^0.3.2",
     "optimize-js-plugin": "0.0.4",
     "react": "15.3.2",
     "react-dom": "15.3.2",
@@ -67,6 +68,7 @@
     "url": "git+https://github.com/planttheidea/crio.git"
   },
   "scripts": {
+    "benchmark": "npm run transpile && NODE_ENV=production node ./benchmarks/index.js",
     "build": "NODE_ENV=development webpack --progress --colors",
     "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
     "compile-for-publish": "npm run lint && npm run test && npm run transpile && npm run dist",
