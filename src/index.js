@@ -13,15 +13,17 @@ import 'core-js/modules/es7.object.enumerable-entries';
 import 'core-js/modules/es7.object.enumerable-keys';
 import 'core-js/modules/es7.object.enumerable-values';
 
+// external dependencies
+import isArray from 'lodash/isArray';
+import isObject from 'lodash/isObject';
+
 import {
   CrioArray,
   CrioObject
 } from './classes';
 
 import {
-  isArray,
-  isCrio,
-  isObject
+  isCrio
 } from './utils/is';
 
 /**

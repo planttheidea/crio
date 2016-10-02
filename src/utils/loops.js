@@ -1,10 +1,9 @@
+// external dependencies
+import isNumber from 'lodash/isNumber';
+
 import {
   ARRAY_PROTOTYPE
 } from './constants';
-
-import {
-  isNumber
-} from './is';
 
 /**
  * convert the value passed into its numeric form
@@ -14,38 +13,6 @@ import {
  */
 const convertToNumber = (value) => {
   return +value;
-};
-
-/**
- * forEach loop specific to arrays
- *
- * @param {array<*>} array
- * @param {function} fn
- * @param {*} thisArg
- * @param {number} length
- */
-const forEachArray = (array, fn, thisArg, length = array.length) => {
-  let index = -1;
-
-  while (++index < length) {
-    fn.call(thisArg, array[index], index, array);
-  }
-};
-
-/**
- * forEach loop specific to arrays, but in descending order
- *
- * @param {array<*>} array
- * @param {function} fn
- * @param {*} thisArg
- * @param {number} length
- */
-const forEachArrayRight = (array, fn, thisArg, length = array.length) => {
-  let index = length;
-
-  while (--index > -1) {
-    fn.call(thisArg, array[index], index, array);
-  }
 };
 
 /**
@@ -65,24 +32,6 @@ const forEachObject = (object, keys, fn, thisArg, length = Object.keys(object).l
     key = keys[index];
 
     fn.call(thisArg, object[key], key, object);
-  }
-};
-
-/**
- *
- *
- * @param {array<*>|object} object
- * @param {function} fn
- * @param {*} thisArg
- * @param {boolean} isItemObject=false
- */
-const forEach = (object, fn, thisArg = object, isItemObject = false) => {
-  if (isItemObject) {
-    const keys = Object.keys(object);
-
-    forEachObject(object, keys, fn, thisArg, keys.length);
-  } else {
-    forEachArray(object, fn, thisArg, object.length);
   }
 };
 
@@ -126,8 +75,5 @@ const shallowCloneArray = (array) => {
 
 export {convertToNumber};
 export {createDeeplyNestedObject};
-export {forEach};
-export {forEachArray};
-export {forEachArrayRight};
 export {forEachObject};
 export {shallowCloneArray};

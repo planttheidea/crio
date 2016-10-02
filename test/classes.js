@@ -1,8 +1,6 @@
 import test from 'ava';
 
-import {
-  isObject
-} from '../src/utils/is';
+import isObject from 'lodash/isObject';
 
 import {
   CrioArray,
