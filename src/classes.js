@@ -202,13 +202,31 @@ const mergeCrios = (target, ...sources) => {
   return getSameCrioIfUnchanged(target, new CrioArray(mergeArrays(target, sources)));
 };
 
+/**
+ * set the value in crio and return a new Crio
+ *
+ * @param {CrioArray|CrioObject} crio
+ * @param {number|string} key
+ * @param {*} value
+ * @returns {CrioArray|CrioObject}
+ */
 const setCrio = (crio, key, value) => {
-  const plainObject = crio[CRIO_TYPE] === CRIO_ARRAY ? shallowCloneArrayWithValue(crio, key, value) :
-    shallowCloneObjectWithValue(crio, key, value);
+  if (crio[CRIO_TYPE] === CRIO_ARRAY) {
+    return getSameCrioIfUnchanged(crio, new CrioArray(shallowCloneArrayWithValue(crio, key, value)));
+  }
 
-  return getSameCrioIfUnchanged(crio, new crio.constructor(plainObject));
+  return getSameCrioIfUnchanged(crio, new CrioObject(shallowCloneObjectWithValue(crio, key, value)));
 };
 
+/**
+ * deeply set the value in crio based on keys and return a new Crio
+ *
+ * @param {CrioArray|CrioObject} crio
+ * @param {function} crio.forEach
+ * @param {array<number|string>} keys
+ * @param {*} value
+ * @returns {CrioArray|CrioObject}
+ */
 const setInCrio = (crio, keys, value) => {
   const length = keys.length;
 
@@ -243,11 +261,14 @@ const setInCrio = (crio, keys, value) => {
   return getSameCrioIfUnchanged(crio, new crio.constructor(plainObject));
 };
 
-/**
- * create based Crio class with a null prototype that will assign
- * the values passed to itself
- */
 class Crio {
+  /**
+   * create based Crio class with a null prototype that will assign
+   * the values passed to itself
+   *
+   * @param {array<*>|object} object
+   * @return {CrioArray|CrioObject}
+   */
   constructor(object) {
     if (isCrio(object)) {
       return object;
@@ -539,6 +560,10 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   set(key, value) {
+    if (this[key] === value) {
+      return this;
+    }
+
     return setCrio(this, key, value);
   },
 
@@ -637,10 +662,12 @@ const CRIO_PROTOTYPE = {
 
 Crio.prototype = OBJECT_CREATE(null, createPrototypeObject(CRIO_PROTOTYPE));
 
-/**
- * create CrioArray class extending Crio with built prototype
- */
 class CrioArray extends Crio {
+  /**
+   * create CrioArray class extending Crio with built prototype
+   *
+   * @param {array<*>} array
+   */
   constructor(array) {
     super(array);
   }
@@ -1052,10 +1079,12 @@ const CRIO_ARRAY_PROTOTYPE = {
 
 CrioArray.prototype = OBJECT_CREATE(Crio.prototype, createPrototypeObject(CRIO_ARRAY_PROTOTYPE));
 
-/**
- * create CrioObject class extending Crio with built prototype
- */
 class CrioObject extends Crio {
+  /**
+   * create CrioObject class extending Crio with built prototype
+   *
+   * @param {object} object
+   */
   constructor(object) {
     super(object);
   }

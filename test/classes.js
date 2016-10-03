@@ -1,4 +1,5 @@
 import test from 'ava';
+import React from 'react';
 
 import isObject from 'lodash/isObject';
 
@@ -12,6 +13,71 @@ import {
   CRIO_TYPE,
   CRIO_OBJECT
 } from '../src/utils/constants';
+
+test('if values are created correctly, where arrays and objects are recursively crioed', (t) => {
+  const primitiveArray = [1, 'foo', true];
+  const primitiveCrioArray = new CrioArray(primitiveArray);
+
+  t.true(primitiveCrioArray instanceof CrioArray);
+
+  primitiveCrioArray.forEach((item, index) => {
+    t.is(item, primitiveArray[index]);
+  });
+
+  const reactElementArray = [<div/>];
+  const reactElementCrioArray = new CrioArray(reactElementArray);
+
+  t.true(reactElementCrioArray instanceof CrioArray);
+
+  reactElementCrioArray.forEach((item, index) => {
+    t.is(item, reactElementArray[index]);
+  });
+
+  const primitiveObject = {foo: 'bar'};
+  const primitiveCrioObject = new CrioObject(primitiveObject);
+
+  t.true(primitiveCrioObject instanceof CrioObject);
+
+  primitiveCrioObject.forEach((item, key) => {
+    t.is(item, primitiveObject[key]);
+  });
+
+  const arrayArray = [[0, 'foo'], [1, 'bar']];
+  const arrayCrioArray = new CrioArray(arrayArray);
+
+  t.true(arrayCrioArray instanceof CrioArray);
+
+  arrayCrioArray.forEach((item) => {
+    t.true(item instanceof CrioArray);
+  });
+
+  const arrayObject = [{foo: 'bar'}, {bar: 'baz'}];
+  const arrayCrioObject = new CrioArray(arrayObject);
+
+  t.true(arrayCrioObject instanceof CrioArray);
+
+  arrayCrioObject.forEach((item) => {
+    t.true(item instanceof CrioObject);
+  });
+
+  const objectObject = {foo: {bar: 'baz'}, bar: {baz: 'foo'}};
+  const objectCrioObject = new CrioObject(objectObject);
+
+  t.true(objectCrioObject instanceof CrioObject);
+
+  objectCrioObject.forEach((item) => {
+    t.true(item instanceof CrioObject);
+  });
+
+  const objectArray = {foo: ['bar'], bar: ['baz']};
+  const objectCrioArray = new CrioObject(objectArray);
+
+  t.true(objectCrioArray instanceof CrioObject);
+
+  objectCrioArray.forEach((item) => {
+    t.true(item instanceof CrioArray);
+  });
+});
 
 /*
   Shared prototype testing
