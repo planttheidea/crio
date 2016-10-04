@@ -1,9 +1,8 @@
 // external dependencies
 import isObject from 'lodash/isObject';
-import isUndefined from 'lodash/isUndefined';
 
 import {
-  CRIO_HASH_CODE,
+  CRIO_TYPE,
   REACT_ELEMENT_TYPE
 } from './constants';
 
@@ -14,7 +13,7 @@ import {
  * @returns {boolean}
  */
 const isCrio = (object) => {
-  return !!object && !isUndefined(object[CRIO_HASH_CODE]);
+  return !!(object && object[CRIO_TYPE]);
 };
 
 /**

@@ -1540,7 +1540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  crio.forEach(function (currentValue, currentKey) {
 	    if (currentKey === key) {
-	      plainObject[currentKey] = (0, _isObject2.default)(currentValue) ? setInCrio(currentValue, restOfKeys, value) : (0, _loops.createDeeplyNestedObject)(restOfKeys, value);
+	      plainObject[currentKey] = (0, _is.isCrio)(currentValue) ? setInCrio(currentValue, restOfKeys, value) : (0, _loops.createDeeplyNestedObject)(restOfKeys, value);
 	    } else {
 	      plainObject[currentKey] = currentValue;
 	    }
@@ -1674,7 +1674,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      currentValue = _this3[currentKey];
 	
 	      if (isTargetKey) {
-	        if ((0, _isObject2.default)(currentValue)) {
+	        if ((0, _is.isCrio)(currentValue)) {
 	          plainObject[currentKey] = currentValue.deleteIn(keys);
 	        }
 	      } else {
@@ -1832,7 +1832,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (isTargetKey) {
 	        isKeySet = true;
 	
-	        plainObject[currentKey] = (0, _isObject2.default)(currentValue) ? currentValue.mergeIn.apply(currentValue, [restOfKeys].concat(objects)) : _loops.createDeeplyNestedObject.apply(undefined, [restOfKeys].concat(objects));
+	        plainObject[currentKey] = (0, _is.isCrio)(currentValue) ? currentValue.mergeIn.apply(currentValue, [restOfKeys].concat(objects)) : _loops.createDeeplyNestedObject.apply(undefined, [restOfKeys].concat(objects));
 	      } else {
 	        plainObject[currentKey] = currentValue;
 	      }
@@ -1904,7 +1904,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var plainObject = getPlainObject(this);
 	
 	    this.forEach(function (value, key) {
-	      plainObject[key] = (0, _isObject2.default)(value) ? value.thaw() : value;
+	      plainObject[key] = (0, _is.isCrio)(value) ? value.thaw() : value;
 	    });
 	
 	    return plainObject;
@@ -6874,10 +6874,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _isObject2 = _interopRequireDefault(_isObject);
 	
-	var _isUndefined = __webpack_require__(182);
-	
-	var _isUndefined2 = _interopRequireDefault(_isUndefined);
-	
 	var _constants = __webpack_require__(183);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -6888,8 +6884,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {*} object
 	 * @returns {boolean}
 	 */
+	// external dependencies
 	var isCrio = function isCrio(object) {
-	  return !!object && !(0, _isUndefined2.default)(object[_constants.CRIO_HASH_CODE]);
+	  return !!(object && object[_constants.CRIO_TYPE]);
 	};
 	
 	/**
@@ -6899,7 +6896,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {string|symbol} object.$$typeof
 	 * @return {boolean}
 	 */
-	// external dependencies
 	var isReactElement = function isReactElement(object) {
 	  return (0, _isObject2.default)(object) && object.$$typeof === _constants.REACT_ELEMENT_TYPE;
 	};

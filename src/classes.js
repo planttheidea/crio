@@ -251,7 +251,7 @@ const setInCrio = (crio, keys, value) => {
 
   crio.forEach((currentValue, currentKey) => {
     if (currentKey === key) {
-      plainObject[currentKey] = isObject(currentValue) ? setInCrio(currentValue, restOfKeys, value) :
+      plainObject[currentKey] = isCrio(currentValue) ? setInCrio(currentValue, restOfKeys, value) :
         createDeeplyNestedObject(restOfKeys, value);
     } else {
       plainObject[currentKey] = currentValue;
@@ -377,7 +377,7 @@ const CRIO_PROTOTYPE = {
       currentValue = this[currentKey];
 
       if (isTargetKey) {
-        if (isObject(currentValue)) {
+        if (isCrio(currentValue)) {
           plainObject[currentKey] = currentValue.deleteIn(keys);
         }
       } else {
@@ -520,7 +520,7 @@ const CRIO_PROTOTYPE = {
       if (isTargetKey) {
         isKeySet = true;
 
-        plainObject[currentKey] = isObject(currentValue) ? currentValue.mergeIn(restOfKeys, ...objects) :
+        plainObject[currentKey] = isCrio(currentValue) ? currentValue.mergeIn(restOfKeys, ...objects) :
           createDeeplyNestedObject(restOfKeys, ...objects);
       } else {
         plainObject[currentKey] = currentValue;
@@ -588,7 +588,7 @@ const CRIO_PROTOTYPE = {
     const plainObject = getPlainObject(this);
 
     this.forEach((value, key) => {
-      plainObject[key] = isObject(value) ? value.thaw() : value;
+      plainObject[key] = isCrio(value) ? value.thaw() : value;
     });
 
     return plainObject;

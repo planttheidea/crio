@@ -37,15 +37,16 @@
     "babel-polyfill": "6.16.0",
     "babel-preset-latest": "6.16.0",
     "babel-preset-react": "6.16.0",
-    "babel-preset-stage-2": "6.16.0",
+    "babel-preset-stage-2": "6.17.0",
     "babel-register": "6.16.3",
-    "eslint": "3.7.0",
+    "eslint": "3.7.1",
     "eslint-friendly-formatter": "2.0.6",
     "eslint-loader": "1.5.0",
     "html-webpack-plugin": "2.22.0",
     "immutable": "^3.8.1",
     "in-publish": "^2.0.0",
     "mori": "^0.3.2",
+    "onchange": "^3.0.2",
     "optimize-js-plugin": "0.0.4",
     "react": "15.3.2",
     "react-dom": "15.3.2",
@@ -69,6 +70,7 @@
   },
   "scripts": {
     "benchmark": "npm run transpile && NODE_ENV=production node ./benchmarks/index.js",
+    "benchmark:watch": "onchange -i 'src/**/*.js' -- npm run benchmark",
     "build": "NODE_ENV=development webpack --progress --colors",
     "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
     "compile-for-publish": "npm run lint && npm run test && npm run transpile && npm run dist",
@@ -81,5 +83,5 @@
     "test:watch": "NODE_ENV=production ava --verbose --no-cache --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "3.0.0-rc1"
+  "version": "3.0.0-rc.2"
 }
