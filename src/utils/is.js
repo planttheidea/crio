@@ -27,17 +27,5 @@ const isReactElement = (object) => {
   return isObject(object) && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
-/**
- * are the two objects passed the same crio in type and value
- *
- * @param {CrioArray|CrioObject} crio1
- * @param {CrioArray|CrioObject} crio2
- * @returns {boolean}
- */
-const isSameCrio = (crio1, crio2) => {
-  return isCrio(crio1) && crio1.equals(crio2);
-};
-
 export {isCrio};
 export {isReactElement};
-export {isSameCrio};

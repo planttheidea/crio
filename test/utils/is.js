@@ -3,8 +3,7 @@ import React from 'react';
 
 import {
   isCrio,
-  isReactElement,
-  isSameCrio
+  isReactElement
 } from '../../src/utils/is';
 
 import crio from '../../src';
@@ -64,9 +63,4 @@ test('if isReactElement correctly determines if object is a React element', (t) 
   t.false(isReactElement(set));
   t.false(isReactElement(string));
   t.false(isReactElement(undef));
-});
-
-test('if isSameCrio correctly determines if the objects are both crio and equal in value', (t) => {
-  t.false(isSameCrio({}, {}));
-  t.false(isSameCrio([], []));
 });

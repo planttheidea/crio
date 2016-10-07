@@ -28,8 +28,7 @@ import {
 
 import {
   isCrio,
-  isReactElement,
-  isSameCrio
+  isReactElement
 } from './utils/is';
 
 import stringify from './utils/stringify';
@@ -116,15 +115,17 @@ const getPlainObject = (crio) => {
  * return the original object if the values have not changed
  *
  * @param {CrioArray|CrioObject} crio
- * @param {CrioArray|CrioObject} newCrio
+ * @param {array<*>|object} potentialCrio
  * @returns {CrioArray|CrioObject}
  */
-const getSameCrioIfUnchanged = (crio, newCrio) => {
-  if (isSameCrio(newCrio)) {
+const getSameCrioIfUnchanged = (crio, potentialCrio) => {
+  const hashCode = hashIt(potentialCrio);
+
+  if (crio[CRIO_HASH_CODE] === hashCode) {
     return crio;
   }
 
-  return newCrio;
+  return new crio.constructor(potentialCrio, hashCode);
 };
 
 /**
@@ -196,10 +197,10 @@ const mergeCrios = (target, ...sources) => {
   const isTargetCrio = isCrio(target);
 
   if (!isTargetCrio || target[CRIO_TYPE] === CRIO_OBJECT) {
-    return getSameCrioIfUnchanged(target, new CrioObject(mergeObjects(target, sources, isTargetCrio)));
+    return getSameCrioIfUnchanged(target, mergeObjects(target, sources, isTargetCrio));
   }
 
-  return getSameCrioIfUnchanged(target, new CrioArray(mergeArrays(target, sources)));
+  return getSameCrioIfUnchanged(target, mergeArrays(target, sources));
 };
 
 /**
@@ -212,10 +213,10 @@ const mergeCrios = (target, ...sources) => {
  */
 const setCrio = (crio, key, value) => {
   if (crio[CRIO_TYPE] === CRIO_ARRAY) {
-    return getSameCrioIfUnchanged(crio, new CrioArray(shallowCloneArrayWithValue(crio, key, value)));
+    return getSameCrioIfUnchanged(crio, shallowCloneArrayWithValue(crio, key, value));
   }
 
-  return getSameCrioIfUnchanged(crio, new CrioObject(shallowCloneObjectWithValue(crio, key, value)));
+  return getSameCrioIfUnchanged(crio, shallowCloneObjectWithValue(crio, key, value));
 };
 
 /**
@@ -258,7 +259,7 @@ const setInCrio = (crio, keys, value) => {
     }
   });
 
-  return getSameCrioIfUnchanged(crio, new crio.constructor(plainObject));
+  return getSameCrioIfUnchanged(crio, plainObject);
 };
 
 class Crio {
@@ -267,9 +268,10 @@ class Crio {
    * the values passed to itself
    *
    * @param {array<*>|object} object
+   * @param {string} hashCode=hashIt(object)
    * @return {CrioArray|CrioObject}
    */
-  constructor(object) {
+  constructor(object, hashCode = hashIt(object)) {
     if (isCrio(object)) {
       return object;
     }
@@ -290,7 +292,7 @@ class Crio {
 
       [CRIO_HASH_CODE]: {
         enumerable: false,
-        value: hashIt(object)
+        value: hashCode
       }
     });
 
@@ -324,7 +326,7 @@ const CRIO_PROTOTYPE = {
       return !!value;
     });
 
-    return getSameCrioIfUnchanged(this, compactedCrio);
+    return this.equals(compactedCrio) ? this : compactedCrio;
   },
 
   constructor: Crio,
@@ -349,7 +351,7 @@ const CRIO_PROTOTYPE = {
       }
     });
 
-    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
+    return getSameCrioIfUnchanged(this, plainObject);
   },
 
   /**
@@ -385,7 +387,7 @@ const CRIO_PROTOTYPE = {
       }
     });
 
-    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
+    return getSameCrioIfUnchanged(this, plainObject);
   },
 
   /**
@@ -536,7 +538,7 @@ const CRIO_PROTOTYPE = {
       plainObject[key] = mergeCrios(object, ...restOfObjects);
     }
 
-    return getSameCrioIfUnchanged(this, new this.constructor(plainObject));
+    return getSameCrioIfUnchanged(this, plainObject);
   },
 
   /**
@@ -548,8 +550,13 @@ const CRIO_PROTOTYPE = {
    */
   mutate(fn, thisArg = this) {
     const result = fn.call(thisArg, this.thaw(), this);
+    const crioedValue = getCrioedValue(result);
 
-    return getSameCrioIfUnchanged(this, getCrioedValue(result));
+    if (isCrio(crioedValue)) {
+      return this.equals(crioedValue) ? this : crioedValue;
+    }
+
+    return crioedValue;
   },
 
   /**
@@ -667,9 +674,10 @@ class CrioArray extends Crio {
    * create CrioArray class extending Crio with built prototype
    *
    * @param {array<*>} array
+   * @param {string} hashCode
    */
-  constructor(array) {
-    super(array);
+  constructor(array, hashCode) {
+    super(array, hashCode);
   }
 }
 
@@ -687,7 +695,7 @@ const CRIO_ARRAY_PROTOTYPE = {
 
     const shallowClone = shallowCloneArray(this);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(ARRAY_PROTOTYPE.concat.apply(shallowClone, args)));
+    return getSameCrioIfUnchanged(this, ARRAY_PROTOTYPE.concat.apply(shallowClone, args));
   },
 
   constructor: CrioArray,
@@ -706,7 +714,7 @@ const CRIO_ARRAY_PROTOTYPE = {
     const shallowClone = shallowCloneArray(this);
     const copiedArray = ARRAY_PROTOTYPE.copyWithin.apply(shallowClone, args);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(copiedArray));
+    return getSameCrioIfUnchanged(this, copiedArray);
   },
 
   /**
@@ -743,7 +751,7 @@ const CRIO_ARRAY_PROTOTYPE = {
     const shallowClone = shallowCloneArray(this);
     const filledArray = ARRAY_PROTOTYPE.fill.apply(shallowClone, args);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(filledArray));
+    return getSameCrioIfUnchanged(this, filledArray);
   },
 
   /**
@@ -756,7 +764,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   filter(fn, thisArg = this) {
     const filteredArray = ARRAY_PROTOTYPE.filter.call(this, fn, thisArg);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(filteredArray));
+    return getSameCrioIfUnchanged(this, filteredArray);
   },
 
   /**
@@ -880,7 +888,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   map(fn, thisArg = this) {
     const mappedArray = ARRAY_PROTOTYPE.map.call(this, fn, thisArg);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(mappedArray));
+    return getSameCrioIfUnchanged(this, mappedArray);
   },
 
   /**
@@ -916,8 +924,13 @@ const CRIO_ARRAY_PROTOTYPE = {
    */
   reduce(fn, defaultValue, thisArg = this) {
     const reducedValue = ARRAY_PROTOTYPE.reduce.call(this, fn, defaultValue, thisArg);
+    const crioedValue = getCrioedValue(reducedValue);
 
-    return getSameCrioIfUnchanged(this, getCrioedValue(reducedValue));
+    if (isCrio(crioedValue)) {
+      return this.equals(crioedValue) ? this : crioedValue;
+    }
+
+    return crioedValue;
   },
 
   /**
@@ -931,8 +944,13 @@ const CRIO_ARRAY_PROTOTYPE = {
    */
   reduceRight(fn, defaultValue, thisArg = this) {
     const reducedValue = ARRAY_PROTOTYPE.reduceRight.call(this, fn, defaultValue, thisArg);
+    const crioedValue = getCrioedValue(reducedValue);
 
-    return getSameCrioIfUnchanged(this, getCrioedValue(reducedValue));
+    if (isCrio(crioedValue)) {
+      return this.equals(crioedValue) ? this : crioedValue;
+    }
+
+    return crioedValue;
   },
 
   /**
@@ -947,7 +965,7 @@ const CRIO_ARRAY_PROTOTYPE = {
       newArray.push(value);
     });
 
-    return getSameCrioIfUnchanged(this, new CrioArray(newArray));
+    return getSameCrioIfUnchanged(this, newArray);
   },
 
   /**
@@ -972,7 +990,7 @@ const CRIO_ARRAY_PROTOTYPE = {
 
     const slicedArray = ARRAY_PROTOTYPE.slice.apply(this, args);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(slicedArray));
+    return getSameCrioIfUnchanged(this, slicedArray);
   },
 
   /**
@@ -995,7 +1013,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   sort(fn) {
     const shallowClone = shallowCloneArray(this);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(shallowClone.sort(fn)));
+    return getSameCrioIfUnchanged(this, shallowClone.sort(fn));
   },
 
   /**
@@ -1013,7 +1031,7 @@ const CRIO_ARRAY_PROTOTYPE = {
 
     ARRAY_PROTOTYPE.splice.apply(shallowClone, args);
 
-    return getSameCrioIfUnchanged(this, new CrioArray(shallowClone));
+    return getSameCrioIfUnchanged(this, shallowClone);
   },
 
   /**
@@ -1060,7 +1078,7 @@ const CRIO_ARRAY_PROTOTYPE = {
 
     const unshiftedArray = ARRAY_PROTOTYPE.concat.apply(args, this);
 
-    return new getSameCrioIfUnchanged(this, new CrioArray(unshiftedArray));
+    return getSameCrioIfUnchanged(this, unshiftedArray);
   },
 
   /**
@@ -1084,9 +1102,10 @@ class CrioObject extends Crio {
    * create CrioObject class extending Crio with built prototype
    *
    * @param {object} object
+   * @param {string} hashCode
    */
-  constructor(object) {
-    super(object);
+  constructor(object, hashCode) {
+    super(object, hashCode);
   }
 }
 
@@ -1118,7 +1137,7 @@ const CRIO_OBJECT_PROTOTYPE = {
       }
     });
 
-    return getSameCrioIfUnchanged(this, new CrioObject(newObject));
+    return getSameCrioIfUnchanged(this, newObject);
   },
 
   /**
@@ -1217,7 +1236,7 @@ const CRIO_OBJECT_PROTOTYPE = {
       newObject[key] = getCrioedValue(result);
     });
 
-    return getSameCrioIfUnchanged(this, new CrioObject(newObject));
+    return getSameCrioIfUnchanged(this, newObject);
   },
 
   /**
@@ -1242,8 +1261,13 @@ const CRIO_OBJECT_PROTOTYPE = {
     const reducedValue = ARRAY_PROTOTYPE.reduce.call(this.keys(), (accumulation, key) => {
       return fn.call(thisArg, accumulation, this[key], key, this);
     }, defaultValue);
+    const crioedValue = getCrioedValue(reducedValue);
 
-    return getSameCrioIfUnchanged(this, getCrioedValue(reducedValue));
+    if (isCrio(crioedValue)) {
+      return this.equals(crioedValue) ? this : crioedValue;
+    }
+
+    return crioedValue;
   },
 
   /**
@@ -1259,8 +1283,13 @@ const CRIO_OBJECT_PROTOTYPE = {
     const reducedValue = ARRAY_PROTOTYPE.reduceRight.call(this.keys(), (accumulation, key) => {
       return fn.call(thisArg, accumulation, this[key], key, this);
     }, defaultValue);
+    const crioedValue = getCrioedValue(reducedValue);
 
-    return getSameCrioIfUnchanged(this, getCrioedValue(reducedValue));
+    if (isCrio(crioedValue)) {
+      return this.equals(crioedValue) ? this : crioedValue;
+    }
+
+    return crioedValue;
   },
 
   /**
