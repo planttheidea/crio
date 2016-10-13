@@ -20,7 +20,7 @@ const convertToNumber = (value) => {
  * forEach loop specific to objects
  *
  * @param {CrioObject} crio
- * @param {function} fn
+ * @param {Function} fn
  * @param {*} thisArg
  */
 const forEachObject = (crio, fn, thisArg) => {
@@ -34,10 +34,10 @@ const forEachObject = (crio, fn, thisArg) => {
  * create a deeply-nested new object with value at last key location
  *
  * @param {string|number} key
- * @param {array<string|number>} restOfKeys
+ * @param {Array<string|number>} restOfKeys
  * @param {number} restOfKeys.length
  * @param {*} value
- * @returns {array<*>|object}
+ * @returns {Array<*>|object}
  */
 /* eslint-enable */
 const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
@@ -57,13 +57,11 @@ const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
 /**
  * shallowly clone an array
  *
- * @param {array<*>} array
- * @returns {array<T>}
+ * @param {Array<*>} array
+ * @returns {Array<T>}
  */
 const shallowCloneArray = (array) => {
-  return ARRAY_PROTOTYPE.map.call(array, (value) => {
-    return value;
-  });
+  return ARRAY_PROTOTYPE.slice.call(array, 0, array.length);
 };
 
 /**
@@ -72,20 +70,13 @@ const shallowCloneArray = (array) => {
  * @param {CrioArray} crioArray
  * @param {number} indexToSet
  * @param {*} valueToSet
- * @returns {array<*>}
+ * @returns {Array<*>}
  */
 const shallowCloneArrayWithValue = (crioArray, indexToSet, valueToSet) => {
-  let plainObject = [];
-
-  plainObject[indexToSet] = valueToSet;
-
-  forEach(crioArray, (value, index) => {
-    if (index !== indexToSet) {
-      plainObject[index] = value;
-    }
-  });
-
-  return plainObject;
+  return []
+    .concat(ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet))
+    .concat([valueToSet])
+    .concat(ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1));
 };
 
 /**
@@ -94,20 +85,20 @@ const shallowCloneArrayWithValue = (crioArray, indexToSet, valueToSet) => {
  * @param {CrioObject} crioObject
  * @param {string} key
  * @param {*} value
- * @returns {object}
+ * @returns {Object}
  */
 const shallowCloneObjectWithValue = (crioObject, key, value) => {
   let plainObject = {
     [key]: value
   };
 
-  forEachObject(crioObject, (currentValue, currentKey) => {
+  return crioObject.keys().reduce((result, currentKey) => {
     if (currentKey !== key) {
-      plainObject[currentKey] = currentValue;
+      result[currentKey] = crioObject.get(currentKey);
     }
-  });
 
-  return plainObject;
+    return result;
+  }, plainObject);
 };
 
 export {convertToNumber};

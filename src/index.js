@@ -30,7 +30,7 @@ import {
  * generate a new CrioArray or CrioObject
  *
  * @param {*} object
- * @returns {CrioArray|CrioObject|*}
+ * @returns {CrioArray|CrioObject|Array<*>|Object|*}
  */
 const createCrio = (object = {}) => {
   if (isCrio(object)) {
@@ -48,10 +48,22 @@ const createCrio = (object = {}) => {
   return object;
 };
 
+/**
+ * create a new CrioArray
+ *
+ * @param {Array<*>} array
+ * @returns {CrioArray}
+ */
 createCrio.array = (array = []) => {
   return new CrioArray(array);
 };
 
+/**
+ * create a new CrioObject
+ *
+ * @param {Object} object
+ * @returns {CrioObject}
+ */
 createCrio.object = (object = {}) => {
   return new CrioObject(object);
 };

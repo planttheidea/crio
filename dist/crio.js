@@ -107,7 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * generate a new CrioArray or CrioObject
 	 *
 	 * @param {*} object
-	 * @returns {CrioArray|CrioObject|*}
+	 * @returns {CrioArray|CrioObject|Array<*>|Object|*}
 	 */
 	
 	
@@ -131,15 +131,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  return object;
-	}; // ES2015
+	};
 	
-	
+	/**
+	 * create a new CrioArray
+	 *
+	 * @param {Array<*>} array
+	 * @returns {CrioArray}
+	 */
+	// ES2015
 	createCrio.array = function () {
 	  var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	
 	  return new _classes.CrioArray(array);
 	};
 	
+	/**
+	 * create a new CrioObject
+	 *
+	 * @param {Object} object
+	 * @returns {CrioObject}
+	 */
 	createCrio.object = function () {
 	  var object = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
@@ -1334,8 +1346,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * build prototype object to add to default prototype
 	 *
-	 * @param {object} prototype
-	 * @returns {object}
+	 * @param {Object} prototype
+	 * @returns {Object}
 	 */
 	var createPrototypeObject = function createPrototypeObject(prototype) {
 	  var keys = OBJECT_KEYS(prototype);
@@ -1403,7 +1415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * return the original object if the values have not changed
 	 *
 	 * @param {CrioArray|CrioObject} crio
-	 * @param {array<*>|object} potentialCrio
+	 * @param {Array<*>|Object} potentialCrio
 	 * @returns {CrioArray|CrioObject}
 	 */
 	var getSameCrioIfUnchanged = function getSameCrioIfUnchanged(crio, potentialCrio) {
@@ -1419,9 +1431,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * shallowly merge source arrays into target array
 	 * 
-	 * @param {array<*>} target
-	 * @param {array<array>} sources
-	 * @returns {array<*>}
+	 * @param {Array<*>} target
+	 * @param {Array<array>} sources
+	 * @returns {Array<*>}
 	 */
 	var mergeArrays = function mergeArrays(target, sources) {
 	  var plainObject = [];
@@ -1450,10 +1462,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * shallowly merge source objects into target object
 	 *
-	 * @param {object} target
-	 * @param {array<object>} sources
+	 * @param {Object} target
+	 * @param {Array<Object>} sources
 	 * @param {boolean} isTargetCrio
-	 * @returns {array<*>|object}
+	 * @returns {Array<*>|Object}
 	 */
 	var mergeObjects = function mergeObjects(target, sources, isTargetCrio) {
 	  var plainObject = isTargetCrio ? _extends({}, target) : {};
@@ -1471,7 +1483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * shallowly merge sources into target
 	 *
 	 * @param {CrioArray|CrioObject} target
-	 * @param {array<array|object>} sources
+	 * @param {Array<array|Object>} sources
 	 * @returns {CrioArray|CrioObject}
 	 */
 	var mergeCrios = function mergeCrios(target) {
@@ -1513,7 +1525,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @param {CrioArray|CrioObject} crio
 	 * @param {function} crio.forEach
-	 * @param {array<number|string>} keys
+	 * @param {Array<number|string>} keys
 	 * @param {*} value
 	 * @returns {CrioArray|CrioObject}
 	 */
@@ -1556,7 +1568,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * create based Crio class with a null prototype that will assign
 	 * the values passed to itself
 	 *
-	 * @param {array<*>|object} object
+	 * @param {Array<*>|Object} object
 	 * @param {string} hashCode=hashIt(object)
 	 * @return {CrioArray|CrioObject}
 	 */
@@ -1655,7 +1667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * remove deeply-nested key from this
 	   *
-	   * @param {array<string|number>} keys
+	   * @param {Array<string|number>} keys
 	   * @returns {CrioArray|CrioObject}
 	   */
 	  deleteIn: function deleteIn(keys) {
@@ -1720,7 +1732,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * get the value that matches at the deeply nested location from keys
 	   *
-	   * @param {array<string|number>} keys
+	   * @param {Array<string|number>} keys
 	   * @returns {*}
 	   */
 	  getIn: function getIn(keys) {
@@ -1781,7 +1793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * shallowly merge the objects passed with this
 	   *
-	   * @param {array<object>} objects
+	   * @param {Array<Object>} objects
 	   * @returns {CrioObject}
 	   */
 	  merge: function merge() {
@@ -1796,8 +1808,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * shallowly merge the objects passed with the deeply-nested location determined by keys
 	   *
-	   * @param {array<string|number>} keys
-	   * @param {array<object>} objects
+	   * @param {Array<string|number>} keys
+	   * @param {Array<Object>} objects
 	   * @returns {CrioObject}
 	   */
 	  mergeIn: function mergeIn(keys) {
@@ -1895,7 +1907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * set deeply-nested value in this based on keys
 	   *
-	   * @param {array<string|number>} keys
+	   * @param {Array<string|number>} keys
 	   * @param {number} keys.length
 	   * @param {*} value
 	   * @returns {CrioArray|CrioObject}
@@ -1908,7 +1920,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return the non-crio version of the object
 	   *
-	   * @returns {array<*>|object}
+	   * @returns {Array<*>|Object}
 	   */
 	  thaw: function thaw() {
 	    var plainObject = getPlainObject(this);
@@ -1999,7 +2011,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * create CrioArray class extending Crio with built prototype
 	   *
-	   * @param {array<*>} array
+	   * @param {Array<*>} array
 	   * @param {string} hashCode
 	   */
 	  function CrioArray(array, hashCode) {
@@ -2015,7 +2027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * concatenate the arguments passed with the current array
 	   *
-	   * @param {array<*> } args
+	   * @param {Array<*> } args
 	   * @returns {CrioArray}
 	   */
 	  concat: function concat() {
@@ -2038,7 +2050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return a new array with the appropriate arguments for copyWithin applied
 	   *
-	   * @param {array<*>} args
+	   * @param {Array<*>} args
 	   * @returns {CrioArray}
 	   */
 	  copyWithin: function copyWithin() {
@@ -2060,7 +2072,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return an array of [key, value] pairs for this
 	   *
-	   * @returns {array<array>}
+	   * @returns {Array<array>}
 	   */
 	  entries: function entries() {
 	    return OBJECT_ENTRIES(this);
@@ -2084,7 +2096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return a new array with the appropriate arguments for fill applied
 	   *
-	   * @param {array<*>} args
+	   * @param {Array<*>} args
 	   * @returns {CrioArray}
 	   */
 	  fill: function fill() {
@@ -2216,7 +2228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return the keys of this
 	   *
-	   * @returns {array<string>}
+	   * @returns {Array<string>}
 	   */
 	  keys: function keys() {
 	    return OBJECT_KEYS(this).map(_loops.convertToNumber);
@@ -2281,7 +2293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * add items to the current CrioArray
 	   *
-	   * @param {array<*>} items
+	   * @param {Array<*>} items
 	   * @returns {CrioArray}
 	   */
 	  push: function push() {
@@ -2371,7 +2383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return the sliced version of the current CrioArray
 	   *
-	   * @param {array<*>} args
+	   * @param {Array<*>} args
 	   * @returns {CrioArray}
 	   */
 	  slice: function slice() {
@@ -2419,7 +2431,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return the spliced version of the current CrioArray
 	   *
-	   * @param {array<*>} args
+	   * @param {Array<*>} args
 	   * @returns {CrioArray}
 	   */
 	  splice: function splice() {
@@ -2474,7 +2486,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * add the args passed to the current CrioArray
 	   *
-	   * @param {array<*>} args
+	   * @param {Array<*>} args
 	   * @returns {CrioArray}
 	   */
 	  unshift: function unshift() {
@@ -2495,7 +2507,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * get the values of this
 	   *
-	   * @returns {array<*>}
+	   * @returns {Array<*>}
 	   */
 	  values: function values() {
 	    return _constants.ARRAY_PROTOTYPE.values.call(this);
@@ -2510,7 +2522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * create CrioObject class extending Crio with built prototype
 	   *
-	   * @param {object} object
+	   * @param {Object} object
 	   * @param {string} hashCode
 	   */
 	  function CrioObject(object, hashCode) {
@@ -2528,7 +2540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * get the entries of this
 	   *
-	   * @returns {array<array>}
+	   * @returns {Array<array>}
 	   */
 	  entries: function entries() {
 	    return OBJECT_ENTRIES(this);
@@ -2642,7 +2654,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * get the keys of this
 	   *
-	   * @returns {array<string>}
+	   * @returns {Array<string>}
 	   */
 	  keys: function keys() {
 	    return OBJECT_KEYS(this);
@@ -2741,7 +2753,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * get the values for this
 	   *
-	   * @returns {array<*>}
+	   * @returns {Array<*>}
 	   */
 	  values: function values() {
 	    return _constants.OBJECT.values(this);
@@ -6842,7 +6854,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * forEach loop specific to objects
 	 *
 	 * @param {CrioObject} crio
-	 * @param {function} fn
+	 * @param {Function} fn
 	 * @param {*} thisArg
 	 */
 	var forEachObject = function forEachObject(crio, fn, thisArg) {
@@ -6856,10 +6868,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * create a deeply-nested new object with value at last key location
 	 *
 	 * @param {string|number} key
-	 * @param {array<string|number>} restOfKeys
+	 * @param {Array<string|number>} restOfKeys
 	 * @param {number} restOfKeys.length
 	 * @param {*} value
-	 * @returns {array<*>|object}
+	 * @returns {Array<*>|object}
 	 */
 	/* eslint-enable */
 	var createDeeplyNestedObject = function createDeeplyNestedObject(_ref, value) {
@@ -6885,13 +6897,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * shallowly clone an array
 	 *
-	 * @param {array<*>} array
-	 * @returns {array<T>}
+	 * @param {Array<*>} array
+	 * @returns {Array<T>}
 	 */
 	var shallowCloneArray = function shallowCloneArray(array) {
-	  return _constants.ARRAY_PROTOTYPE.map.call(array, function (value) {
-	    return value;
-	  });
+	  return _constants.ARRAY_PROTOTYPE.slice.call(array, 0, array.length);
 	};
 	
 	/**
@@ -6900,20 +6910,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {CrioArray} crioArray
 	 * @param {number} indexToSet
 	 * @param {*} valueToSet
-	 * @returns {array<*>}
+	 * @returns {Array<*>}
 	 */
 	var shallowCloneArrayWithValue = function shallowCloneArrayWithValue(crioArray, indexToSet, valueToSet) {
-	  var plainObject = [];
-	
-	  plainObject[indexToSet] = valueToSet;
-	
-	  (0, _forEach2.default)(crioArray, function (value, index) {
-	    if (index !== indexToSet) {
-	      plainObject[index] = value;
-	    }
-	  });
-	
-	  return plainObject;
+	  return [].concat(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet)).concat([valueToSet]).concat(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1));
 	};
 	
 	/**
@@ -6922,18 +6922,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {CrioObject} crioObject
 	 * @param {string} key
 	 * @param {*} value
-	 * @returns {object}
+	 * @returns {Object}
 	 */
 	var shallowCloneObjectWithValue = function shallowCloneObjectWithValue(crioObject, key, value) {
 	  var plainObject = _defineProperty({}, key, value);
 	
-	  forEachObject(crioObject, function (currentValue, currentKey) {
+	  return crioObject.keys().reduce(function (result, currentKey) {
 	    if (currentKey !== key) {
-	      plainObject[currentKey] = currentValue;
+	      result[currentKey] = crioObject.get(currentKey);
 	    }
-	  });
 	
-	  return plainObject;
+	    return result;
+	  }, plainObject);
 	};
 	
 	exports.convertToNumber = convertToNumber;
@@ -7030,7 +7030,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * determine if object is a React element
 	 *
 	 * @param {any} object
-	 * @param {string|symbol} object.$$typeof
+	 * @param {string|Symbol} object.$$typeof
 	 * @return {boolean}
 	 */
 	var isReactElement = function isReactElement(object) {

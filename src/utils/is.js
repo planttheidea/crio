@@ -20,7 +20,7 @@ const isCrio = (object) => {
  * determine if object is a React element
  *
  * @param {any} object
- * @param {string|symbol} object.$$typeof
+ * @param {string|Symbol} object.$$typeof
  * @return {boolean}
  */
 const isReactElement = (object) => {

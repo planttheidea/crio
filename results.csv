@@ -1,41 +1,41 @@
-Benchmark (all times in milliseconds): 1000, 5000, 10000, 50000, 100000, 500000, 1000000, 5000000
-[get] Object Native: 0, 0, 0, 1, 0, 2, 3, 19
-[get] Object Seamless-immutable: 0, 0, 1, 2, 0, 2, 3, 16
-[get] Object Immutable.js: 2, 1, 1, 2, 2, 10, 21, 101
-[get] Object Mori.js: 3, 1, 1, 7, 7, 41, 68, 334
-[get] Object Crio: 2, 0, 1, 1, 2, 2, 4, 16
-[get] Array Native: 0, 1, 0, 1, 2, 8, 17, 83
-[get] Array Seamless-immutable.js: 1, 1, 1, 2, 12, 55, 109, 540
-[get] Array Immutable.js: 2, 2, 1, 2, 3, 18, 35, 170
-[get] Array Mori.js: 2, 1, 2, 8, 15, 74, 149, 734
-[get] Array Crio: 0, 3, 0, 1, 2, 8, 17, 83
-[get-in] Object Native: 0, 1, 0, 1, 0, 2, 3, 16
-[get-in] Object Seamless-immutable: 0, 0, 1, 1, 0, 2, 4, 19
-[get-in] Object Immutable.js: 2, 4, 7, 18, 35, 172, 357, 1700
-[get-in] Object Mori.js: 3, 3, 2, 10, 17, 89, 178, 885
-[get-in] Object Crio: 1, 0, 1, 1, 4, 2, 4, 19
-[get-in] Array Native: 0, 1, 0, 1, 2, 10, 19, 94
-[get-in] Array Seamless-immutable.js: 0, 2, 1, 2, 3, 12, 24, 116
-[get-in] Array Immutable.js: 3, 9, 4, 19, 37, 185, 384, 1925
-[get-in] Array Mori.js: 3, 2, 4, 15, 29, 147, 288, 1491
-[get-in] Array Crio: 0, 3, 1, 1, 1, 11, 19, 97
-[set] Object Native: 1, 4, 4, 24, 46, 229, 458, 2289
-[set] Object Seamless-immutable: 7, 26, 47, 231, 462, 2312, 4607, 23020
-[set] Object Immutable.js: 2, 4, 5, 13, 24, 122, 244, 1222
-[set] Object Mori.js: 2, 4, 2, 12, 18, 76, 117, 584
-[set] Object Crio: 23, 68, 126, 630, 1253, 6321, 12445, 62222
-[set] Array Native: 1, 3, 4, 18, 36, 180, 358, 1793
-[set] Array Seamless-immutable.js: 16, 64, 121, 602, 1202, 6000, 11984, 60051
-[set] Array Immutable.js: 4, 4, 6, 25, 49, 257, 503, 2519
-[set] Array Mori.js: 3, 2, 3, 12, 25, 108, 222, 1062
-[set] Array Crio: 26, 104, 208, 950, 1914, 9521, 19044, 93601
-[set-in] Object Native: 2, 7, 10, 48, 96, 481, 962, 4793
-[set-in] Object Seamless-immutable: 12, 49, 96, 480, 956, 4776, 9558, 47826
-[set-in] Object Immutable.js: 5, 9, 12, 58, 120, 578, 1171, 5882
-[set-in] Object Mori.js: 6, 5, 5, 19, 37, 173, 346, 1737
-[set-in] Object Crio: 35, 144, 278, 1380, 2781, 13842, 27710, 138369
-[set-in] Array Native: 1, 5, 8, 36, 75, 369, 739, 3749
-[set-in] Array Seamless-immutable.js: 30, 127, 246, 1228, 2450, 12268, 24548, 122724
-[set-in] Array Immutable.js: 6, 13, 18, 93, 182, 926, 1829, 9154
-[set-in] Array Mori.js: 2, 3, 4, 24, 46, 237, 463, 2353
-[set-in] Array Crio: 48, 218, 428, 2136, 4294, 21398, 42709, 214151
+Benchmark (all times in milliseconds): 1000, 5000, 10000, 50000, 100000
+[get] Object Native: 0, 0, 0, 1, 0
+[get] Object Seamless-immutable: 0, 0, 0, 3, 0
+[get] Object Immutable.js: 2, 1, 1, 2, 2
+[get] Object Mori.js: 3, 1, 2, 6, 7
+[get] Object Crio: 1, 0, 1, 1, 3
+[get] Array Native: 0, 1, 0, 1, 2
+[get] Array Seamless-immutable.js: 0, 1, 1, 2, 13
+[get] Array Immutable.js: 1, 3, 0, 3, 6
+[get] Array Mori.js: 3, 2, 2, 9, 15
+[get] Array Crio: 1, 3, 0, 1, 1
+[get-in] Object Native: 1, 0, 0, 1, 0
+[get-in] Object Seamless-immutable: 0, 1, 0, 1, 0
+[get-in] Object Immutable.js: 2, 5, 6, 17, 34
+[get-in] Object Mori.js: 3, 2, 2, 9, 17
+[get-in] Object Crio: 1, 0, 1, 1, 3
+[get-in] Array Native: 1, 1, 0, 1, 2
+[get-in] Array Seamless-immutable.js: 0, 1, 1, 2, 3
+[get-in] Array Immutable.js: 2, 9, 5, 20, 42
+[get-in] Array Mori.js: 3, 2, 4, 15, 31
+[get-in] Array Crio: 0, 3, 1, 1, 2
+[set] Object Native: 1, 3, 5, 23, 47
+[set] Object Seamless-immutable: 6, 26, 47, 234, 468
+[set] Object Immutable.js: 3, 4, 5, 14, 28
+[set] Object Mori.js: 2, 5, 2, 13, 19
+[set] Object Crio: 22, 67, 124, 616, 1231
+[set] Array Native: 1, 3, 3, 19, 38
+[set] Array Seamless-immutable.js: 16, 70, 132, 658, 1313
+[set] Array Immutable.js: 3, 5, 5, 28, 54
+[set] Array Mori.js: 4, 2, 3, 14, 29
+[set] Array Crio: 27, 112, 210, 1044, 2106
+[set-in] Object Native: 2, 6, 10, 48, 95
+[set-in] Object Seamless-immutable: 13, 52, 101, 503, 1008
+[set-in] Object Immutable.js: 4, 9, 13, 58, 119
+[set-in] Object Mori.js: 5, 5, 4, 19, 35
+[set-in] Object Crio: 35, 147, 307, 1425, 2871
+[set-in] Array Native: 1, 5, 8, 37, 75
+[set-in] Array Seamless-immutable.js: 30, 132, 257, 1289, 2575
+[set-in] Array Immutable.js: 5, 12, 19, 96, 190
+[set-in] Array Mori.js: 1, 3, 4, 23, 46
+[set-in] Array Crio: 54, 251, 493, 2460, 4919

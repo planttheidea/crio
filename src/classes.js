@@ -40,8 +40,8 @@ const OBJECT_KEYS = OBJECT.keys;
 /**
  * build prototype object to add to default prototype
  *
- * @param {object} prototype
- * @returns {object}
+ * @param {Object} prototype
+ * @returns {Object}
  */
 const createPrototypeObject = (prototype) => {
   const keys = OBJECT_KEYS(prototype);
@@ -115,7 +115,7 @@ const getPlainObject = (crio) => {
  * return the original object if the values have not changed
  *
  * @param {CrioArray|CrioObject} crio
- * @param {array<*>|object} potentialCrio
+ * @param {Array<*>|Object} potentialCrio
  * @returns {CrioArray|CrioObject}
  */
 const getSameCrioIfUnchanged = (crio, potentialCrio) => {
@@ -131,9 +131,9 @@ const getSameCrioIfUnchanged = (crio, potentialCrio) => {
 /**
  * shallowly merge source arrays into target array
  * 
- * @param {array<*>} target
- * @param {array<array>} sources
- * @returns {array<*>}
+ * @param {Array<*>} target
+ * @param {Array<array>} sources
+ * @returns {Array<*>}
  */
 const mergeArrays = (target, sources) => {
   let plainObject = [];
@@ -162,10 +162,10 @@ const mergeArrays = (target, sources) => {
 /**
  * shallowly merge source objects into target object
  *
- * @param {object} target
- * @param {array<object>} sources
+ * @param {Object} target
+ * @param {Array<Object>} sources
  * @param {boolean} isTargetCrio
- * @returns {array<*>|object}
+ * @returns {Array<*>|Object}
  */
 const mergeObjects = (target, sources, isTargetCrio) => {
   let plainObject = isTargetCrio ? {...target} : {};
@@ -186,7 +186,7 @@ const mergeObjects = (target, sources, isTargetCrio) => {
  * shallowly merge sources into target
  *
  * @param {CrioArray|CrioObject} target
- * @param {array<array|object>} sources
+ * @param {Array<array|Object>} sources
  * @returns {CrioArray|CrioObject}
  */
 const mergeCrios = (target, ...sources) => {
@@ -203,71 +203,12 @@ const mergeCrios = (target, ...sources) => {
   return getSameCrioIfUnchanged(target, mergeArrays(target, sources));
 };
 
-/**
- * set the value in crio and return a new Crio
- *
- * @param {CrioArray|CrioObject} crio
- * @param {number|string} key
- * @param {*} value
- * @returns {CrioArray|CrioObject}
- */
-const setCrio = (crio, key, value) => {
-  if (crio[CRIO_TYPE] === CRIO_ARRAY) {
-    return getSameCrioIfUnchanged(crio, shallowCloneArrayWithValue(crio, key, value));
-  }
-
-  return getSameCrioIfUnchanged(crio, shallowCloneObjectWithValue(crio, key, value));
-};
-
-/**
- * deeply set the value in crio based on keys and return a new Crio
- *
- * @param {CrioArray|CrioObject} crio
- * @param {function} crio.forEach
- * @param {array<number|string>} keys
- * @param {*} value
- * @returns {CrioArray|CrioObject}
- */
-const setInCrio = (crio, keys, value) => {
-  const length = keys.length;
-
-  if (length === 0) {
-    return this;
-  }
-
-  if (length === 1) {
-    return setCrio(crio, keys[0], value);
-  }
-
-  const [
-    key,
-    ...restOfKeys
-  ] = keys;
-
-  if (!crio[key]) {
-    return setCrio(crio, key, createDeeplyNestedObject(restOfKeys, value));
-  }
-
-  let plainObject = getPlainObject(crio);
-
-  crio.forEach((currentValue, currentKey) => {
-    if (currentKey === key) {
-      plainObject[currentKey] = isCrio(currentValue) ? setInCrio(currentValue, restOfKeys, value) :
-        createDeeplyNestedObject(restOfKeys, value);
-    } else {
-      plainObject[currentKey] = currentValue;
-    }
-  });
-
-  return getSameCrioIfUnchanged(crio, plainObject);
-};
-
 class Crio {
   /**
    * create based Crio class with a null prototype that will assign
    * the values passed to itself
    *
-   * @param {array<*>|object} object
+   * @param {Array<*>|Object} object
    * @param {string} hashCode=hashIt(object)
    * @return {CrioArray|CrioObject}
    */
@@ -357,7 +298,7 @@ const CRIO_PROTOTYPE = {
   /**
    * remove deeply-nested key from this
    *
-   * @param {array<string|number>} keys
+   * @param {Array<string|number>} keys
    * @returns {CrioArray|CrioObject}
    */
   deleteIn(keys) {
@@ -417,7 +358,7 @@ const CRIO_PROTOTYPE = {
   /**
    * get the value that matches at the deeply nested location from keys
    *
-   * @param {array<string|number>} keys
+   * @param {Array<string|number>} keys
    * @returns {*}
    */
   getIn(keys) {
@@ -475,7 +416,7 @@ const CRIO_PROTOTYPE = {
   /**
    * shallowly merge the objects passed with this
    *
-   * @param {array<object>} objects
+   * @param {Array<Object>} objects
    * @returns {CrioObject}
    */
   merge(...objects) {
@@ -485,8 +426,8 @@ const CRIO_PROTOTYPE = {
   /**
    * shallowly merge the objects passed with the deeply-nested location determined by keys
    *
-   * @param {array<string|number>} keys
-   * @param {array<object>} objects
+   * @param {Array<string|number>} keys
+   * @param {Array<Object>} objects
    * @returns {CrioObject}
    */
   mergeIn(keys, ...objects) {
@@ -567,29 +508,65 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   set(key, value) {
-    if (this[key] === value) {
+    if (this.get(key) === value) {
       return this;
     }
 
-    return setCrio(this, key, value);
+    if (this[CRIO_TYPE] === CRIO_ARRAY) {
+      return getSameCrioIfUnchanged(this, shallowCloneArrayWithValue(this, key, value));
+    }
+
+    return getSameCrioIfUnchanged(this, shallowCloneObjectWithValue(this, key, value));
   },
 
   /**
    * set deeply-nested value in this based on keys
    *
-   * @param {array<string|number>} keys
+   * @param {Array<string|number>} keys
    * @param {number} keys.length
    * @param {*} value
    * @returns {CrioArray|CrioObject}
    */
   setIn(keys, value) {
-    return setInCrio(this, keys, value);
+    switch (keys.length) {
+      case 1:
+        return this.set(keys[0], value);
+
+      case 0:
+        return this;
+    }
+
+    const [
+      key,
+      ...restOfKeys
+    ] = keys;
+
+    if (!this.get(key)) {
+      return this.set(key, createDeeplyNestedObject(restOfKeys, value));
+    }
+
+    let currentValue;
+
+    const plainObject = this.keys().reduce((result, currentKey) => {
+      currentValue = this.get(currentKey);
+
+      if (currentKey === key) {
+        result[currentKey] = isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
+          createDeeplyNestedObject(restOfKeys, value);
+      } else {
+        result[currentKey] = currentValue;
+      }
+
+      return result;
+    }, getPlainObject(this));
+
+    return getSameCrioIfUnchanged(this, plainObject);
   },
 
   /**
    * return the non-crio version of the object
    *
-   * @returns {array<*>|object}
+   * @returns {Array<*>|Object}
    */
   thaw() {
     const plainObject = getPlainObject(this);
@@ -673,7 +650,7 @@ class CrioArray extends Crio {
   /**
    * create CrioArray class extending Crio with built prototype
    *
-   * @param {array<*>} array
+   * @param {Array<*>} array
    * @param {string} hashCode
    */
   constructor(array, hashCode) {
@@ -685,7 +662,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * concatenate the arguments passed with the current array
    *
-   * @param {array<*> } args
+   * @param {Array<*> } args
    * @returns {CrioArray}
    */
   concat(...args) {
@@ -703,7 +680,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * return a new array with the appropriate arguments for copyWithin applied
    *
-   * @param {array<*>} args
+   * @param {Array<*>} args
    * @returns {CrioArray}
    */
   copyWithin(...args) {
@@ -720,7 +697,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * return an array of [key, value] pairs for this
    *
-   * @returns {array<array>}
+   * @returns {Array<array>}
    */
   entries() {
     return OBJECT_ENTRIES(this);
@@ -740,7 +717,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * return a new array with the appropriate arguments for fill applied
    *
-   * @param {array<*>} args
+   * @param {Array<*>} args
    * @returns {CrioArray}
    */
   fill(...args) {
@@ -847,7 +824,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * return the keys of this
    *
-   * @returns {array<string>}
+   * @returns {Array<string>}
    */
   keys() {
     return OBJECT_KEYS(this).map(convertToNumber);
@@ -903,7 +880,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * add items to the current CrioArray
    *
-   * @param {array<*>} items
+   * @param {Array<*>} items
    * @returns {CrioArray}
    */
   push(...items) {
@@ -980,7 +957,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * return the sliced version of the current CrioArray
    *
-   * @param {array<*>} args
+   * @param {Array<*>} args
    * @returns {CrioArray}
    */
   slice(...args) {
@@ -1019,7 +996,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * return the spliced version of the current CrioArray
    *
-   * @param {array<*>} args
+   * @param {Array<*>} args
    * @returns {CrioArray}
    */
   splice(...args) {
@@ -1068,7 +1045,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * add the args passed to the current CrioArray
    *
-   * @param {array<*>} args
+   * @param {Array<*>} args
    * @returns {CrioArray}
    */
   unshift(...args) {
@@ -1084,7 +1061,7 @@ const CRIO_ARRAY_PROTOTYPE = {
   /**
    * get the values of this
    *
-   * @returns {array<*>}
+   * @returns {Array<*>}
    */
   values() {
     return ARRAY_PROTOTYPE.values.call(this);
@@ -1101,7 +1078,7 @@ class CrioObject extends Crio {
   /**
    * create CrioObject class extending Crio with built prototype
    *
-   * @param {object} object
+   * @param {Object} object
    * @param {string} hashCode
    */
   constructor(object, hashCode) {
@@ -1115,7 +1092,7 @@ const CRIO_OBJECT_PROTOTYPE = {
   /**
    * get the entries of this
    *
-   * @returns {array<array>}
+   * @returns {Array<array>}
    */
   entries() {
     return OBJECT_ENTRIES(this);
@@ -1213,7 +1190,7 @@ const CRIO_OBJECT_PROTOTYPE = {
   /**
    * get the keys of this
    *
-   * @returns {array<string>}
+   * @returns {Array<string>}
    */
   keys() {
     return OBJECT_KEYS(this);
@@ -1295,7 +1272,7 @@ const CRIO_OBJECT_PROTOTYPE = {
   /**
    * get the values for this
    *
-   * @returns {array<*>}
+   * @returns {Array<*>}
    */
   values() {
     return OBJECT.values(this);

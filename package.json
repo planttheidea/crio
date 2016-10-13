@@ -1,6 +1,7 @@
 {
   "author": "planttheidea",
   "ava": {
+    "concurrency": 10,
     "babel": {
       "babelrc": true,
       "presets": [
@@ -15,7 +16,8 @@
     "require": [
       "babel-register",
       "babel-polyfill"
-    ]
+    ],
+    "verbose": true
   },
   "bugs": {
     "url": "https://github.com/planttheidea/crio/issues"
@@ -79,9 +81,9 @@
     "dist": "npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "in-publish && npm run compile-for-publish || in-install",
-    "test": "NODE_ENV=test ava --verbose --no-cache",
-    "test:watch": "NODE_ENV=production ava --verbose --no-cache --watch",
+    "test": "NODE_ENV=test ava --no-cache",
+    "test:watch": "NODE_ENV=production ava --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "3.0.0-rc.3"
+  "version": "3.0.0-rc.4"
 }
