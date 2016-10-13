@@ -85,5 +85,5 @@
     "test:watch": "NODE_ENV=production ava --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "3.0.0-rc.4"
+  "version": "3.0.0-rc.5"
 }

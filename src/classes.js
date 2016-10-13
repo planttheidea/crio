@@ -528,12 +528,14 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   setIn(keys, value) {
-    switch (keys.length) {
-      case 1:
-        return this.set(keys[0], value);
+    const length = keys.length;
 
-      case 0:
-        return this;
+    if (length === 1) {
+      return this.set(keys[0], value);
+    }
+
+    if (length === 0) {
+      return this;
     }
 
     const [
@@ -545,20 +547,16 @@ const CRIO_PROTOTYPE = {
       return this.set(key, createDeeplyNestedObject(restOfKeys, value));
     }
 
-    let currentValue;
+    let plainObject = getPlainObject(this);
 
-    const plainObject = this.keys().reduce((result, currentKey) => {
-      currentValue = this.get(currentKey);
-
+    this.forEach((currentValue, currentKey) => {
       if (currentKey === key) {
-        result[currentKey] = isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
+        plainObject[currentKey] = isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
           createDeeplyNestedObject(restOfKeys, value);
       } else {
-        result[currentKey] = currentValue;
+        plainObject[currentKey] = currentValue;
       }
-
-      return result;
-    }, getPlainObject(this));
+    });
 
     return getSameCrioIfUnchanged(this, plainObject);
   },
