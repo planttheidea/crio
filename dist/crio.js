@@ -1402,13 +1402,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * get the value for setIn
+	 *
+	 * @param {*} currentValue
+	 * @param {*} value
+	 * @param {boolean} isMatchingKey
+	 * @param {Array<string>} restOfKeys
+	 * @returns {*}
+	 */
+	var getDeeplyNestedValue = function getDeeplyNestedValue(currentValue, value, isMatchingKey, restOfKeys) {
+	  if (!isMatchingKey) {
+	    return currentValue;
+	  }
+	
+	  return (0, _is.isCrio)(currentValue) ? currentValue.setIn(restOfKeys, value) : (0, _loops.createDeeplyNestedObject)(restOfKeys, value);
+	};
+	
+	/**
 	 * get the plain object version of the crio type
 	 *
 	 * @param {CrioArray|CrioObject} crio
-	 * @returns {{}|[]}
+	 * @param {number} crio.length
+	 * @param {boolean} isDynamicLength=true
+	 * @returns {Array<*>|Object}
 	 */
 	var getPlainObject = function getPlainObject(crio) {
-	  return crio[_constants.CRIO_TYPE] === _constants.CRIO_OBJECT ? {} : [];
+	  var isDynamicLength = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+	
+	  if ((0, _is.isCrioArray)(crio)) {
+	    return isDynamicLength ? [] : new Array(crio.length);
+	  }
+	
+	  return {};
 	};
 	
 	/**
@@ -1497,7 +1522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  var isTargetCrio = (0, _is.isCrio)(target);
 	
-	  if (!isTargetCrio || target[_constants.CRIO_TYPE] === _constants.CRIO_OBJECT) {
+	  if (!isTargetCrio || (0, _is.isCrioObject)(target)) {
 	    return getSameCrioIfUnchanged(target, mergeObjects(target, sources, isTargetCrio));
 	  }
 	
@@ -1510,13 +1535,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * the values passed to itself
 	 *
 	 * @param {Array<*>|Object} object
-	 * @param {string} hashCode=hashIt(object)
+	 * @param {string} hashCode=hashIt.withRecursion(object)
 	 * @return {CrioArray|CrioObject}
 	 */
 	function Crio(object) {
 	  var _this = this;
 	
-	  var hashCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : (0, _hashIt2.default)(object);
+	  var hashCode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _hashIt2.default.withRecursion(object);
 	
 	  _classCallCheck(this, Crio);
 	
@@ -1780,7 +1805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.set(key, mergeCrios.apply(undefined, [object].concat(_toConsumableArray(restOfObjects))));
 	    }
 	
-	    var plainObject = getPlainObject(this),
+	    var plainObject = getPlainObject(this, false),
 	        isKeySet = false,
 	        isTargetKey = false;
 	
@@ -1797,11 +1822,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	
 	    if (!isKeySet) {
-	      var _object = objects[0];
-	
-	      var _restOfObjects = objects.slice(1);
-	
-	      plainObject[key] = mergeCrios.apply(undefined, [_object].concat(_toConsumableArray(_restOfObjects)));
+	      plainObject[key] = mergeCrios.apply(undefined, objects);
 	    }
 	
 	    return getSameCrioIfUnchanged(this, plainObject);
@@ -1837,11 +1858,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray|CrioObject}
 	   */
 	  set: function set(key, value) {
-	    if (this.get(key) === value) {
+	    if (this[key] === value) {
 	      return this;
 	    }
 	
-	    if (this[_constants.CRIO_TYPE] === _constants.CRIO_ARRAY) {
+	    if ((0, _is.isCrioArray)(this)) {
 	      return getSameCrioIfUnchanged(this, (0, _loops.shallowCloneArrayWithValue)(this, key, value));
 	    }
 	
@@ -1874,18 +1895,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var restOfKeys = _keys2.slice(1);
 	
-	    if (!this.get(key)) {
+	    if (!this[key]) {
 	      return this.set(key, (0, _loops.createDeeplyNestedObject)(restOfKeys, value));
 	    }
 	
-	    var plainObject = getPlainObject(this);
+	    var plainObject = getPlainObject(this, false);
 	
 	    this.forEach(function (currentValue, currentKey) {
-	      if (currentKey === key) {
-	        plainObject[currentKey] = (0, _is.isCrio)(currentValue) ? currentValue.setIn(restOfKeys, value) : (0, _loops.createDeeplyNestedObject)(restOfKeys, value);
-	      } else {
-	        plainObject[currentKey] = currentValue;
-	      }
+	      plainObject[currentKey] = getDeeplyNestedValue(currentValue, value, currentKey === key, restOfKeys);
 	    });
 	
 	    return getSameCrioIfUnchanged(this, plainObject);
@@ -1898,7 +1915,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {Array<*>|Object}
 	   */
 	  thaw: function thaw() {
-	    var plainObject = getPlainObject(this);
+	    var plainObject = getPlainObject(this, false);
 	
 	    this.forEach(function (value, key) {
 	      plainObject[key] = (0, _is.isCrio)(value) ? value.thaw() : value;
@@ -1914,7 +1931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  toArray: function toArray() {
-	    if (this[_constants.CRIO_TYPE] === _constants.CRIO_ARRAY) {
+	    if ((0, _is.isCrioArray)(this)) {
 	      return this;
 	    }
 	
@@ -1944,7 +1961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioObject}
 	   */
 	  toObject: function toObject() {
-	    if (this[_constants.CRIO_TYPE] === _constants.CRIO_OBJECT) {
+	    if ((0, _is.isCrioObject)(this)) {
 	      return this;
 	    }
 	
@@ -2612,6 +2629,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 	
 	    (0, _loops.forEachObject)(this, fn, thisArg);
+	  },
+	
+	
+	  /**
+	   * does this include the value passed
+	   *
+	   * @param {*} value
+	   * @returns {boolean}
+	   */
+	  includes: function includes(value) {
+	    var keys = this.keys();
+	
+	    var index = -1,
+	        currentKey = void 0,
+	        currentValue = void 0;
+	
+	    while (++index < this.length) {
+	      currentKey = keys[index];
+	      currentValue = this[currentKey];
+	
+	      if (currentValue === value) {
+	        return true;
+	      }
+	    }
+	
+	    return false;
 	  },
 	
 	
@@ -6812,6 +6855,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); } // external dependencies
 	
 	
@@ -6888,7 +6933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Array<*>}
 	 */
 	var shallowCloneArrayWithValue = function shallowCloneArrayWithValue(crioArray, indexToSet, valueToSet) {
-	  return [].concat(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet)).concat([valueToSet]).concat(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1));
+	  return [].concat(_toConsumableArray(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet)), [valueToSet], _toConsumableArray(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1)));
 	};
 	
 	/**
@@ -6902,13 +6947,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	var shallowCloneObjectWithValue = function shallowCloneObjectWithValue(crioObject, key, value) {
 	  var plainObject = _defineProperty({}, key, value);
 	
-	  return crioObject.keys().reduce(function (result, currentKey) {
+	  (0, _forEach2.default)(crioObject.keys(), function (currentKey) {
 	    if (currentKey !== key) {
-	      result[currentKey] = crioObject.get(currentKey);
+	      plainObject[currentKey] = crioObject[currentKey];
 	    }
+	  });
 	
-	    return result;
-	  }, plainObject);
+	  return plainObject;
 	};
 	
 	exports.convertToNumber = convertToNumber;
@@ -6980,7 +7025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.isReactElement = exports.isCrio = undefined;
+	exports.isReactElement = exports.isCrioObject = exports.isCrioArray = exports.isCrio = undefined;
 	
 	var _isObject = __webpack_require__(65);
 	
@@ -7002,6 +7047,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * determine if object passed is a CrioArray
+	 *
+	 * @param {*} object
+	 * @returns {boolean}
+	 */
+	var isCrioArray = function isCrioArray(object) {
+	  return isCrio(object) && object[_constants.CRIO_TYPE] === _constants.CRIO_ARRAY;
+	};
+	
+	/**
+	 * determine if object passed is a CrioObject
+	 *
+	 * @param {*} object
+	 * @returns {boolean}
+	 */
+	var isCrioObject = function isCrioObject(object) {
+	  return isCrio(object) && object[_constants.CRIO_TYPE] === _constants.CRIO_OBJECT;
+	};
+	
+	/**
 	 * determine if object is a React element
 	 *
 	 * @param {any} object
@@ -7013,6 +7078,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	exports.isCrio = isCrio;
+	exports.isCrioArray = isCrioArray;
+	exports.isCrioObject = isCrioObject;
 	exports.isReactElement = isReactElement;
 
 /***/ },

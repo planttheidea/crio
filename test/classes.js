@@ -834,6 +834,22 @@ test('if forEach loops over the object providing both value and key', (t) => {
   t.deepEqual(object.thaw(), resultObject);
 });
 
+test('if includes returns the correct boolean value based on the existence of a value in the CrioObject', (t) => {
+  const simple = 'foo';
+  const complex = new CrioObject({bar: 'baz'});
+
+  const crioObject = new CrioObject({
+    complex,
+    simple
+  });
+
+  t.true(crioObject.includes('foo'));
+  t.false(crioObject.includes('bar'));
+
+  t.true(crioObject.includes(complex));
+  t.false(crioObject.includes({foo: 'bar'}));
+});
+
 test('if the CrioObject is the prototype of another object', (t) => {
   const object = new CrioObject({foo: 'bar', bar: 'baz'});
 

@@ -2,6 +2,8 @@
 import isObject from 'lodash/isObject';
 
 import {
+  CRIO_ARRAY,
+  CRIO_OBJECT,
   CRIO_TYPE,
   REACT_ELEMENT_TYPE
 } from './constants';
@@ -17,6 +19,26 @@ const isCrio = (object) => {
 };
 
 /**
+ * determine if object passed is a CrioArray
+ *
+ * @param {*} object
+ * @returns {boolean}
+ */
+const isCrioArray = (object) => {
+  return isCrio(object) && object[CRIO_TYPE] === CRIO_ARRAY;
+};
+
+/**
+ * determine if object passed is a CrioObject
+ *
+ * @param {*} object
+ * @returns {boolean}
+ */
+const isCrioObject = (object) => {
+  return isCrio(object) && object[CRIO_TYPE] === CRIO_OBJECT;
+};
+
+/**
  * determine if object is a React element
  *
  * @param {any} object
@@ -28,4 +50,6 @@ const isReactElement = (object) => {
 };
 
 export {isCrio};
+export {isCrioArray};
+export {isCrioObject};
 export {isReactElement};

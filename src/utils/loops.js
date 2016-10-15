@@ -73,10 +73,11 @@ const shallowCloneArray = (array) => {
  * @returns {Array<*>}
  */
 const shallowCloneArrayWithValue = (crioArray, indexToSet, valueToSet) => {
-  return []
-    .concat(ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet))
-    .concat([valueToSet])
-    .concat(ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1));
+  return [
+    ...ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet),
+    valueToSet,
+    ...ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1)
+  ];
 };
 
 /**
@@ -92,13 +93,13 @@ const shallowCloneObjectWithValue = (crioObject, key, value) => {
     [key]: value
   };
 
-  return crioObject.keys().reduce((result, currentKey) => {
+  forEach(crioObject.keys(), (currentKey) => {
     if (currentKey !== key) {
-      result[currentKey] = crioObject.get(currentKey);
+      plainObject[currentKey] = crioObject[currentKey];
     }
+  });
 
-    return result;
-  }, plainObject);
+  return plainObject;
 };
 
 export {convertToNumber};

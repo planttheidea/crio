@@ -93,7 +93,9 @@ As most of these methods replicate (or just use) the native method, most will be
 #### crio Methods
 * clear returns `{CrioObject}`
     * returns an empty `CrioObject`
-* delete `{tring}` *key*, returns `{CrioObject}`
+* compact, returns `{CrioObject}`
+    * returns a new `CrioObject` with all keys with falsy values filtered out
+* delete `{string}` *key*, returns `{CrioObject}`
     * Deletes the key provided from the crio object
 * deleteIn `{array<number|string>}` *keys*, returns `{CrioObject}`
     * Deletes the final key based on the array of keys nested inside of the crio object
@@ -109,6 +111,8 @@ As most of these methods replicate (or just use) the native method, most will be
     * Retrieve value at key
 * getIn `{array}` *keys*, returns `{any}`
     * Retrieve value in deeply nested object based on array of keys
+* includes `{any}` *value*, returns `{boolean}`
+    * Determine if the `CrioObject` has a value matching `value`
 * map `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object and maps returned value to the respective key
     * Iteration order is not guaranteed
@@ -117,7 +121,11 @@ As most of these methods replicate (or just use) the native method, most will be
 * mergeIn `{array}` *keys*, `{object[, object2, ..., objectN]}` *objects*, returns `{CrioObject}`
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioObject}`
-    * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioOjbect`
+    * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioObject`
+* reduce `{function(accumulatedObject, value, key): any}` *fn*, `{any}` *thisArg*, returns `{any}`
+    * Performs same function as `reduce` in the `Array` prototype, but on the `CrioObject`
+* reduceRight `{function(accumulatedObject, value, key): any}` *fn*, `{any}` *thisArg*, returns `{any}`
+    * Performs same function as `reduceRight` in the `Array` prototype, but on the `CrioObject`
 * set `{string}` *key*, returns `{CrioObject}`
     * Sets value at key
 * setIn `{array}` *keys*, returns `{CrioObject}`

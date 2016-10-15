@@ -28,6 +28,8 @@ import {
 
 import {
   isCrio,
+  isCrioArray,
+  isCrioObject,
   isReactElement
 } from './utils/is';
 
@@ -102,13 +104,37 @@ const getCrioedValue = (value) => {
 };
 
 /**
+ * get the value for setIn
+ *
+ * @param {*} currentValue
+ * @param {*} value
+ * @param {boolean} isMatchingKey
+ * @param {Array<string>} restOfKeys
+ * @returns {*}
+ */
+const getDeeplyNestedValue = (currentValue, value, isMatchingKey, restOfKeys) => {
+  if (!isMatchingKey) {
+    return currentValue;
+  }
+
+  return isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
+    createDeeplyNestedObject(restOfKeys, value);
+};
+
+/**
  * get the plain object version of the crio type
  *
  * @param {CrioArray|CrioObject} crio
- * @returns {{}|[]}
+ * @param {number} crio.length
+ * @param {boolean} isDynamicLength=true
+ * @returns {Array|Object}
  */
-const getPlainObject = (crio) => {
-  return crio[CRIO_TYPE] === CRIO_OBJECT ? {} : [];
+const getPlainObject = (crio, isDynamicLength = true) => {
+  if (isCrioArray(crio)) {
+    return isDynamicLength ? [] : new Array(crio.length);
+  }
+
+  return {};
 };
 
 /**
@@ -196,7 +222,7 @@ const mergeCrios = (target, ...sources) => {
 
   const isTargetCrio = isCrio(target);
 
-  if (!isTargetCrio || target[CRIO_TYPE] === CRIO_OBJECT) {
+  if (!isTargetCrio || isCrioObject(target)) {
     return getSameCrioIfUnchanged(target, mergeObjects(target, sources, isTargetCrio));
   }
 
@@ -209,10 +235,10 @@ class Crio {
    * the values passed to itself
    *
    * @param {Array<*>|Object} object
-   * @param {string} hashCode=hashIt(object)
+   * @param {string} hashCode=hashIt.withRecursion(object)
    * @return {CrioArray|CrioObject}
    */
-  constructor(object, hashCode = hashIt(object)) {
+  constructor(object, hashCode = hashIt.withRecursion(object)) {
     if (isCrio(object)) {
       return object;
     }
@@ -453,7 +479,7 @@ const CRIO_PROTOTYPE = {
       return this.set(key, mergeCrios(object, ...restOfObjects));
     }
 
-    let plainObject = getPlainObject(this),
+    let plainObject = getPlainObject(this, false),
         isKeySet = false,
         isTargetKey = false;
 
@@ -471,12 +497,7 @@ const CRIO_PROTOTYPE = {
     });
 
     if (!isKeySet) {
-      const [
-        object,
-        ...restOfObjects
-      ] = objects;
-
-      plainObject[key] = mergeCrios(object, ...restOfObjects);
+      plainObject[key] = mergeCrios(...objects);
     }
 
     return getSameCrioIfUnchanged(this, plainObject);
@@ -508,11 +529,11 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   set(key, value) {
-    if (this.get(key) === value) {
+    if (this[key] === value) {
       return this;
     }
 
-    if (this[CRIO_TYPE] === CRIO_ARRAY) {
+    if (isCrioArray(this)) {
       return getSameCrioIfUnchanged(this, shallowCloneArrayWithValue(this, key, value));
     }
 
@@ -543,19 +564,14 @@ const CRIO_PROTOTYPE = {
       ...restOfKeys
     ] = keys;
 
-    if (!this.get(key)) {
+    if (!this[key]) {
       return this.set(key, createDeeplyNestedObject(restOfKeys, value));
     }
 
-    let plainObject = getPlainObject(this);
+    let plainObject = getPlainObject(this, false);
 
     this.forEach((currentValue, currentKey) => {
-      if (currentKey === key) {
-        plainObject[currentKey] = isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
-          createDeeplyNestedObject(restOfKeys, value);
-      } else {
-        plainObject[currentKey] = currentValue;
-      }
+      plainObject[currentKey] = getDeeplyNestedValue(currentValue, value, currentKey === key, restOfKeys);
     });
 
     return getSameCrioIfUnchanged(this, plainObject);
@@ -567,7 +583,7 @@ const CRIO_PROTOTYPE = {
    * @returns {Array<*>|Object}
    */
   thaw() {
-    const plainObject = getPlainObject(this);
+    const plainObject = getPlainObject(this, false);
 
     this.forEach((value, key) => {
       plainObject[key] = isCrio(value) ? value.thaw() : value;
@@ -582,7 +598,7 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray}
    */
   toArray() {
-    if (this[CRIO_TYPE] === CRIO_ARRAY) {
+    if (isCrioArray(this)) {
       return this;
     }
 
@@ -610,7 +626,7 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioObject}
    */
   toObject() {
-    if (this[CRIO_TYPE] === CRIO_OBJECT) {
+    if (isCrioObject(this)) {
       return this;
     }
 
@@ -1173,6 +1189,31 @@ const CRIO_OBJECT_PROTOTYPE = {
    */
   forEach(fn, thisArg = this) {
     forEachObject(this, fn, thisArg);
+  },
+
+  /**
+   * does this include the value passed
+   *
+   * @param {*} value
+   * @returns {boolean}
+   */
+  includes(value) {
+    const keys = this.keys();
+
+    let index = -1,
+        currentKey,
+        currentValue;
+
+    while (++index < this.length) {
+      currentKey = keys[index];
+      currentValue = this[currentKey];
+
+      if (currentValue === value) {
+        return true;
+      }
+    }
+
+    return false;
   },
 
   /**
