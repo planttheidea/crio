@@ -1,5 +1,10 @@
 # crio changelog
 
+#### 3.1.0
+* Return `pluck` to prototypes
+* Add `pluck` as available for `CrioObject`
+* Add `isCrio`, `isArray`, and `isObject` method to main `crio` method
+
 #### 3.0.0
 * Complete rewrite for better performance, scalability, testability, and code management
 * `compact`, `has`, `hasOwnProperty`, and `includes` now are available on both `CrioArray` and `CrioObject`

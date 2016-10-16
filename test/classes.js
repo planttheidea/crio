@@ -205,6 +205,22 @@ test('if hasOwnProperty returns true when property exists and false when it does
   t.false(array.hasOwnProperty('bar'));
 });
 
+test('if isArray returns the correct boolean value', (t) => {
+  const array = new CrioArray(['foo']);
+  const object = new CrioObject({foo: 'bar'});
+
+  t.true(array.isArray());
+  t.false(object.isArray());
+});
+
+test('if isObject returns the correct boolean value', (t) => {
+  const array = new CrioArray(['foo']);
+  const object = new CrioObject({foo: 'bar'});
+
+  t.false(array.isObject());
+  t.true(object.isObject());
+});
+
 test('if merge will shallowly merge the values in objects to the existing crio', (t) => {
   const object = new CrioObject({foo: 'bar', bar: 'baz'});
 
@@ -268,6 +284,21 @@ test('if mutate will mutate the object to the correct result', (t) => {
 
   t.true(mutatedObject.equals(crioArray));
   t.deepEqual(mutatedObject.thaw(), array);
+});
+
+test('if pluck correctly returns the values in the collection', (t) => {
+  const array = new CrioArray([{foo: 'bar'}, {foo: 'baz'}]);
+  const object = new CrioObject({one: {foo: 'bar'}, two: {foo: 'baz'}});
+
+  const expectedResult = ['bar', 'baz'];
+
+  const arrayResult = array.pluck('foo');
+
+  t.deepEqual(arrayResult.thaw(), expectedResult);
+
+  const objectResult = object.pluck('foo');
+
+  t.deepEqual(objectResult.thaw(), expectedResult);
 });
 
 test('if set will assign both new and current key values to the Crio', (t) => {

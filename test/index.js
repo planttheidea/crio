@@ -7,6 +7,12 @@ import {
   CrioObject
 } from '../src/classes';
 
+import {
+  isCrio,
+  isCrioArray,
+  isCrioObject
+} from '../src/utils/is';
+
 const VALUES_NOT_CRIO = [
   true,
   1,
@@ -60,6 +66,12 @@ test('if crio.array passed a non-array throws an Error', (t) => {
   t.throws(() => {
     crio.array('foo');
   });
+});
+
+test('if is* functions are equal to those in utils', (t) => {
+  t.is(crio.isCrio, isCrio);
+  t.is(crio.isArray, isCrioArray);
+  t.is(crio.isObject, isCrioObject);
 });
 
 test('if crio.object passed a non-object throws an Error', (t) => {

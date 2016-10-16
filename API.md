@@ -4,10 +4,16 @@
 
 * crio `{any}`, returns *CrioArray|CrioObject*
     * Standard method, will `crio` the object passed if an array or object, else it will return the object itself
-* crio.object `{Array<any>}`, returns *CrioArray*
+* crio.array `{Array<any>}`, returns *CrioArray*
     * Shortcut method for `crio`ing array-specific values
 * crio.object `{Object}`, returns *CrioObject*
     * Shortcut method for `crio`ing object-specific values
+* crio.isCrio `{any}`, returns *boolean*
+    * Determine if the object passed is a `Crio`
+* crio.isArray `{any}`, returns *boolean*
+    * Determine if the object passed is a `CrioArray`
+* crio.isObject `{any}`, returns *boolean*
+    * Determine if the object passed is a `CrioObject`
 
 As most of these methods replicate (or just use) the native method, most will be links to MDN to better describe how to use them. Where any specific differences from the default behavior exist, they will be called out, however one broad difference is that all methods that are not getters which return primitive values are chainable.
 
@@ -77,8 +83,8 @@ As most of these methods replicate (or just use) the native method, most will be
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioArray}`
     * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioArray`
-* pluck `{string}` *key*, returns `{CrioArray}`
-    * Iterates over `CrioArray` and if the *key* exists as a property on the item it returns the value of the property, else undefined
+* pluck `{number|string}` *key*, returns `{CrioArray}`
+    * Iterates over `CrioArray` and returns an array of values where the *key* exists as a property on the collection item
 * set `{number}` *key*, returns `{CrioArray}`
     * Sets value at key
 * setIn `{Array<number|string>}` *keys*, returns `{CrioArray}`
@@ -132,6 +138,8 @@ As most of these methods replicate (or just use) the native method, most will be
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioObject}`
     * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioObject`
+* pluck `{number|string}` *key*, returns `{CrioArray}`
+    * Iterates over `CrioObject` and returns an array of values where the *key* exists as a property on the collection item
 * reduce `{function(accumulatedObject, value, key): any}` *fn*, `{any}` *thisArg*, returns `{any}`
     * Performs same function as `reduce` in the `Array` prototype, but on the `CrioObject`
 * reduceRight `{function(accumulatedObject, value, key): any}` *fn*, `{any}` *thisArg*, returns `{any}`

@@ -23,7 +23,9 @@ import {
 } from './classes';
 
 import {
-  isCrio
+  isCrio,
+  isCrioArray,
+  isCrioObject
 } from './utils/is';
 
 const throwTypeError = (type) => {
@@ -65,6 +67,10 @@ createCrio.array = (array = []) => {
   
   return new CrioArray(array);
 };
+
+createCrio.isArray = isCrioArray;
+createCrio.isCrio = isCrio;
+createCrio.isObject = isCrioObject;
 
 /**
  * create a new CrioObject

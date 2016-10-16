@@ -356,6 +356,24 @@ const CRIO_PROTOTYPE = {
   },
 
   /**
+   * is the Crio a CrioArray
+   *
+   * @returns {boolean}
+   */
+  isArray() {
+    return isCrioArray(this);
+  },
+
+  /**
+   * is the Crio a CrioObject
+   *
+   * @returns {boolean}
+   */
+  isObject() {
+    return isCrioObject(this);
+  },
+
+  /**
    * shallowly merge the objects passed with this
    *
    * @param {Array<Object>} objects
@@ -435,6 +453,24 @@ const CRIO_PROTOTYPE = {
     }
 
     return crioedValue;
+  },
+
+  /**
+   * return new CrioArray of values in collection for the property method
+   *
+   * @param {string} property
+   * @returns {CrioArray}
+   */
+  pluck(property) {
+    let array = [];
+
+    this.forEach((value) => {
+      if (value.hasOwnProperty(property)) {
+        array.push(value[property]);
+      }
+    });
+
+    return new CrioArray(array);
   },
 
   /**
