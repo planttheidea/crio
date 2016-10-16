@@ -41,7 +41,7 @@
     "babel-preset-react": "6.16.0",
     "babel-preset-stage-2": "6.17.0",
     "babel-register": "6.16.3",
-    "eslint": "3.7.1",
+    "eslint": "3.8.0",
     "eslint-friendly-formatter": "2.0.6",
     "eslint-loader": "1.5.0",
     "html-webpack-plugin": "2.22.0",
@@ -82,8 +82,8 @@
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "in-publish && npm run compile-for-publish || in-install",
     "test": "NODE_ENV=test ava --no-cache",
-    "test:watch": "NODE_ENV=production ava --watch",
+    "test:watch": "NODE_ENV=test ava --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "3.0.0-rc.6"
+  "version": "3.0.0"
 }

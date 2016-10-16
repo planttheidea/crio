@@ -4,7 +4,7 @@ Immutable JS objects with a natural API
 #### Jump to the API
 [API Documentation](API.md)
 
-#### Usage
+#### Import into your project
 
 ```javascript
 // ES2015
@@ -15,6 +15,18 @@ const crio = require('crio').default;
 
 // UMD
 const crio = window.crio;
+```
+
+#### Usage
+
+```javascript
+// you can assign with crio() directly
+const crioArray = crio(['foo']);
+const crioObject = crio({foo: 'bar'});
+
+// or use the convenience methods
+const otherCrioArray = crio.array(['bar']);
+const otherCrioObject = crio.object({bar: 'baz'});
 ```
 
 #### What is immutable?
@@ -116,17 +128,15 @@ crio has been tested on the following browsers:
 * Chrome
 * Firefox
 * Edge
-* IE11
-
-This is only because of the youth of the project, as the intended support should include Safari, Opera, and IE versions back to 9. Theoretically all of these browsers should work out of the box, I just have not verified it. Please report any issues that you encounter.
+* IE9
 
 #### Performance
 
-There has been a lot of performance tuning (and hopefully more to come), however because new objects are being instantiated with each creation then inevitably things will be slower than the native methods. Additionally, because objects are frozen upon creation, the only way to produce a new object is to clone the existing object, so doing a bunch of assignment operations in a loop can add up. We're still talking milliseconds here (and [it probably won't be noticeable to you anyway](https://blog.getify.com/sanity-check-object-creation-performance/)), but who knows ... maybe 51ms to create an array of 1000 unique objects is way too slow for your application.
+There has been a lot of performance tuning (and hopefully more to come), however because new objects are being instantiated with each creation then inevitably things will be slower than the native methods. Additionally, because objects are frozen upon creation, the only way to produce a new object is to clone the existing object, so doing a bunch of assignment operations in a loop can add up. We're still talking milliseconds here, and [it probably won't be noticeable to you anyway](https://blog.getify.com/sanity-check-object-creation-performance/)).
 
 Basically, if you're noticing a perceivable slowdown, check the implementation method. The majority of processing time is spent in the construction of the CrioArray / CrioObject, so optimizing for that will keep things performant.
 
-A silly and unrealistic example that micro-optimizers love to use:
+An unrealistic example that micro-optimizers love to use:
 
 ```javascript
 
@@ -179,13 +189,16 @@ Immutable objects with recursive values are basically impossible, and trying the
 #### Development
 
 Standard stuff, clone the repo and `npm install` dependencies. The npm scripts available:
+* `benchmark` => run benchmarks in node
+* `benchmark:watch` => run `benchmark` with persistent watcher for changes
 * `build` => run webpack to build crio.js with NODE_ENV=development
-* `build-minifed` => run webpack to build crio.min.js with NODE_ENV=production
+* `build:minifed` => run webpack to build crio.min.js with NODE_ENV=production
+* `compile-for-publish` => run `lint`, `test`, `transpile`, `dist`
 * `dev` => run webpack dev server to run example app (playground!)
+* `dev:production` => runs `dev` but with NODE_ENV=production
+* `dist` => runs `build` and `build-minified`
 * `lint` => run ESLint against all files in the `src` folder
-* `prepublish` => run `lint`, `test`, `transpile`, `build`, and `build-minified`
+* `prepublish` => runs `compile-for-publish`
 * `test` => run AVA test functions with `NODE_ENV=test`
-* `test-production` => run AVA test functions with `NODE_ENV=production`
 * `test:watch` => same as `test`, but runs persistent watcher
-* `test-production:watch` => same as `test`, but runs persistent watcher
 * `transpile` => run babel against all files in `src` to create files in `lib`

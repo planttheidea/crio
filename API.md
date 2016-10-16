@@ -1,5 +1,14 @@
 # crio API
 
+## Instantiation
+
+* crio `{any}`, returns *CrioArray|CrioObject*
+    * Standard method, will `crio` the object passed if an array or object, else it will return the object itself
+* crio.object `{Array<any>}`, returns *CrioArray*
+    * Shortcut method for `crio`ing array-specific values
+* crio.object `{Object}`, returns *CrioObject*
+    * Shortcut method for `crio`ing object-specific values
+
 As most of these methods replicate (or just use) the native method, most will be links to MDN to better describe how to use them. Where any specific differences from the default behavior exist, they will be called out, however one broad difference is that all methods that are not getters which return primitive values are chainable.
 
 ## Arrays
@@ -16,6 +25,7 @@ As most of these methods replicate (or just use) the native method, most will be
 * [findIndex](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex)
 * [forEach](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach)
 * [includes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes)
+    * Does a deep value equality comparison (rather than strict equality), so you can do things like `crioArray.includes({foo: 'bar'})`
 * [indexOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf)
 * [join](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join)
 * [keys](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/keys)
@@ -49,7 +59,7 @@ As most of these methods replicate (or just use) the native method, most will be
     * returns a new `CrioArray` with all falsy values filtered out
 * delete `{number}` *key*, returns `{CrioArray}`
     * Deletes the key provided from the crio object
-* deleteIn `{array<number|string>}` *keys*, returns `{CrioArray}`
+* deleteIn `{Array<number|string>}` *keys*, returns `{CrioArray}`
     * Deletes the final key based on the array of keys nested inside of the crio object
 * equals `{CrioArray}` *crioArrayToCompare*, returns `{boolean}`
     * Determines whether array is deeply equal in value to another by comparing hashCodes
@@ -57,13 +67,13 @@ As most of these methods replicate (or just use) the native method, most will be
     * Returns a new array of the first *num* number of items in the array
 * get `{number}` *key*, returns `{any}`
     * Retrieve value at key
-* getIn `{array}` *keys*, returns `{any}`
+* getIn `{Array<number|string>}` *keys*, returns `{any}`
     * Retrieve value in deeply nested object based on array of keys
 * last `{number}` *num*, returns `{CrioArray}`
     * Returns a new array of the last *num* number of items in the array
-* merge `{object[, object2, ..., objectN]}` *objects*, returns `{CrioArray}`
+* merge `{Object[, Object2, ..., ObjectN]}` *objects*, returns `{CrioArray}`
     * Shallow merge any number of items into existing crio
-* mergeIn `{array}` *keys*, `{object[, object2, ..., objectN]}` *objects*, returns `{CrioArray}`
+* mergeIn `{Array<number|string>}` *keys*, `{Object[, Object2, ..., ObjectN]}` *objects*, returns `{CrioArray}`
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioArray}`
     * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioArray`
@@ -71,11 +81,11 @@ As most of these methods replicate (or just use) the native method, most will be
     * Iterates over `CrioArray` and if the *key* exists as a property on the item it returns the value of the property, else undefined
 * set `{number}` *key*, returns `{CrioArray}`
     * Sets value at key
-* setIn `{array<number|string>}` *keys*, returns `{CrioArray}`
+* setIn `{Array<number|string>}` *keys*, returns `{CrioArray}`
     * Sets value in deeply nested object based on array of keys
 * toObject, returns `{CrioObject}`
     * Converts `CrioArray` into a `CrioObject` of index: value pairs
-* thaw, returns `{array<any>}`
+* thaw, returns `{Array<any>}`
     * Recursively thaws array deeply and returns standard object version of itself
 * unique, returns `{CrioArray}`
     * Returns a new `CrioArray` of values filtered down to only existing in the array once
@@ -97,7 +107,7 @@ As most of these methods replicate (or just use) the native method, most will be
     * returns a new `CrioObject` with all keys with falsy values filtered out
 * delete `{string}` *key*, returns `{CrioObject}`
     * Deletes the key provided from the crio object
-* deleteIn `{array<number|string>}` *keys*, returns `{CrioObject}`
+* deleteIn `{Array<number|string>}` *keys*, returns `{CrioObject}`
     * Deletes the final key based on the array of keys nested inside of the crio object
 * equals `{CrioObject}` *crioObjectToCompare*, returns `{boolean}`
     * Determines whether array is deeply equal in value to another by comparing hashCodes
@@ -109,16 +119,16 @@ As most of these methods replicate (or just use) the native method, most will be
     * Iteration order is not guaranteed
 * get `{string}` *key*, returns `{any}`
     * Retrieve value at key
-* getIn `{array}` *keys*, returns `{any}`
+* getIn `{Array<number|string>}` *keys*, returns `{any}`
     * Retrieve value in deeply nested object based on array of keys
 * includes `{any}` *value*, returns `{boolean}`
-    * Determine if the `CrioObject` has a value matching `value`
+    * Determine if the `CrioObject` has a value that deeply matches `value` in equality
 * map `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object and maps returned value to the respective key
     * Iteration order is not guaranteed
-* merge `{object[, object2, ..., objectN]}` *objects*, returns `{CrioObject}`
+* merge `{Object[, Object2, ..., ObjectN]}` *objects*, returns `{CrioObject}`
     * Shallow merge any number of items into existing crio
-* mergeIn `{array}` *keys*, `{object[, object2, ..., objectN]}` *objects*, returns `{CrioObject}`
+* mergeIn `{Array<number|string>}` *keys*, `{Object[, Object2, ..., ObjectN]}` *objects*, returns `{CrioObject}`
     * Shallow merge any number of items into value existing in deeply nested object based on array of keys
 * mutate `{function(mutableCrio, originalCrio): any}` *callback*, returns `{CrioObject}`
     * Whatever you return in the callback is what is returned, or if you return nothing it returns the original `CrioObject`
@@ -128,9 +138,9 @@ As most of these methods replicate (or just use) the native method, most will be
     * Performs same function as `reduceRight` in the `Array` prototype, but on the `CrioObject`
 * set `{string}` *key*, returns `{CrioObject}`
     * Sets value at key
-* setIn `{array}` *keys*, returns `{CrioObject}`
+* setIn `{Array<number|string>}` *keys*, returns `{CrioObject}`
     * Sets value in deeply nested object based on array of keys
 * toArray, returns `{CrioArray}`
     * Converts `CrioObject` to a `CrioArray` of the object's values
-* thaw, returns `{object}`
+* thaw, returns `{Object}`
     * Recursively thaws array deeply and returns standard object version of itself

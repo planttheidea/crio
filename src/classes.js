@@ -3,29 +3,40 @@ import forEach from 'lodash/forEach';
 import forEachRight from 'lodash/forEachRight';
 import hashIt from 'hash-it';
 import isArray from 'lodash/isArray';
+import isEqual from 'lodash/isEqual';
 import isObject from 'lodash/isObject';
 import isUndefined from 'lodash/isUndefined';
 
+// utils
 import {
   ARRAY_PROTOTYPE,
   CRIO_ARRAY,
   CRIO_OBJECT,
   CRIO_HASH_CODE,
   CRIO_TYPE,
-  IS_PRODUCTION,
   OBJECT,
+  OBJECT_CREATE,
+  OBJECT_ENTRIES,
+  OBJECT_KEYS,
   OBJECT_PROTOTYPE
 } from './utils/constants';
-
+import {
+  createPrototypeObject,
+  freezeIfNotProduction,
+  getCleanValue,
+  getDeeplyNestedValue,
+  getPlainObject,
+  getSameCrioIfUnchanged
+} from './utils/crio';
 import {
   convertToNumber,
   createDeeplyNestedObject,
   forEachObject,
+  mergeObjects,
   shallowCloneArray,
   shallowCloneArrayWithValue,
   shallowCloneObjectWithValue
 } from './utils/loops';
-
 import {
   isCrio,
   isCrioArray,
@@ -34,51 +45,6 @@ import {
 } from './utils/is';
 
 import stringify from './utils/stringify';
-
-const OBJECT_CREATE = OBJECT.create;
-const OBJECT_ENTRIES = OBJECT.entries;
-const OBJECT_KEYS = OBJECT.keys;
-
-/**
- * build prototype object to add to default prototype
- *
- * @param {Object} prototype
- * @returns {Object}
- */
-const createPrototypeObject = (prototype) => {
-  const keys = OBJECT_KEYS(prototype);
-  const propertySymbols = OBJECT.getOwnPropertySymbols(prototype);
-  const allPropertyItems = [
-    ...keys,
-    ...propertySymbols
-  ];
-
-  return allPropertyItems.reduce((accumulatedPrototype, key) => {
-    const value = prototype[key];
-
-    return {
-      ...accumulatedPrototype,
-      [key]: {
-        enumerable: false,
-        value
-      }
-    };
-  }, {});
-};
-
-/**
- * run Object.freeze on the crio only in non-production environments
- *
- * @param {CrioArray|CrioObject} crio
- * @returns {CrioArray|CrioObject}
- */
-const freezeIfNotProduction = (crio) => {
-  if (IS_PRODUCTION) {
-    return crio;
-  }
-
-  return Object.freeze(crio);
-};
 
 /**
  * get the crioed value if it is an array or object,
@@ -101,57 +67,6 @@ const getCrioedValue = (value) => {
   }
 
   return value;
-};
-
-/**
- * get the value for setIn
- *
- * @param {*} currentValue
- * @param {*} value
- * @param {boolean} isMatchingKey
- * @param {Array<string>} restOfKeys
- * @returns {*}
- */
-const getDeeplyNestedValue = (currentValue, value, isMatchingKey, restOfKeys) => {
-  if (!isMatchingKey) {
-    return currentValue;
-  }
-
-  return isCrio(currentValue) ? currentValue.setIn(restOfKeys, value) :
-    createDeeplyNestedObject(restOfKeys, value);
-};
-
-/**
- * get the plain object version of the crio type
- *
- * @param {CrioArray|CrioObject} crio
- * @param {number} crio.length
- * @param {boolean} isDynamicLength=true
- * @returns {Array|Object}
- */
-const getPlainObject = (crio, isDynamicLength = true) => {
-  if (isCrioArray(crio)) {
-    return isDynamicLength ? [] : new Array(crio.length);
-  }
-
-  return {};
-};
-
-/**
- * return the original object if the values have not changed
- *
- * @param {CrioArray|CrioObject} crio
- * @param {Array<*>|Object} potentialCrio
- * @returns {CrioArray|CrioObject}
- */
-const getSameCrioIfUnchanged = (crio, potentialCrio) => {
-  const hashCode = hashIt(potentialCrio);
-
-  if (crio[CRIO_HASH_CODE] === hashCode) {
-    return crio;
-  }
-
-  return new crio.constructor(potentialCrio, hashCode);
 };
 
 /**
@@ -186,29 +101,6 @@ const mergeArrays = (target, sources) => {
 };
 
 /**
- * shallowly merge source objects into target object
- *
- * @param {Object} target
- * @param {Array<Object>} sources
- * @param {boolean} isTargetCrio
- * @returns {Array<*>|Object}
- */
-const mergeObjects = (target, sources, isTargetCrio) => {
-  let plainObject = isTargetCrio ? {...target} : {};
-
-  forEach(sources, (object) => {
-    if (isObject(object)) {
-      plainObject = {
-        ...plainObject,
-        ...object
-      };
-    }
-  });
-
-  return plainObject;
-};
-
-/**
  * shallowly merge sources into target
  *
  * @param {CrioArray|CrioObject} target
@@ -235,10 +127,10 @@ class Crio {
    * the values passed to itself
    *
    * @param {Array<*>|Object} object
-   * @param {string} hashCode=hashIt.withRecursion(object)
+   * @param {string} hashCode=hashIt(object)
    * @return {CrioArray|CrioObject}
    */
-  constructor(object, hashCode = hashIt.withRecursion(object)) {
+  constructor(object, hashCode = hashIt(object)) {
     if (isCrio(object)) {
       return object;
     }
@@ -437,6 +329,30 @@ const CRIO_PROTOTYPE = {
    */
   hasOwnProperty(property) {
     return OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
+  },
+
+  /**
+   * does this include the value passed
+   *
+   * @param {*} value
+   * @returns {boolean}
+   */
+  includes(value) {
+    const keys = this.keys();
+    const cleanValue = getCleanValue(value);
+
+    let index = -1,
+        currentKey;
+
+    while (++index < this.length) {
+      currentKey = keys[index];
+
+      if (isEqual(getCleanValue(this[currentKey]), cleanValue)) {
+        return true;
+      }
+    }
+
+    return false;
   },
 
   /**
@@ -802,16 +718,6 @@ const CRIO_ARRAY_PROTOTYPE = {
    */
   forEach(fn, thisArg = this) {
     ARRAY_PROTOTYPE.forEach.call(this, fn, thisArg);
-  },
-
-  /**
-   * does this have the value passed
-   *
-   * @param {*} value
-   * @returns {boolean}
-   */
-  includes(value) {
-    return ARRAY_PROTOTYPE.includes.call(this, value);
   },
 
   /**
@@ -1189,31 +1095,6 @@ const CRIO_OBJECT_PROTOTYPE = {
    */
   forEach(fn, thisArg = this) {
     forEachObject(this, fn, thisArg);
-  },
-
-  /**
-   * does this include the value passed
-   *
-   * @param {*} value
-   * @returns {boolean}
-   */
-  includes(value) {
-    const keys = this.keys();
-
-    let index = -1,
-        currentKey,
-        currentValue;
-
-    while (++index < this.length) {
-      currentKey = keys[index];
-      currentValue = this[currentKey];
-
-      if (currentValue === value) {
-        return true;
-      }
-    }
-
-    return false;
   },
 
   /**

@@ -17,13 +17,6 @@ const listItems = array.map((value, index) => {
   );
 });
 
-const arrayArray = crio.array(['foo', ['bar']]);
-const newKeyArrayArray = arrayArray.setIn([1, 1], 'baz');
-
-const object = crio.object({complex: {foo: 'bar'}});
-
-console.log(object.includes({foo: 'bar'}));
-
 const App = () => {
   return (
     <div>

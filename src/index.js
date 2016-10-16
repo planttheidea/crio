@@ -26,6 +26,10 @@ import {
   isCrio
 } from './utils/is';
 
+const throwTypeError = (type) => {
+  throw new TypeError(`Must pass ${type} to crio.${type}.`);
+};
+
 /**
  * generate a new CrioArray or CrioObject
  *
@@ -55,6 +59,10 @@ const createCrio = (object = {}) => {
  * @returns {CrioArray}
  */
 createCrio.array = (array = []) => {
+  if (!isArray(array)) {
+    throwTypeError('array');
+  }
+  
   return new CrioArray(array);
 };
 
@@ -65,6 +73,10 @@ createCrio.array = (array = []) => {
  * @returns {CrioObject}
  */
 createCrio.object = (object = {}) => {
+  if (!isObject(object)) {
+    throwTypeError('object');
+  }
+
   return new CrioObject(object);
 };
 

@@ -55,3 +55,15 @@ test('if crio.object returns a CrioObject', (t) => {
 
   t.true(object instanceof CrioObject);
 });
+
+test('if crio.array passed a non-array throws an Error', (t) => {
+  t.throws(() => {
+    crio.array('foo');
+  });
+});
+
+test('if crio.object passed a non-object throws an Error', (t) => {
+  t.throws(() => {
+    crio.object('foo');
+  });
+});

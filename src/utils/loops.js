@@ -1,6 +1,7 @@
 // external dependencies
 import forEach from 'lodash/forEach';
 import isNumber from 'lodash/isNumber';
+import isObject from 'lodash/isObject';
 
 import {
   ARRAY_PROTOTYPE
@@ -50,6 +51,29 @@ const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
   } else {
     plainObject[key] = valueToSave;
   }
+
+  return plainObject;
+};
+
+/**
+ * shallowly merge source objects into target object
+ *
+ * @param {Object} target
+ * @param {Array<Object>} sources
+ * @param {boolean} isTargetCrio
+ * @returns {Array<*>|Object}
+ */
+const mergeObjects = (target, sources, isTargetCrio) => {
+  let plainObject = isTargetCrio ? {...target} : {};
+
+  forEach(sources, (object) => {
+    if (isObject(object)) {
+      plainObject = {
+        ...plainObject,
+        ...object
+      };
+    }
+  });
 
   return plainObject;
 };
@@ -105,6 +129,7 @@ const shallowCloneObjectWithValue = (crioObject, key, value) => {
 export {convertToNumber};
 export {createDeeplyNestedObject};
 export {forEachObject};
+export {mergeObjects};
 export {shallowCloneArray};
 export {shallowCloneArrayWithValue};
 export {shallowCloneObjectWithValue};

@@ -1,5 +1,12 @@
 # crio changelog
 
+#### 3.0.0
+* Complete rewrite for better performance, scalability, testability, and code management
+* `compact`, `has`, `hasOwnProperty`, and `includes` now are available on both `CrioArray` and `CrioObject`
+* More accurate implementation of `entries`, `keys`, `values`, and iterators
+* Performance improvement of ~25% in high-volume scenarios
+* Far superior test coverage
+
 #### 2.8.2
 * Fix issue where `hash-it` was not being included as a dependency
 * Modify `forEach` and `forEachRight` to be recursive functions instead of `while` loops
