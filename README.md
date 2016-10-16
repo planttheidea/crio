@@ -132,9 +132,9 @@ crio has been tested on the following browsers:
 
 #### Performance
 
-There has been a lot of performance tuning (and hopefully more to come), however because new objects are being instantiated with each creation then inevitably things will be slower than the native methods. Additionally, because objects are frozen upon creation, the only way to produce a new object is to clone the existing object, so doing a bunch of assignment operations in a loop can add up. We're still talking milliseconds here, and [it probably won't be noticeable to you anyway](https://blog.getify.com/sanity-check-object-creation-performance/)).
+There has been a lot of performance tuning (and hopefully more to come), however because new objects are being instantiated with each creation then inevitably things will be slower than the native methods. Additionally, because objects are frozen upon creation, the only way to produce a new object is to clone the existing object, so doing a bunch of assignment operations in a loop can add up. We're still talking milliseconds here, and [it probably won't be noticeable to you anyway](https://blog.getify.com/sanity-check-object-creation-performance/).
 
-Basically, if you're noticing a perceivable slowdown, check the implementation method. The majority of processing time is spent in the construction of the CrioArray / CrioObject, so optimizing for that will keep things performant.
+Basically, if you're noticing a perceivable slowdown, check the implementation method. The majority of processing time is spent in the construction of the `Crio`, so optimizing for that will keep things performant.
 
 An unrealistic example that micro-optimizers love to use:
 
