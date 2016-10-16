@@ -944,9 +944,11 @@ const CRIO_ARRAY_PROTOTYPE = {
    * @returns {CrioArray}
    */
   sort(fn) {
-    const shallowClone = shallowCloneArray(this);
+    let shallowClone = shallowCloneArray(this);
 
-    return getSameCrioIfUnchanged(this, shallowClone.sort(fn));
+    ARRAY_PROTOTYPE.sort.call(shallowClone, fn);
+
+    return getSameCrioIfUnchanged(this, shallowClone);
   },
 
   /**
@@ -1082,12 +1084,11 @@ const CRIO_OBJECT_PROTOTYPE = {
    */
   find(fn, thisArg = this) {
     const keys = this.keys();
-    const length = keys.length;
 
     let index = -1,
         key;
 
-    while (++index < length) {
+    while (++index < this.length) {
       key = keys[index];
 
       if (fn.call(thisArg, this[key], key, this)) {
@@ -1107,12 +1108,11 @@ const CRIO_OBJECT_PROTOTYPE = {
    */
   findKey(fn, thisArg = this) {
     const keys = this.keys();
-    const length = keys.length;
 
     let index = -1,
-      key;
+        key;
 
-    while (++index < length) {
+    while (++index < this.length) {
       key = keys[index];
 
       if (fn.call(thisArg, this[key], key, this)) {

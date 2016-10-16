@@ -5,7 +5,7 @@ import {
 
 import crio from '../src';
 
-// import '../benchmarks';
+import '../benchmarks';
 
 const array = crio.array(['foo', 'bar', 'baz']);
 

@@ -2379,7 +2379,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  sort: function sort(fn) {
 	    var shallowClone = (0, _loops.shallowCloneArray)(this);
 	
-	    return (0, _crio.getSameCrioIfUnchanged)(this, shallowClone.sort(fn));
+	    _constants.ARRAY_PROTOTYPE.sort.call(shallowClone, fn);
+	
+	    return (0, _crio.getSameCrioIfUnchanged)(this, shallowClone);
 	  },
 	
 	
@@ -2537,12 +2539,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 	
 	    var keys = this.keys();
-	    var length = keys.length;
 	
 	    var index = -1,
 	        key = void 0;
 	
-	    while (++index < length) {
+	    while (++index < this.length) {
 	      key = keys[index];
 	
 	      if (fn.call(thisArg, this[key], key, this)) {
@@ -2565,12 +2566,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 	
 	    var keys = this.keys();
-	    var length = keys.length;
 	
 	    var index = -1,
 	        key = void 0;
 	
-	    while (++index < length) {
+	    while (++index < this.length) {
 	      key = keys[index];
 	
 	      if (fn.call(thisArg, this[key], key, this)) {
