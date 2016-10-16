@@ -17,6 +17,10 @@ const listItems = array.map((value, index) => {
   );
 });
 
+console.log(crio.isArray(array));
+console.log(crio.isCrio(array));
+console.log(crio.isObject(array));
+
 const App = () => {
   return (
     <div>

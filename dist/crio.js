@@ -152,6 +152,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return new _classes.CrioArray(array);
 	};
 	
+	createCrio.isArray = _is.isCrioArray;
+	createCrio.isCrio = _is.isCrio;
+	createCrio.isObject = _is.isCrioObject;
+	
 	/**
 	 * create a new CrioObject
 	 *
@@ -1688,6 +1692,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  /**
+	   * is the Crio a CrioArray
+	   *
+	   * @returns {boolean}
+	   */
+	  isArray: function isArray() {
+	    return (0, _is.isCrioArray)(this);
+	  },
+	
+	
+	  /**
+	   * is the Crio a CrioObject
+	   *
+	   * @returns {boolean}
+	   */
+	  isObject: function isObject() {
+	    return (0, _is.isCrioObject)(this);
+	  },
+	
+	
+	  /**
 	   * shallowly merge the objects passed with this
 	   *
 	   * @param {Array<Object>} objects
@@ -1778,6 +1802,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    return crioedValue;
+	  },
+	
+	
+	  /**
+	   * return new CrioArray of values in collection for the property method
+	   *
+	   * @param {string} property
+	   * @returns {CrioArray}
+	   */
+	  pluck: function pluck(property) {
+	    var array = [];
+	
+	    this.forEach(function (value) {
+	      if (value.hasOwnProperty(property)) {
+	        array.push(value[property]);
+	      }
+	    });
+	
+	    return new CrioArray(array);
 	  },
 	
 	
