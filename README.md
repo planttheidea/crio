@@ -11,7 +11,7 @@ Immutable JS objects with a natural API
 import crio from 'crio';
 
 // CommonJS
-const crio = require('crio').default;
+const crio = require('crio');
 
 // UMD
 const crio = window.crio;
