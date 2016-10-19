@@ -15,7 +15,7 @@ import 'core-js/modules/es7.object.enumerable-values';
 
 // external dependencies
 import isArray from 'lodash/isArray';
-import isObject from 'lodash/isObject';
+import isPlainObject from 'lodash/isPlainObject';
 
 import {
   CrioArray,
@@ -47,7 +47,7 @@ const createCrio = (object = {}) => {
     return new CrioArray(object);
   }
 
-  if (isObject(object)) {
+  if (isPlainObject(object)) {
     return new CrioObject(object);
   }
 
@@ -79,7 +79,7 @@ createCrio.isObject = isCrioObject;
  * @returns {CrioObject}
  */
 createCrio.object = (object = {}) => {
-  if (!isObject(object)) {
+  if (!isPlainObject(object)) {
     throwTypeError('object');
   }
 

@@ -1,12 +1,24 @@
 import test from 'ava';
 
 import {
+  convertToNumber,
   createDeeplyNestedObject,
   forEachObject,
-  shallowCloneArray
+  mergeObjects,
+  shallowCloneArray,
+  shallowCloneArrayWithValue,
+  shallowCloneObjectWithValue
 } from '../../src/utils/loops';
 
 import crio from '../../src';
+
+test('if convertToNumber will correctly convert value passed to the number', (t) => {
+  const number = convertToNumber('0');
+  const notNumber = convertToNumber('foo');
+
+  t.is(number, 0);
+  t.true(notNumber !== notNumber);
+});
 
 test('if createDeeplyNestedObject creates the correct deeply-nested object', (t) => {
   const objectKeys = ['some', 'deeply', 'nested', 'object', 'that', 'has'];
@@ -41,9 +53,68 @@ test('if forEachObject loops over object correctly', (t) => {
   t.deepEqual(values, expectedValues);
 });
 
+test('if mergeObjects will merge objects passed into a new plain object', (t) => {
+  const object = {foo: 'bar'};
+  const expectedNewResult = {
+    foo: 'bar',
+    bar: 'baz',
+    baz: 'foo'
+  };
+
+  const newResult = mergeObjects(object, [{bar: 'baz'}, {baz: 'foo'}]);
+
+  t.deepEqual(newResult, expectedNewResult);
+
+  const expectedExistingResult = {
+    foo: 'baz'
+  };
+
+  const existingResult = mergeObjects(object, [{foo: 'baz'}]);
+
+  t.deepEqual(existingResult, expectedExistingResult);
+});
+
 test('if shallowCloneArray returns a non-crio shallowClone', (t) => {
   const array = ['foo', 'bar', 'baz'];
   const crioArray = crio(array);
 
   t.deepEqual(shallowCloneArray(crioArray), array);
+});
+
+test('if shallowCloneArrayWithValue will assign the value passed', (t) => {
+  const array = crio.array(['foo']);
+  const expectedNewResult = [
+    'foo',
+    'bar'
+  ];
+
+  const newResult = shallowCloneArrayWithValue(array, 1, 'bar');
+
+  t.deepEqual(newResult, expectedNewResult);
+
+  const expectedExistingResult = ['bar'];
+
+  const existingResult = shallowCloneArrayWithValue(array, 0, 'bar');
+
+  t.deepEqual(existingResult, expectedExistingResult);
+});
+
+test('if shallowCloneObjectWithValue will assign the value passed', (t) => {
+  const object = crio.object({foo: 'bar'});
+  const expectedNewResult = {
+    foo: 'bar',
+    bar: 'baz'
+  };
+
+  const newResult = shallowCloneObjectWithValue(object, 'bar', 'baz');
+
+  t.deepEqual(newResult, expectedNewResult);
+
+  const expectedExistingResult = {
+    foo: 'baz'
+  };
+
+  const existingResult = shallowCloneObjectWithValue(object, 'foo', 'baz');
+
+  t.deepEqual(existingResult, expectedExistingResult);
 });

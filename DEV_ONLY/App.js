@@ -5,7 +5,7 @@ import {
 
 import crio from '../src';
 
-import '../benchmarks';
+// import '../benchmarks';
 
 const array = crio.array(['foo', 'bar', 'baz']);
 
@@ -16,10 +16,6 @@ const listItems = array.map((value, index) => {
     </li>
   );
 });
-
-console.log(crio.isArray(array));
-console.log(crio.isCrio(array));
-console.log(crio.isObject(array));
 
 const App = () => {
   return (

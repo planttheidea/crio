@@ -1,6 +1,10 @@
 # crio
 Immutable JS objects with a natural API
 
+<img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-93.23%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
+
 #### Jump to the API
 [API Documentation](API.md)
 

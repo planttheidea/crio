@@ -1,11 +1,15 @@
 import test from 'ava';
 import React from 'react';
+import sinon from 'sinon';
 
 import isObject from 'lodash/isObject';
 
 import {
   CrioArray,
-  CrioObject
+  CrioObject,
+  getCrioedValue,
+  mergeArrays,
+  mergeCrios
 } from '../src/classes';
 
 import {
@@ -13,6 +17,12 @@ import {
   CRIO_TYPE,
   CRIO_OBJECT
 } from '../src/utils/constants';
+
+import {
+  isCrio
+} from '../src/utils/is';
+
+import * as loops from '../src/utils/loops';
 
 test('if values are created correctly, where arrays and objects are recursively crioed', (t) => {
   const primitiveArray = [1, 'foo', true];
@@ -249,6 +259,50 @@ test('if merge will shallowly merge the values in objects to the existing crio',
   const addKeyArrayMerge = array.merge(['baz', 'bar', 'foo', 'baz']);
 
   t.deepEqual(addKeyArrayMerge.thaw(), ['baz', 'bar', 'foo', 'baz']);
+});
+
+test('if mergeArrays will correctly merge the values into the array', (t) => {
+  const array = ['foo'];
+  const expectedSingleResult = ['bar', 'baz'];
+
+  const singleResult = mergeArrays(array, [['bar', 'baz']]);
+
+  t.deepEqual(singleResult, expectedSingleResult);
+
+  const expectedMultipleResult = ['baz', 'foo'];
+
+  const multipleResult = mergeArrays(array, [['bar', 'foo'], ['baz']]);
+
+  t.deepEqual(multipleResult, expectedMultipleResult);
+});
+
+test('if mergeCrios will call the appropriate merge function based on the parameter passed', (t) => {
+  const mergeObjectsStub = sinon.stub(loops, 'mergeObjects');
+
+  const plainObject = {};
+  const plainArray = [];
+  const crioObject = new CrioObject({});
+  const crioArray = new CrioArray([]);
+
+  mergeCrios(plainObject, {});
+
+  t.true(mergeObjectsStub.calledOnce);
+
+  mergeCrios(crioObject, {});
+
+  t.true(mergeObjectsStub.calledTwice);
+
+  /**
+   * @todo rather than check if mergeObjects was not called, find way to test if mergeArrays was called
+   */
+
+  mergeCrios(plainArray, []);
+
+  t.true(mergeObjectsStub.calledTwice);
+
+  mergeCrios(crioArray, []);
+
+  t.true(mergeObjectsStub.calledTwice);
 });
 
 test('if mergeIn will correctly merge the values deeply', (t) => {
@@ -1009,5 +1063,43 @@ test('if CrioObject has a valid iterator', (t) => {
     for (let value of object) {
       noop = value;
     }
+  });
+});
+
+test('if getCrioedValue returns a Crio if an array or object, else returns original object', (t) => {
+  const array = [];
+  const boolean = true;
+  const date = new Date();
+  const func = function() {};
+  const number = 12;
+  const object = {};
+  const regexp = /foo/;
+  const string = 'foo';
+
+  const validItems = [
+    array,
+    object
+  ];
+  const invalidItems = [
+    boolean,
+    date,
+    func,
+    number,
+    regexp,
+    string
+  ];
+
+  validItems.forEach((item) => {
+    const result = getCrioedValue(item);
+
+    t.true(isCrio(result));
+    t.not(result, item);
+  });
+
+  invalidItems.forEach((item) => {
+    const result = getCrioedValue(item);
+
+    t.false(isCrio(result));
+    t.is(result, item);
   });
 });
