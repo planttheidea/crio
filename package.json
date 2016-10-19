@@ -10,8 +10,8 @@
     },
     "failFast": true,
     "files": [
-      "./test/utils/*.js",
-      "./test/*.js"
+      "test/utils/*.js",
+      "test/*.js"
     ],
     "require": [
       "babel-register",
@@ -48,6 +48,7 @@
     "immutable": "^3.8.1",
     "in-publish": "^2.0.0",
     "mori": "^0.3.2",
+    "nyc": "^8.3.1",
     "onchange": "^3.0.2",
     "optimize-js-plugin": "0.0.4",
     "react": "15.3.2",
@@ -75,15 +76,16 @@
     "benchmark:watch": "onchange -i 'src/**/*.js' -- npm run benchmark",
     "build": "NODE_ENV=development webpack --progress --colors",
     "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
-    "compile-for-publish": "npm run lint && npm run test && npm run transpile && npm run dist",
+    "compile-for-publish": "npm run lint && npm test && npm run transpile && npm run dist",
     "dev": "NODE_ENV=development webpack-dev-server --profile --colors --config=webpack.config.dev.js",
     "dev:production": "NODE_ENV=production webpack-dev-server --progress --colors --config=webpack.config.dev.js",
     "dist": "npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "in-publish && npm run compile-for-publish || in-install",
     "test": "NODE_ENV=test ava --no-cache",
+    "test:coverage": "nyc npm test",
     "test:watch": "NODE_ENV=test ava --watch",
     "transpile": "./node_modules/babel-cli/lib/babel/index.js -d lib/ src/"
   },
-  "version": "3.1.1"
+  "version": "3.1.2"
 }

@@ -1,7 +1,7 @@
 // external dependencies
 import forEach from 'lodash/forEach';
 import isNumber from 'lodash/isNumber';
-import isObject from 'lodash/isObject';
+import isPlainObject from 'lodash/isPlainObject';
 
 import {
   ARRAY_PROTOTYPE
@@ -60,14 +60,13 @@ const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
  *
  * @param {Object} target
  * @param {Array<Object>} sources
- * @param {boolean} isTargetCrio
  * @returns {Array<*>|Object}
  */
-const mergeObjects = (target, sources, isTargetCrio) => {
-  let plainObject = isTargetCrio ? {...target} : {};
+const mergeObjects = (target, sources) => {
+  let plainObject = {...target};
 
   forEach(sources, (object) => {
-    if (isObject(object)) {
+    if (isPlainObject(object)) {
       plainObject = {
         ...plainObject,
         ...object

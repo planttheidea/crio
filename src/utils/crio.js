@@ -1,5 +1,6 @@
 // external dependencies
 import hashIt from 'hash-it';
+import isArray from 'lodash/isArray';
 
 // utils
 import {
@@ -120,9 +121,21 @@ const getSameCrioIfUnchanged = (crio, potentialCrio) => {
   return new crio.constructor(potentialCrio, hashCode);
 };
 
+/**
+ * if keys passed are not valid, throw a TypeError
+ *
+ * @param {Array<number|string>} keys
+ */
+const throwTypeErrorIfKeysInvalid = (keys) => {
+  if (!isArray(keys)) {
+    throw new TypeError('Keys passed must be an array.');
+  }
+};
+
 export {createPrototypeObject};
 export {freezeIfNotProduction};
 export {getCleanValue};
 export {getDeeplyNestedValue};
 export {getPlainObject};
 export {getSameCrioIfUnchanged};
+export {throwTypeErrorIfKeysInvalid};

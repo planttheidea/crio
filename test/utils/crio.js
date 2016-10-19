@@ -1,14 +1,13 @@
 import test from 'ava';
 
-import hashIt from 'hash-it';
-
 import {
   createPrototypeObject,
   freezeIfNotProduction,
   getCleanValue,
   getDeeplyNestedValue,
   getPlainObject,
-  getSameCrioIfUnchanged
+  getSameCrioIfUnchanged,
+  throwTypeErrorIfKeysInvalid
 } from '../../src/utils/crio';
 
 import crio from '../../src';
@@ -85,4 +84,10 @@ test('if getSameCrioIfUnchanged will return the same object if no values have ch
 
   t.is(getSameCrioIfUnchanged(crioArray, array), crioArray);
   t.not(getSameCrioIfUnchanged(crioArray, changedArray), crioArray);
+});
+
+test('if throwTypeErrorIfKeysInvalid throws when keys are not array', (t) => {
+  t.throws(() => {
+    throwTypeErrorIfKeysInvalid('foo');
+  });
 });

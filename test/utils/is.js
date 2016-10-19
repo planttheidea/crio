@@ -3,6 +3,8 @@ import React from 'react';
 
 import {
   isCrio,
+  isCrioArray,
+  isCrioObject,
   isReactElement
 } from '../../src/utils/is';
 
@@ -44,6 +46,42 @@ test('if isCrio correctly determines if object is a CrioArray or CrioObject', (t
   t.false(isCrio(set));
   t.false(isCrio(string));
   t.false(isCrio(undef));
+});
+
+test('if isCrioArray correctly determines if object is a CrioArray', (t) => {
+  t.true(isCrioArray(crioArray));
+
+  t.false(isCrioArray(crioObject));
+  t.false(isCrioArray(array));
+  t.false(isCrioArray(boolean));
+  t.false(isCrioArray(date));
+  t.false(isCrioArray(map));
+  t.false(isCrioArray(number));
+  t.false(isCrioArray(object));
+  t.false(isCrioArray(ReactClass));
+  t.false(isCrioArray(reactElement));
+  t.false(isCrioArray(regexp));
+  t.false(isCrioArray(set));
+  t.false(isCrioArray(string));
+  t.false(isCrioArray(undef));
+});
+
+test('if isCrioObject correctly determines if object is a CrioObject', (t) => {
+  t.true(isCrioObject(crioObject));
+
+  t.false(isCrioObject(crioArray));
+  t.false(isCrioObject(array));
+  t.false(isCrioObject(boolean));
+  t.false(isCrioObject(date));
+  t.false(isCrioObject(map));
+  t.false(isCrioObject(number));
+  t.false(isCrioObject(object));
+  t.false(isCrioObject(ReactClass));
+  t.false(isCrioObject(reactElement));
+  t.false(isCrioObject(regexp));
+  t.false(isCrioObject(set));
+  t.false(isCrioObject(string));
+  t.false(isCrioObject(undef));
 });
 
 test('if isReactElement correctly determines if object is a React element', (t) => {

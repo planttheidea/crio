@@ -1,9 +1,11 @@
-.idea/
-benchmarks/
-DEV_ONLY/
-node_modules/
-src/
-test/
+.idea
+.nyc_output
+benchmarks
+coverage
+DEV_ONLY
+node_modules
+src
+test
 .babelrc
 .eslintrc
 .gitignore

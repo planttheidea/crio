@@ -1,5 +1,5 @@
 // external dependencies
-import isObject from 'lodash/isObject';
+import isPlainObject from 'lodash/isPlainObject';
 
 import {
   CRIO_ARRAY,
@@ -46,7 +46,7 @@ const isCrioObject = (object) => {
  * @return {boolean}
  */
 const isReactElement = (object) => {
-  return isObject(object) && object.$$typeof === REACT_ELEMENT_TYPE;
+  return isPlainObject(object) && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
 export {isCrio};

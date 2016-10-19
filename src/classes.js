@@ -4,7 +4,7 @@ import forEachRight from 'lodash/forEachRight';
 import hashIt from 'hash-it';
 import isArray from 'lodash/isArray';
 import isEqual from 'lodash/isEqual';
-import isObject from 'lodash/isObject';
+import isPlainObject from 'lodash/isPlainObject';
 import isUndefined from 'lodash/isUndefined';
 
 // utils
@@ -26,7 +26,8 @@ import {
   getCleanValue,
   getDeeplyNestedValue,
   getPlainObject,
-  getSameCrioIfUnchanged
+  getSameCrioIfUnchanged,
+  throwTypeErrorIfKeysInvalid
 } from './utils/crio';
 import {
   convertToNumber,
@@ -62,7 +63,7 @@ const getCrioedValue = (value) => {
     return new CrioArray(value);
   }
 
-  if (isObject(value)) {
+  if (isPlainObject(value)) {
     return new CrioObject(value);
   }
 
@@ -77,7 +78,7 @@ const getCrioedValue = (value) => {
  * @returns {Array<*>}
  */
 const mergeArrays = (target, sources) => {
-  let plainObject = [];
+  let plainObject = [...target];
 
   forEach(sources, (array) => {
     if (isArray(array)) {
@@ -86,16 +87,6 @@ const mergeArrays = (target, sources) => {
       });
     }
   });
-
-  const targetLength = target.length;
-
-  if (plainObject.length < targetLength) {
-    let index = plainObject.length - 1;
-
-    while (++index < targetLength) {
-      plainObject[index] = target[index];
-    }
-  }
 
   return plainObject;
 };
@@ -112,13 +103,9 @@ const mergeCrios = (target, ...sources) => {
     return target;
   }
 
-  const isTargetCrio = isCrio(target);
+  const mergeFunction = isCrioObject(target) || isPlainObject(target) ? mergeObjects : mergeArrays;
 
-  if (!isTargetCrio || isCrioObject(target)) {
-    return getSameCrioIfUnchanged(target, mergeObjects(target, sources, isTargetCrio));
-  }
-
-  return getSameCrioIfUnchanged(target, mergeArrays(target, sources));
+  return getSameCrioIfUnchanged(target, mergeFunction(target, sources));
 };
 
 class Crio {
@@ -220,6 +207,8 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   deleteIn(keys) {
+    throwTypeErrorIfKeysInvalid(keys);
+
     if (!keys.length) {
       return this;
     }
@@ -280,6 +269,8 @@ const CRIO_PROTOTYPE = {
    * @returns {*}
    */
   getIn(keys) {
+    throwTypeErrorIfKeysInvalid(keys);
+
     const length = keys.length;
 
     if (length === 0) {
@@ -485,11 +476,9 @@ const CRIO_PROTOTYPE = {
       return this;
     }
 
-    if (isCrioArray(this)) {
-      return getSameCrioIfUnchanged(this, shallowCloneArrayWithValue(this, key, value));
-    }
+    const shallowCloneWithValueFunction = isCrioArray(this) ? shallowCloneArrayWithValue : shallowCloneObjectWithValue;
 
-    return getSameCrioIfUnchanged(this, shallowCloneObjectWithValue(this, key, value));
+    return getSameCrioIfUnchanged(this, shallowCloneWithValueFunction(this, key, value));
   },
 
   /**
@@ -501,6 +490,8 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   setIn(keys, value) {
+    throwTypeErrorIfKeysInvalid(keys);
+
     const length = keys.length;
 
     if (length === 1) {
@@ -1266,6 +1257,10 @@ const CRIO_OBJECT_PROTOTYPE = {
 };
 
 CrioObject.prototype = OBJECT_CREATE(Crio.prototype, createPrototypeObject(CRIO_OBJECT_PROTOTYPE));
+
+export {getCrioedValue};
+export {mergeArrays};
+export {mergeCrios};
 
 export {CrioArray};
 export {CrioObject};
