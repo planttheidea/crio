@@ -202,6 +202,31 @@ test('if getIn() works for arrays and objects', (t) => {
   t.is(crioObject.getIn(['bar', 0]), undefined);
 });
 
+test('if has returns true when property exists and false when it doesnt', (t) => {
+  const array = new CrioArray(['foo']);
+
+  t.true(array.has(0));
+  t.true(array.has('0'));
+  t.false(array.has(1));
+
+  const object = new CrioObject({foo: 'bar'});
+
+  t.true(object.has('foo'));
+  t.false(object.has('bar'));
+});
+
+test('if hasIn returns true when property exists and false when it doesnt', (t) => {
+  const array = new CrioArray([{foo: [{bar: 'baz'}]}]);
+
+  t.true(array.hasIn([0, 'foo', 0, 'bar']));
+  t.false(array.hasIn([0, 'bar', 1, 'baz']));
+
+  const object = new CrioObject({foo: [{bar: 'baz'}]});
+
+  t.true(object.hasIn(['foo', 0, 'bar']));
+  t.false(object.hasIn(['bar', 1, 'baz']));
+});
+
 test('if hasOwnProperty returns true when property exists and false when it doesnt', (t) => {
   const array = new CrioArray(['foo']);
 
@@ -351,6 +376,21 @@ test('if pluck correctly returns the values in the collection', (t) => {
   t.deepEqual(arrayResult.thaw(), expectedResult);
 
   const objectResult = object.pluck('foo');
+
+  t.deepEqual(objectResult.thaw(), expectedResult);
+});
+
+test('if pluckIn correctly returns the values in the collection', (t) => {
+  const array = new CrioArray([{foo: ['bar']}, {foo: ['baz']}]);
+  const object = new CrioObject({one: [{foo: 'bar'}], two: [{foo: 'baz'}]});
+
+  const expectedResult = ['bar', 'baz'];
+
+  const arrayResult = array.pluckIn(['foo', 0]);
+
+  t.deepEqual(arrayResult.thaw(), expectedResult);
+
+  const objectResult = object.pluckIn([0, 'foo']);
 
   t.deepEqual(objectResult.thaw(), expectedResult);
 });
