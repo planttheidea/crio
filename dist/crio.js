@@ -1642,15 +1642,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    (0, _crio.throwTypeErrorIfKeysInvalid)(keys);
 	
-	    if (!keys.length) {
+	    var length = keys.length;
+	
+	    if (length === 1) {
+	      return this.delete(keys[0]);
+	    }
+	
+	    if (!length) {
 	      return this;
 	    }
 	
 	    var key = keys.shift();
-	
-	    if (!keys.length) {
-	      return this.delete(key);
-	    }
 	
 	    var plainObject = (0, _crio.getPlainObject)(this),
 	        isTargetKey = false;
@@ -1709,12 +1711,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var length = keys.length;
 	
-	    if (length === 0) {
-	      return this;
-	    }
-	
 	    if (length === 1) {
 	      return this[keys[0]];
+	    }
+	
+	    if (!length) {
+	      return this;
 	    }
 	
 	    var currentObject = this,
@@ -1742,22 +1744,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * does this have the property passed
 	   *
-	   * @param {number|string} property
+	   * @param {number|string} key
 	   * @returns {boolean}
 	   */
-	  has: function has(property) {
-	    return this.hasOwnProperty(property);
+	  has: function has(key) {
+	    return this.hasOwnProperty(key);
+	  },
+	
+	
+	  /**
+	   * does this have the property deeply nested
+	   *
+	   * @param {Array<number|string>} keys
+	   * @returns {boolean}
+	   */
+	  hasIn: function hasIn(keys) {
+	    (0, _crio.throwTypeErrorIfKeysInvalid)(keys);
+	
+	    var length = keys.length;
+	
+	    if (keys.length === 1) {
+	      return this.has(keys[0]);
+	    }
+	
+	    if (!length) {
+	      return false;
+	    }
+	
+	    var _keys = _toArray(keys);
+	
+	    var key = _keys[0];
+	
+	    var restOfKeys = _keys.slice(1);
+	
+	    var target = this[key];
+	
+	    if ((0, _is.isCrio)(target)) {
+	      return target.hasIn(restOfKeys);
+	    }
+	
+	    return false;
 	  },
 	
 	
 	  /**
 	   * does this have the property passed
 	   *
-	   * @param {number|string} property
+	   * @param {number|string} key
 	   * @returns {boolean}
 	   */
-	  hasOwnProperty: function hasOwnProperty(property) {
-	    return _constants.OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
+	  hasOwnProperty: function hasOwnProperty(key) {
+	    return _constants.OBJECT_PROTOTYPE.hasOwnProperty.call(this, key);
 	  },
 	
 	
@@ -1833,27 +1870,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	      objects[_key3 - 1] = arguments[_key3];
 	    }
 	
-	    if (!keys.length) {
-	      return this;
-	    }
+	    (0, _crio.throwTypeErrorIfKeysInvalid)(keys);
 	
-	    var _keys = _toArray(keys);
+	    var length = keys.length;
 	
-	    var key = _keys[0];
+	    if (length === 1) {
+	      var _key4 = keys[0];
 	
-	    var restOfKeys = _keys.slice(1);
-	
-	    if (!restOfKeys.length) {
-	      if ((0, _is.isCrio)(this[key])) {
-	        return this.set(key, mergeCrios.apply(undefined, [this[key]].concat(objects)));
+	      if ((0, _is.isCrio)(this[_key4])) {
+	        return this.set(_key4, mergeCrios.apply(undefined, [this[_key4]].concat(objects)));
 	      }
 	
 	      var object = objects[0];
 	      var restOfObjects = objects.slice(1);
 	
 	
-	      return this.set(key, mergeCrios.apply(undefined, [object].concat(_toConsumableArray(restOfObjects))));
+	      return this.set(_key4, mergeCrios.apply(undefined, [object].concat(_toConsumableArray(restOfObjects))));
 	    }
+	
+	    if (!length) {
+	      return this;
+	    }
+	
+	    var _keys2 = _toArray(keys);
+	
+	    var key = _keys2[0];
+	
+	    var restOfKeys = _keys2.slice(1);
 	
 	    var plainObject = (0, _crio.getPlainObject)(this, false),
 	        isKeySet = false,
@@ -1903,15 +1946,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * return new CrioArray of values in collection for the property method
 	   *
-	   * @param {string} property
+	   * @param {string} key
 	   * @returns {CrioArray}
 	   */
-	  pluck: function pluck(property) {
+	  pluck: function pluck(key) {
 	    var array = [];
 	
 	    this.forEach(function (value) {
-	      if (value.hasOwnProperty(property)) {
-	        array.push(value[property]);
+	      if (value.hasOwnProperty(key)) {
+	        array.push(value[key]);
+	      }
+	    });
+	
+	    return new CrioArray(array);
+	  },
+	
+	
+	  /**
+	   * pluck the deeply-nested value based on keys
+	   *
+	   * @param {Array<number|string>} keys
+	   * @returns {Array<*>}
+	   */
+	  pluckIn: function pluckIn(keys) {
+	    (0, _crio.throwTypeErrorIfKeysInvalid)(keys);
+	
+	    var length = keys.length;
+	
+	    if (length === 1) {
+	      return this.pluck(keys[0]);
+	    }
+	
+	    if (!length) {
+	      return this;
+	    }
+	
+	    var _keys3 = _toArray(keys);
+	
+	    var key = _keys3[0];
+	
+	    var restOfKeys = _keys3.slice(1);
+	
+	    var array = [];
+	
+	    this.forEach(function (value) {
+	      if (value.hasOwnProperty(key) && (0, _is.isCrio)(value[key])) {
+	        var deepValue = value[key].getIn(restOfKeys);
+	
+	        if (!(0, _isUndefined2.default)(deepValue)) {
+	          array.push(deepValue);
+	        }
 	      }
 	    });
 	
@@ -1954,15 +2038,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.set(keys[0], value);
 	    }
 	
-	    if (length === 0) {
+	    if (!length) {
 	      return this;
 	    }
 	
-	    var _keys2 = _toArray(keys);
+	    var _keys4 = _toArray(keys);
 	
-	    var key = _keys2[0];
+	    var key = _keys4[0];
 	
-	    var restOfKeys = _keys2.slice(1);
+	    var restOfKeys = _keys4.slice(1);
 	
 	    if (!this[key]) {
 	      return this.set(key, (0, _loops.createDeeplyNestedObject)(restOfKeys, value));
@@ -2004,13 +2088,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this;
 	    }
 	
-	    var array = [];
-	
-	    this.forEach(function (value) {
+	    return this.reduce(function (array, value) {
 	      array.push(value);
-	    });
 	
-	    return new CrioArray(array);
+	      return array;
+	    }, []);
 	  },
 	
 	
@@ -2034,13 +2116,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this;
 	    }
 	
-	    var object = {};
-	
-	    this.forEach(function (value, index) {
+	    return this.reduce(function (object, value, index) {
 	      object[index] = value;
-	    });
 	
-	    return new CrioObject(object);
+	      return object;
+	    }, {});
 	  },
 	
 	
@@ -2092,8 +2172,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  concat: function concat() {
-	    for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-	      args[_key4] = arguments[_key4];
+	    for (var _len4 = arguments.length, args = Array(_len4), _key5 = 0; _key5 < _len4; _key5++) {
+	      args[_key5] = arguments[_key5];
 	    }
 	
 	    if (!args.length) {
@@ -2115,8 +2195,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  copyWithin: function copyWithin() {
-	    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-	      args[_key5] = arguments[_key5];
+	    for (var _len5 = arguments.length, args = Array(_len5), _key6 = 0; _key6 < _len5; _key6++) {
+	      args[_key6] = arguments[_key6];
 	    }
 	
 	    if (!args.length) {
@@ -2161,8 +2241,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  fill: function fill() {
-	    for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-	      args[_key6] = arguments[_key6];
+	    for (var _len6 = arguments.length, args = Array(_len6), _key7 = 0; _key7 < _len6; _key7++) {
+	      args[_key7] = arguments[_key7];
 	    }
 	
 	    if (!args.length) {
@@ -2347,8 +2427,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  push: function push() {
-	    for (var _len7 = arguments.length, items = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-	      items[_key7] = arguments[_key7];
+	    for (var _len7 = arguments.length, items = Array(_len7), _key8 = 0; _key8 < _len7; _key8++) {
+	      items[_key8] = arguments[_key8];
 	    }
 	
 	    if (!items.length) {
@@ -2437,8 +2517,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  slice: function slice() {
-	    for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-	      args[_key8] = arguments[_key8];
+	    for (var _len8 = arguments.length, args = Array(_len8), _key9 = 0; _key9 < _len8; _key9++) {
+	      args[_key9] = arguments[_key9];
 	    }
 	
 	    if (!args.length) {
@@ -2487,8 +2567,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  splice: function splice() {
-	    for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-	      args[_key9] = arguments[_key9];
+	    for (var _len9 = arguments.length, args = Array(_len9), _key10 = 0; _key10 < _len9; _key10++) {
+	      args[_key10] = arguments[_key10];
 	    }
 	
 	    if (!args.length) {
@@ -2542,8 +2622,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @returns {CrioArray}
 	   */
 	  unshift: function unshift() {
-	    for (var _len10 = arguments.length, args = Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
-	      args[_key10] = arguments[_key10];
+	    for (var _len10 = arguments.length, args = Array(_len10), _key11 = 0; _key11 < _len10; _key11++) {
+	      args[_key11] = arguments[_key11];
 	    }
 	
 	    if (!args.length) {

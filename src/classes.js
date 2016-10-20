@@ -209,15 +209,17 @@ const CRIO_PROTOTYPE = {
   deleteIn(keys) {
     throwTypeErrorIfKeysInvalid(keys);
 
-    if (!keys.length) {
+    const length = keys.length;
+
+    if (length === 1) {
+      return this.delete(keys[0]);
+    }
+
+    if (!length) {
       return this;
     }
 
     const key = keys.shift();
-
-    if (!keys.length) {
-      return this.delete(key);
-    }
 
     let plainObject = getPlainObject(this),
         isTargetKey = false;
@@ -273,12 +275,12 @@ const CRIO_PROTOTYPE = {
 
     const length = keys.length;
 
-    if (length === 0) {
-      return this;
-    }
-
     if (length === 1) {
       return this[keys[0]];
+    }
+
+    if (!length) {
+      return this;
     }
 
     let currentObject = this,
@@ -305,21 +307,54 @@ const CRIO_PROTOTYPE = {
   /**
    * does this have the property passed
    *
-   * @param {number|string} property
+   * @param {number|string} key
    * @returns {boolean}
    */
-  has(property) {
-    return this.hasOwnProperty(property);
+  has(key) {
+    return this.hasOwnProperty(key);
+  },
+
+  /**
+   * does this have the property deeply nested
+   *
+   * @param {Array<number|string>} keys
+   * @returns {boolean}
+   */
+  hasIn(keys) {
+    throwTypeErrorIfKeysInvalid(keys);
+
+    const length = keys.length;
+
+    if (keys.length === 1) {
+      return this.has(keys[0]);
+    }
+
+    if (!length) {
+      return false;
+    }
+
+    const [
+      key,
+      ...restOfKeys
+    ] = keys;
+
+    const target = this[key];
+
+    if (isCrio(target)) {
+      return target.hasIn(restOfKeys);
+    }
+
+    return false;
   },
 
   /**
    * does this have the property passed
    *
-   * @param {number|string} property
+   * @param {number|string} key
    * @returns {boolean}
    */
-  hasOwnProperty(property) {
-    return OBJECT_PROTOTYPE.hasOwnProperty.call(this, property);
+  hasOwnProperty(key) {
+    return OBJECT_PROTOTYPE.hasOwnProperty.call(this, key);
   },
 
   /**
@@ -382,16 +417,13 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioObject}
    */
   mergeIn(keys, ...objects) {
-    if (!keys.length) {
-      return this;
-    }
+    throwTypeErrorIfKeysInvalid(keys);
 
-    const [
-      key,
-      ...restOfKeys
-    ] = keys;
+    const length = keys.length;
 
-    if (!restOfKeys.length) {
+    if (length === 1) {
+      const key = keys[0];
+
       if (isCrio(this[key])) {
         return this.set(key, mergeCrios(this[key], ...objects));
       }
@@ -403,6 +435,15 @@ const CRIO_PROTOTYPE = {
 
       return this.set(key, mergeCrios(object, ...restOfObjects));
     }
+
+    if (!length) {
+      return this;
+    }
+
+    const [
+      key,
+      ...restOfKeys
+    ] = keys;
 
     let plainObject = getPlainObject(this, false),
         isKeySet = false,
@@ -449,15 +490,54 @@ const CRIO_PROTOTYPE = {
   /**
    * return new CrioArray of values in collection for the property method
    *
-   * @param {string} property
+   * @param {string} key
    * @returns {CrioArray}
    */
-  pluck(property) {
+  pluck(key) {
     let array = [];
 
     this.forEach((value) => {
-      if (value.hasOwnProperty(property)) {
-        array.push(value[property]);
+      if (value.hasOwnProperty(key)) {
+        array.push(value[key]);
+      }
+    });
+
+    return new CrioArray(array);
+  },
+
+  /**
+   * pluck the deeply-nested value based on keys
+   *
+   * @param {Array<number|string>} keys
+   * @returns {Array<*>}
+   */
+  pluckIn(keys) {
+    throwTypeErrorIfKeysInvalid(keys);
+
+    const length = keys.length;
+
+    if (length === 1) {
+      return this.pluck(keys[0]);
+    }
+
+    if (!length) {
+      return this;
+    }
+
+    const [
+      key,
+      ...restOfKeys
+    ] = keys;
+
+    let array = [];
+
+    this.forEach((value) => {
+      if (value.hasOwnProperty(key) && isCrio(value[key])) {
+        const deepValue = value[key].getIn(restOfKeys);
+
+        if (!isUndefined(deepValue)) {
+          array.push(deepValue);
+        }
       }
     });
 
@@ -498,7 +578,7 @@ const CRIO_PROTOTYPE = {
       return this.set(keys[0], value);
     }
 
-    if (length === 0) {
+    if (!length) {
       return this;
     }
 
@@ -545,13 +625,11 @@ const CRIO_PROTOTYPE = {
       return this;
     }
 
-    let array = [];
-
-    this.forEach((value) => {
+    return this.reduce((array, value) => {
       array.push(value);
-    });
 
-    return new CrioArray(array);
+      return array;
+    }, []);
   },
 
   /**
@@ -573,13 +651,11 @@ const CRIO_PROTOTYPE = {
       return this;
     }
 
-    let object = {};
-
-    this.forEach((value, index) => {
+    return this.reduce((object, value, index) => {
       object[index] = value;
-    });
 
-    return new CrioObject(object);
+      return object;
+    }, {});
   },
 
   /**

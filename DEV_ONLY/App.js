@@ -17,6 +17,21 @@ const listItems = array.map((value, index) => {
   );
 });
 
+const collection = crio([{foo: 'bar'}, {foo: 'baz'}]);
+
+console.log(collection.pluck('foo'));
+
+const deepCollection = crio([
+  {foo: [{bar: 'foo'}]},
+  {foo: [{bar: 'bar'}]},
+  {foo: [{bar: 'baz'}]},
+  {foo: [{baz: 'bar'}]}
+]);
+
+const deepCollectionObject = deepCollection.toObject();
+
+console.log(deepCollectionObject);
+
 const App = () => {
   return (
     <div>
