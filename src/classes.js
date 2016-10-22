@@ -1,7 +1,7 @@
 // external dependencies
+import hashIt from 'hash-it';
 import forEach from 'lodash/forEach';
 import forEachRight from 'lodash/forEachRight';
-import hashIt from 'hash-it';
 import isArray from 'lodash/isArray';
 import isEqual from 'lodash/isEqual';
 import isPlainObject from 'lodash/isPlainObject';
@@ -728,6 +728,35 @@ const CRIO_ARRAY_PROTOTYPE = {
   },
 
   /**
+   * find the values in this that do not exist in any of the arrays passed
+   *
+   * @param {Array<Array>} arrays
+   * @returns {CrioArray}
+   */
+  difference(...arrays) {
+    if (!arrays.length) {
+      return this;
+    }
+
+    let shallowClone = shallowCloneArray(this),
+        indexOfValue;
+
+    forEach(arrays, (array) => {
+      if (isArray(array) || isCrioArray(array)) {
+        forEach(array, (value) => {
+          indexOfValue = shallowClone.indexOf(value);
+
+          if (!!~indexOfValue) {
+            shallowClone.splice(indexOfValue, 1);
+          }
+        });
+      }
+    });
+
+    return getSameCrioIfUnchanged(this, shallowClone);
+  },
+
+  /**
    * return an array of [key, value] pairs for this
    *
    * @returns {Array<array>}
@@ -832,6 +861,49 @@ const CRIO_ARRAY_PROTOTYPE = {
    */
   indexOf(value) {
     return ARRAY_PROTOTYPE.indexOf.call(this, value);
+  },
+
+  /**
+   * find the values in that exist in this and each of the arrays passed
+   *
+   * @param {Array<Array>} arrays
+   * @returns {CrioArray}
+   */
+  intersection(...arrays) {
+    if (!arrays.length) {
+      return this;
+    }
+
+    const allArrays = [
+      this,
+      ...arrays
+    ];
+    const allArraysLength = allArrays.length;
+
+    let allValues = [],
+        indices = {},
+        indexOfValue;
+
+    forEach(allArrays, (array) => {
+      if (isArray(array) || isCrioArray(array)) {
+        forEach(array, (value) => {
+          indexOfValue = allValues.indexOf(value);
+
+          if (!!~indexOfValue) {
+            indices[indexOfValue]++;
+          } else {
+            indices[allValues.length] = 1;
+            allValues.push(value);
+          }
+        });
+      }
+    });
+
+    const intersectingValues = allValues.filter((value, index) => {
+      return indices[index] === allArraysLength;
+    });
+
+    return getSameCrioIfUnchanged(this, intersectingValues);
   },
 
   /**
@@ -1090,6 +1162,47 @@ const CRIO_ARRAY_PROTOTYPE = {
    */
   values() {
     return ARRAY_PROTOTYPE.values.call(this);
+  },
+
+  /**
+   * find the values that are the symmetric difference of this and the arrays passed
+   *
+   * @param {Array<Array>} arrays
+   * @returns {CrioArray}
+   */
+  xor(...arrays) {
+    if (!arrays.length) {
+      return this;
+    }
+
+    const allArrays = [
+      this,
+      ...arrays
+    ];
+
+    let allValues = [],
+        indicesToRemove = [],
+        indexOfValue;
+
+    forEach(allArrays, (array) => {
+      if (isArray(array) || isCrioArray(array)) {
+        forEach(array, (value) => {
+          indexOfValue = allValues.indexOf(value);
+
+          if (!!~indexOfValue) {
+            indicesToRemove.push(indexOfValue);
+          } else {
+            allValues.push(value);
+          }
+        });
+      }
+    });
+
+    const xorValues = allValues.filter((value, index) => {
+      return !~indicesToRemove.indexOf(index);
+    });
+
+    return getSameCrioIfUnchanged(this, xorValues);
   },
 
   [CRIO_TYPE]: CRIO_ARRAY,

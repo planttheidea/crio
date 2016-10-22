@@ -1,5 +1,11 @@
 # crio changelog
 
+#### 3.3.0
+* Added `difference`, `intersection`, and `xor` to the available methods for `CrioArray`
+
+#### 3.2.0
+* Added `hasIn` and `pluckIn` to the available methods for both `CrioArray` and `CrioObject`
+
 #### 3.1.0
 * Return `pluck` to prototypes
 * Add `pluck` as available for `CrioObject`

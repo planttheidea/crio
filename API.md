@@ -59,12 +59,18 @@ Methods with the same name as the native method will be a link to MDN, as they a
 * [values](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values) 
 
 #### Added crio Methods
+* difference `{Array<*>}` *array[, array2, ..., arrayN]*, returns `{CrioArray}`
+    * Returns a new array of the values that only exist in either the `CrioArray` or in one of the arrays passed
 * first `{number}` *num*, returns `{CrioArray}`
     * Returns a new array of the first *num* number of items in the array
+* intersection `{Array<*>}` *array[, array2, ..., arrayN]*, returns `{CrioArray}`
+    * Returns a new array of the values that exist in all of the arrays passed
 * last `{number}` *num*, returns `{CrioArray}`
     * Returns a new array of the last *num* number of items in the array
 * unique, returns `{CrioArray}`
     * Returns a new `CrioArray` of values filtered down to only existing in the array once
+* xor `{Array<*>}` *array[, array2, ..., arrayN]*, returns `{CrioArray}`
+    * Returns a new array of the values that are the [symmetric difference](https://en.wikipedia.org/wiki/Symmetric_difference) of the `CrioArray` and the arrays passed
 
 ## Objects
 

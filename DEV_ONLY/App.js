@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import {
   render
@@ -17,20 +18,10 @@ const listItems = array.map((value, index) => {
   );
 });
 
-const collection = crio([{foo: 'bar'}, {foo: 'baz'}]);
+const foo = crio.array(['foo', 1, true]);
 
-console.log(collection.pluck('foo'));
-
-const deepCollection = crio([
-  {foo: [{bar: 'foo'}]},
-  {foo: [{bar: 'bar'}]},
-  {foo: [{bar: 'baz'}]},
-  {foo: [{baz: 'bar'}]}
-]);
-
-const deepCollectionObject = deepCollection.toObject();
-
-console.log(deepCollectionObject);
+console.log(foo.xor(['foo', true]));
+console.log(_.xor(['foo', 1, true], ['foo', true]));
 
 const App = () => {
   return (
