@@ -557,6 +557,13 @@ test('if copyWithin produces the correct new CrioArray', (t) => {
   t.deepEqual(array.copyWithin(-2, -3, -1).thaw(), [1, 2, 3, 3, 4]);
 });
 
+test('if difference produces the correct new CrioArray', (t) => {
+  const array = new CrioArray(['foo', 1, true]);
+
+  t.deepEqual(array.difference(['foo'], [true]).thaw(), [1]);
+  t.deepEqual(array.difference(['foo', 1]).thaw(), [true]);
+});
+
 test('if entries will return index,value pairs from the array', (t) => {
   const array = new CrioArray(['foo', 'bar', 'baz']);
   const entries = array.entries();
@@ -660,6 +667,13 @@ test('if indexOf returns the first index when found and -1 when not', (t) => {
   t.is(array.indexOf('foo'), 0);
   t.is(array.indexOf('baz'), 1);
   t.is(array.indexOf('bar'), -1);
+});
+
+test('if intersection produces the correct new CrioArray', (t) => {
+  const array = new CrioArray(['foo', 1, true]);
+
+  t.deepEqual(array.intersection(['foo'], [true]).thaw(), []);
+  t.deepEqual(array.intersection(['foo', 1]).thaw(), ['foo', 1]);
 });
 
 test('if join builds a string with the separator passed', (t) => {
@@ -861,6 +875,13 @@ test('if values will return the array of values in the CrioArray', (t) => {
   }
 
   t.deepEqual(resultValues, array);
+});
+
+test('if xor produces the correct new CrioArray', (t) => {
+  const array = new CrioArray(['foo', 1, true]);
+
+  t.deepEqual(array.xor(['foo'], [true]).thaw(), [1]);
+  t.deepEqual(array.xor(['foo', 1]).thaw(), [true]);
 });
 
 test('if the type of the CrioArray is correct', (t) => {
