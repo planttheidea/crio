@@ -30,29 +30,23 @@ const forEachObject = (crio, fn, thisArg) => {
   });
 };
 
-/* eslint-disable valid-jsdoc */
 /**
  * create a deeply-nested new object with value at last key location
  *
- * @param {string|number} key
- * @param {Array<string|number>} restOfKeys
- * @param {number} restOfKeys.length
+ * @param {Array<string|number>} keys
  * @param {*} value
  * @returns {Array<*>|object}
  */
-/* eslint-enable */
-const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
-  const isPlainItemArray = isNumber(key);
+const createDeeplyNestedObject = (keys, value) => {
+  const [
+    key,
+    ...restOfKeys
+  ] = keys;
   const valueToSave = restOfKeys.length ? createDeeplyNestedObject(restOfKeys, value) : value;
-  const plainObject = isPlainItemArray ? [] : {};
 
-  if (isPlainItemArray) {
-    plainObject.push(valueToSave);
-  } else {
-    plainObject[key] = valueToSave;
-  }
-
-  return plainObject;
+  return isNumber(key) ? [valueToSave] : {
+    [key]: valueToSave
+  };
 };
 
 /**
@@ -63,18 +57,16 @@ const createDeeplyNestedObject = ([key, ...restOfKeys], value) => {
  * @returns {Array<*>|Object}
  */
 const mergeObjects = (target, sources) => {
-  let plainObject = {...target};
-
-  forEach(sources, (object) => {
-    if (isPlainObject(object)) {
+  return sources.reduce((plainObject, source) => {
+    if (isPlainObject(source)) {
       plainObject = {
         ...plainObject,
-        ...object
+        ...source
       };
     }
-  });
 
-  return plainObject;
+    return plainObject;
+  }, {...target});
 };
 
 /**
@@ -112,17 +104,15 @@ const shallowCloneArrayWithValue = (crioArray, indexToSet, valueToSet) => {
  * @returns {Object}
  */
 const shallowCloneObjectWithValue = (crioObject, key, value) => {
-  let plainObject = {
-    [key]: value
-  };
-
-  forEach(crioObject.keys(), (currentKey) => {
+  return crioObject.keys().reduce((plainObject, currentKey) => {
     if (currentKey !== key) {
       plainObject[currentKey] = crioObject[currentKey];
     }
-  });
 
-  return plainObject;
+    return plainObject;
+  }, {
+    [key]: value
+  });
 };
 
 export {convertToNumber};

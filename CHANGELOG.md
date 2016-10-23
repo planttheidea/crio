@@ -1,5 +1,10 @@
 # crio changelog
 
+#### 3.3.1
+* Prevent `delete` and `deleteIn` from making clones when key being deleted does not exist
+* Optimize `isReactElement` check
+* Documentation to include `entries`, `keys`, and `values` for `CrioObject`
+
 #### 3.3.0
 * Added `difference`, `intersection`, and `xor` to the available methods for `CrioArray`
 

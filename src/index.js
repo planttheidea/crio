@@ -19,7 +19,8 @@ import isPlainObject from 'lodash/isPlainObject';
 
 import {
   CrioArray,
-  CrioObject
+  CrioObject,
+  getCrioedValue
 } from './classes';
 
 import {
@@ -39,19 +40,7 @@ const throwTypeError = (type) => {
  * @returns {CrioArray|CrioObject|Array<*>|Object|*}
  */
 const createCrio = (object = {}) => {
-  if (isCrio(object)) {
-    return object;
-  }
-
-  if (isArray(object)) {
-    return new CrioArray(object);
-  }
-
-  if (isPlainObject(object)) {
-    return new CrioObject(object);
-  }
-
-  return object;
+  return getCrioedValue(object);
 };
 
 /**

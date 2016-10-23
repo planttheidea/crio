@@ -78,17 +78,15 @@ const getCrioedValue = (value) => {
  * @returns {Array<*>}
  */
 const mergeArrays = (target, sources) => {
-  let plainObject = [...target];
-
-  forEach(sources, (array) => {
-    if (isArray(array)) {
-      forEach(array, (value, index) => {
+  return sources.reduce((plainObject, source) => {
+    if (isArray(source)) {
+      forEach(source, (value, index) => {
         plainObject[index] = getCrioedValue(value);
       });
     }
-  });
 
-  return plainObject;
+    return plainObject;
+  }, [...target]);
 };
 
 /**
@@ -184,6 +182,10 @@ const CRIO_PROTOTYPE = {
    * @returns {CrioArray|CrioObject}
    */
   delete(key) {
+    if (!this.has(key)) {
+      return this;
+    }
+
     let plainObject = getPlainObject(this),
         isThisArray = isArray(plainObject);
 
@@ -221,6 +223,10 @@ const CRIO_PROTOTYPE = {
 
     const key = keys.shift();
 
+    if (!this.has(key)) {
+      return this;
+    }
+
     let plainObject = getPlainObject(this),
         isTargetKey = false;
 
@@ -238,6 +244,15 @@ const CRIO_PROTOTYPE = {
     });
 
     return getSameCrioIfUnchanged(this, plainObject);
+  },
+
+  /**
+   * return an array of [key, value] pairs for this
+   *
+   * @returns {Array<array>}
+   */
+  entries() {
+    return OBJECT_ENTRIES(this);
   },
 
   /**
@@ -626,9 +641,7 @@ const CRIO_PROTOTYPE = {
     }
 
     return this.reduce((array, value) => {
-      array.push(value);
-
-      return array;
+      return array.concat([value]);
     }, []);
   },
 
@@ -674,6 +687,15 @@ const CRIO_PROTOTYPE = {
    */
   valueOf() {
     return this;
+  },
+
+  /**
+   * get the values for this
+   *
+   * @returns {Array<*>}
+   */
+  values() {
+    return OBJECT.values(this);
   }
 };
 
@@ -738,31 +760,23 @@ const CRIO_ARRAY_PROTOTYPE = {
       return this;
     }
 
-    let shallowClone = shallowCloneArray(this),
-        indexOfValue;
+    let indexOfValue;
 
-    forEach(arrays, (array) => {
+    const shallowClone = arrays.reduce((differenceArray, array) => {
       if (isArray(array) || isCrioArray(array)) {
         forEach(array, (value) => {
-          indexOfValue = shallowClone.indexOf(value);
+          indexOfValue = differenceArray.indexOf(value);
 
           if (!!~indexOfValue) {
-            shallowClone.splice(indexOfValue, 1);
+            differenceArray.splice(indexOfValue, 1);
           }
         });
       }
-    });
+
+      return differenceArray;
+    }, shallowCloneArray(this));
 
     return getSameCrioIfUnchanged(this, shallowClone);
-  },
-
-  /**
-   * return an array of [key, value] pairs for this
-   *
-   * @returns {Array<array>}
-   */
-  entries() {
-    return OBJECT_ENTRIES(this);
   },
 
   /**
@@ -880,28 +894,29 @@ const CRIO_ARRAY_PROTOTYPE = {
     ];
     const allArraysLength = allArrays.length;
 
-    let allValues = [],
-        indices = {},
+    let indices = [],
         indexOfValue;
 
-    forEach(allArrays, (array) => {
-      if (isArray(array) || isCrioArray(array)) {
-        forEach(array, (value) => {
-          indexOfValue = allValues.indexOf(value);
+    const intersectingValues = allArrays
+      .reduce((values, array) => {
+        if (isArray(array) || isCrioArray(array)) {
+          forEach(array, (value) => {
+            indexOfValue = values.indexOf(value);
 
-          if (!!~indexOfValue) {
-            indices[indexOfValue]++;
-          } else {
-            indices[allValues.length] = 1;
-            allValues.push(value);
-          }
-        });
-      }
-    });
+            if (!!~indexOfValue) {
+              indices[indexOfValue]++;
+            } else {
+              indices[values.length] = 1;
+              values.push(value);
+            }
+          });
+        }
 
-    const intersectingValues = allValues.filter((value, index) => {
-      return indices[index] === allArraysLength;
-    });
+        return values;
+      }, [])
+      .filter((value, index) => {
+        return indices[index] === allArraysLength;
+      });
 
     return getSameCrioIfUnchanged(this, intersectingValues);
   },
@@ -1156,15 +1171,6 @@ const CRIO_ARRAY_PROTOTYPE = {
   },
 
   /**
-   * get the values of this
-   *
-   * @returns {Array<*>}
-   */
-  values() {
-    return ARRAY_PROTOTYPE.values.call(this);
-  },
-
-  /**
    * find the values that are the symmetric difference of this and the arrays passed
    *
    * @param {Array<Array>} arrays
@@ -1180,27 +1186,28 @@ const CRIO_ARRAY_PROTOTYPE = {
       ...arrays
     ];
 
-    let allValues = [],
-        indicesToRemove = [],
+    let indicesToRemove = [],
         indexOfValue;
 
-    forEach(allArrays, (array) => {
-      if (isArray(array) || isCrioArray(array)) {
-        forEach(array, (value) => {
-          indexOfValue = allValues.indexOf(value);
+    const xorValues = allArrays
+      .reduce((values, array) => {
+        if (isArray(array) || isCrioArray(array)) {
+          forEach(array, (value) => {
+            indexOfValue = values.indexOf(value);
 
-          if (!!~indexOfValue) {
-            indicesToRemove.push(indexOfValue);
-          } else {
-            allValues.push(value);
-          }
-        });
-      }
-    });
+            if (!!~indexOfValue) {
+              indicesToRemove.push(indexOfValue);
+            } else {
+              values.push(value);
+            }
+          });
+        }
 
-    const xorValues = allValues.filter((value, index) => {
-      return !~indicesToRemove.indexOf(index);
-    });
+        return values;
+      }, [])
+      .filter((value, index) => {
+        return !~indicesToRemove.indexOf(index);
+      });
 
     return getSameCrioIfUnchanged(this, xorValues);
   },
@@ -1228,15 +1235,6 @@ const CRIO_OBJECT_PROTOTYPE = {
   constructor: CrioObject,
 
   /**
-   * get the entries of this
-   *
-   * @returns {Array<array>}
-   */
-  entries() {
-    return OBJECT_ENTRIES(this);
-  },
-
-  /**
    * filter the current CrioArray by the truthy return of fn
    *
    * @param {function} fn
@@ -1244,13 +1242,17 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {CrioObject}
    */
   filter(fn, thisArg = this) {
-    let newObject = {};
+    let value;
 
-    this.forEach((value, key) => {
+    const newObject = this.keys().reduce((object, key) => {
+      value = this[key];
+
       if (fn.call(thisArg, value, key, this)) {
-        newObject[key] = value;
+        object[key] = value;
       }
-    });
+
+      return object;
+    }, {});
 
     return getSameCrioIfUnchanged(this, newObject);
   },
@@ -1340,14 +1342,16 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {CrioObject}
    */
   map(fn, thisArg = this) {
-    let newObject = {},
-        result;
+    let value, result;
 
-    this.forEach((value, key) => {
+    const newObject = this.keys().reduce((object, key) => {
+      value = this[key];
       result = fn.call(thisArg, value, key, this);
 
-      newObject[key] = getCrioedValue(result);
-    });
+      object[key] = getCrioedValue(result);
+
+      return object;
+    }, {});
 
     return getSameCrioIfUnchanged(this, newObject);
   },
@@ -1371,7 +1375,7 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {*}
    */
   reduce(fn, defaultValue, thisArg = this) {
-    const reducedValue = ARRAY_PROTOTYPE.reduce.call(this.keys(), (accumulation, key) => {
+    const reducedValue = this.keys().reduce((accumulation, key) => {
       return fn.call(thisArg, accumulation, this[key], key, this);
     }, defaultValue);
     const crioedValue = getCrioedValue(reducedValue);
@@ -1393,7 +1397,7 @@ const CRIO_OBJECT_PROTOTYPE = {
    * @returns {*}
    */
   reduceRight(fn, defaultValue, thisArg = this) {
-    const reducedValue = ARRAY_PROTOTYPE.reduceRight.call(this.keys(), (accumulation, key) => {
+    const reducedValue = this.keys().reduce((accumulation, key) => {
       return fn.call(thisArg, accumulation, this[key], key, this);
     }, defaultValue);
     const crioedValue = getCrioedValue(reducedValue);
@@ -1405,26 +1409,14 @@ const CRIO_OBJECT_PROTOTYPE = {
     return crioedValue;
   },
 
-  /**
-   * get the values for this
-   *
-   * @returns {Array<*>}
-   */
-  values() {
-    return OBJECT.values(this);
-  },
-
   [CRIO_TYPE]: CRIO_OBJECT,
 
   [Symbol.iterator]() {
-    const keys = this.keys();
-
     let index = 0,
         key, value;
 
     return {
       next: () => {
-        key = keys[index];
         value = this[key];
 
         if (index < this.length) {
@@ -1432,7 +1424,6 @@ const CRIO_OBJECT_PROTOTYPE = {
 
           return {
             done: false,
-            key,
             value
           };
         } else {

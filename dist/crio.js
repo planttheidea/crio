@@ -121,19 +121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var createCrio = function createCrio() {
 	  var object = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
-	  if ((0, _is.isCrio)(object)) {
-	    return object;
-	  }
-	
-	  if ((0, _isArray2.default)(object)) {
-	    return new _classes.CrioArray(object);
-	  }
-	
-	  if ((0, _isPlainObject2.default)(object)) {
-	    return new _classes.CrioObject(object);
-	  }
-	
-	  return object;
+	  return (0, _classes.getCrioedValue)(object);
 	};
 	
 	/**
@@ -1496,17 +1484,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Array<*>}
 	 */
 	var mergeArrays = function mergeArrays(target, sources) {
-	  var plainObject = [].concat(_toConsumableArray(target));
-	
-	  (0, _forEach2.default)(sources, function (array) {
-	    if ((0, _isArray2.default)(array)) {
-	      (0, _forEach2.default)(array, function (value, index) {
+	  return sources.reduce(function (plainObject, source) {
+	    if ((0, _isArray2.default)(source)) {
+	      (0, _forEach2.default)(source, function (value, index) {
 	        plainObject[index] = getCrioedValue(value);
 	      });
 	    }
-	  });
 	
-	  return plainObject;
+	    return plainObject;
+	  }, [].concat(_toConsumableArray(target)));
 	};
 	
 	/**
@@ -1614,6 +1600,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  delete: function _delete(key) {
 	    var _this2 = this;
 	
+	    if (!this.has(key)) {
+	      return this;
+	    }
+	
 	    var plainObject = (0, _crio.getPlainObject)(this),
 	        isThisArray = (0, _isArray2.default)(plainObject);
 	
@@ -1654,6 +1644,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var key = keys.shift();
 	
+	    if (!this.has(key)) {
+	      return this;
+	    }
+	
 	    var plainObject = (0, _crio.getPlainObject)(this),
 	        isTargetKey = false;
 	
@@ -1671,6 +1665,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	
 	    return (0, _crio.getSameCrioIfUnchanged)(this, plainObject);
+	  },
+	
+	
+	  /**
+	   * return an array of [key, value] pairs for this
+	   *
+	   * @returns {Array<array>}
+	   */
+	  entries: function entries() {
+	    return (0, _constants.OBJECT_ENTRIES)(this);
 	  },
 	
 	
@@ -2089,9 +2093,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    return this.reduce(function (array, value) {
-	      array.push(value);
-	
-	      return array;
+	      return array.concat([value]);
 	    }, []);
 	  },
 	
@@ -2141,6 +2143,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  valueOf: function valueOf() {
 	    return this;
+	  },
+	
+	
+	  /**
+	   * get the values for this
+	   *
+	   * @returns {Array<*>}
+	   */
+	  values: function values() {
+	    return _constants.OBJECT.values(this);
 	  }
 	};
 	
@@ -2225,32 +2237,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this;
 	    }
 	
-	    var shallowClone = (0, _loops.shallowCloneArray)(this),
-	        indexOfValue = void 0;
+	    var indexOfValue = void 0;
 	
-	    (0, _forEach2.default)(arrays, function (array) {
+	    var shallowClone = arrays.reduce(function (differenceArray, array) {
 	      if ((0, _isArray2.default)(array) || (0, _is.isCrioArray)(array)) {
 	        (0, _forEach2.default)(array, function (value) {
-	          indexOfValue = shallowClone.indexOf(value);
+	          indexOfValue = differenceArray.indexOf(value);
 	
 	          if (!!~indexOfValue) {
-	            shallowClone.splice(indexOfValue, 1);
+	            differenceArray.splice(indexOfValue, 1);
 	          }
 	        });
 	      }
-	    });
+	
+	      return differenceArray;
+	    }, (0, _loops.shallowCloneArray)(this));
 	
 	    return (0, _crio.getSameCrioIfUnchanged)(this, shallowClone);
-	  },
-	
-	
-	  /**
-	   * return an array of [key, value] pairs for this
-	   *
-	   * @returns {Array<array>}
-	   */
-	  entries: function entries() {
-	    return (0, _constants.OBJECT_ENTRIES)(this);
 	  },
 	
 	
@@ -2394,26 +2397,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var allArrays = [this].concat(arrays);
 	    var allArraysLength = allArrays.length;
 	
-	    var allValues = [],
-	        indices = {},
+	    var indices = [],
 	        indexOfValue = void 0;
 	
-	    (0, _forEach2.default)(allArrays, function (array) {
+	    var intersectingValues = allArrays.reduce(function (values, array) {
 	      if ((0, _isArray2.default)(array) || (0, _is.isCrioArray)(array)) {
 	        (0, _forEach2.default)(array, function (value) {
-	          indexOfValue = allValues.indexOf(value);
+	          indexOfValue = values.indexOf(value);
 	
 	          if (!!~indexOfValue) {
 	            indices[indexOfValue]++;
 	          } else {
-	            indices[allValues.length] = 1;
-	            allValues.push(value);
+	            indices[values.length] = 1;
+	            values.push(value);
 	          }
 	        });
 	      }
-	    });
 	
-	    var intersectingValues = allValues.filter(function (value, index) {
+	      return values;
+	    }, []).filter(function (value, index) {
 	      return indices[index] === allArraysLength;
 	    });
 	
@@ -2716,16 +2718,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	  /**
-	   * get the values of this
-	   *
-	   * @returns {Array<*>}
-	   */
-	  values: function values() {
-	    return _constants.ARRAY_PROTOTYPE.values.call(this);
-	  },
-	
-	
-	  /**
 	   * find the values that are the symmetric difference of this and the arrays passed
 	   *
 	   * @param {Array<Array>} arrays
@@ -2742,25 +2734,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var allArrays = [this].concat(arrays);
 	
-	    var allValues = [],
-	        indicesToRemove = [],
+	    var indicesToRemove = [],
 	        indexOfValue = void 0;
 	
-	    (0, _forEach2.default)(allArrays, function (array) {
+	    var xorValues = allArrays.reduce(function (values, array) {
 	      if ((0, _isArray2.default)(array) || (0, _is.isCrioArray)(array)) {
 	        (0, _forEach2.default)(array, function (value) {
-	          indexOfValue = allValues.indexOf(value);
+	          indexOfValue = values.indexOf(value);
 	
 	          if (!!~indexOfValue) {
 	            indicesToRemove.push(indexOfValue);
 	          } else {
-	            allValues.push(value);
+	            values.push(value);
 	          }
 	        });
 	      }
-	    });
 	
-	    var xorValues = allValues.filter(function (value, index) {
+	      return values;
+	    }, []).filter(function (value, index) {
 	      return !~indicesToRemove.indexOf(index);
 	    });
 	
@@ -2792,16 +2783,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  constructor: CrioObject,
 	
 	  /**
-	   * get the entries of this
-	   *
-	   * @returns {Array<array>}
-	   */
-	  entries: function entries() {
-	    return (0, _constants.OBJECT_ENTRIES)(this);
-	  },
-	
-	
-	  /**
 	   * filter the current CrioArray by the truthy return of fn
 	   *
 	   * @param {function} fn
@@ -2813,13 +2794,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 	
-	    var newObject = {};
+	    var value = void 0;
 	
-	    this.forEach(function (value, key) {
+	    var newObject = this.keys().reduce(function (object, key) {
+	      value = _this6[key];
+	
 	      if (fn.call(thisArg, value, key, _this6)) {
-	        newObject[key] = value;
+	        object[key] = value;
 	      }
-	    });
+	
+	      return object;
+	    }, {});
 	
 	    return (0, _crio.getSameCrioIfUnchanged)(this, newObject);
 	  },
@@ -2925,14 +2910,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
 	
-	    var newObject = {},
+	    var value = void 0,
 	        result = void 0;
 	
-	    this.forEach(function (value, key) {
+	    var newObject = this.keys().reduce(function (object, key) {
+	      value = _this7[key];
 	      result = fn.call(thisArg, value, key, _this7);
 	
-	      newObject[key] = getCrioedValue(result);
-	    });
+	      object[key] = getCrioedValue(result);
+	
+	      return object;
+	    }, {});
 	
 	    return (0, _crio.getSameCrioIfUnchanged)(this, newObject);
 	  },
@@ -2962,7 +2950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var thisArg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this;
 	
-	    var reducedValue = _constants.ARRAY_PROTOTYPE.reduce.call(this.keys(), function (accumulation, key) {
+	    var reducedValue = this.keys().reduce(function (accumulation, key) {
 	      return fn.call(thisArg, accumulation, _this8[key], key, _this8);
 	    }, defaultValue);
 	    var crioedValue = getCrioedValue(reducedValue);
@@ -2989,7 +2977,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    var thisArg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this;
 	
-	    var reducedValue = _constants.ARRAY_PROTOTYPE.reduceRight.call(this.keys(), function (accumulation, key) {
+	    var reducedValue = this.keys().reduce(function (accumulation, key) {
 	      return fn.call(thisArg, accumulation, _this9[key], key, _this9);
 	    }, defaultValue);
 	    var crioedValue = getCrioedValue(reducedValue);
@@ -2999,21 +2987,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    return crioedValue;
-	  },
-	
-	
-	  /**
-	   * get the values for this
-	   *
-	   * @returns {Array<*>}
-	   */
-	  values: function values() {
-	    return _constants.OBJECT.values(this);
 	  }
 	}, _defineProperty(_CRIO_OBJECT_PROTOTYP, _constants.CRIO_TYPE, _constants.CRIO_OBJECT), _defineProperty(_CRIO_OBJECT_PROTOTYP, Symbol.iterator, function () {
 	  var _this10 = this;
-	
-	  var keys = this.keys();
 	
 	  var index = 0,
 	      key = void 0,
@@ -3021,7 +2997,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  return {
 	    next: function next() {
-	      key = keys[index];
 	      value = _this10[key];
 	
 	      if (index < _this10.length) {
@@ -3029,7 +3004,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        return {
 	          done: false,
-	          key: key,
 	          value: value
 	        };
 	      } else {
@@ -7262,13 +7236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.isReactElement = exports.isCrioObject = exports.isCrioArray = exports.isCrio = undefined;
 	
-	var _isPlainObject = __webpack_require__(65);
-	
-	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
-	
 	var _constants = __webpack_require__(189);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/**
 	 * determine if object passed is a Crio object
@@ -7276,7 +7244,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {*} object
 	 * @returns {boolean}
 	 */
-	// external dependencies
 	var isCrio = function isCrio(object) {
 	  return !!(object && object[_constants.CRIO_TYPE]);
 	};
@@ -7287,6 +7254,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {*} object
 	 * @returns {boolean}
 	 */
+	// constants
 	var isCrioArray = function isCrioArray(object) {
 	  return isCrio(object) && object[_constants.CRIO_TYPE] === _constants.CRIO_ARRAY;
 	};
@@ -7309,7 +7277,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {boolean}
 	 */
 	var isReactElement = function isReactElement(object) {
-	  return (0, _isPlainObject2.default)(object) && object.$$typeof === _constants.REACT_ELEMENT_TYPE;
+	  return !!object && object.$$typeof === _constants.REACT_ELEMENT_TYPE;
 	};
 	
 	exports.isCrio = isCrio;
@@ -7346,9 +7314,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); } // external dependencies
 	
@@ -7376,35 +7344,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	  });
 	};
 	
-	/* eslint-disable valid-jsdoc */
 	/**
 	 * create a deeply-nested new object with value at last key location
 	 *
-	 * @param {string|number} key
-	 * @param {Array<string|number>} restOfKeys
-	 * @param {number} restOfKeys.length
+	 * @param {Array<string|number>} keys
 	 * @param {*} value
 	 * @returns {Array<*>|object}
 	 */
-	/* eslint-enable */
-	var createDeeplyNestedObject = function createDeeplyNestedObject(_ref, value) {
-	  var _ref2 = _toArray(_ref);
+	var createDeeplyNestedObject = function createDeeplyNestedObject(keys, value) {
+	  var _keys = _toArray(keys);
 	
-	  var key = _ref2[0];
+	  var key = _keys[0];
 	
-	  var restOfKeys = _ref2.slice(1);
+	  var restOfKeys = _keys.slice(1);
 	
-	  var isPlainItemArray = (0, _isNumber2.default)(key);
 	  var valueToSave = restOfKeys.length ? createDeeplyNestedObject(restOfKeys, value) : value;
-	  var plainObject = isPlainItemArray ? [] : {};
 	
-	  if (isPlainItemArray) {
-	    plainObject.push(valueToSave);
-	  } else {
-	    plainObject[key] = valueToSave;
-	  }
-	
-	  return plainObject;
+	  return (0, _isNumber2.default)(key) ? [valueToSave] : _defineProperty({}, key, valueToSave);
 	};
 	
 	/**
@@ -7415,15 +7371,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Array<*>|Object}
 	 */
 	var mergeObjects = function mergeObjects(target, sources) {
-	  var plainObject = _extends({}, target);
-	
-	  (0, _forEach2.default)(sources, function (object) {
-	    if ((0, _isPlainObject2.default)(object)) {
-	      plainObject = _extends({}, plainObject, object);
+	  return sources.reduce(function (plainObject, source) {
+	    if ((0, _isPlainObject2.default)(source)) {
+	      plainObject = _extends({}, plainObject, source);
 	    }
-	  });
 	
-	  return plainObject;
+	    return plainObject;
+	  }, _extends({}, target));
 	};
 	
 	/**
@@ -7457,15 +7411,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {Object}
 	 */
 	var shallowCloneObjectWithValue = function shallowCloneObjectWithValue(crioObject, key, value) {
-	  var plainObject = _defineProperty({}, key, value);
-	
-	  (0, _forEach2.default)(crioObject.keys(), function (currentKey) {
+	  return crioObject.keys().reduce(function (plainObject, currentKey) {
 	    if (currentKey !== key) {
 	      plainObject[currentKey] = crioObject[currentKey];
 	    }
-	  });
 	
-	  return plainObject;
+	    return plainObject;
+	  }, _defineProperty({}, key, value));
 	};
 	
 	exports.convertToNumber = convertToNumber;

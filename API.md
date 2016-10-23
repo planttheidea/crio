@@ -83,6 +83,8 @@ Methods with the same name as the native method will be a link to MDN, as they a
 * [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf)
 
 #### Added crio Methods
+* entries, returns `{Array<[string, any]>}`
+    * Gets an array of the `[key, value]` pairs in the `CrioObject`
 * forEach `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object executing *fn*
     * Iteration order is not guaranteed
@@ -91,6 +93,8 @@ Methods with the same name as the native method will be a link to MDN, as they a
     * Iteration order is not guaranteed
 * includes `{any}` *value*, returns `{boolean}`
     * Determine if the `CrioObject` has a value that deeply matches `value` in equality
+* keys, returns `{Array<string>}`
+    * Returns an array of the keys in the `CrioObject`
 * map `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object and maps returned value to the respective key
     * Iteration order is not guaranteed
@@ -98,6 +102,8 @@ Methods with the same name as the native method will be a link to MDN, as they a
     * Performs same function as `reduce` in the `Array` prototype, but on the `CrioObject`
 * reduceRight `{function(accumulatedObject, value, key): any}` *fn*, `{any}` *thisArg*, returns `{any}`
     * Performs same function as `reduceRight` in the `Array` prototype, but on the `CrioObject`
+* values, returns `{Array<any>}`
+    * Returns an array of the values in the `CrioObject`
     
 There are also a number of additional `crio`-specific methods that are available on both `CrioArray` and `CrioObject`.
 
