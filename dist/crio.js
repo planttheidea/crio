@@ -2019,9 +2019,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this;
 	    }
 	
-	    var shallowCloneWithValueFunction = (0, _is.isCrioArray)(this) ? _loops.shallowCloneArrayWithValue : _loops.shallowCloneObjectWithValue;
+	    var shallowClone = (0, _is.isCrioArray)(this) ? (0, _loops.shallowCloneArray)(this) : (0, _loops.shallowCloneObject)(this);
 	
-	    return (0, _crio.getSameCrioIfUnchanged)(this, shallowCloneWithValueFunction(this, key, value));
+	    shallowClone[key] = value;
+	
+	    return (0, _crio.getSameCrioIfUnchanged)(this, shallowClone);
 	  },
 	
 	
@@ -2955,11 +2957,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, defaultValue);
 	    var crioedValue = getCrioedValue(reducedValue);
 	
-	    if ((0, _is.isCrio)(crioedValue)) {
-	      return this.equals(crioedValue) ? this : crioedValue;
-	    }
-	
-	    return crioedValue;
+	    return (0, _is.isCrio)(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
 	  },
 	
 	
@@ -2982,11 +2980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, defaultValue);
 	    var crioedValue = getCrioedValue(reducedValue);
 	
-	    if ((0, _is.isCrio)(crioedValue)) {
-	      return this.equals(crioedValue) ? this : crioedValue;
-	    }
-	
-	    return crioedValue;
+	    return (0, _is.isCrio)(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
 	  }
 	}, _defineProperty(_CRIO_OBJECT_PROTOTYP, _constants.CRIO_TYPE, _constants.CRIO_OBJECT), _defineProperty(_CRIO_OBJECT_PROTOTYP, Symbol.iterator, function () {
 	  var _this10 = this;
@@ -7294,7 +7288,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.shallowCloneObjectWithValue = exports.shallowCloneArrayWithValue = exports.shallowCloneArray = exports.mergeObjects = exports.forEachObject = exports.createDeeplyNestedObject = exports.convertToNumber = undefined;
+	exports.shallowCloneObject = exports.shallowCloneArray = exports.mergeObjects = exports.forEachObject = exports.createDeeplyNestedObject = exports.convertToNumber = undefined;
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -7313,8 +7307,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _constants = __webpack_require__(189);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
@@ -7391,33 +7383,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
-	 * shallowly clone an array, but setting the value at indexToSet
+	 * shallowly clone an object
 	 *
-	 * @param {CrioArray} crioArray
-	 * @param {number} indexToSet
-	 * @param {*} valueToSet
-	 * @returns {Array<*>}
-	 */
-	var shallowCloneArrayWithValue = function shallowCloneArrayWithValue(crioArray, indexToSet, valueToSet) {
-	  return [].concat(_toConsumableArray(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet)), [valueToSet], _toConsumableArray(_constants.ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1)));
-	};
-	
-	/**
-	 * shallowly clone an object, but setting the value at key
-	 *
-	 * @param {CrioObject} crioObject
-	 * @param {string} key
-	 * @param {*} value
+	 * @param {Object} object
 	 * @returns {Object}
 	 */
-	var shallowCloneObjectWithValue = function shallowCloneObjectWithValue(crioObject, key, value) {
-	  return crioObject.keys().reduce(function (plainObject, currentKey) {
-	    if (currentKey !== key) {
-	      plainObject[currentKey] = crioObject[currentKey];
-	    }
-	
-	    return plainObject;
-	  }, _defineProperty({}, key, value));
+	var shallowCloneObject = function shallowCloneObject(object) {
+	  return _extends({}, object);
 	};
 	
 	exports.convertToNumber = convertToNumber;
@@ -7425,8 +7397,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.forEachObject = forEachObject;
 	exports.mergeObjects = mergeObjects;
 	exports.shallowCloneArray = shallowCloneArray;
-	exports.shallowCloneArrayWithValue = shallowCloneArrayWithValue;
-	exports.shallowCloneObjectWithValue = shallowCloneObjectWithValue;
+	exports.shallowCloneObject = shallowCloneObject;
 
 /***/ },
 /* 194 */

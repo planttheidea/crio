@@ -6,8 +6,7 @@ import {
   forEachObject,
   mergeObjects,
   shallowCloneArray,
-  shallowCloneArrayWithValue,
-  shallowCloneObjectWithValue
+  shallowCloneObject
 } from '../../src/utils/loops';
 
 import crio from '../../src';
@@ -81,40 +80,9 @@ test('if shallowCloneArray returns a non-crio shallowClone', (t) => {
   t.deepEqual(shallowCloneArray(crioArray), array);
 });
 
-test('if shallowCloneArrayWithValue will assign the value passed', (t) => {
-  const array = crio.array(['foo']);
-  const expectedNewResult = [
-    'foo',
-    'bar'
-  ];
+test('if shallowCloneObject returns a non-crio shallowClone', (t) => {
+  const object = {foo: 'bar', bar: 'baz'};
+  const crioObject = crio(object);
 
-  const newResult = shallowCloneArrayWithValue(array, 1, 'bar');
-
-  t.deepEqual(newResult, expectedNewResult);
-
-  const expectedExistingResult = ['bar'];
-
-  const existingResult = shallowCloneArrayWithValue(array, 0, 'bar');
-
-  t.deepEqual(existingResult, expectedExistingResult);
-});
-
-test('if shallowCloneObjectWithValue will assign the value passed', (t) => {
-  const object = crio.object({foo: 'bar'});
-  const expectedNewResult = {
-    foo: 'bar',
-    bar: 'baz'
-  };
-
-  const newResult = shallowCloneObjectWithValue(object, 'bar', 'baz');
-
-  t.deepEqual(newResult, expectedNewResult);
-
-  const expectedExistingResult = {
-    foo: 'baz'
-  };
-
-  const existingResult = shallowCloneObjectWithValue(object, 'foo', 'baz');
-
-  t.deepEqual(existingResult, expectedExistingResult);
+  t.deepEqual(shallowCloneObject(crioObject), object);
 });

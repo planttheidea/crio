@@ -35,8 +35,7 @@ import {
   forEachObject,
   mergeObjects,
   shallowCloneArray,
-  shallowCloneArrayWithValue,
-  shallowCloneObjectWithValue
+  shallowCloneObject
 } from './utils/loops';
 import {
   isCrio,
@@ -571,9 +570,11 @@ const CRIO_PROTOTYPE = {
       return this;
     }
 
-    const shallowCloneWithValueFunction = isCrioArray(this) ? shallowCloneArrayWithValue : shallowCloneObjectWithValue;
+    let shallowClone = isCrioArray(this) ? shallowCloneArray(this) : shallowCloneObject(this);
 
-    return getSameCrioIfUnchanged(this, shallowCloneWithValueFunction(this, key, value));
+    shallowClone[key] = value;
+
+    return getSameCrioIfUnchanged(this, shallowClone);
   },
 
   /**
@@ -1380,11 +1381,7 @@ const CRIO_OBJECT_PROTOTYPE = {
     }, defaultValue);
     const crioedValue = getCrioedValue(reducedValue);
 
-    if (isCrio(crioedValue)) {
-      return this.equals(crioedValue) ? this : crioedValue;
-    }
-
-    return crioedValue;
+    return isCrio(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
   },
 
   /**
@@ -1402,11 +1399,7 @@ const CRIO_OBJECT_PROTOTYPE = {
     }, defaultValue);
     const crioedValue = getCrioedValue(reducedValue);
 
-    if (isCrio(crioedValue)) {
-      return this.equals(crioedValue) ? this : crioedValue;
-    }
-
-    return crioedValue;
+    return isCrio(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
   },
 
   [CRIO_TYPE]: CRIO_OBJECT,
