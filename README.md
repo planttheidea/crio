@@ -2,7 +2,7 @@
 Immutable JS objects with a natural API
 
 <img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
-<img src="https://img.shields.io/badge/coverage-93.45%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-93.14%25-brightgreen.svg"/>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
 
 #### Jump to the API

@@ -2536,11 +2536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var reducedValue = _constants.ARRAY_PROTOTYPE.reduce.call(this, fn, defaultValue, thisArg);
 	    var crioedValue = getCrioedValue(reducedValue);
 	
-	    if ((0, _is.isCrio)(crioedValue)) {
-	      return this.equals(crioedValue) ? this : crioedValue;
-	    }
-	
-	    return crioedValue;
+	    return (0, _is.isCrio)(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
 	  },
 	
 	
@@ -2559,11 +2555,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var reducedValue = _constants.ARRAY_PROTOTYPE.reduceRight.call(this, fn, defaultValue, thisArg);
 	    var crioedValue = getCrioedValue(reducedValue);
 	
-	    if ((0, _is.isCrio)(crioedValue)) {
-	      return this.equals(crioedValue) ? this : crioedValue;
-	    }
-	
-	    return crioedValue;
+	    return (0, _is.isCrio)(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
 	  },
 	
 	

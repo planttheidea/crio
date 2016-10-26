@@ -1014,11 +1014,7 @@ const CRIO_ARRAY_PROTOTYPE = {
     const reducedValue = ARRAY_PROTOTYPE.reduce.call(this, fn, defaultValue, thisArg);
     const crioedValue = getCrioedValue(reducedValue);
 
-    if (isCrio(crioedValue)) {
-      return this.equals(crioedValue) ? this : crioedValue;
-    }
-
-    return crioedValue;
+    return isCrio(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
   },
 
   /**
@@ -1034,11 +1030,7 @@ const CRIO_ARRAY_PROTOTYPE = {
     const reducedValue = ARRAY_PROTOTYPE.reduceRight.call(this, fn, defaultValue, thisArg);
     const crioedValue = getCrioedValue(reducedValue);
 
-    if (isCrio(crioedValue)) {
-      return this.equals(crioedValue) ? this : crioedValue;
-    }
-
-    return crioedValue;
+    return isCrio(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
   },
 
   /**
