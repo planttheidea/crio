@@ -80,39 +80,13 @@ const shallowCloneArray = (array) => {
 };
 
 /**
- * shallowly clone an array, but setting the value at indexToSet
+ * shallowly clone an object
  *
- * @param {CrioArray} crioArray
- * @param {number} indexToSet
- * @param {*} valueToSet
- * @returns {Array<*>}
- */
-const shallowCloneArrayWithValue = (crioArray, indexToSet, valueToSet) => {
-  return [
-    ...ARRAY_PROTOTYPE.slice.call(crioArray, 0, indexToSet),
-    valueToSet,
-    ...ARRAY_PROTOTYPE.slice.call(crioArray, indexToSet + 1)
-  ];
-};
-
-/**
- * shallowly clone an object, but setting the value at key
- *
- * @param {CrioObject} crioObject
- * @param {string} key
- * @param {*} value
+ * @param {Object} object
  * @returns {Object}
  */
-const shallowCloneObjectWithValue = (crioObject, key, value) => {
-  return crioObject.keys().reduce((plainObject, currentKey) => {
-    if (currentKey !== key) {
-      plainObject[currentKey] = crioObject[currentKey];
-    }
-
-    return plainObject;
-  }, {
-    [key]: value
-  });
+const shallowCloneObject = (object) => {
+  return {...object};
 };
 
 export {convertToNumber};
@@ -120,5 +94,4 @@ export {createDeeplyNestedObject};
 export {forEachObject};
 export {mergeObjects};
 export {shallowCloneArray};
-export {shallowCloneArrayWithValue};
-export {shallowCloneObjectWithValue};
+export {shallowCloneObject};

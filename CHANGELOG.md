@@ -1,5 +1,7 @@
 # crio changelog
 
+#### 3.3.2
+
 #### 3.3.1
 * Prevent `delete` and `deleteIn` from making clones when key being deleted does not exist
 * Optimize `isReactElement` check
