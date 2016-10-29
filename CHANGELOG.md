@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 3.4.0
+* Add `every` and `some` for `CrioObject` (same as for Arrays, but for object collections)
+
 #### 3.3.2
 * Simplify shallow cloning with value assignment in `set` method (5-13% performance improvement)
 

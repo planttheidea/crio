@@ -2777,6 +2777,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	  constructor: CrioObject,
 	
 	  /**
+	   * loop over the object and if all fn calls returns true, then return true
+	   *
+	   * @param {function} fn
+	   * @param {*} thisArg
+	   * @returns {boolean}
+	   */
+	  every: function every(fn) {
+	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+	
+	    var keys = this.keys();
+	
+	    var index = -1,
+	        key = void 0;
+	
+	    while (++index < this.length) {
+	      key = keys[index];
+	
+	      if (!fn.call(thisArg, this[key], key, this)) {
+	        return false;
+	      }
+	    }
+	
+	    return true;
+	  },
+	
+	
+	  /**
 	   * filter the current CrioArray by the truthy return of fn
 	   *
 	   * @param {function} fn
@@ -2973,6 +3000,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var crioedValue = getCrioedValue(reducedValue);
 	
 	    return (0, _is.isCrio)(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
+	  },
+	
+	
+	  /**
+	   * loop over the object and if the fn passed returns true, then return true
+	   *
+	   * @param {function} fn
+	   * @param {*} thisArg
+	   * @returns {boolean}
+	   */
+	  some: function some(fn) {
+	    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+	
+	    var keys = this.keys();
+	
+	    var index = -1,
+	        key = void 0;
+	
+	    while (++index < this.length) {
+	      key = keys[index];
+	
+	      if (fn.call(thisArg, this[key], key, this)) {
+	        return true;
+	      }
+	    }
+	
+	    return false;
 	  }
 	}, _defineProperty(_CRIO_OBJECT_PROTOTYP, _constants.CRIO_TYPE, _constants.CRIO_OBJECT), _defineProperty(_CRIO_OBJECT_PROTOTYP, Symbol.iterator, function () {
 	  var _this10 = this;

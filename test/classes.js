@@ -931,6 +931,26 @@ test('if entries returns an iterator for both keys and values', (t) => {
   t.deepEqual(object.thaw(), resultObject);
 });
 
+test('if every returns true if all of the function call results are truthy', (t) => {
+  const foo = new CrioObject({foo: 'bar', bar: 'bar'});
+
+  t.true(foo.every((value) => {
+    return value === 'bar';
+  }));
+
+  t.false(foo.every((value, key) => {
+    return key === 'bar';
+  }));
+
+  t.false(foo.every((value) => {
+    return value === 'baz';
+  }));
+
+  t.false(foo.every((value, key) => {
+    return key === 'baz';
+  }));
+});
+
 test('if filter creates new CrioObject with falsy returns removed', (t) => {
   const object = new CrioObject({foo: 'bar', bar: 'baz', baz: 'foo'});
   const filteredObject = object.filter((value, key) => {
@@ -1097,6 +1117,26 @@ test('if reduceRight returns a new reduced value (Crio or not) in reverse order'
   }, {});
 
   t.deepEqual(reducedValueArray.thaw(), {foo: 2, bar: 4, baz: 6});
+});
+
+test('if some returns true if any of the function call results are truthy', (t) => {
+  const foo = new CrioObject({foo: 'bar', bar: 'baz'});
+
+  t.true(foo.some((value) => {
+    return value === 'bar';
+  }));
+
+  t.true(foo.some((value, key) => {
+    return key === 'bar';
+  }));
+
+  t.true(foo.some((value) => {
+    return value === 'baz';
+  }));
+
+  t.false(foo.some((value, key) => {
+    return key === 'baz';
+  }));
 });
 
 test('if values return an array of values in the object', (t) => {

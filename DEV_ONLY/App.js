@@ -18,10 +18,23 @@ const listItems = array.map((value, index) => {
   );
 });
 
-const foo = crio.array(['foo', 1, true]);
+const foo = crio.object({foo: 'bar', bar: 'bar'});
 
-console.log(foo.xor(['foo', true]));
-console.log(_.xor(['foo', 1, true], ['foo', true]));
+console.log(foo.every((value) => {
+  return value === 'bar';
+}));
+
+console.log(foo.every((value, key) => {
+  return key === 'bar';
+}));
+
+console.log(foo.every((value) => {
+  return value === 'baz';
+}));
+
+console.log(foo.every((value, key) => {
+  return key === 'baz';
+}));
 
 const App = () => {
   return (

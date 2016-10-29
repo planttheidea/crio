@@ -85,6 +85,8 @@ Methods with the same name as the native method will be a link to MDN, as they a
 #### Added crio Methods
 * entries, returns `{Array<[string, any]>}`
     * Gets an array of the `[key, value]` pairs in the `CrioObject`
+* every `{function(value, key, CrioObject): any}` *fn*, `{any}` *thisArg*, returns `{any}`
+    * Performs same function as `every` in the `Array` prototype, but on the `CrioObject`
 * forEach `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object executing *fn*
     * Iteration order is not guaranteed
@@ -102,6 +104,8 @@ Methods with the same name as the native method will be a link to MDN, as they a
     * Performs same function as `reduce` in the `Array` prototype, but on the `CrioObject`
 * reduceRight `{function(accumulatedObject, value, key): any}` *fn*, `{any}` *thisArg*, returns `{any}`
     * Performs same function as `reduceRight` in the `Array` prototype, but on the `CrioObject`
+* some `{function(value, key, CrioObject): any}` *fn*, `{any}` *thisArg*, returns `{any}`
+    * Performs same function as `some` in the `Array` prototype, but on the `CrioObject`
 * values, returns `{Array<any>}`
     * Returns an array of the values in the `CrioObject`
     

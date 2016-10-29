@@ -1228,6 +1228,30 @@ const CRIO_OBJECT_PROTOTYPE = {
   constructor: CrioObject,
 
   /**
+   * loop over the object and if all fn calls returns true, then return true
+   *
+   * @param {function} fn
+   * @param {*} thisArg
+   * @returns {boolean}
+   */
+  every(fn, thisArg = this) {
+    const keys = this.keys();
+
+    let index = -1,
+      key;
+
+    while (++index < this.length) {
+      key = keys[index];
+
+      if (!fn.call(thisArg, this[key], key, this)) {
+        return false;
+      }
+    }
+
+    return true;
+  },
+
+  /**
    * filter the current CrioArray by the truthy return of fn
    *
    * @param {function} fn
@@ -1392,6 +1416,30 @@ const CRIO_OBJECT_PROTOTYPE = {
     const crioedValue = getCrioedValue(reducedValue);
 
     return isCrio(crioedValue) && this.equals(crioedValue) ? this : crioedValue;
+  },
+
+  /**
+   * loop over the object and if the fn passed returns true, then return true
+   *
+   * @param {function} fn
+   * @param {*} thisArg
+   * @returns {boolean}
+   */
+  some(fn, thisArg = this) {
+    const keys = this.keys();
+
+    let index = -1,
+        key;
+
+    while (++index < this.length) {
+      key = keys[index];
+
+      if (fn.call(thisArg, this[key], key, this)) {
+        return true;
+      }
+    }
+
+    return false;
   },
 
   [CRIO_TYPE]: CRIO_OBJECT,
