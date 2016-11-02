@@ -1,5 +1,8 @@
 # crio changelog
 
+#### 3.4.1
+* Add `lodash-webpack-plugin` for smaller `dist` builds
+
 #### 3.4.0
 * Add `every` and `some` for `CrioObject` (same as for Arrays, but for object collections)
 
