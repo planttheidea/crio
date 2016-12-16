@@ -1,7 +1,10 @@
 # crio changelog
 
-#### 3.4.2.
+#### 3.4.3
 * Update hash-it dependency for faster hash creation
+
+#### 3.4.2
+* Failed publish
 
 #### 3.4.1
 * Add `lodash-webpack-plugin` for smaller `dist` builds
