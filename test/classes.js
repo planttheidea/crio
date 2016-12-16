@@ -133,7 +133,7 @@ test('if delete removes the item from the Crio', (t) => {
 
   const object = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  t.deepEqual(object.delete('foo'), {bar: 'baz'});
+  t.deepEqual(object.delete('foo').thaw(), {bar: 'baz'});
 });
 
 test('if deleteIn removes the deeply-nested item from the Crio', (t) => {

@@ -1,5 +1,11 @@
 # crio changelog
 
+#### 3.4.2.
+* Update hash-it dependency for faster hash creation
+
+#### 3.4.1
+* Include lodash-webpack-plugin for smaller build
+
 #### 3.4.0
 * Add `every` and `some` for `CrioObject` (same as for Arrays, but for object collections)
 

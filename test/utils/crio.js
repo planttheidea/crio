@@ -67,12 +67,12 @@ test('if getDeeplyNestedValue will deeply set the value in a nested object', (t)
   t.deepEqual(getDeeplyNestedValue(crioObject, {bar: 'boo'}, true, ['some']), resultCrio);
 });
 
-test('if getPlainObject will return the thawed crio', (t) => {
+test.only('if getPlainObject will return the thawed crio', (t) => {
   const crioArray = crio.array(['foo']);
   const crioObject = crio.object({foo: 'bar'});
 
   t.deepEqual(getPlainObject(crioArray), []);
-  t.deepEqual(getPlainObject(crioArray, true), new Array(1));
+  t.deepEqual(getPlainObject(crioArray, false), new Array(1));
 
   t.deepEqual(getPlainObject(crioObject), {});
 });
