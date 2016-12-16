@@ -83,7 +83,7 @@
     "dev:production": "NODE_ENV=production webpack-dev-server --progress --colors --config=webpack.config.dev.js",
     "dist": "npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
-    "prepublish": "in-publish && prepublish:compile || echo ''",
+    "prepublish": "in-publish && npm run prepublish:compile || echo ''",
     "prepublish:compile": "npm run clean && npm run lint && npm test && npm run transpile && npm run dist",
     "test": "NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
