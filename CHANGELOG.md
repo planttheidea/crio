@@ -4,7 +4,7 @@
 * Update hash-it dependency for faster hash creation
 
 #### 3.4.1
-* Include lodash-webpack-plugin for smaller build
+* Add `lodash-webpack-plugin` for smaller `dist` builds
 
 #### 3.4.0
 * Add `every` and `some` for `CrioObject` (same as for Arrays, but for object collections)
