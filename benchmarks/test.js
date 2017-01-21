@@ -5,15 +5,15 @@ exports.test = (name, benchmark) => {
 
   return `${name}: ${repeats.map(cycles => {
     startTime = Date.now();
-    
+
     benchmark(cycles);
-    
+
     testTime = Date.now() - startTime;
-    
+
     if (global && global.gc) {
       global.gc();
     }
-    
+
     return testTime;
   }).join(', ')}`
 };

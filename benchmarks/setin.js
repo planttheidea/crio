@@ -3,6 +3,7 @@ const seamlessImmutableJs = require('seamless-immutable');
 const ImmutableJs = require('immutable');
 const moriJs = require('mori');
 const crio = require('../lib');
+const crioOld = require('../lib-old');
 
 /**
  * Data
@@ -17,21 +18,21 @@ const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.
 
 exports.objectSetInNative = (cycles) => {
   const obj = {
-    data: {value},
+    data: {value}
   };
 
   for (let i = 0; i < cycles; i++) {
     Object.assign({}, obj, {
       data: Object.assign({}, obj.data, {
-        value: Math.random(),
-      }),
+        value: Math.random()
+      })
     });
   }
 };
 
 exports.objectSetInSeamlessImmutableJs = (cycles) => {
   const obj = seamlessImmutableJs.from({
-    data: {value},
+    data: {value}
   });
 
   for (let i = 0; i < cycles; i++) {
@@ -41,7 +42,7 @@ exports.objectSetInSeamlessImmutableJs = (cycles) => {
 
 exports.objectSetInImmutableJs = (cycles) => {
   const obj = ImmutableJs.fromJS({
-    data: {value},
+    data: {value}
   });
 
   for (let i = 0; i < cycles; i++) {
@@ -59,7 +60,17 @@ exports.objectSetInMoriJs = (cycles) => {
 
 exports.objectSetInCrio = (cycles) => {
   const obj = crio({
-    data: {value},
+    data: {value}
+  });
+
+  for (let i = 0; i < cycles; i++) {
+    obj.set(['data', 'value'], Math.random());
+  }
+};
+
+exports.objectSetInCrioOld = (cycles) => {
+  const obj = crioOld({
+    data: {value}
   });
 
   for (let i = 0; i < cycles; i++) {
@@ -116,6 +127,19 @@ exports.arraySetInMoriJs = (cycles) => {
 
 exports.arraySetInCrio = (cycles) => {
   const arr = crio([array]);
+  const maxIndex = arr[0].length - 1;
+
+  let index;
+
+  for (let i = 0; i < cycles; i++) {
+    index = ~~(Math.random() * maxIndex);
+
+    arr.set([0, index], Math.random());
+  }
+};
+
+exports.arraySetInCrioOld = (cycles) => {
+  const arr = crioOld([array]);
   const maxIndex = arr[0].length - 1;
 
   let index;

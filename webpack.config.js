@@ -73,7 +73,10 @@ module.exports = {
     ]),
     new LodashModuleReplacementPlugin({
       collections: true,
-      paths: true
+      cloning: true,
+      currying: true,
+      paths: true,
+      unicode: true
     })
   ],
 

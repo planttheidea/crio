@@ -8,33 +8,10 @@ import crio from '../src';
 
 // import '../benchmarks';
 
-const array = crio.array(['foo', 'bar', 'baz']);
+const object = crio({foo: ['bar', {baz: 'foo', foo: 'bar'}]});
+const deletedObject = object.deleteIn(['foo', 1, 'baz']);
 
-const listItems = array.map((value, index) => {
-  return (
-    <li key={`value-${index}`}>
-      {value}
-    </li>
-  );
-});
-
-const foo = crio.object({foo: 'bar', bar: 'bar'});
-
-console.log(foo.every((value) => {
-  return value === 'bar';
-}));
-
-console.log(foo.every((value, key) => {
-  return key === 'bar';
-}));
-
-console.log(foo.every((value) => {
-  return value === 'baz';
-}));
-
-console.log(foo.every((value, key) => {
-  return key === 'baz';
-}));
+console.log(deletedObject, deletedObject.thaw());
 
 const App = () => {
   return (
@@ -42,10 +19,6 @@ const App = () => {
       <h1>
         App
       </h1>
-
-      <ul>
-        {listItems}
-      </ul>
     </div>
   );
 };
