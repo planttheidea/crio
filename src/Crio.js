@@ -1,10 +1,12 @@
 // external dependencies
+import hashIt from 'hash-it';
 import every from 'lodash/every';
 import fill from 'lodash/fill';
 import find from 'lodash/find';
 import findKey from 'lodash/findKey';
 import findLastKey from 'lodash/findLastKey';
-import hashIt from 'hash-it';
+import isArray from 'lodash/isArray';
+import isUndefined from 'lodash/isUndefined';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import get from 'lodash/fp/get';
@@ -34,11 +36,11 @@ import {
 // utils
 import {
   createAssignToObject,
-  createReturnForMap,
   freeze,
-  getConstructor,
+  getCorrectConstructor,
   getCrioValue,
   getKeysMetadata,
+  getRelativeValue,
   getStandardValue,
   isCrio,
   isEqual,
@@ -247,7 +249,7 @@ export class Crio {
    *
    * @param {function} fn function to call in iteration
    * @param {*} [thisArg=this] argument to use as "this" in the iteration
-   * @returns {Crio}
+   * @returns {Crio} new crio instance
    */
   forEach(fn, thisArg = this) {
     forEach(this, fn, thisArg);
@@ -375,12 +377,21 @@ export class Crio {
     return keys(this);
   }
 
+  /**
+   * @function map
+   *
+   * @description
+   * iterate over the crio mapping the result of fn to the key
+   *
+   * @param {function} fn function to call on iteration
+   * @param {*} [thisArg=this] argument to use as "this" in the iteration
+   * @returns {Crio} new crio instance
+   */
   map(fn, thisArg = this) {
-    const getValue = createReturnForMap(this, fn);
     const updated = this.isArray() ?
-      map(this, getValue, thisArg) :
+      map(this, fn, thisArg) :
       reduce(this, (updatedValue, value, key) => {
-        updatedValue[key] = getValue(value, key, this);
+        updatedValue[key] = fn.call(thisArg, value, key, this);
 
         return updatedValue;
       }, {});
@@ -388,47 +399,98 @@ export class Crio {
     return new this.constructor(updated);
   }
 
+  /**
+   * @function merge
+   *
+   * @description
+   * merge objects with crio
+   *
+   * @param {...Array<CrioArray|CrioObject|Object>} objects objects to merge with the crio
+   * @returns {Crio} new crio instance
+   */
   merge(...objects) {
+    if (!objects.length) {
+      return this;
+    }
+
     const merged = merge({}, this.thaw(), ...objects);
 
     return new this.constructor(merged);
   }
 
+  /**
+   * @function mergeIn
+   *
+   * @description
+   * merge the objects passed at the nested path in the crioArray
+   *
+   * @param {Array<number|string>} keys path to merge into
+   * @param {...Array<CrioArray|CrioObject|Object>} objects objects to merge with the crio
+   * @returns {Crio} new crio instance
+   */
   mergeIn(keys, ...objects) {
     if (!keys || !keys.length) {
       return this;
     }
 
-    const {
-      currentValue,
-      lastIndex,
-      parentKeys
-    } = getKeysMetadata(keys, this);
+    const valueToMerge = this.getIn(keys);
 
-    if (!isCrio(currentValue)) {
-      return this;
+    if (!isCrio(valueToMerge)) {
+      return this.setIn(keys, merge({}, ...objects));
     }
 
-    const updated = this.setIn(parentKeys, currentValue.merge(keys[lastIndex], ...objects));
+    const updated = this.setIn(keys, valueToMerge.merge(...objects));
 
     return new this.constructor(updated);
   }
 
+  /**
+   * @function mutate
+   *
+   * @description
+   * work with the object in a mutated way and return the crioed result of that call
+   *
+   * @param {function} fn function to apply to crio
+   * @param {*} [thisArg=this] argument to use for "this" in the call
+   * @returns {*} crioed value resulting from the call
+   */
   mutate(fn, thisArg = this) {
     const result = fn.call(thisArg, this.thaw(), this);
 
-    return getCrioValue(result);
+    return getCrioValue(result, getCorrectConstructor(result, CrioArray, CrioObject));
   }
 
+  /**
+   * @function pluck
+   *
+   * @description
+   * get the values in each object in the collection at key
+   *
+   * @param {string} key key to find value of in collection object
+   * @returns {Crio} new crio instance
+   */
   pluck(key) {
+    let plucked;
+
     return this.reduce((pluckedValues, value) => {
-      return !value.hasOwnProperty(key) ? pluckedValues : [
+      plucked = !!(value && value.hasOwnProperty(key)) ? value[key] : undefined;
+
+      return [
         ...pluckedValues,
-        value[key]
+        plucked
       ];
     }, []);
   }
 
+    /**
+     * @function pluckIn
+     *
+     * @description
+     * get the values in each object in the collection at the nested path
+     *
+     * @param {Array<number|string>} keys keys to find value of in collection object
+     * @returns {Crio} new crio instance
+     */
   pluckIn(keys) {
     if (!keys || !keys.length) {
       return new CrioArray([]);
@@ -450,18 +512,50 @@ export class Crio {
     return currentValue.pluck(keys[lastIndex]);
   }
 
+  /**
+   * @function reduce
+   *
+   * @description
+   * reduce the crio down to a single value, starting with initial value
+   *
+   * @param {function} fn the function to iterate with
+   * @param {*} initialValue the initial value of the reduction
+   * @param {*} [thisArg=this] argument to use for "this" in the call of fn
+   * @returns {*} the reduced value
+   */
   reduce(fn, initialValue, thisArg = this) {
     const reducedValue = reduce(this, fn, initialValue, thisArg);
 
-    return getCrioValue(reducedValue, getConstructor(this));
+    return getCrioValue(reducedValue, getCorrectConstructor(reducedValue, CrioArray, CrioObject));
   }
 
+  /**
+   * @function reduceRight
+   *
+   * @description
+   * reduce the crio down to a single value, starting with initial value, in reverse order
+   *
+   * @param {function} fn the function to iterate with
+   * @param {*} initialValue the initial value of the reduction
+   * @param {*} [thisArg=this] argument to use for "this" in the call of fn
+   * @returns {*} the reduced value
+   */
   reduceRight(fn, initialValue, thisArg = this) {
     const reducedValue = reduceRight(this, fn, initialValue, thisArg);
 
-    return getCrioValue(reducedValue, getConstructor(this));
+    return getCrioValue(reducedValue, getCorrectConstructor(reducedValue, CrioArray, CrioObject));
   }
 
+  /**
+   * @function set
+   *
+   * @description
+   * set the value at the key passed
+   *
+   * @param {number|string} key key to assign value to
+   * @param {*} value value to assign
+   * @returns {Crio} new crio instance
+   */
   set(key, value) {
     const updated = {
       ...this,
@@ -471,6 +565,16 @@ export class Crio {
     return new this.constructor(updated);
   }
 
+  /**
+   * @function setIn
+   *
+   * @description
+   * deeply set the value at the path passed
+   *
+   * @param {Array<number|string>} keys path to assign value to
+   * @param {*} value value to assign
+   * @returns {Crio} new crio instance
+   */
   setIn(keys, value) {
     if (!keys || !keys.length) {
       return this;
@@ -481,16 +585,28 @@ export class Crio {
     return new this.constructor(updatedObject);
   }
 
+  /**
+   * @function some
+   *
+   * @description
+   * do any of the items in crio match per the fn passed
+   *
+   * @param {function} fn fn to iterate with
+   * @param {*} [thisArg=this] argument to use as "this" in the iteration
+   * @returns {boolean} are there any matches
+   */
   some(fn, thisArg = this) {
     return some(this, fn, thisArg);
   }
 
-  sort(fn) {
-    const sorted = sortBy(fn, this);
-
-    return new CrioArray(sorted);
-  }
-
+  /**
+   * @function thaw
+   *
+   * @description
+   * create a plain JS version of the crio
+   *
+   * @returns {Array<*>|Object} plain JS version of crio
+   */
   thaw() {
     let returnValue = this.isArray() ? [] : {};
 
@@ -499,6 +615,14 @@ export class Crio {
     return returnValue;
   }
 
+  /**
+   * @function toArray
+   *
+   * @description
+   * convert the crio to an array if it isnt already
+   *
+   * @returns {CrioArray} new crio array instance
+   */
   toArray() {
     if (this.isArray()) {
       return this;
@@ -507,10 +631,26 @@ export class Crio {
     return new CrioArray(this.values());
   }
 
+  /**
+   * @function toLocaleString
+   *
+   * @description
+   * convert the crio to stringified form
+   *
+   * @returns {string} stringified crio
+   */
   toLocaleString() {
     return this.toString();
   }
 
+  /**
+   * @function toObject
+   *
+   * @description
+   * convert the crio to an object if it isnt already
+   *
+   * @returns {CrioObject} new crio object instance
+   */
   toObject() {
     if (this.isObject()) {
       return this;
@@ -525,14 +665,38 @@ export class Crio {
     return new CrioObject(updated);
   }
 
+  /**
+   * @function toLocaleString
+   *
+   * @description
+   * convert the crio to stringified form
+   *
+   * @returns {string} stringified crio
+   */
   toString() {
     return stringify(this);
   }
 
+  /**
+   * @function valueOf
+   *
+   * @description
+   * noop for valueOf
+   *
+   * @returns {Crio} the same crio instance
+   */
   valueOf() {
     return this;
   }
 
+  /**
+   * @function values
+   *
+   * @description
+   * get the values of the crio as an array
+   *
+   * @returns {Array<*>} values in the crio
+   */
   values() {
     return values(this);
   }
@@ -548,6 +712,15 @@ export class CrioArray extends Crio {
     return Object.keys(this).length;
   }
 
+  /**
+   * @function concat
+   *
+   * @description
+   * append the items passed to the crio
+   *
+   * @param {...Array<*>} items items to append to the crio
+   * @returns {CrioArray} new crio array instance
+   */
   concat(items) {
     return new CrioArray([
       ...this,
@@ -555,58 +728,244 @@ export class CrioArray extends Crio {
     ]);
   }
 
+  /**
+   * @function copyWithin
+   *
+   * @description
+   * move values around within the array
+   *
+   * @param {number} target target to copy
+   * @param {number} [start=0] index to start copying to
+   * @param {number} [end=this.length] index to stop copying to
+   * @returns {CrioArray} new crio array instance
+   */
   copyWithin(target, start = 0, end = this.length) {
-    const replacements = this
-      .slice(start, end)
-      .compact();
+    const copiedArray = [...this];
+    const length = this.length >>> 0;
 
-    return this.splice(target, replacements.length, ...replacements);
+    let to = getRelativeValue(target >> 0, length),
+        from = getRelativeValue(start >> 0, length);
+
+    const final = getRelativeValue(end >> 0, length);
+
+    let count = Math.min(final - from, length - to),
+        direction = 1;
+
+    if (from < to && to < (from + count)) {
+      direction = -1;
+      from += count - 1;
+      to += count - 1;
+    }
+
+    while (count > 0) {
+      if (from in copiedArray) {
+        copiedArray[to] = copiedArray[from];
+      } else {
+        delete copiedArray[to];
+      }
+
+      from += direction;
+      to += direction;
+      count--;
+    }
+
+    return new CrioArray(copiedArray);
   }
 
+  /**
+   * @function difference
+   *
+   * @description
+   * find the values in this that do not exist in any of the arrays passed
+   *
+   * @param {Array<Array>} arrays arrays to get the difference of
+   * @returns {CrioArray} array of items matching diffference criteria
+   */
+  difference(...arrays) {
+    if (!arrays.length) {
+      return this;
+    }
+
+    let indexOfValue;
+
+    const difference = reduce(arrays, (differenceArray, array) => {
+      if (isArray(array) || (isCrio(array) && array.isArray())) {
+        forEach(array, (value) => {
+          indexOfValue = differenceArray.indexOf(value);
+
+          if (!!~indexOfValue) {
+            differenceArray.splice(indexOfValue, 1);
+          }
+        });
+      }
+
+      return differenceArray;
+    }, [...this]);
+
+    return new CrioArray(difference);
+  }
+
+  /**
+   * @function fill
+   *
+   * @description
+   * fill the array at certain indices with the value passed
+   *
+   * @param {*} value the value to fill the indices with
+   * @param {number} [start=0] the starting index to fill
+   * @param {number} [end=this.length] the ending index to fill
+   * @returns {CrioArray} new crio array instance
+   */
   fill(value, start = 0, end = this.length) {
-    const filled = fill(this, value, start, end);
+    const filled = fill(this.thaw(), value, start, end);
 
     return new CrioArray(filled, this);
   }
 
-  findIndex(fn) {
-    return findKey(this, fn);
+  /**
+   * @function findIndex
+   *
+   * @description
+   * find the matching index based on truthy return from fn
+   *
+   * @param {function} fn function to use for test in iteration
+   * @param {*} [thisArg=this] argument to use as "this" in fn call
+   * @returns {number} index of match, or -1
+   */
+  findIndex(fn, thisArg = this) {
+    const index = findKey(this, (value, index) => {
+      return fn.call(thisArg, value, +index, this);
+    });
+
+    return isUndefined(index) ? -1 : +index;
   }
 
-  findLastIndex(fn) {
-    return findLastKey(this, fn);
+  /**
+   * @function findLastIndex
+   *
+   * @description
+   * find the matching index based on truthy return from fn starting from end
+   *
+   * @param {function} fn function to use for test in iteration
+   * @param {*} [thisArg=this] argument to use as "this" in fn call
+   * @returns {number} index of match, or -1
+   */
+  findLastIndex(fn, thisArg = this) {
+    const index = findLastKey(this, (value, index) => {
+      return fn.call(thisArg, value, +index, this);
+    });
+
+    return isUndefined(index) ? -1 : +index;
   }
 
+  /**
+   * @function indexOf
+   *
+   * @description
+   * get the index of the value passed
+   *
+   * @param {*} value value to find in crio
+   * @returns {number} index of match, or -1
+   */
   indexOf(value) {
     return this.findIndex((thisValue) => {
       return thisValue === value;
     });
   }
 
+  /**
+   * @function join
+   *
+   * @description
+   * join the values in the crio as a string, combined with separator
+   *
+   * @param {string} [separator=','] character(s) to place between strings in combination
+   * @returns {string} parameters joined by separator in string
+   */
   join(separator = ',') {
     return [...this].join(separator);
   }
 
+  /**
+   * @function pop
+   *
+   * @description
+   * get crio based on current crio with last item removed
+   *
+   * @returns {CrioArray} new crio array instance
+   */
   pop() {
     return this.slice(0, this.length - 1);
   }
 
+  /**
+   * @function reverse
+   *
+   * @description
+   * get the same values, but in reverse order
+   *
+   * @returns {CrioArray} new crio array instance
+   */
   reverse() {
     const reversed = reverse(this);
 
     return new CrioArray(reversed);
   }
 
+  /**
+   * @function shift
+   *
+   * @description
+   * get crio based on current crio with first item removed
+   *
+   * @returns {CrioArray} new crio array instance
+   */
   shift() {
     return this.slice(1);
   }
 
+  /**
+   * @function slice
+   *
+   * @description
+   * get a new crio array based on a subset of the current crio
+   *
+   * @param {number} [start=0] first index to include
+   * @param {number} [end=this.length] size of array from first index
+   * @returns {CrioArray} new crio array instance
+   */
   slice(start = 0, end = this.length) {
     const sliced = slice(this, start, end);
 
     return new CrioArray(sliced);
   }
 
+  /**
+   * @function sort
+   *
+   * @description
+   * sort the collection by the fn passed
+   *
+   * @param {function} fn the function to sort based on
+   * @returns {CrioArray} new crio array instance
+   */
+  sort(fn) {
+    const sorted = sortBy(fn, this);
+
+    return new CrioArray(sorted);
+  }
+
+  /**
+   * @function splice
+   *
+   * @description
+   * splice the values into or out of the array
+   *
+   * @param {number} [start=0] starting index to splice
+   * @param {number} [deleteCount=1] length from starting index to removes
+   * @param {...Array<*>} items items to insert after delete is complete
+   * @returns {CrioArray} new crio array instance
+   */
   splice(start = 0, deleteCount = 1, ...items) {
     let spliced = [...this];
 
@@ -615,12 +974,90 @@ export class CrioArray extends Crio {
     return new CrioArray(spliced);
   }
 
+  /**
+   * @function unique
+   *
+   * @description
+   * return the current CrioArray with the duplicate values removed
+   *
+   * @returns {CrioArray} new crio instance
+   */
+  unique() {
+    let hashArray = [],
+        newArray = [],
+        hasHashCode = false,
+        hashCode, storeValue;
+
+    return this.filter((value) => {
+      hashCode = !!value ? value.hashCode : undefined;
+      hasHashCode = !isUndefined(hashCode);
+      storeValue = !~newArray.indexOf(value) && (!hasHashCode || !~hashArray.indexOf(hashCode));
+
+      if (storeValue) {
+        newArray.push(value);
+
+        if (hasHashCode) {
+          hashArray.push(hashCode);
+        }
+      }
+
+      return storeValue;
+    });
+  }
+
   unshift(...items) {
     if (!items.length) {
       return this;
     }
 
-    return this.concat(items);
+    return new CrioArray([
+      ...items,
+      ...this
+    ]);
+  }
+
+  /**
+   * @function xor
+   *
+   * @description
+   * find the values that are the symmetric difference of this and the arrays passed
+   *
+   * @param {Array<Array>} arrays arrays to find symmetric values in
+   * @returns {CrioArray} new crio array instance
+   */
+  xor(...arrays) {
+    if (!arrays.length) {
+      return this;
+    }
+
+    const allArrays = [
+      this,
+      ...arrays
+    ];
+
+    let indicesToRemove = [],
+        indexOfValue;
+
+    const reducedValues = reduce(allArrays, (values, array) => {
+      if (isArray(array) || (isCrio(array) && array.isArray())) {
+        forEach(array, (value) => {
+          indexOfValue = values.indexOf(value);
+
+          if (!!~indexOfValue) {
+            indicesToRemove.push(indexOfValue);
+          } else {
+            values.push(value);
+          }
+        });
+      }
+
+      return values;
+    }, []);
+    const xorValues = filter(reducedValues, (value, index) => {
+      return !~indicesToRemove.indexOf(index);
+    });
+
+    return new CrioArray(xorValues);
   }
 }
 

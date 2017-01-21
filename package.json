@@ -91,5 +91,5 @@
     "transpile": "babel src --out-dir lib",
     "transpile:old": "babel src-old --out-dir lib-old"
   },
-  "version": "3.4.3"
+  "version": "4.0.0"
 }

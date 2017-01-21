@@ -8,10 +8,10 @@ import crio from '../src';
 
 // import '../benchmarks';
 
-const object = crio({foo: ['bar', {baz: 'foo', foo: 'bar'}]});
-const deletedObject = object.deleteIn(['foo', 1, 'baz']);
+const array = crio(['foo', 'bar', {baz: {foo: 'bar'}}]);
+const mergedArray = array.mergeIn([2, 'baz'], {some: 'thing'});
 
-console.log(deletedObject, deletedObject.thaw());
+console.log(mergedArray, mergedArray.thaw());
 
 const App = () => {
   return (

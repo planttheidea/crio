@@ -80,17 +80,18 @@ export const isEqual = (crio, object) => {
 };
 
 /**
- * @function getConstructor
+ * @function getCorrectConstructor
  *
  * @description
- * get the constructor of the instance
+ * get the constructor that is valid for the object type passed
  *
- * @param {CrioArray|CrioObject} instance crio object
- *
- * @returns {Function} constructor of the instance
+ * @param {*} object object to test
+ * @param {CrioArray} CrioArray constructor for CrioArray class
+ * @param {CrioObject} CrioObject constructor for CrioObject class
+ * @returns {CrioArray|CrioObject} constructor correct for object
  */
-export const getConstructor = (instance) => {
-  return instance.constructor;
+export const getCorrectConstructor = (object, CrioArray, CrioObject) => {
+  return isArray(object) ? CrioArray : CrioObject;
 };
 
 /**
@@ -140,6 +141,20 @@ export const getKeysMetadata = (keys, instance) => {
 };
 
 /**
+ * @function getRelativeValue
+ *
+ * @description
+ * get the relative value used in copyWithin
+ *
+ * @param {number} value value used as baseline
+ * @param {number} length the length of the crio
+ * @returns {number} the relative number value
+ */
+export const getRelativeValue = (value, length) => {
+  return value < 0 ? Math.max(length + value, 0) : Math.min(value, length);
+};
+
+/**
  * @function getStandardValue
  *
  * @description
@@ -167,7 +182,7 @@ export const getStandardValue = (object) => {
 export const createAssignToObject = (CrioArray, CrioObject) => {
   return (object, getValue) => {
     return (value, key) => {
-      object[key] = getValue(value, isArray(value) ? CrioArray : CrioObject);
+      object[key] = getValue(value, getCorrectConstructor(value, CrioArray, CrioObject));
     };
   };
 };
