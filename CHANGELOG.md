@@ -9,7 +9,6 @@
   * `merge` and `mergeIn` are now recursive instead of shallow
   * `hashCode` is now computed at runtime based on current object
   * No reconciliation between pre- and post-transformation takes place now (always creates a new `Crio`)
-  * 
 
 #### 3.4.3
 * Update hash-it dependency for faster hash creation
