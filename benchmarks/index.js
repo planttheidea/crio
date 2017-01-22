@@ -11,7 +11,7 @@ const {
   arrayGetSeamlessImmutableJs,
   arrayGetImmutableJs,
   arrayGetMoriJs,
-  arrayGetCrio,
+  arrayGetCrio
 } = require('./get');
 
 const {
@@ -24,7 +24,7 @@ const {
   arrayGetInSeamlessImmutableJs,
   arrayGetInImmutableJs,
   arrayGetInMoriJs,
-  arrayGetInCrio,
+  arrayGetInCrio
 } = require('./getin');
 
 const {
@@ -37,7 +37,7 @@ const {
   arraySetSeamlessImmutableJs,
   arraySetImmutableJs,
   arraySetMoriJs,
-  arraySetCrio,
+  arraySetCrio
 } = require('./set');
 
 const {
@@ -50,7 +50,7 @@ const {
   arraySetInSeamlessImmutableJs,
   arraySetInImmutableJs,
   arraySetInMoriJs,
-  arraySetInCrio,
+  arraySetInCrio
 } = require('./setin');
 
 const header = () => `Benchmark (all times in milliseconds): ${repeats.join(', ')}`;
@@ -62,6 +62,7 @@ const logAndSave = (it) => {
   results.push(it);
   console.log(it);
 };
+
 // header
 logAndSave(header());
 // object get tests

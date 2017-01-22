@@ -3,9 +3,7 @@
     "add-module-exports"
   ],
   "presets": [
-    ["latest", {
-      "loose": true
-    }],
+    "latest",
     "stage-2"
   ]
 }

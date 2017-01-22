@@ -1,81 +1,85 @@
+// test
 import test from 'ava';
 
-import crio from '../src';
-
+// src
+import crio from '../src/index';
 import {
   CrioArray,
   CrioObject
-} from '../src/classes';
+} from '../src/Crio';
+import * as utils from '../src/utils';
 
-import {
-  isCrio,
-  isCrioArray,
-  isCrioObject
-} from '../src/utils/is';
+test('if crio will return a crio object or array if valid', (t) => {
+  const array = [];
+  const crioArray = crio(array);
 
-const VALUES_NOT_CRIO = [
-  true,
-  1,
-  'foo',
-  null
-];
+  t.true(crioArray instanceof CrioArray);
 
-test('if crio passed nothing returns an empty CrioObject', (t) => {
-  const object = crio();
+  const object = {};
+  const crioObject = crio(object);
 
-  t.true(object instanceof CrioObject);
+  t.true(crioObject instanceof CrioObject);
 });
 
-test('if crio passed an array returns a CrioArray', (t) => {
-  const object = crio([]);
+test('if crio will default to a plain object when no value is passed', (t) => {
+  const crioObject = crio();
 
-  t.true(object instanceof CrioArray);
+  t.true(crioObject instanceof CrioObject);
 });
 
-test('if crio passed an object returns a CrioObject', (t) => {
-  const object = crio({});
+test('if crio will return the original object if it is already a crio', (t) => {
+  const crioObject = crio();
+  const newCrioObject = crio(crioObject);
 
-  t.true(object instanceof CrioObject);
+  t.is(crioObject, newCrioObject);
 });
 
-test('if crio passed a value that is not an array or object returns a itself', (t) => {
-  VALUES_NOT_CRIO.forEach((value) => {
-    t.is(crio(value), value);
-  });
+test('if crio will throw when the input type is incorrect', (t) => {
+  t.throws(() => {
+    crio('foo');
+  }, TypeError);
 });
 
-test('if crio passed a crio returns itself', (t) => {
-  const object = crio({});
-
-  t.is(crio(object), object);
-});
-
-test('if crio.array returns a CrioArray', (t) => {
+test('if crio.array will generate an array without a value passed', (t) => {
   const array = crio.array();
 
   t.true(array instanceof CrioArray);
 });
 
-test('if crio.object returns a CrioObject', (t) => {
+test('if crio.array will throw a TypeError when the object passed is not an array', (t) => {
+  t.throws(() => {
+    crio.array('foo');
+  }, TypeError);
+});
+
+test('if crio.isArray correctly tests if the item is a crio array', (t) => {
+  const array = [];
+  const crioArray = crio.array();
+
+  t.false(crio.isArray(array));
+  t.true(crio.isArray(crioArray));
+});
+
+test('if crio.isCrio is the isCrio function in utils', (t) => {
+  t.is(crio.isCrio, utils.isCrio);
+});
+
+test('if crio.isObject correctly tests if the item is a crio object', (t) => {
+  const object = {};
+  const crioObject = crio.object();
+
+  t.false(crio.isObject(object));
+  t.true(crio.isObject(crioObject));
+});
+
+test('if crio.object will generate an object without a value passed', (t) => {
   const object = crio.object();
 
   t.true(object instanceof CrioObject);
 });
 
-test('if crio.array passed a non-array throws an Error', (t) => {
-  t.throws(() => {
-    crio.array('foo');
-  });
-});
-
-test('if is* functions are equal to those in utils', (t) => {
-  t.is(crio.isCrio, isCrio);
-  t.is(crio.isArray, isCrioArray);
-  t.is(crio.isObject, isCrioObject);
-});
-
-test('if crio.object passed a non-object throws an Error', (t) => {
+test('if crio.object will throw a TypeError when the object passed is not an object', (t) => {
   t.throws(() => {
     crio.object('foo');
-  });
+  }, TypeError);
 });

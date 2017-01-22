@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>crio Tutorial: API</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cyborg.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">crio</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Crio.html">Crio</a></li><li><a href="module-crio_.html">crio</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-API.html">API</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			<section class="tutorial-section">
+
+<header>
+    
+
+    <h2>API</h2>
+</header>
+
+<article>
+    <h1 id="crio-api">crio API</h1>
+<h2 id="instantiation">Instantiation</h2>
+<ul>
+<li>crio <code>{any}</code>, returns <em>CrioArray|CrioObject</em><ul>
+<li>Standard method, will <code>crio</code> the object passed if an array or object, else it will return the object itself</li>
+</ul>
+</li>
+<li>crio.array <code>{Array&lt;any&gt;}</code>, returns <em>CrioArray</em><ul>
+<li>Shortcut method for <code>crio</code>ing array-specific values</li>
+</ul>
+</li>
+<li>crio.object <code>{Object}</code>, returns <em>CrioObject</em><ul>
+<li>Shortcut method for <code>crio</code>ing object-specific values</li>
+</ul>
+</li>
+<li>crio.isCrio <code>{any}</code>, returns <em>boolean</em><ul>
+<li>Determine if the object passed is a <code>Crio</code></li>
+</ul>
+</li>
+<li>crio.isArray <code>{any}</code>, returns <em>boolean</em><ul>
+<li>Determine if the object passed is a <code>CrioArray</code></li>
+</ul>
+</li>
+<li>crio.isObject <code>{any}</code>, returns <em>boolean</em><ul>
+<li>Determine if the object passed is a <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<p>Methods with the same name as the native method will be a link to MDN, as they are meant to be as similar to the native method as possible. Where any specific differences from the default behavior exist, they will be called out, however one broad difference is that all methods that are not getters which return primitive values are chainable.</p>
+<h4 id="shared-methods">Shared Methods</h4>
+<p>The following methods are specific to <code>Crio</code> types, and are available on either <code>CrioArray</code> or <code>CrioObject</code></p>
+<ul>
+<li>clear, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>returns an empty <code>Crio</code></li>
+</ul>
+</li>
+<li>compact, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>returns a new <code>Crio</code> with all falsy values filtered out</li>
+</ul>
+</li>
+<li>delete <code>{number}</code> <em>key</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Deletes the key provided from the crio object</li>
+</ul>
+</li>
+<li>deleteIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Deletes the final key based on the array of keys nested inside of the crio object</li>
+</ul>
+</li>
+<li>equals <code>{CrioArray|CrioObject}</code> <em>crioArrayToCompare</em>, returns <code>{boolean}</code><ul>
+<li>Determines whether array is deeply equal in value to another by comparing hashCodes</li>
+</ul>
+</li>
+<li>get <code>{number}</code> <em>key</em>, returns <code>{any}</code><ul>
+<li>Retrieve value at key</li>
+</ul>
+</li>
+<li>getIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{any}</code><ul>
+<li>Retrieve value in deeply nested object based on array of keys</li>
+</ul>
+</li>
+<li>has <code>{string}</code> <em>key</em>, returns <code>{boolean}</code><ul>
+<li>Alias for <code>hasOwnProperty</code></li>
+</ul>
+</li>
+<li>hasIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{boolean}</code><ul>
+<li>Does the <code>Crio</code> have the combination of <em>keys</em> assigned deeply</li>
+</ul>
+</li>
+<li>merge <code>{Object[, Object2, ..., ObjectN]}</code> <em>objects</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Shallow merge any number of items into existing crio</li>
+</ul>
+</li>
+<li>mergeIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, <code>{Object[, Object2, ..., ObjectN]}</code> <em>objects</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Shallow merge any number of items into value existing in deeply nested object based on array of keys</li>
+</ul>
+</li>
+<li>mutate <code>{function(mutableCrio, originalCrio): any}</code> <em>callback</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Whatever you return in the callback is what is returned, or if you return nothing it returns the original <code>Crio</code></li>
+</ul>
+</li>
+<li>pluck <code>{number|string}</code> <em>key</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Iterates over <code>Crio</code> and returns an array of values where the <em>key</em> exists as a property on the collection item</li>
+</ul>
+</li>
+<li>pluckIn <code>{Array&lt;number|string}</code> <em>keys</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Iterates over <code>Crio</code> and returns an array of values where the <em>keys</em> map to a deeply-nested property on the collection item</li>
+</ul>
+</li>
+<li>set <code>{number}</code> <em>key</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Sets value at key</li>
+</ul>
+</li>
+<li>setIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{CrioArray|CrioObject}</code><ul>
+<li>Sets value in deeply nested object based on array of keys</li>
+</ul>
+</li>
+<li>toArray, returns <code>{CrioArray}</code><ul>
+<li>Converts <code>CrioObject</code> to a <code>CrioArray</code> of the object's values</li>
+</ul>
+</li>
+<li>toObject, returns <code>{CrioObject}</code><ul>
+<li>Converts <code>CrioArray</code> into a <code>CrioObject</code> of index: value pairs</li>
+</ul>
+</li>
+<li>thaw, returns <code>{Array&lt;any&gt;}</code><ul>
+<li>Recursively thaws array deeply and returns standard object version of itself</li>
+</ul>
+</li>
+</ul>
+<h2 id="arrays">Arrays</h2>
+<h4 id="default-methods">Default Methods</h4>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat">concat</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">copyWithin</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries">entries</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every">every</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill">fill</a><ul>
+<li>Returns new crio with items from <em>start</em> to <em>end</em> filled with <em>value</em></li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">filter</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find">find</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex">findIndex</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">forEach</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">includes</a><ul>
+<li>Does a deep value equality comparison (rather than strict equality), so you can do things like <code>crioArray.includes({foo: 'bar'})</code></li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">indexOf</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">join</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/keys">keys</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">lastIndexOf</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">map</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">pop</a><ul>
+<li>Returns new crio with first item removed</li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">push</a><ul>
+<li>Returns new crio with new item added</li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce">reduce</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight">reduceRight</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">reverse</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift">shift</a><ul>
+<li>Returns new crio with last item removed</li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">slice</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some">some</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort</a><ul>
+<li>Returns new crio sorted by either callback or default</li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">splice</a><ul>
+<li>Returns new crio with items added/removed based on splicing parameters</li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toLocaleString">toLocaleString</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">unshift</a><ul>
+<li>Returns new crio with new items added to beginning</li>
+</ul>
+</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values">values</a></li>
+</ul>
+<h4 id="added-crio-methods">Added crio Methods</h4>
+<ul>
+<li>difference <code>{Array&lt;*&gt;}</code> <em>array[, array2, ..., arrayN]</em>, returns <code>{CrioArray}</code><ul>
+<li>Returns a new array of the values that only exist in either the <code>CrioArray</code> or in one of the arrays passed</li>
+</ul>
+</li>
+<li>findLastIndex <code>{function}</code> <em>fn</em>, returns <code>{number}</code><ul>
+<li>Same as <code>findIndex</code> but starting from end and working to start</li>
+</ul>
+</li>
+<li>first <code>{number}</code> <em>num</em>, returns <code>{CrioArray}</code><ul>
+<li>Returns a new array of the first <em>num</em> number of items in the array</li>
+</ul>
+</li>
+<li>intersection <code>{Array&lt;*&gt;}</code> <em>array[, array2, ..., arrayN]</em>, returns <code>{CrioArray}</code><ul>
+<li>Returns a new array of the values that exist in all of the arrays passed</li>
+</ul>
+</li>
+<li>last <code>{number}</code> <em>num</em>, returns <code>{CrioArray}</code><ul>
+<li>Returns a new array of the last <em>num</em> number of items in the array</li>
+</ul>
+</li>
+<li>unique, returns <code>{CrioArray}</code><ul>
+<li>Returns a new <code>CrioArray</code> of values filtered down to only existing in the array once</li>
+</ul>
+</li>
+<li>xor <code>{Array&lt;*&gt;}</code> <em>array[, array2, ..., arrayN]</em>, returns <code>{CrioArray}</code><ul>
+<li>Returns a new array of the values that are the <a href="https://en.wikipedia.org/wiki/Symmetric_difference">symmetric difference</a> of the <code>CrioArray</code> and the arrays passed</li>
+</ul>
+</li>
+</ul>
+<h2 id="objects">Objects</h2>
+<h4 id="default-methods">Default Methods</h4>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty">hasOwnProperty</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isPrototypeOf">isPrototypeOf</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable">propertyIsEnumerable</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString">toLocaleString</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf">valueOf</a></li>
+</ul>
+<h4 id="added-crio-methods">Added crio Methods</h4>
+<ul>
+<li>entries, returns <code>{Array&lt;[string, any]&gt;}</code><ul>
+<li>Gets an array of the <code>[key, value]</code> pairs in the <code>CrioObject</code></li>
+</ul>
+</li>
+<li>every <code>{function(value, key, CrioObject): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
+<li>Performs same function as <code>every</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+<li>forEach <code>{function}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{CrioObject}</code><ul>
+<li>Iterates over object executing <em>fn</em></li>
+<li>Iteration order is not guaranteed</li>
+</ul>
+</li>
+<li>filter <code>{function}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{CrioObject}</code><ul>
+<li>Iterates over object and filters out any returned values that are falsy</li>
+<li>Iteration order is not guaranteed</li>
+</ul>
+</li>
+<li>findKey <code>{function}</code> <em>fn</em>, returns <code>{number}</code><ul>
+<li>Same as <code>findIndex</code> for <code>CrioArray</code> but finding the key instead of the index</li>
+</ul>
+</li>
+<li>findLastKey <code>{function}</code> <em>fn</em>, returns <code>{number}</code><ul>
+<li>Same as <code>findKey</code> but starting from end and working to start</li>
+</ul>
+</li>
+<li>includes <code>{any}</code> <em>value</em>, returns <code>{boolean}</code><ul>
+<li>Determine if the <code>CrioObject</code> has a value that deeply matches <code>value</code> in equality</li>
+</ul>
+</li>
+<li>keys, returns <code>{Array&lt;string&gt;}</code><ul>
+<li>Returns an array of the keys in the <code>CrioObject</code></li>
+</ul>
+</li>
+<li>map <code>{function}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{CrioObject}</code><ul>
+<li>Iterates over object and maps returned value to the respective key</li>
+<li>Iteration order is not guaranteed</li>
+</ul>
+</li>
+<li>reduce <code>{function(accumulatedObject, value, key): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
+<li>Performs same function as <code>reduce</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+<li>reduceRight <code>{function(accumulatedObject, value, key): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
+<li>Performs same function as <code>reduceRight</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+<li>some <code>{function(value, key, CrioObject): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
+<li>Performs same function as <code>some</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+<li>values, returns <code>{Array&lt;any&gt;}</code><ul>
+<li>Returns an array of the values in the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+</article>
+
+</section>
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

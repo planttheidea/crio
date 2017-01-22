@@ -1,5 +1,16 @@
 # crio changelog
 
+#### 4.0.0
+* Complete rewrite, leveraging lodash wherever possible
+* Massive speed improvement (over 70% in certain cases)
+* Added `findKey` and `findLastKey` for `CrioObject`s
+* Breaking changes
+  * `length` is now exclusive to `CrioArray`, `size` is the property on `CrioObject` (prevents lodash from incorrectly identifying it as an array)
+  * `merge` and `mergeIn` are now recursive instead of shallow
+  * `hashCode` is now computed at runtime based on current object
+  * No reconciliation between pre- and post-transformation takes place now (always creates a new `Crio`)
+  * 
+
 #### 3.4.3
 * Update hash-it dependency for faster hash creation
 

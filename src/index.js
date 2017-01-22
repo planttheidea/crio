@@ -1,79 +1,108 @@
-// ES2015
-import 'core-js/modules/es6.array.copy-within';
-import 'core-js/modules/es6.array.every';
-import 'core-js/modules/es6.array.fill';
-import 'core-js/modules/es6.array.find';
-import 'core-js/modules/es6.array.find-index';
-import 'core-js/modules/es6.array.iterator';
-import 'core-js/modules/es6.array.some';
-
-// ESNext
-import 'core-js/modules/es7.array.includes';
-import 'core-js/modules/es7.object.enumerable-entries';
-import 'core-js/modules/es7.object.enumerable-keys';
-import 'core-js/modules/es7.object.enumerable-values';
-
 // external dependencies
 import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 
+// Crio
 import {
   CrioArray,
-  CrioObject,
-  getCrioedValue
-} from './classes';
+  CrioObject
+} from './Crio';
 
+// utils
 import {
-  isCrio,
-  isCrioArray,
-  isCrioObject
-} from './utils/is';
+  isCrio
+} from './utils';
 
-const throwTypeError = (type) => {
-  throw new TypeError(`Must pass ${type} to crio.${type}.`);
+/**
+ * @module crio
+ */
+
+/**
+ * @function crio
+ *
+ * @description
+ * build a new crio object based on the object passed
+ *
+ * @param {*} [object={}] object to convert to crio
+ *
+ * @returns {CrioArray|CrioObject} object that has been crioed
+ */
+const crio = (object = {}) => {
+  if (isArray(object)) {
+    return new CrioArray(object);
+  }
+
+  if (isPlainObject(object)) {
+    return new CrioObject(object);
+  }
+
+  if (isCrio(object)) {
+    return object;
+  }
+
+  throw new TypeError('Object passed must be either an array or a plain object.');
 };
 
 /**
- * generate a new CrioArray or CrioObject
+ * @function crio.array
  *
- * @param {*} object
- * @returns {CrioArray|CrioObject|Array<*>|Object|*}
- */
-const createCrio = (object = {}) => {
-  return getCrioedValue(object);
-};
-
-/**
- * create a new CrioArray
+ * @description
+ * convenience method for making crio arrays
  *
- * @param {Array<*>} array
- * @returns {CrioArray}
+ * @param {Array<*>} array array to crio
+ * @returns {CrioArray} crio array
  */
-createCrio.array = (array = []) => {
+crio.array = (array = []) => {
   if (!isArray(array)) {
-    throwTypeError('array');
+    throw new TypeError('Object passed must be an array.');
   }
-  
-  return new CrioArray(array);
-};
 
-createCrio.isArray = isCrioArray;
-createCrio.isCrio = isCrio;
-createCrio.isObject = isCrioObject;
+  return crio(array);
+};
 
 /**
- * create a new CrioObject
+ * @function crio.isArray
  *
- * @param {Object} object
- * @returns {CrioObject}
+ * @description
+ * check if object is a crio array
+ *
+ * @param {*} object object to test
+ * @returns {boolean} is the object a crio array
  */
-createCrio.object = (object = {}) => {
-  if (!isPlainObject(object)) {
-    throwTypeError('object');
-  }
-
-  return new CrioObject(object);
+crio.isArray = (object) => {
+  return isCrio(object) && object.isArray();
 };
 
-export default createCrio;
+crio.isCrio = isCrio;
 
+/**
+ * @function crio.isObject
+ *
+ * @description
+ * check if object is a crio object
+ *
+ * @param {*} object object to test
+ * @returns {boolean} is the object a crio object
+ */
+crio.isObject = (object) => {
+  return isCrio(object) && object.isObject();
+};
+
+/**
+ * @function crio.object
+ *
+ * @description
+ * convenience method for making crio objects
+ *
+ * @param {Object} object object to crio
+ * @returns {CrioObject} crio object
+ */
+crio.object = (object = {}) => {
+  if (!isPlainObject(object)) {
+    throw new TypeError('Object passed must be a plain object.');
+  }
+
+  return crio(object);
+};
+
+export default crio;

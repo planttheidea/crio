@@ -17,7 +17,7 @@ const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.
 
 exports.objectGetInNative = (cycles) => {
   const obj = {
-    data: {value},
+    data: {value}
   };
 
   let val;
@@ -29,7 +29,7 @@ exports.objectGetInNative = (cycles) => {
 
 exports.objectGetInSeamlessImmutableJs = (cycles) => {
   const obj = seamlessImmutableJs.from({
-    data: {value},
+    data: {value}
   });
 
   let val;
@@ -41,7 +41,7 @@ exports.objectGetInSeamlessImmutableJs = (cycles) => {
 
 exports.objectGetInImmutableJs = (cycles) => {
   const obj = ImmutableJs.fromJS({
-    data: {value},
+    data: {value}
   });
 
   let val;
@@ -63,7 +63,7 @@ exports.objectGetInMoriJs = (cycles) => {
 
 exports.objectGetInCrio = (cycles) => {
   const obj = crio({
-    data: {value},
+    data: {value}
   });
 
   let val;
