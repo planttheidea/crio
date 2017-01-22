@@ -8,6 +8,10 @@ Immutable JS objects with a natural API
 #### Jump to the API
 [API Documentation](https://github.com/planttheidea/crio/blob/master/tutorials/API.md)
 
+#### Upgrade notice
+
+If upgrading from `3.x.x` versions, please check the [changelog](CHANGELOG.md) for breaking changes.
+
 #### Import into your project
 
 ```javascript
