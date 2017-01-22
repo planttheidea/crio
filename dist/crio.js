@@ -82,6 +82,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/**
+	 * @module crio
+	 */
+	
+	/**
 	 * @function crio
 	 *
 	 * @description
@@ -513,11 +517,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	/**
+	 * @module Crio
+	 */
+	
 	var assignToObject = void 0;
 	
 	/**
 	 * @class Crio
 	 * @classdesc base crio class
+	 *
+	 * @memberof module:Crio
 	 */
 	
 	var Crio = exports.Crio = function () {
@@ -549,6 +559,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    /**
 	     * @function clear
+	     * @memberof! Crio#
 	     *
 	     * @description
 	     * get a new crio that is empty
@@ -1305,6 +1316,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	Object.defineProperties(Crio.prototype, (_Object$definePropert = {}, _defineProperty(_Object$definePropert, Symbol.iterator, _constants.ITERATOR_PROPERTY_DESCRIPTOR), _defineProperty(_Object$definePropert, Symbol.unscopables, _constants.UNSCOPABLES_PROPERTY_DESCRIPTOR), _Object$definePropert));
 	
+	/**
+	 * @class CrioArray
+	 * @classdesc extension of Crio class specific to arrays
+	 *
+	 * @memberof module:Crio
+	 */
+	
 	var CrioArray = exports.CrioArray = function (_Crio) {
 	  _inherits(CrioArray, _Crio);
 	
@@ -1784,6 +1802,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return storeValue;
 	      });
 	    }
+	
+	    /**
+	     * @function unshift
+	     *
+	     * @description
+	     * add items passed to the beginning of the crio array
+	     *
+	     * @param {...Array<*>} items items to prepend to the array
+	     * @returns {CrioArray} new crio array instance
+	     */
+	
 	  }, {
 	    key: 'unshift',
 	    value: function unshift() {
@@ -1862,6 +1891,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  writable: false
 	}));
 	
+	/**
+	 * @class CrioObject
+	 * @classdesc extension of Crio class specific to objects
+	 *
+	 * @memberof module:Crio
+	 */
+	
 	var CrioObject = exports.CrioObject = function (_Crio2) {
 	  _inherits(CrioObject, _Crio2);
 	
@@ -1873,9 +1909,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	  _createClass(CrioObject, [{
 	    key: 'findKey',
+	
+	
+	    /**
+	     * @function findKey
+	     *
+	     * @description
+	     * find a specific key based on a matching function
+	     *
+	     * @param {function} fn function to match
+	     * @returns {string|undefined} key matching fn
+	     */
 	    value: function findKey(fn) {
 	      return (0, _findKey3.default)(this, fn);
 	    }
+	
+	    /**
+	     * @function findLastKey
+	     *
+	     * @description
+	     * find a specific key based on a matching function, starting from the end
+	     *
+	     * @param {function} fn function to match
+	     * @returns {string|undefined} key matching fn
+	     */
+	
 	  }, {
 	    key: 'findLastKey',
 	    value: function findLastKey(fn) {
@@ -8384,10 +8442,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	/**
+	 * @private
+	 *
+	 * @constant {boolean}
+	 * @default
+	 */
 	var IS_PRODUCTION = exports.IS_PRODUCTION = !!(process && process.env && ("development") === 'production');
 	
+	/**
+	 * @private
+	 *
+	 * @constant {Symbol}
+	 */
 	var CRIO_SYMBOL = exports.CRIO_SYMBOL = Symbol('Crio');
 	
+	/**
+	 * @private
+	 *
+	 * @constant {{configurable: boolean, enumerable: boolean, value: function(): Object, writable: boolean}}
+	 */
 	var ITERATOR_PROPERTY_DESCRIPTOR = exports.ITERATOR_PROPERTY_DESCRIPTOR = {
 	  configurable: false,
 	  enumerable: false,
@@ -8420,6 +8494,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  writable: true
 	};
 	
+	/**
+	 * @private
+	 *
+	 * @constant {{configurable: boolean, enumerable: boolean, value: Object, writable: boolean}}
+	 */
 	var UNSCOPABLES_PROPERTY_DESCRIPTOR = exports.UNSCOPABLES_PROPERTY_DESCRIPTOR = {
 	  configurable: true,
 	  enumerable: false,
@@ -8435,10 +8514,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	  writable: false
 	};
 	
+	/**
+	 * @private
+	 *
+	 * @constant {Symbol}
+	 */
 	var CRIO_TYPE = exports.CRIO_TYPE = Symbol('Crio type');
+	
+	/**
+	 * @private
+	 *
+	 * @constant {string}
+	 * @default
+	 */
 	var CRIO_ARRAY_TYPE = exports.CRIO_ARRAY_TYPE = 'CrioArray';
+	
+	/**
+	 * @private
+	 *
+	 * @constant {string}
+	 * @default
+	 */
 	var CRIO_OBJECT_TYPE = exports.CRIO_OBJECT_TYPE = 'CrioObject';
 	
+	/**
+	 * @private
+	 *
+	 * @constant {Symbol|number}
+	 */
 	var REACT_ELEMENT_TYPE = exports.REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element') || 0xeac7;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175)))
 
@@ -8659,15 +8762,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// external dependencies
 	var STRINGIFIER_OPTIONS = {
 	  maxDepth: 10
 	};
 	
-	// constants
-	
-	
 	/**
+	 * @private
+	 *
 	 * @function freeze
 	 *
 	 * @description
@@ -8677,6 +8778,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * @returns {T} frozen object
 	 */
+	
+	
+	// constants
+	// external dependencies
 	var freeze = exports.freeze = function (isProduction) {
 	  if (isProduction) {
 	    return function (object) {
@@ -8690,6 +8795,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	}(_constants.IS_PRODUCTION);
 	
 	/**
+	 * @private
+	 *
 	 * @function isComplexObject
 	 *
 	 * @description
@@ -8704,6 +8811,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function isCrio
 	 *
 	 * @description
@@ -8718,6 +8827,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function isCrioArray
 	 *
 	 * @description
@@ -8731,6 +8842,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function isEqual
 	 *
 	 * @description
@@ -8746,6 +8859,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function isReactElement
 	 *
 	 * @description
@@ -8759,6 +8874,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function getCorrectConstructor
 	 *
 	 * @description
@@ -8774,6 +8891,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function getCrioValue
 	 *
 	 * @description
@@ -8797,6 +8916,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function getKeysMetadata
 	 *
 	 * @description
@@ -8820,6 +8941,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function getRelativeValue
 	 *
 	 * @description
@@ -8834,6 +8957,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function getStandardValue
 	 *
 	 * @description
@@ -8848,6 +8973,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function createAssignToObject
 	 *
 	 * @description
@@ -8867,6 +8994,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @private
+	 *
 	 * @function stringify
 	 *
 	 * @description
