@@ -14,6 +14,10 @@ import {
 } from './utils';
 
 /**
+ * @module crio
+ */
+
+/**
  * @function crio
  *
  * @description

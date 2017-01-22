@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>crio Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cyborg.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">crio</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Crio.html">Crio</a></li><li><a href="module-crio_.html">crio</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-API.html">API</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+    <h3>crio 4.0.0</h3>
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1 id="crio">crio</h1>
+<p>Immutable JS objects with a natural API</p>
+<p><img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-96.54%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/license-MIT-blue.svg"/></p>
+<h4 id="jump-to-the-api">Jump to the API</h4>
+<p><a href="https://github.com/planttheidea/crio/blob/master/tutorials/API.md">API Documentation</a></p>
+<h4 id="import-into-your-project">Import into your project</h4>
+<pre class="prettyprint source lang-javascript"><code>// ES2015
+import crio from 'crio';
+
+// CommonJS
+const crio = require('crio');
+
+// UMD
+const crio = window.crio;</code></pre><h4 id="usage">Usage</h4>
+<pre class="prettyprint source lang-javascript"><code>// you can assign with crio() directly
+const crioArray = crio(['foo']);
+const crioObject = crio({foo: 'bar'});
+
+// or use the convenience methods
+const otherCrioArray = crio.array(['bar']);
+const otherCrioObject = crio.object({bar: 'baz'});</code></pre><h4 id="what-is-immutable-">What is immutable?</h4>
+<p>When something is described as immutable, it means that it cannot change after it has been created. In JavaScript terms, this means that any attempted change to an object results in a brand new object being created, without changing the original object.</p>
+<h4 id="why-do-we-need-this-in-javascript-">Why do we need this in JavaScript?</h4>
+<p>The concept of immutability already exists in a lot of places in JavaScript, for example:</p>
+<pre class="prettyprint source lang-javascript"><code>const two = 2;
+const three = 3;
+const five = two + three;</code></pre><p>By adding together <em>two</em> and <em>three</em> you expect to get <em>five</em>, however you don't expect the value of <em>two</em> to change. You can continue working with it even after using it in an expression:</p>
+<pre class="prettyprint source lang-javascript"><code>const two = 2;
+const three = 3;
+const five = two + three;
+const four = two * two;</code></pre><p>This is true of strings, numbers, undefined, and null, and is an expected behavior. The same idea, however, is not true for complex objects in JavaScript. For example:</p>
+<pre class="prettyprint source lang-javascript"><code>const foo = ['foo'];
+const fooBar = foo.push('bar');</code></pre><p>The expectation is that you have pushed the value of &quot;bar&quot; into <em>foo</em> and created a new array <em>bar</em> that contains &quot;foo, bar&quot;, however in reality this is what happens:</p>
+<pre class="prettyprint source lang-javascript"><code>const foo = ['foo'];
+const fooBar = foo.push('bar');
+
+console.log(foo); // ['foo', 'bar']
+console.log(fooBar); // 1</code></pre><p>Basically, you have mutated <em>foo</em> so that it is no longer empty, and what the <em>.push()</em> method returns is actually the index of the item you just added. This double-standard of expectations creates a lot confusion from a development perspective, but also makes keeping track of the state of your application very difficult because there is no traceability of what transactions have occurred to create that state at any given point.</p>
+<h4 id="enter-crio">Enter crio</h4>
+<p>crio attempts to solve the problem by closing the &quot;immutable loop&quot; on collection items, meaning it applies immutability to objects that are normally mutable by nature by replacing mutating methods with immutable counterparts. As a point of reference:</p>
+<p><em>Naturally immutable objects</em></p>
+<ul>
+<li>Numbers</li>
+<li>Strings</li>
+<li>undefined</li>
+<li>null</li>
+</ul>
+<p><em>Naturally mutable objects</em></p>
+<ul>
+<li>Arrays</li>
+<li>Dates (not covered by crio)</li>
+<li>Objects</li>
+</ul>
+<p>To create a new crio object, its pretty straightforward:</p>
+<pre class="prettyprint source lang-javascript"><code>const crioArray = crio([]);
+const crioObject = crio({}); // or just crio()</code></pre><p>These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze">Object.freeze</a>, and stores as a custom <code>CrioArray</code> or <code>CrioObject</code> with a prototypical methods that will return a new immutable version of the object with each update. Example:</p>
+<pre class="prettyprint source lang-javascript"><code>const foo = crio(['foo']);
+const fooBar = foo.push('bar');
+
+console.log(foo); // ['foo']
+console.log(fooBar); // ['foo', 'bar']</code></pre><p>The <a href="tutorials/API.md">API</a> is the same as you already know working with those objects, and includes polyfills for all ES6 and some ES7 functions, as well as a few helpful crio-specific functions. The only difference is that any setting happens via .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable.</p>
+<h4 id="why-not-just-use-x-immutable-library-">Why not just use X immutable library?</h4>
+<p>There are a bunch of ones out there, but the two that people usually gravitate towards:</p>
+<ul>
+<li><a href="https://github.com/facebook/immutable-js">Immutable.js</a></li>
+<li><a href="https://github.com/rtfeldman/seamless-immutable">seamless-immutable</a></li>
+</ul>
+<p><code>immutable</code> is quite nice, and very highly regarded by the community, however it creates an opaque object that cannot be used with other external libraries (namely lodash) without converting back to vanilla JS. Additionally, the object itself is not truly immutable, just constructed in a way that makes it incredibly difficult to alter outside of the API. This decision was likely made for performance reasons, but can cause unintended consequences (you can totally assign <code>foo.bar = 'baz'</code> and no error is thrown).</p>
+<p><code>seamless-immutable</code> has some great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the &quot;right way&quot;. As such, it fell short of my expectations.</p>
+<p>Bottom line, I support each of these projects to the fullest because they are trying to instill immutability in JavaScript practices; I just took a different approach that I consider the best of both worlds. :)</p>
+<h4 id="browser-support">Browser support</h4>
+<p>The only requirement is that your browser has a proper ES5 environment, which you can mostly shim with something like <a href="https://github.com/es-shims/es5-shim">es5-shim</a>, however certain things like Object.defineProperty cannot be shimmed, so IE8 and below cannot be supported.</p>
+<p>crio has been tested on the following browsers:</p>
+<ul>
+<li>Chrome</li>
+<li>Firefox</li>
+<li>Edge</li>
+<li>IE9</li>
+</ul>
+<h4 id="performance">Performance</h4>
+<p>As of <code>4.0.0</code>, performance has substantially improved, and in many scenarios <code>crio</code> is more performant than <code>seamless-immutable</code> (in the case of <code>setIn</code>, by over <strong>3x</strong>). When it comes to <code>get</code> operations (either directly or nested), <code>crio</code> is identical to native in performance. I don't want to post benchmarks because those vary wildly from machine to machine, but feel free to test them out yourself!</p>
+<h4 id="gotchas">Gotchas</h4>
+<p><strong>Recursive objects are not allowed</strong></p>
+<p>Immutable objects with recursive values are basically impossible, and trying them will cause a stack overflow, so be mindful of that!</p>
+<h4 id="development">Development</h4>
+<p>Standard stuff, clone the repo and <code>npm install</code> dependencies. The npm scripts available:</p>
+<ul>
+<li><code>benchmark</code> =&gt; run benchmarks in node</li>
+<li><code>benchmark:watch</code> =&gt; run <code>benchmark</code> with persistent watcher for changes</li>
+<li><code>build</code> =&gt; run webpack to build crio.js with NODE_ENV=development</li>
+<li><code>build:minifed</code> =&gt; run webpack to build crio.min.js with NODE_ENV=production</li>
+<li><code>compile-for-publish</code> =&gt; run <code>lint</code>, <code>test</code>, <code>transpile</code>, <code>dist</code></li>
+<li><code>dev</code> =&gt; run webpack dev server to run example app (playground!)</li>
+<li><code>dev:production</code> =&gt; runs <code>dev</code> but with NODE_ENV=production</li>
+<li><code>dist</code> =&gt; runs <code>build</code> and <code>build-minified</code></li>
+<li><code>lint</code> =&gt; run ESLint against all files in the <code>src</code> folder</li>
+<li><code>prepublish</code> =&gt; runs <code>compile-for-publish</code></li>
+<li><code>test</code> =&gt; run AVA test functions with <code>NODE_ENV=test</code></li>
+<li><code>test:watch</code> =&gt; same as <code>test</code>, but runs persistent watcher</li>
+<li><code>transpile</code> =&gt; run babel against all files in <code>src</code> to create files in <code>lib</code></li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

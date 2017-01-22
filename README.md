@@ -6,7 +6,7 @@ Immutable JS objects with a natural API
 <img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
 
 #### Jump to the API
-[API Documentation](API.md)
+[API Documentation](https://github.com/planttheidea/crio/blob/master/tutorials/API.md)
 
 #### Import into your project
 
@@ -107,22 +107,19 @@ console.log(foo); // ['foo']
 console.log(fooBar); // ['foo', 'bar']
 ```
 
-The [API](API.md) is the same as you already know working with those objects, and includes polyfills for all ES6 and some ES7 functions, as well as a few helpful crio-specific functions. The only difference is that any setting happens via .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable.
+The [API](tutorials/API.md) is the same as you already know working with those objects, and includes polyfills for all ES6 and some ES7 functions, as well as a few helpful crio-specific functions. The only difference is that any setting happens via .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable.
 
 #### Why not just use X immutable library?
 
-There are a bunch of ones out there, but the three that people usually gravitate towards:
+There are a bunch of ones out there, but the two that people usually gravitate towards:
 * [Immutable.js](https://github.com/facebook/immutable-js)
-* [mori](https://github.com/swannodette/mori)
 * [seamless-immutable](https://github.com/rtfeldman/seamless-immutable)
 
-**Immutable** is quite nice, and very highly regarded by the community, however it creates an opaque object that cannot be used with other external libraries (namely lodash) without converting back to vanilla JS. Additionally, the object itself is not truly immutable, just constructed in a way that makes it incredibly difficult to alter outside of the API. This decision was likely made for performance reasons, but can cause unintended consequences (you can totally assign `foo.bar = 'baz'` and no error is thrown).
+`immutable` is quite nice, and very highly regarded by the community, however it creates an opaque object that cannot be used with other external libraries (namely lodash) without converting back to vanilla JS. Additionally, the object itself is not truly immutable, just constructed in a way that makes it incredibly difficult to alter outside of the API. This decision was likely made for performance reasons, but can cause unintended consequences (you can totally assign `foo.bar = 'baz'` and no error is thrown).
 
-**mori** is the seasoned veteran, having been hardened via ClosureScript, and for many is chosen specifically because it does not try to "immutabilize" the default API methods. Personal taste, I wasn't interested in relearning an entirely new API (that for a person without a ClosureScript background is obtuse). Plus, it's not written in JavaScript ... its compiled to it, which just felt wrong to a JavaScript devout like me.
+`seamless-immutable` has some great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the "right way". As such, it fell short of my expectations.
 
-**seamless-immutable** has some great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the "right way". As such, it fell short of my expectations.
-
-Bottom line, I support each one of these projects to the fullest because they are trying to create immutability in JavaScript, I just wanted to take a different approach.
+Bottom line, I support each of these projects to the fullest because they are trying to instill immutability in JavaScript practices; I just took a different approach that I consider the best of both worlds. :)
 
 #### Browser support
 
@@ -136,7 +133,7 @@ crio has been tested on the following browsers:
 
 #### Performance
 
-As-of v4.0.0, performance has substantially improved, and in many scenarios `crio` is more performant than `seamless-immutable` (in the case of `setIn`, by over **3x**). When it comes to `get` operations (either directly or nested), `crio` is identical to native in performance. I don't want to post benchmarks because those vary wildly from machine to machine, but feel free to test them out yourself!
+As of `4.0.0`, performance has substantially improved, and in many scenarios `crio` is more performant than `seamless-immutable` (in the case of `setIn`, by over **3x**). When it comes to `get` operations (either directly or nested), `crio` is identical to native in performance. I don't want to post benchmarks because those vary wildly from machine to machine, but feel free to test them out yourself!
 
 #### Gotchas
 

@@ -1,4 +1,90 @@
-// external dependencies
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>crio Source: Crio.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cyborg.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">crio</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Crio.html">Crio</a></li><li><a href="module-crio_.html">crio</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-API.html">API</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: Crio.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// external dependencies
 import hashIt from 'hash-it';
 import every from 'lodash/every';
 import fill from 'lodash/fill';
@@ -145,7 +231,7 @@ export class Crio {
    * @description
    * remove a nested item from the crio
    *
-   * @param {Array<number|string>} keys the path of the item to remove
+   * @param {Array&lt;number|string>} keys the path of the item to remove
    * @returns {Crio} new crio instance with the item removed
    */
   deleteIn(keys) {
@@ -178,7 +264,7 @@ export class Crio {
    * @description
    * get the pairs of [key, value] in the crio
    *
-   * @returns {Array<Array<string>>} [key, value] pairs
+   * @returns {Array&lt;Array&lt;string>>} [key, value] pairs
    */
   entries() {
     return toPairs(this);
@@ -284,7 +370,7 @@ export class Crio {
    * @description
    * get the nested item at the path passed
    *
-   * @param {Array<number|string>} keys path to retrieve from
+   * @param {Array&lt;number|string>} keys path to retrieve from
    * @returns {*} item found at nested path
    */
   getIn(keys) {
@@ -314,7 +400,7 @@ export class Crio {
    * @description
    * does the crio have the nested key at the path passed
    *
-   * @param {Array<number|string>} keys path to test
+   * @param {Array&lt;number|string>} keys path to test
    * @returns {boolean} does the crio have the nested path
    */
   hasIn(keys) {
@@ -331,7 +417,7 @@ export class Crio {
       lastIndex
     } = getKeysMetadata(keys, this);
 
-    return isCrio(currentValue) && currentValue.has(keys[lastIndex]);
+    return isCrio(currentValue) &amp;&amp; currentValue.has(keys[lastIndex]);
   }
 
   /**
@@ -379,7 +465,7 @@ export class Crio {
    * @description
    * get the keys of the crio
    *
-   * @returns {Array<string>} keys in the crio
+   * @returns {Array&lt;string>} keys in the crio
    */
   keys() {
     return keys(this);
@@ -413,7 +499,7 @@ export class Crio {
    * @description
    * merge objects with crio
    *
-   * @param {...Array<CrioArray|CrioObject|Object>} objects objects to merge with the crio
+   * @param {...Array&lt;CrioArray|CrioObject|Object>} objects objects to merge with the crio
    * @returns {Crio} new crio instance
    */
   merge(...objects) {
@@ -432,8 +518,8 @@ export class Crio {
    * @description
    * merge the objects passed at the nested path in the crioArray
    *
-   * @param {Array<number|string>} keys path to merge into
-   * @param {...Array<CrioArray|CrioObject|Object>} objects objects to merge with the crio
+   * @param {Array&lt;number|string>} keys path to merge into
+   * @param {...Array&lt;CrioArray|CrioObject|Object>} objects objects to merge with the crio
    * @returns {Crio} new crio instance
    */
   mergeIn(keys, ...objects) {
@@ -481,7 +567,7 @@ export class Crio {
     let plucked;
 
     return this.reduce((pluckedValues, value) => {
-      plucked = !!(value && value.hasOwnProperty(key)) ? value[key] : undefined;
+      plucked = !!(value &amp;&amp; value.hasOwnProperty(key)) ? value[key] : undefined;
 
       return [
         ...pluckedValues,
@@ -496,7 +582,7 @@ export class Crio {
      * @description
      * get the values in each object in the collection at the nested path
      *
-     * @param {Array<number|string>} keys keys to find value of in collection object
+     * @param {Array&lt;number|string>} keys keys to find value of in collection object
      * @returns {Crio} new crio instance
      */
   pluckIn(keys) {
@@ -579,7 +665,7 @@ export class Crio {
    * @description
    * deeply set the value at the path passed
    *
-   * @param {Array<number|string>} keys path to assign value to
+   * @param {Array&lt;number|string>} keys path to assign value to
    * @param {*} value value to assign
    * @returns {Crio} new crio instance
    */
@@ -613,7 +699,7 @@ export class Crio {
    * @description
    * create a plain JS version of the crio
    *
-   * @returns {Array<*>|Object} plain JS version of crio
+   * @returns {Array&lt;*>|Object} plain JS version of crio
    */
   thaw() {
     let returnValue = this.isArray() ? [] : {};
@@ -703,7 +789,7 @@ export class Crio {
    * @description
    * get the values of the crio as an array
    *
-   * @returns {Array<*>} values in the crio
+   * @returns {Array&lt;*>} values in the crio
    */
   values() {
     return values(this);
@@ -732,7 +818,7 @@ export class CrioArray extends Crio {
    * @description
    * append the items passed to the crio
    *
-   * @param {...Array<*>} items items to append to the crio
+   * @param {...Array&lt;*>} items items to append to the crio
    * @returns {CrioArray} new crio array instance
    */
   concat(items) {
@@ -765,7 +851,7 @@ export class CrioArray extends Crio {
     let count = Math.min(final - from, length - to),
         direction = 1;
 
-    if (from < to && to < (from + count)) {
+    if (from &lt; to &amp;&amp; to &lt; (from + count)) {
       direction = -1;
       from += count - 1;
       to += count - 1;
@@ -792,7 +878,7 @@ export class CrioArray extends Crio {
    * @description
    * find the values in this that do not exist in any of the arrays passed
    *
-   * @param {Array<Array>} arrays arrays to get the difference of
+   * @param {Array&lt;Array>} arrays arrays to get the difference of
    * @returns {CrioArray} array of items matching diffference criteria
    */
   difference(...arrays) {
@@ -906,7 +992,7 @@ export class CrioArray extends Crio {
    * @description
    * find the values in that exist in this and each of the arrays passed
    *
-   * @param {Array<Array>} arrays
+   * @param {Array&lt;Array>} arrays
    * @returns {CrioArray}
    */
   intersection(...arrays) {
@@ -1064,7 +1150,7 @@ export class CrioArray extends Crio {
    *
    * @param {number} [start=0] starting index to splice
    * @param {number} [deleteCount=1] length from starting index to removes
-   * @param {...Array<*>} items items to insert after delete is complete
+   * @param {...Array&lt;*>} items items to insert after delete is complete
    * @returns {CrioArray} new crio array instance
    */
   splice(start = 0, deleteCount = 1, ...items) {
@@ -1092,7 +1178,7 @@ export class CrioArray extends Crio {
     return this.filter((value) => {
       hashCode = !!value ? value.hashCode : undefined;
       hasHashCode = !isUndefined(hashCode);
-      storeValue = !~newArray.indexOf(value) && (!hasHashCode || !~hashArray.indexOf(hashCode));
+      storeValue = !~newArray.indexOf(value) &amp;&amp; (!hasHashCode || !~hashArray.indexOf(hashCode));
 
       if (storeValue) {
         newArray.push(value);
@@ -1112,7 +1198,7 @@ export class CrioArray extends Crio {
    * @description
    * add items passed to the beginning of the crio array
    *
-   * @param {...Array<*>} items items to prepend to the array
+   * @param {...Array&lt;*>} items items to prepend to the array
    * @returns {CrioArray} new crio array instance
    */
   unshift(...items) {
@@ -1132,7 +1218,7 @@ export class CrioArray extends Crio {
    * @description
    * find the values that are the symmetric difference of this and the arrays passed
    *
-   * @param {Array<Array>} arrays arrays to find symmetric values in
+   * @param {Array&lt;Array>} arrays arrays to find symmetric values in
    * @returns {CrioArray} new crio array instance
    */
   xor(...arrays) {
@@ -1228,3 +1314,169 @@ Object.defineProperties(CrioObject.prototype, {
 });
 
 assignToObject = createAssignToObject(CrioArray, CrioObject);
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

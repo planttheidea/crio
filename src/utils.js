@@ -4,10 +4,6 @@ import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 import stringifier from 'stringifier';
 
-const STRINGIFIER_OPTIONS = {
-  maxDepth: 10
-};
-
 // constants
 import {
   CRIO_SYMBOL,
@@ -15,7 +11,13 @@ import {
   REACT_ELEMENT_TYPE
 } from './constants';
 
+const STRINGIFIER_OPTIONS = {
+  maxDepth: 10
+};
+
 /**
+ * @private
+ *
  * @function freeze
  *
  * @description
@@ -38,6 +40,8 @@ export const freeze = ((isProduction) => {
 })(IS_PRODUCTION);
 
 /**
+ * @private
+ *
  * @function isComplexObject
  *
  * @description
@@ -52,6 +56,8 @@ export const isComplexObject = (object) => {
 };
 
 /**
+ * @private
+ *
  * @function isCrio
  *
  * @description
@@ -66,6 +72,8 @@ export const isCrio = (object) => {
 };
 
 /**
+ * @private
+ *
  * @function isCrioArray
  *
  * @description
@@ -79,6 +87,8 @@ export const isCrioArray = (object) => {
 };
 
 /**
+ * @private
+ *
  * @function isEqual
  *
  * @description
@@ -94,6 +104,8 @@ export const isEqual = (crio, object) => {
 };
 
 /**
+ * @private
+ *
  * @function isReactElement
  *
  * @description
@@ -107,6 +119,8 @@ export const isReactElement = (object) => {
 };
 
 /**
+ * @private
+ *
  * @function getCorrectConstructor
  *
  * @description
@@ -122,6 +136,8 @@ export const getCorrectConstructor = (object, CrioArray, CrioObject) => {
 };
 
 /**
+ * @private
+ *
  * @function getCrioValue
  *
  * @description
@@ -145,6 +161,8 @@ export const getCrioValue = (object, Constructor) => {
 };
 
 /**
+ * @private
+ *
  * @function getKeysMetadata
  *
  * @description
@@ -168,6 +186,8 @@ export const getKeysMetadata = (keys, instance) => {
 };
 
 /**
+ * @private
+ *
  * @function getRelativeValue
  *
  * @description
@@ -182,6 +202,8 @@ export const getRelativeValue = (value, length) => {
 };
 
 /**
+ * @private
+ *
  * @function getStandardValue
  *
  * @description
@@ -196,6 +218,8 @@ export const getStandardValue = (object) => {
 };
 
 /**
+ * @private
+ *
  * @function createAssignToObject
  *
  * @description
@@ -215,6 +239,8 @@ export const createAssignToObject = (CrioArray, CrioObject) => {
 };
 
 /**
+ * @private
+ *
  * @function stringify
  *
  * @description
