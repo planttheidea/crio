@@ -1,49 +1,49 @@
 Benchmark (all times in milliseconds): 1000, 5000, 10000, 50000, 100000, 500000, 1000000, 5000000
-[get] Object Native: 0, 0, 0, 1, 0, 1, 3, 11
-[get] Object Seamless-immutable: 0, 0, 1, 2, 1, 1, 2, 13
-[get] Object Immutable.js: 2, 1, 3, 0, 2, 7, 13, 64
-[get] Object Mori.js: 2, 2, 1, 12, 22, 75, 152, 756
-[get] Object Crio: 1, 0, 1, 1, 1, 1, 2, 10
-[get] Object Crio old: 1, 0, 1, 1, 3, 1, 3, 11
-[get] Array Native: 1, 1, 0, 1, 1, 5, 11, 51
-[get] Array Seamless-immutable.js: 1, 1, 0, 2, 8, 43, 78, 401
-[get] Array Immutable.js: 2, 1, 0, 1, 2, 11, 20, 103
-[get] Array Mori.js: 3, 3, 0, 4, 5, 30, 58, 292
-[get] Array Crio: 0, 2, 0, 1, 1, 5, 11, 52
-[get] Array Crio old: 1, 4, 0, 0, 2, 4, 10, 51
-[get-in] Object Native: 0, 0, 1, 1, 0, 1, 2, 10
-[get-in] Object Seamless-immutable: 1, 0, 1, 0, 0, 1, 2, 10
-[get-in] Object Immutable.js: 2, 1, 5, 7, 15, 74, 137, 690
-[get-in] Object Mori.js: 3, 5, 5, 21, 44, 199, 375, 1870
-[get-in] Object Crio: 0, 1, 0, 3, 1, 1, 2, 10
-[get-in] Object Crio old: 1, 0, 2, 1, 4, 1, 2, 10
-[get-in] Array Native: 1, 1, 0, 0, 1, 6, 10, 56
-[get-in] Array Seamless-immutable.js: 0, 2, 1, 2, 2, 7, 14, 71
-[get-in] Array Immutable.js: 3, 7, 1, 8, 18, 88, 164, 828
-[get-in] Array Mori.js: 3, 5, 1, 9, 15, 80, 161, 800
-[get-in] Array Crio: 0, 3, 0, 0, 1, 5, 12, 56
-[get-in] Array Crio old: 0, 5, 0, 1, 1, 5, 11, 53
-[set] Object Native: 0, 3, 3, 14, 28, 144, 295, 1422
-[set] Object Seamless-immutable: 5, 19, 36, 165, 361, 1724, 3234, 15412
-[set] Object Immutable.js: 2, 2, 2, 7, 15, 77, 158, 718
-[set] Object Mori.js: 2, 3, 3, 9, 37, 100, 165, 939
-[set] Object Crio: 8, 12, 23, 118, 207, 932, 1973, 10656
-[set] Object Crio old: 11, 25, 49, 186, 361, 1979, 3648, 18839
-[set] Array Native: 0, 2, 1, 7, 13, 68, 131, 661
-[set] Array Seamless-immutable.js: 7, 34, 59, 276, 562, 2864, 5737, 28650
-[set] Array Immutable.js: 3, 2, 3, 14, 29, 127, 254, 1284
-[set] Array Mori.js: 3, 2, 0, 5, 9, 42, 75, 355
-[set] Array Crio: 7, 30, 57, 294, 681, 2913, 5860, 30367
-[set] Array Crio old: 10, 51, 68, 337, 659, 3301, 6616, 33035
-[set-in] Object Native: 1, 3, 5, 25, 48, 228, 455, 2276
-[set-in] Object Seamless-immutable: 8, 34, 59, 298, 584, 2939, 5879, 29432
-[set-in] Object Immutable.js: 3, 4, 6, 27, 49, 240, 484, 2424
-[set-in] Object Mori.js: 4, 5, 6, 28, 51, 249, 494, 2478
-[set-in] Object Crio: 5, 16, 34, 158, 339, 1678, 3319, 17400
-[set-in] Object Crio old: 16, 65, 84, 405, 806, 4037, 8167, 40562
-[set-in] Array Native: 0, 3, 2, 14, 27, 133, 259, 1282
-[set-in] Array Seamless-immutable.js: 14, 62, 114, 561, 1131, 5591, 11240, 56077
-[set-in] Array Immutable.js: 3, 6, 8, 42, 78, 381, 764, 3851
-[set-in] Array Mori.js: 1, 4, 2, 11, 25, 102, 206, 1030
-[set-in] Array Crio: 6, 31, 46, 259, 504, 2498, 5582, 25243
-[set-in] Array Crio old: 23, 111, 185, 908, 1809, 8996, 17972, 90445
+[get] Object Native: 0, 0, 1, 0, 0, 2, 1, 11
+[get] Object Seamless-immutable: 0, 1, 1, 0, 1, 0, 3, 10
+[get] Object Immutable.js: 2, 0, 2, 0, 1, 6, 12, 56
+[get] Object Mori.js: 3, 1, 2, 8, 19, 64, 124, 649
+[get] Object Crio: 0, 1, 0, 1, 2, 1, 2, 9
+[get] Object Crio old: 0, 1, 0, 1, 2, 1, 2, 10
+[get] Array Native: 0, 1, 0, 0, 1, 5, 9, 48
+[get] Array Seamless-immutable.js: 0, 1, 1, 1, 7, 35, 71, 335
+[get] Array Immutable.js: 1, 2, 0, 1, 1, 9, 18, 89
+[get] Array Mori.js: 2, 1, 1, 2, 5, 26, 49, 242
+[get] Array Crio: 1, 2, 0, 0, 1, 4, 9, 45
+[get] Array Crio old: 0, 3, 0, 0, 1, 5, 9, 44
+[get-in] Object Native: 0, 0, 0, 1, 0, 1, 2, 8
+[get-in] Object Seamless-immutable: 1, 0, 0, 1, 0, 1, 1, 9
+[get-in] Object Immutable.js: 2, 1, 4, 5, 13, 58, 112, 581
+[get-in] Object Mori.js: 2, 3, 3, 17, 33, 156, 314, 1573
+[get-in] Object Crio: 0, 0, 1, 0, 3, 1, 2, 9
+[get-in] Object Crio old: 1, 0, 1, 0, 4, 1, 2, 9
+[get-in] Array Native: 1, 0, 1, 0, 1, 5, 9, 47
+[get-in] Array Seamless-immutable.js: 1, 1, 1, 1, 2, 6, 12, 63
+[get-in] Array Immutable.js: 2, 5, 1, 7, 14, 66, 135, 675
+[get-in] Array Mori.js: 2, 3, 1, 7, 12, 67, 130, 646
+[get-in] Array Crio: 0, 3, 0, 1, 1, 5, 10, 48
+[get-in] Array Crio old: 1, 3, 0, 0, 1, 5, 10, 47
+[set] Object Native: 1, 2, 2, 12, 24, 121, 240, 1208
+[set] Object Seamless-immutable: 5, 15, 26, 128, 255, 1290, 2580, 12825
+[set] Object Immutable.js: 2, 3, 1, 7, 13, 67, 135, 659
+[set] Object Mori.js: 1, 3, 2, 10, 19, 78, 153, 831
+[set] Object Crio: 5, 10, 14, 62, 120, 578, 1129, 5640
+[set] Object Crio old: 10, 24, 46, 192, 346, 1710, 3443, 17163
+[set] Array Native: 0, 2, 1, 6, 14, 77, 134, 676
+[set] Array Seamless-immutable.js: 8, 34, 59, 286, 578, 2825, 5587, 28153
+[set] Array Immutable.js: 3, 2, 3, 15, 34, 146, 281, 1375
+[set] Array Mori.js: 2, 2, 1, 4, 11, 43, 72, 375
+[set] Array Crio: 7, 29, 54, 247, 494, 2446, 4872, 24217
+[set] Array Crio old: 11, 44, 71, 363, 690, 3446, 6850, 34254
+[set-in] Object Native: 1, 4, 4, 26, 51, 232, 462, 2311
+[set-in] Object Seamless-immutable: 9, 33, 61, 296, 591, 2885, 5791, 28984
+[set-in] Object Immutable.js: 3, 4, 6, 27, 59, 256, 486, 2415
+[set-in] Object Mori.js: 4, 5, 6, 29, 57, 259, 525, 2571
+[set-in] Object Crio: 5, 15, 25, 120, 219, 1006, 1987, 10018
+[set-in] Object Crio old: 16, 55, 87, 463, 897, 4419, 8871, 44244
+[set-in] Array Native: 1, 2, 3, 13, 29, 135, 262, 1285
+[set-in] Array Seamless-immutable.js: 13, 65, 122, 571, 1147, 5680, 11388, 56837
+[set-in] Array Immutable.js: 3, 6, 8, 46, 79, 392, 765, 3827
+[set-in] Array Mori.js: 2, 4, 2, 11, 24, 112, 228, 1007
+[set-in] Array Crio: 6, 30, 45, 194, 365, 1786, 3599, 17812
+[set-in] Array Crio old: 23, 115, 191, 880, 1718, 8656, 17205, 85932

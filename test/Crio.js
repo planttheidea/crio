@@ -877,6 +877,13 @@ test('if findLastIndex will return the index for the correct object', (t) => {
   t.is(foundArrayByValue, 2);
 });
 
+test('if first returns a new CrioArray with the first n number of items in the CrioArray', (t) => {
+  const array = new CrioArray(['foo', 'bar', 'baz']);
+
+  t.deepEqual(array.first().thaw(), ['foo']);
+  t.deepEqual(array.first(2).thaw(), ['foo', 'bar']);
+});
+
 test('if indexOf returns the first index when found and -1 when not', (t) => {
   const array = new CrioArray(['foo', 'baz', 'foo']);
 
@@ -885,11 +892,33 @@ test('if indexOf returns the first index when found and -1 when not', (t) => {
   t.is(array.indexOf('bar'), -1);
 });
 
+test('if intersection produces the correct new CrioArray', (t) => {
+  const array = new CrioArray(['foo', 1, true]);
+
+  t.deepEqual(array.intersection(['foo'], [true]).thaw(), []);
+  t.deepEqual(array.intersection(['foo', 1]).thaw(), ['foo', 1]);
+});
+
 test('if join builds a string with the separator passed', (t) => {
   const array = new CrioArray(['foo', 'bar', 'baz']);
 
   t.is(array.join(), 'foo,bar,baz');
   t.is(array.join('|'), 'foo|bar|baz');
+});
+
+test('if last returns the last n number of items in the CrioArray', (t) => {
+  const array = new CrioArray(['foo', 'bar', 'baz']);
+
+  t.deepEqual(array.last().thaw(), ['baz']);
+  t.deepEqual(array.last(2).thaw(), ['bar', 'baz']);
+});
+
+test('if lastIndexOf returns the last index when found and -1 when not', (t) => {
+  const array = new CrioArray(['foo', 'baz', 'foo']);
+
+  t.is(array.lastIndexOf('foo'), 2);
+  t.is(array.lastIndexOf('baz'), 1);
+  t.is(array.lastIndexOf('bar'), -1);
 });
 
 test('if pop returns a new CrioArray with the last item removed', (t) => {

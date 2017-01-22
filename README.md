@@ -2,7 +2,7 @@
 Immutable JS objects with a natural API
 
 <img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
-<img src="https://img.shields.io/badge/coverage-93.14%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-96.54%25-brightgreen.svg"/>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
 
 #### Jump to the API
@@ -94,7 +94,7 @@ To create a new crio object, its pretty straightforward:
 
 ```javascript
 const crioArray = crio([]);
-const crioObject = crio({});
+const crioObject = crio({}); // or just crio()
 ```
 
 These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via [Object.freeze](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze), and stores as a custom `CrioArray` or `CrioObject` with a prototypical methods that will return a new immutable version of the object with each update. Example:
@@ -107,7 +107,7 @@ console.log(foo); // ['foo']
 console.log(fooBar); // ['foo', 'bar']
 ```
 
-The [API](API.md) is the same as you already know working with those objects, and includes polyfills for all ES6 and some ES7 functions, as well as a few helpful crio-specific functions. The only difference is that any setting happens via .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable. 
+The [API](API.md) is the same as you already know working with those objects, and includes polyfills for all ES6 and some ES7 functions, as well as a few helpful crio-specific functions. The only difference is that any setting happens via .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable.
 
 #### Why not just use X immutable library?
 
@@ -122,7 +122,7 @@ There are a bunch of ones out there, but the three that people usually gravitate
 
 **seamless-immutable** has some great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the "right way". As such, it fell short of my expectations.
 
-Bottom line, I support each one of these projects to the fullest because they are trying to create immutability in JavaScript, just with different approaches.
+Bottom line, I support each one of these projects to the fullest because they are trying to create immutability in JavaScript, I just wanted to take a different approach.
 
 #### Browser support
 
@@ -136,53 +136,7 @@ crio has been tested on the following browsers:
 
 #### Performance
 
-There has been a lot of performance tuning (and hopefully more to come), however because new objects are being instantiated with each creation then inevitably things will be slower than the native methods. Additionally, because objects are frozen upon creation, the only way to produce a new object is to clone the existing object, so doing a bunch of assignment operations in a loop can add up. We're still talking milliseconds here, and [it probably won't be noticeable to you anyway](https://blog.getify.com/sanity-check-object-creation-performance/).
-
-Basically, if you're noticing a perceivable slowdown, check the implementation method. The majority of processing time is spent in the construction of the `Crio`, so optimizing for that will keep things performant.
-
-An unrealistic example that micro-optimizers love to use:
-
-```javascript
-
-let crioArray = crio([]),
-    index = -1;
-    
-while (++index < 100000) {
-    crioArray = crioArray.push(index);
-}
-```
-
-This will take a while, but a small tweak makes it much faster:
-
-```javascript
-
-let array = [],
-    index = -1;
-    
-while (++index < 100000) {
-    array.push(index);
-}
-
-const crioArray = crio(array);
-```
-
-The difference here is we created the `CrioArray` in a single shot, whereas before a new `CrioArray` was instantiated with each `.push()`. Focusing your code on optimizing for the creation will keep things nice and snappy.
-
-Additionally, if you plan to do a bunch of manipulations to it, you can always use the `.mutate()` method:
-
-```javascript
-const crioObject = crioArray.mutate((array) => {
-    let object = {};
-    
-    array.forEach((item, index) => {
-        object[index] = item;
-    });
-    
-    return object;
-});
-```
-
-This is a simple example, but `mutate` will allow you to work with the standard (mutable) JS objects and maximize performance.
+As-of v4.0.0, performance has substantially improved, and in many scenarios `crio` is more performant than `seamless-immutable` (in the case of `setIn`, by over **3x**). When it comes to `get` operations (either directly or nested), `crio` is identical to native in performance. I don't want to post benchmarks because those vary wildly from machine to machine, but feel free to test them out yourself!
 
 #### Gotchas
 

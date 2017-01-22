@@ -113,7 +113,75 @@ return /******/ (function(modules) { // webpackBootstrap
 	  throw new TypeError('Object passed must be either an array or a plain object.');
 	};
 	
+	/**
+	 * @function crio.array
+	 *
+	 * @description
+	 * convenience method for making crio arrays
+	 *
+	 * @param {Array<*>} array array to crio
+	 * @returns {CrioArray} crio array
+	 */
+	
+	
 	// utils
+	crio.array = function () {
+	  var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	
+	  if (!(0, _isArray2.default)(array)) {
+	    throw new TypeError('Object passed must be an array.');
+	  }
+	
+	  return crio(array);
+	};
+	
+	/**
+	 * @function crio.isArray
+	 *
+	 * @description
+	 * check if object is a crio array
+	 *
+	 * @param {*} object object to test
+	 * @returns {boolean} is the object a crio array
+	 */
+	crio.isArray = function (object) {
+	  return (0, _utils.isCrio)(object) && object.isArray();
+	};
+	
+	crio.isCrio = _utils.isCrio;
+	
+	/**
+	 * @function crio.isObject
+	 *
+	 * @description
+	 * check if object is a crio object
+	 *
+	 * @param {*} object object to test
+	 * @returns {boolean} is the object a crio object
+	 */
+	crio.isObject = function (object) {
+	  return (0, _utils.isCrio)(object) && object.isObject();
+	};
+	
+	/**
+	 * @function crio.object
+	 *
+	 * @description
+	 * convenience method for making crio objects
+	 *
+	 * @param {Object} object object to crio
+	 * @returns {CrioObject} crio object
+	 */
+	crio.object = function () {
+	  var object = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	
+	  if (!(0, _isPlainObject2.default)(object)) {
+	    throw new TypeError('Object passed must be a plain object.');
+	  }
+	
+	  return crio(object);
+	};
+	
 	exports.default = crio;
 	module.exports = exports['default'];
 
@@ -1337,7 +1405,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var indexOfValue = void 0;
 	
 	      var difference = (0, _reduce3.default)(arrays, function (differenceArray, array) {
-	        if ((0, _isArray2.default)(array) || (0, _utils.isCrio)(array) && array.isArray()) {
+	        if ((0, _isArray2.default)(array) || (0, _utils.isCrioArray)(array)) {
 	          (0, _forEach3.default)(array, function (value) {
 	            indexOfValue = differenceArray.indexOf(value);
 	
@@ -1427,6 +1495,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
+	     * @function first
+	     *
+	     * @description
+	     * take the first n number of items in the array
+	     *
+	     * @param {number} [size=1] size of elements to take from beginning of array
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'first',
+	    value: function first() {
+	      var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	      return this.slice(0, size);
+	    }
+	
+	    /**
 	     * @function indexOf
 	     *
 	     * @description
@@ -1445,6 +1531,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
+	     * @function intersection
+	     *
+	     * @description
+	     * find the values in that exist in this and each of the arrays passed
+	     *
+	     * @param {Array<Array>} arrays
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'intersection',
+	    value: function intersection() {
+	      for (var _len4 = arguments.length, arrays = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+	        arrays[_key4] = arguments[_key4];
+	      }
+	
+	      if (!arrays.length) {
+	        return this;
+	      }
+	
+	      var allArrays = [this].concat(arrays);
+	      var allArraysLength = allArrays.length;
+	
+	      var indices = [],
+	          indexOfValue = void 0;
+	
+	      var reducedArrays = (0, _reduce3.default)(allArrays, function (values, array) {
+	        if ((0, _isArray2.default)(array) || (0, _utils.isCrioArray)(array)) {
+	          (0, _forEach3.default)(array, function (value) {
+	            indexOfValue = values.indexOf(value);
+	
+	            if (!!~indexOfValue) {
+	              indices[indexOfValue]++;
+	            } else {
+	              indices[values.length] = 1;
+	              values.push(value);
+	            }
+	          });
+	        }
+	
+	        return values;
+	      }, []);
+	      var filteredArrays = (0, _filter3.default)(reducedArrays, function (value, index) {
+	        return indices[index] === allArraysLength;
+	      });
+	
+	      return new CrioArray(filteredArrays);
+	    }
+	
+	    /**
 	     * @function join
 	     *
 	     * @description
@@ -1460,6 +1596,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var separator = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ',';
 	
 	      return [].concat(_toConsumableArray(this)).join(separator);
+	    }
+	
+	    /**
+	     * @function last
+	     *
+	     * @description
+	     * take the last n number of items in the array
+	     *
+	     * @param {number} [size=1] size of elements to take from end of array
+	     * @returns {CrioArray}
+	     */
+	
+	  }, {
+	    key: 'last',
+	    value: function last() {
+	      var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+	
+	      return this.slice(this.length - size);
+	    }
+	
+	    /**
+	     * @function lastIndexOf
+	     *
+	     * @description
+	     * get the last index of the value passed
+	     *
+	     * @param {*} value value to find in crio
+	     * @returns {number} index of match, or -1
+	     */
+	
+	  }, {
+	    key: 'lastIndexOf',
+	    value: function lastIndexOf(value) {
+	      return this.findLastIndex(function (thisValue) {
+	        return thisValue === value;
+	      });
 	    }
 	
 	    /**
@@ -1569,8 +1741,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	      var spliced = [].concat(_toConsumableArray(this));
 	
-	      for (var _len4 = arguments.length, items = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-	        items[_key4 - 2] = arguments[_key4];
+	      for (var _len5 = arguments.length, items = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+	        items[_key5 - 2] = arguments[_key5];
 	      }
 	
 	      spliced.splice.apply(spliced, [start, deleteCount].concat(items));
@@ -1615,8 +1787,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'unshift',
 	    value: function unshift() {
-	      for (var _len5 = arguments.length, items = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-	        items[_key5] = arguments[_key5];
+	      for (var _len6 = arguments.length, items = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+	        items[_key6] = arguments[_key6];
 	      }
 	
 	      if (!items.length) {
@@ -1639,8 +1811,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'xor',
 	    value: function xor() {
-	      for (var _len6 = arguments.length, arrays = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-	        arrays[_key6] = arguments[_key6];
+	      for (var _len7 = arguments.length, arrays = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+	        arrays[_key7] = arguments[_key7];
 	      }
 	
 	      if (!arrays.length) {
@@ -1653,7 +1825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          indexOfValue = void 0;
 	
 	      var reducedValues = (0, _reduce3.default)(allArrays, function (values, array) {
-	        if ((0, _isArray2.default)(array) || (0, _utils.isCrio)(array) && array.isArray()) {
+	        if ((0, _isArray2.default)(array) || (0, _utils.isCrioArray)(array)) {
 	          (0, _forEach3.default)(array, function (value) {
 	            indexOfValue = values.indexOf(value);
 	
@@ -8266,6 +8438,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var CRIO_TYPE = exports.CRIO_TYPE = Symbol('Crio type');
 	var CRIO_ARRAY_TYPE = exports.CRIO_ARRAY_TYPE = 'CrioArray';
 	var CRIO_OBJECT_TYPE = exports.CRIO_OBJECT_TYPE = 'CrioObject';
+	
+	var REACT_ELEMENT_TYPE = exports.REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element') || 0xeac7;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175)))
 
 /***/ },
@@ -8463,7 +8637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.stringify = exports.createAssignToObject = exports.getStandardValue = exports.getRelativeValue = exports.getKeysMetadata = exports.getCrioValue = exports.getCorrectConstructor = exports.isEqual = exports.isCrio = exports.isComplexObject = exports.freeze = undefined;
+	exports.stringify = exports.createAssignToObject = exports.getStandardValue = exports.getRelativeValue = exports.getKeysMetadata = exports.getCrioValue = exports.getCorrectConstructor = exports.isReactElement = exports.isEqual = exports.isCrioArray = exports.isCrio = exports.isComplexObject = exports.freeze = undefined;
 	
 	var _deepFreezeStrict = __webpack_require__(177);
 	
@@ -8544,6 +8718,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	/**
+	 * @function isCrioArray
+	 *
+	 * @description
+	 * is the object a crio array
+	 *
+	 * @param {*} object object to test
+	 * @returns {boolean} is the object a crio array
+	 */
+	var isCrioArray = exports.isCrioArray = function isCrioArray(object) {
+	  return isCrio && object.isArray();
+	};
+	
+	/**
 	 * @function isEqual
 	 *
 	 * @description
@@ -8556,6 +8743,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	var isEqual = exports.isEqual = function isEqual(crio, object) {
 	  return isCrio(object) && crio.hashCode === object.hashCode;
+	};
+	
+	/**
+	 * @function isReactElement
+	 *
+	 * @description
+	 * is the object passed a react element
+	 *
+	 * @param {*} object object to test
+	 * @returns {boolean} is object a react element
+	 */
+	var isReactElement = exports.isReactElement = function isReactElement(object) {
+	  return !!object && object.$$typeof === _constants.REACT_ELEMENT_TYPE;
 	};
 	
 	/**
@@ -8585,7 +8785,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {*} object with clean value
 	 */
 	var getCrioValue = exports.getCrioValue = function getCrioValue(object, Constructor) {
-	  if (isCrio(object)) {
+	  if (isCrio(object) || isReactElement(object)) {
 	    return object;
 	  }
 	

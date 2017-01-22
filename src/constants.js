@@ -50,3 +50,5 @@ export const UNSCOPABLES_PROPERTY_DESCRIPTOR = {
 export const CRIO_TYPE = Symbol('Crio type');
 export const CRIO_ARRAY_TYPE = 'CrioArray';
 export const CRIO_OBJECT_TYPE = 'CrioObject';
+
+export const REACT_ELEMENT_TYPE = (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) || 0xeac7;

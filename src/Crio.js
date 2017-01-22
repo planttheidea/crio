@@ -43,6 +43,7 @@ import {
   getRelativeValue,
   getStandardValue,
   isCrio,
+  isCrioArray,
   isEqual,
   stringify
 } from './utils';
@@ -789,7 +790,7 @@ export class CrioArray extends Crio {
     let indexOfValue;
 
     const difference = reduce(arrays, (differenceArray, array) => {
-      if (isArray(array) || (isCrio(array) && array.isArray())) {
+      if (isArray(array) || isCrioArray(array)) {
         forEach(array, (value) => {
           indexOfValue = differenceArray.indexOf(value);
 
@@ -859,6 +860,19 @@ export class CrioArray extends Crio {
   }
 
   /**
+   * @function first
+   *
+   * @description
+   * take the first n number of items in the array
+   *
+   * @param {number} [size=1] size of elements to take from beginning of array
+   * @returns {CrioArray}
+   */
+  first(size = 1) {
+    return this.slice(0, size);
+  }
+
+  /**
    * @function indexOf
    *
    * @description
@@ -874,6 +888,52 @@ export class CrioArray extends Crio {
   }
 
   /**
+   * @function intersection
+   *
+   * @description
+   * find the values in that exist in this and each of the arrays passed
+   *
+   * @param {Array<Array>} arrays
+   * @returns {CrioArray}
+   */
+  intersection(...arrays) {
+    if (!arrays.length) {
+      return this;
+    }
+
+    const allArrays = [
+      this,
+      ...arrays
+    ];
+    const allArraysLength = allArrays.length;
+
+    let indices = [],
+        indexOfValue;
+
+    const reducedArrays = reduce(allArrays, (values, array) => {
+      if (isArray(array) || isCrioArray(array)) {
+        forEach(array, (value) => {
+          indexOfValue = values.indexOf(value);
+
+          if (!!~indexOfValue) {
+            indices[indexOfValue]++;
+          } else {
+            indices[values.length] = 1;
+            values.push(value);
+          }
+        });
+      }
+
+      return values;
+    }, []);
+    const filteredArrays = filter(reducedArrays, (value, index) => {
+      return indices[index] === allArraysLength;
+    });
+
+    return new CrioArray(filteredArrays);
+  }
+
+  /**
    * @function join
    *
    * @description
@@ -884,6 +944,34 @@ export class CrioArray extends Crio {
    */
   join(separator = ',') {
     return [...this].join(separator);
+  }
+
+  /**
+   * @function last
+   *
+   * @description
+   * take the last n number of items in the array
+   *
+   * @param {number} [size=1] size of elements to take from end of array
+   * @returns {CrioArray}
+   */
+  last(size = 1) {
+    return this.slice(this.length - size);
+  }
+
+  /**
+   * @function lastIndexOf
+   *
+   * @description
+   * get the last index of the value passed
+   *
+   * @param {*} value value to find in crio
+   * @returns {number} index of match, or -1
+   */
+  lastIndexOf(value) {
+    return this.findLastIndex((thisValue) => {
+      return thisValue === value;
+    });
   }
 
   /**
@@ -1039,7 +1127,7 @@ export class CrioArray extends Crio {
         indexOfValue;
 
     const reducedValues = reduce(allArrays, (values, array) => {
-      if (isArray(array) || (isCrio(array) && array.isArray())) {
+      if (isArray(array) || isCrioArray(array)) {
         forEach(array, (value) => {
           indexOfValue = values.indexOf(value);
 

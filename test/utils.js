@@ -1,6 +1,7 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
+import React from 'react';
 
 // src
 import {
@@ -137,6 +138,7 @@ test('if isComplexObject returns true if object passed is an object or array, fa
   const regexp = /foo/;
   const array = [];
   const object = {};
+  const reactElement = <div/>;
 
   t.false(utils.isComplexObject(bool));
   t.false(utils.isComplexObject(number));
@@ -144,6 +146,7 @@ test('if isComplexObject returns true if object passed is an object or array, fa
   t.false(utils.isComplexObject(date));
   t.false(utils.isComplexObject(regexp));
 
+  t.true(utils.isComplexObject(reactElement));
   t.true(utils.isComplexObject(array));
   t.true(utils.isComplexObject(object));
 });
@@ -158,6 +161,7 @@ test('if isCrio returns true for crios but false otherwise', (t) => {
   const object = {};
   const crioArray = new CrioArray([]);
   const crioObject = new CrioObject({});
+  const reactElement = <div/>;
 
   t.false(utils.isCrio(bool));
   t.false(utils.isCrio(number));
@@ -166,6 +170,7 @@ test('if isCrio returns true for crios but false otherwise', (t) => {
   t.false(utils.isCrio(regexp));
   t.false(utils.isCrio(array));
   t.false(utils.isCrio(object));
+  t.false(utils.isCrio(reactElement));
 
   t.true(utils.isCrio(crioArray));
   t.true(utils.isCrio(crioObject));
@@ -189,6 +194,31 @@ test('if isEqual checks that second object is a crio and that their hashCodes ar
   t.true(utils.isEqual(array, arrayMatch));
   t.false(utils.isEqual(array, arrayNotCrio));
   t.false(utils.isEqual(array, arrayNotMatch));
+});
+
+test('if isReactElement returns true for react elements but false otherwise', (t) => {
+  const bool = true;
+  const number = 123;
+  const string = 'foo';
+  const date = new Date();
+  const regexp = /foo/;
+  const array = [];
+  const object = {};
+  const crioArray = new CrioArray([]);
+  const crioObject = new CrioObject({});
+  const reactElement = <div/>;
+
+  t.false(utils.isReactElement(bool));
+  t.false(utils.isReactElement(number));
+  t.false(utils.isReactElement(string));
+  t.false(utils.isReactElement(date));
+  t.false(utils.isReactElement(regexp));
+  t.false(utils.isReactElement(array));
+  t.false(utils.isReactElement(object));
+  t.false(utils.isReactElement(crioArray));
+  t.false(utils.isReactElement(crioObject));
+
+  t.true(utils.isReactElement(reactElement));
 });
 
 test('if stringify returns a stringified version of the object passed to it', (t) => {

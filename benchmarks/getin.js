@@ -3,7 +3,6 @@ const seamlessImmutableJs = require('seamless-immutable');
 const ImmutableJs = require('immutable');
 const moriJs = require('mori');
 const crio = require('../lib');
-const crioOld = require('../lib-old');
 
 /**
  * Data
@@ -74,18 +73,6 @@ exports.objectGetInCrio = (cycles) => {
   }
 };
 
-exports.objectGetInCrioOld = (cycles) => {
-  const obj = crioOld({
-    data: {value}
-  });
-
-  let val;
-
-  for (let i = 0; i < cycles; i++) {
-    val = obj.data.value;
-  }
-};
-
 /**
  * Array
  */
@@ -140,18 +127,6 @@ exports.arrayGetInMoriJs = (cycles) => {
 
 exports.arrayGetInCrio = (cycles) => {
   const arr = crio([array]);
-  const maxIndex = arr[0].length - 1;
-
-  let index, val;
-
-  for (let i = 0; i < cycles; i++) {
-    index = ~~(Math.random() * maxIndex);
-    val = arr[0][index];
-  }
-};
-
-exports.arrayGetInCrioOld = (cycles) => {
-  const arr = crioOld([array]);
   const maxIndex = arr[0].length - 1;
 
   let index, val;

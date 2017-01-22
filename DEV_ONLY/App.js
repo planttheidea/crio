@@ -8,10 +8,9 @@ import crio from '../src';
 
 // import '../benchmarks';
 
-const array = crio(['foo', 'bar', {baz: {foo: 'bar'}}]);
-const mergedArray = array.mergeIn([2, 'baz'], {some: 'thing'});
+const array = crio(['foo', 'bar', 'baz']);
 
-console.log(mergedArray, mergedArray.thaw());
+console.log(array.slice(1, 2));
 
 const App = () => {
   return (

@@ -74,7 +74,7 @@
     "url": "git+https://github.com/planttheidea/crio.git"
   },
   "scripts": {
-    "benchmark": "npm run transpile:old && npm run transpile && NODE_ENV=production node ./benchmarks/index.js",
+    "benchmark": "npm run transpile && NODE_ENV=production node ./benchmarks/index.js",
     "benchmark:watch": "onchange -i 'src/**/*.js' -- npm run benchmark",
     "build": "NODE_ENV=development webpack --progress --colors",
     "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
@@ -84,12 +84,11 @@
     "dist": "npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "in-publish && npm run prepublish:compile || echo ''",
-    "prepublish:compile": "npm run clean && npm run lint && npm test && npm run transpile && npm run dist",
+    "prepublish:compile": "npm run clean && npm run lint && npm run test:coverage && npm run transpile && npm run dist",
     "test": "NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
     "test:watch": "NODE_ENV=test ava --watch",
-    "transpile": "babel src --out-dir lib",
-    "transpile:old": "babel src-old --out-dir lib-old"
+    "transpile": "babel src --out-dir lib"
   },
   "version": "4.0.0"
 }

@@ -50,17 +50,19 @@ Methods with the same name as the native method will be a link to MDN, as they a
 * [some](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
 * [sort](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort)
     * Returns new crio sorted by either callback or default
-* [splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) 
+* [splice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice)
     * Returns new crio with items added/removed based on splicing parameters
 * [toLocaleString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toLocaleString)
 * [toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString)
-* [unshift](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift) 
+* [unshift](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift)
     * Returns new crio with new items added to beginning
-* [values](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values) 
+* [values](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values)
 
 #### Added crio Methods
 * difference `{Array<*>}` *array[, array2, ..., arrayN]*, returns `{CrioArray}`
     * Returns a new array of the values that only exist in either the `CrioArray` or in one of the arrays passed
+* findLastIndex `{function}` *fn*, returns `{number}`
+    * Same as `findIndex` but starting from end and working to start
 * first `{number}` *num*, returns `{CrioArray}`
     * Returns a new array of the first *num* number of items in the array
 * intersection `{Array<*>}` *array[, array2, ..., arrayN]*, returns `{CrioArray}`
@@ -93,6 +95,10 @@ Methods with the same name as the native method will be a link to MDN, as they a
 * filter `{function}` *fn*, `{any}` *thisArg*, returns `{CrioObject}`
     * Iterates over object and filters out any returned values that are falsy
     * Iteration order is not guaranteed
+* findKey `{function}` *fn*, returns `{number}`
+    * Same as `findIndex` for `CrioArray` but finding the key instead of the index
+* findLastKey `{function}` *fn*, returns `{number}`
+    * Same as `findKey` but starting from end and working to start
 * includes `{any}` *value*, returns `{boolean}`
     * Determine if the `CrioObject` has a value that deeply matches `value` in equality
 * keys, returns `{Array<string>}`
@@ -108,7 +114,7 @@ Methods with the same name as the native method will be a link to MDN, as they a
     * Performs same function as `some` in the `Array` prototype, but on the `CrioObject`
 * values, returns `{Array<any>}`
     * Returns an array of the values in the `CrioObject`
-    
+
 There are also a number of additional `crio`-specific methods that are available on both `CrioArray` and `CrioObject`.
 
 #### Shared Methods

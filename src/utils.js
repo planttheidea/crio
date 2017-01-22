@@ -11,7 +11,8 @@ const STRINGIFIER_OPTIONS = {
 // constants
 import {
   CRIO_SYMBOL,
-  IS_PRODUCTION
+  IS_PRODUCTION,
+  REACT_ELEMENT_TYPE
 } from './constants';
 
 /**
@@ -65,6 +66,19 @@ export const isCrio = (object) => {
 };
 
 /**
+ * @function isCrioArray
+ *
+ * @description
+ * is the object a crio array
+ *
+ * @param {*} object object to test
+ * @returns {boolean} is the object a crio array
+ */
+export const isCrioArray = (object) => {
+  return isCrio && object.isArray();
+};
+
+/**
  * @function isEqual
  *
  * @description
@@ -77,6 +91,19 @@ export const isCrio = (object) => {
  */
 export const isEqual = (crio, object) => {
   return isCrio(object) && crio.hashCode === object.hashCode;
+};
+
+/**
+ * @function isReactElement
+ *
+ * @description
+ * is the object passed a react element
+ *
+ * @param {*} object object to test
+ * @returns {boolean} is object a react element
+ */
+export const isReactElement = (object) => {
+  return !!object && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
 /**
@@ -106,7 +133,7 @@ export const getCorrectConstructor = (object, CrioArray, CrioObject) => {
  * @returns {*} object with clean value
  */
 export const getCrioValue = (object, Constructor) => {
-  if (isCrio(object)) {
+  if (isCrio(object) || isReactElement(object)) {
     return object;
   }
 
