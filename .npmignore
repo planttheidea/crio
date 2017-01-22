@@ -6,12 +6,15 @@ DEV_ONLY
 node_modules
 src
 test
+tutorials
 .babelrc
 .eslintrc
 .gitignore
 .npmignore
+.yarnrc
+jsdoc.config.json
 results.csv
-results-v2.csv
 webpack.config.js
 webpack.config.minified.js
 webpack.config.dev.js
+yarn.lock
