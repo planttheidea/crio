@@ -4,42 +4,40 @@
  * @constant {boolean}
  * @default
  */
-export const IS_PRODUCTION = !!(
-  process &&
-  process.env &&
-  process.env.NODE_ENV === 'production'
-);
+export var IS_PRODUCTION = !!(process && process.env && process.env.NODE_ENV === 'production');
 
 /**
  * @private
  *
  * @constant {Symbol}
  */
-export const CRIO_SYMBOL = Symbol('Crio');
+export var CRIO_SYMBOL = Symbol('Crio');
 
 /**
  * @private
  *
  * @constant {{configurable: boolean, enumerable: boolean, value: function(): Object, writable: boolean}}
  */
-export const ITERATOR_PROPERTY_DESCRIPTOR = {
+export var ITERATOR_PROPERTY_DESCRIPTOR = {
   configurable: false,
   enumerable: false,
   value: function iterator() {
-    const keys = Object.getOwnPropertyNames(this);
-    const length = keys.length;
+    var _this = this;
 
-    let index = -1,
-      value;
+    var keys = Object.getOwnPropertyNames(this);
+    var length = keys.length;
+
+    var index = -1,
+        value = void 0;
 
     return {
-      next: () => {
+      next: function next() {
         if (++index < length) {
-          value = this[keys[index]];
+          value = _this[keys[index]];
 
           return {
             done: false,
-            value
+            value: value
           };
         } else {
           return {
@@ -57,7 +55,7 @@ export const ITERATOR_PROPERTY_DESCRIPTOR = {
  *
  * @constant {{configurable: boolean, enumerable: boolean, value: Object, writable: boolean}}
  */
-export const UNSCOPABLES_PROPERTY_DESCRIPTOR = {
+export var UNSCOPABLES_PROPERTY_DESCRIPTOR = {
   configurable: true,
   enumerable: false,
   value: {
@@ -77,7 +75,7 @@ export const UNSCOPABLES_PROPERTY_DESCRIPTOR = {
  *
  * @constant {Symbol}
  */
-export const CRIO_TYPE = Symbol('Crio type');
+export var CRIO_TYPE = Symbol('Crio type');
 
 /**
  * @private
@@ -85,7 +83,7 @@ export const CRIO_TYPE = Symbol('Crio type');
  * @constant {string}
  * @default
  */
-export const CRIO_ARRAY_TYPE = 'CrioArray';
+export var CRIO_ARRAY_TYPE = 'CrioArray';
 
 /**
  * @private
@@ -93,22 +91,20 @@ export const CRIO_ARRAY_TYPE = 'CrioArray';
  * @constant {string}
  * @default
  */
-export const CRIO_OBJECT_TYPE = 'CrioObject';
+export var CRIO_OBJECT_TYPE = 'CrioObject';
 
 /**
  * @private
  *
  * @constant {Symbol|number}
  */
-export const REACT_ELEMENT_TYPE =
-  (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) ||
-  0xeac7;
+export var REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element') || 0xeac7;
 
 /**
    * @private
    *
    * @constant {Object}
    */
-export const STRINGIFIER_OPTIONS = {
+export var STRINGIFIER_OPTIONS = {
   maxDepth: 10
 };

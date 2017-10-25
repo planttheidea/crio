@@ -3,10 +3,10 @@ import isArray from 'lodash/isArray';
 import isPlainObject from 'lodash/isPlainObject';
 
 // Crio
-import {CrioArray, CrioObject} from './Crio';
+import { CrioArray, CrioObject } from './Crio';
 
 // utils
-import {isCrio} from './utils';
+import { isCrio } from './utils';
 
 /**
  * @module crio
@@ -22,7 +22,9 @@ import {isCrio} from './utils';
  *
  * @returns {CrioArray|CrioObject} object that has been crioed
  */
-const crio = (object = {}) => {
+var crio = function crio() {
+  var object = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
   if (isArray(object)) {
     return new CrioArray(object);
   }
@@ -35,9 +37,7 @@ const crio = (object = {}) => {
     return object;
   }
 
-  throw new TypeError(
-    'Object passed must be either an array or a plain object.'
-  );
+  throw new TypeError('Object passed must be either an array or a plain object.');
 };
 
 /**
@@ -49,7 +49,9 @@ const crio = (object = {}) => {
  * @param {Array<*>} array array to crio
  * @returns {CrioArray} crio array
  */
-crio.array = (array = []) => {
+crio.array = function () {
+  var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
   if (!isArray(array)) {
     throw new TypeError('Object passed must be an array.');
   }
@@ -66,7 +68,7 @@ crio.array = (array = []) => {
  * @param {*} object object to test
  * @returns {boolean} is the object a crio array
  */
-crio.isArray = (object) => {
+crio.isArray = function (object) {
   return isCrio(object) && object.isArray();
 };
 
@@ -81,7 +83,7 @@ crio.isCrio = isCrio;
  * @param {*} object object to test
  * @returns {boolean} is the object a crio object
  */
-crio.isObject = (object) => {
+crio.isObject = function (object) {
   return isCrio(object) && object.isObject();
 };
 
@@ -94,7 +96,9 @@ crio.isObject = (object) => {
  * @param {Object} object object to crio
  * @returns {CrioObject} crio object
  */
-crio.object = (object = {}) => {
+crio.object = function () {
+  var object = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
   if (!isPlainObject(object)) {
     throw new TypeError('Object passed must be a plain object.');
   }

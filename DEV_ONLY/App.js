@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import {
-  render
-} from 'react-dom';
+import {render} from 'react-dom';
 
 import crio from '../src';
 
@@ -14,23 +12,21 @@ const array = crio([
   {key: 2, value: 'baz'}
 ]);
 
+console.log(array);
+console.log(array.setIn([0, 'key'], 'value'));
+console.log(array.concat(['foo']));
+
+console.log(array.thaw());
+
 const App = () => {
   return (
     <div>
-      <h1>
-        App
-      </h1>
+      <h1>App</h1>
 
-      <h4>
-        Things
-      </h4>
+      <h4>Things</h4>
 
       {array.map(({key, value}) => {
-        return (
-          <div key={`item-${key}`}>
-            Item: {value}
-          </div>
-        );
+        return <div key={`item-${key}`}>Item: {value}</div>;
       })}
     </div>
   );
@@ -40,8 +36,6 @@ const div = document.createElement('div');
 
 div.id = 'app-container';
 
-render((
-  <App/>
-), div);
+render(<App />, div);
 
 document.body.appendChild(div);

@@ -1,57 +1,48 @@
+var _Object$definePropert, _Object$definePropert2, _Object$definePropert3;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 // external dependencies
 import hashIt from 'hash-it';
-import every from 'lodash/every';
-import fill from 'lodash/fill';
-import find from 'lodash/find';
-import findKey from 'lodash/findKey';
-import findLastKey from 'lodash/findLastKey';
+import _every from 'lodash/every';
+import _fill from 'lodash/fill';
+import _find from 'lodash/find';
+import _findKey from 'lodash/findKey';
+import _findLastKey from 'lodash/findLastKey';
 import isArray from 'lodash/isArray';
 import isUndefined from 'lodash/isUndefined';
-import filter from 'lodash/filter';
-import forEach from 'lodash/forEach';
+import _filter from 'lodash/filter';
+import _forEach from 'lodash/forEach';
 import get from 'lodash/fp/get';
-import map from 'lodash/map';
-import merge from 'lodash/merge';
-import reduce from 'lodash/reduce';
-import reduceRight from 'lodash/reduceRight';
+import _map from 'lodash/map';
+import _merge from 'lodash/merge';
+import _reduce from 'lodash/reduce';
+import _reduceRight from 'lodash/reduceRight';
 import set from 'lodash/fp/set';
-import slice from 'lodash/slice';
-import some from 'lodash/some';
+import _slice from 'lodash/slice';
+import _some from 'lodash/some';
 import toPairs from 'lodash/toPairs';
-import values from 'lodash/values';
+import _values from 'lodash/values';
 
 // constants
-import {
-  CRIO_ARRAY_TYPE,
-  CRIO_OBJECT_TYPE,
-  CRIO_SYMBOL,
-  CRIO_TYPE,
-  ITERATOR_PROPERTY_DESCRIPTOR,
-  UNSCOPABLES_PROPERTY_DESCRIPTOR
-} from './constants';
+import { CRIO_ARRAY_TYPE, CRIO_OBJECT_TYPE, CRIO_SYMBOL, CRIO_TYPE, ITERATOR_PROPERTY_DESCRIPTOR, UNSCOPABLES_PROPERTY_DESCRIPTOR } from './constants';
 
 // utils
-import {
-  createAssignToObject,
-  freeze,
-  getCorrectConstructor,
-  getCrioValue,
-  getKeysMetadata,
-  getRelativeValue,
-  getStandardValue,
-  hasOwnProperty,
-  isCrio,
-  isCrioArray,
-  isEqual,
-  keys,
-  stringify
-} from './utils';
+import { createAssignToObject, freeze, getCorrectConstructor, getCrioValue, getKeysMetadata, getRelativeValue, getStandardValue, hasOwnProperty, isCrio, isCrioArray, isEqual, keys as _keys, stringify } from './utils';
 
 /**
  * @module Crio
  */
 
-let assignToObject;
+var assignToObject = void 0;
 
 /**
  * @class Crio
@@ -59,7 +50,7 @@ let assignToObject;
  *
  * @memberof module:Crio
  */
-export class Crio {
+export var Crio = function () {
   /**
    * @function constructor
    *
@@ -69,8 +60,10 @@ export class Crio {
    * @param {Object} object object passed for crioing
    * @returns {Crio} crioed object
    */
-  constructor(object) {
-    forEach(object, assignToObject(this, getCrioValue));
+  function Crio(object) {
+    _classCallCheck(this, Crio);
+
+    _forEach(object, assignToObject(this, getCrioValue));
 
     return freeze(this);
   }
@@ -78,17 +71,7 @@ export class Crio {
   /**
    * @static
    */
-  static get ['@@species']() {
-    return this;
-  }
 
-  get [CRIO_SYMBOL]() {
-    return true;
-  }
-
-  get hashCode() {
-    return hashIt(this);
-  }
 
   /**
    * @function clear
@@ -99,9 +82,9 @@ export class Crio {
    *
    * @returns {Crio} new empty crio instance
    */
-  clear() {
+  Crio.prototype.clear = function clear() {
     return new this.constructor(this.isArray() ? [] : {});
-  }
+  };
 
   /**
    * @function compact
@@ -111,11 +94,13 @@ export class Crio {
    *
    * @returns {Crio} new crio instance
    */
-  compact() {
-    return this.filter((value) => {
+
+
+  Crio.prototype.compact = function compact() {
+    return this.filter(function (value) {
       return !!value;
     });
-  }
+  };
 
   /**
    * @function delete
@@ -126,17 +111,19 @@ export class Crio {
    * @param {number|string} key the key to remove from the crio
    * @returns {Crio} new crio instance with item removed
    */
-  delete(key) {
-    let updated = {...this};
+
+
+  Crio.prototype.delete = function _delete(key) {
+    var updated = _extends({}, this);
 
     delete updated[key];
 
     if (this.isArray()) {
-      updated = map(updated);
+      updated = _map(updated);
     }
 
     return new this.constructor(updated);
-  }
+  };
 
   /**
    * @function deleteIn
@@ -147,7 +134,9 @@ export class Crio {
    * @param {Array<number|string>} keys the path of the item to remove
    * @returns {Crio} new crio instance with the item removed
    */
-  deleteIn(keys) {
+
+
+  Crio.prototype.deleteIn = function deleteIn(keys) {
     if (!keys || !keys.length) {
       return this;
     }
@@ -156,16 +145,19 @@ export class Crio {
       return this.delete(keys[0]);
     }
 
-    const {currentValue, lastIndex, parentKeys} = getKeysMetadata(keys, this);
+    var _getKeysMetadata = getKeysMetadata(keys, this),
+        currentValue = _getKeysMetadata.currentValue,
+        lastIndex = _getKeysMetadata.lastIndex,
+        parentKeys = _getKeysMetadata.parentKeys;
 
     if (!isCrio(currentValue)) {
       return this;
     }
 
-    const updated = currentValue.delete(keys[lastIndex]);
+    var updated = currentValue.delete(keys[lastIndex]);
 
     return this.setIn(parentKeys, updated);
-  }
+  };
 
   /**
    * @function entries
@@ -175,9 +167,11 @@ export class Crio {
    *
    * @returns {Array<Array<string>>} [key, value] pairs
    */
-  entries() {
+
+
+  Crio.prototype.entries = function entries() {
     return toPairs(this);
-  }
+  };
 
   /**
    * @function equals
@@ -188,9 +182,11 @@ export class Crio {
    * @param {*} object object to compare against the instance
    * @returns {boolean} is the object equal
    */
-  equals(object) {
+
+
+  Crio.prototype.equals = function equals(object) {
     return isEqual(this, object);
-  }
+  };
 
   /**
    * @function every
@@ -202,9 +198,13 @@ export class Crio {
    * @param {*} [thisArg=this] argument for "this" to use in the iteration
    * @returns {boolean} does every instance match
    */
-  every(fn, thisArg = this) {
-    return every(this, fn, thisArg);
-  }
+
+
+  Crio.prototype.every = function every(fn) {
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    return _every(this, fn, thisArg);
+  };
 
   /**
    * @function filter
@@ -216,23 +216,23 @@ export class Crio {
    * @param {*} [thisArg=this] argument for "this" to use in the iteration
    * @returns {Crio} new crio instance
    */
-  filter(fn, thisArg = this) {
-    const updated = this.isArray()
-      ? filter(this, fn, thisArg)
-      : reduce(
-          this,
-          (updatedValue, value, key) => {
-            if (fn.call(thisArg, value, key, this)) {
-              updatedValue[key] = value;
-            }
 
-            return updatedValue;
-          },
-          {}
-        );
+
+  Crio.prototype.filter = function filter(fn) {
+    var _this = this;
+
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    var updated = this.isArray() ? _filter(this, fn, thisArg) : _reduce(this, function (updatedValue, value, key) {
+      if (fn.call(thisArg, value, key, _this)) {
+        updatedValue[key] = value;
+      }
+
+      return updatedValue;
+    }, {});
 
     return new this.constructor(updated);
-  }
+  };
 
   /**
    * @function find
@@ -244,9 +244,11 @@ export class Crio {
    * @param {number} [fromKey] key to start from when performing the find
    * @returns {*} found item or undefined
    */
-  find(fn, fromKey) {
-    return find(this, fn, fromKey);
-  }
+
+
+  Crio.prototype.find = function find(fn, fromKey) {
+    return _find(this, fn, fromKey);
+  };
 
   /**
    * @function forEach
@@ -258,11 +260,15 @@ export class Crio {
    * @param {*} [thisArg=this] argument to use as "this" in the iteration
    * @returns {Crio} new crio instance
    */
-  forEach(fn, thisArg = this) {
-    forEach(this, fn, thisArg);
+
+
+  Crio.prototype.forEach = function forEach(fn) {
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    _forEach(this, fn, thisArg);
 
     return this;
-  }
+  };
 
   /**
    * @function get
@@ -273,9 +279,11 @@ export class Crio {
    * @param {number|string} key key to retrieve
    * @returns {*} item found at key
    */
-  get(key) {
+
+
+  Crio.prototype.get = function get(key) {
     return this[key];
-  }
+  };
 
   /**
    * @function getIn
@@ -286,13 +294,15 @@ export class Crio {
    * @param {Array<number|string>} keys path to retrieve from
    * @returns {*} item found at nested path
    */
-  getIn(keys) {
+
+
+  Crio.prototype.getIn = function getIn(keys) {
     if (!keys || !keys.length) {
       return this;
     }
 
     return get(keys, this);
-  }
+  };
 
   /**
    * @function has
@@ -303,9 +313,11 @@ export class Crio {
    * @param {number|string} key key to test
    * @returns {boolean} does the crio have the key
    */
-  has(key) {
+
+
+  Crio.prototype.has = function has(key) {
     return hasOwnProperty.call(this, key);
-  }
+  };
 
   /**
    * @function hasIn
@@ -316,7 +328,9 @@ export class Crio {
    * @param {Array<number|string>} keys path to test
    * @returns {boolean} does the crio have the nested path
    */
-  hasIn(keys) {
+
+
+  Crio.prototype.hasIn = function hasIn(keys) {
     if (!keys || !keys.length) {
       return false;
     }
@@ -325,10 +339,12 @@ export class Crio {
       return this.has(keys[0]);
     }
 
-    const {currentValue, lastIndex} = getKeysMetadata(keys, this);
+    var _getKeysMetadata2 = getKeysMetadata(keys, this),
+        currentValue = _getKeysMetadata2.currentValue,
+        lastIndex = _getKeysMetadata2.lastIndex;
 
     return isCrio(currentValue) && currentValue.has(keys[lastIndex]);
-  }
+  };
 
   /**
    * @function includes
@@ -339,11 +355,13 @@ export class Crio {
    * @param {*} value value to test for existence
    * @returns {boolean} does the value exist in the crio
    */
-  includes(value) {
-    return this.some((currentValue) => {
+
+
+  Crio.prototype.includes = function includes(value) {
+    return this.some(function (currentValue) {
       return currentValue === value;
     });
-  }
+  };
 
   /**
    * @function isArray
@@ -353,9 +371,11 @@ export class Crio {
    *
    * @returns {boolean} is the crio an array
    */
-  isArray() {
+
+
+  Crio.prototype.isArray = function isArray() {
     return this[CRIO_TYPE] === CRIO_ARRAY_TYPE;
-  }
+  };
 
   /**
      * @function isObject
@@ -365,9 +385,11 @@ export class Crio {
      *
      * @returns {boolean} is the crio an object
      */
-  isObject() {
+
+
+  Crio.prototype.isObject = function isObject() {
     return this[CRIO_TYPE] === CRIO_OBJECT_TYPE;
-  }
+  };
 
   /**
    * @function keys
@@ -377,9 +399,11 @@ export class Crio {
    *
    * @returns {Array<string>} keys in the crio
    */
-  keys() {
-    return keys(this);
-  }
+
+
+  Crio.prototype.keys = function keys() {
+    return _keys(this);
+  };
 
   /**
    * @function map
@@ -391,21 +415,21 @@ export class Crio {
    * @param {*} [thisArg=this] argument to use as "this" in the iteration
    * @returns {Crio} new crio instance
    */
-  map(fn, thisArg = this) {
-    const updated = this.isArray()
-      ? map(this, fn, thisArg)
-      : reduce(
-          this,
-          (updatedValue, value, key) => {
-            updatedValue[key] = fn.call(thisArg, value, key, this);
 
-            return updatedValue;
-          },
-          {}
-        );
+
+  Crio.prototype.map = function map(fn) {
+    var _this2 = this;
+
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    var updated = this.isArray() ? _map(this, fn, thisArg) : _reduce(this, function (updatedValue, value, key) {
+      updatedValue[key] = fn.call(thisArg, value, key, _this2);
+
+      return updatedValue;
+    }, {});
 
     return new this.constructor(updated);
-  }
+  };
 
   /**
    * @function merge
@@ -416,15 +440,21 @@ export class Crio {
    * @param {...Array<CrioArray|CrioObject|Object>} objects objects to merge with the crio
    * @returns {Crio} new crio instance
    */
-  merge(...objects) {
+
+
+  Crio.prototype.merge = function merge() {
+    for (var _len = arguments.length, objects = Array(_len), _key = 0; _key < _len; _key++) {
+      objects[_key] = arguments[_key];
+    }
+
     if (!objects.length) {
       return this;
     }
 
-    const merged = merge({}, this.thaw(), ...objects);
+    var merged = _merge.apply(undefined, [{}, this.thaw()].concat(objects));
 
     return new this.constructor(merged);
-  }
+  };
 
   /**
    * @function mergeIn
@@ -436,21 +466,27 @@ export class Crio {
    * @param {...Array<CrioArray|CrioObject|Object>} objects objects to merge with the crio
    * @returns {Crio} new crio instance
    */
-  mergeIn(keys, ...objects) {
+
+
+  Crio.prototype.mergeIn = function mergeIn(keys) {
     if (!keys || !keys.length) {
       return this;
     }
 
-    const valueToMerge = this.getIn(keys);
+    var valueToMerge = this.getIn(keys);
 
-    if (!isCrio(valueToMerge)) {
-      return this.setIn(keys, merge({}, ...objects));
+    for (var _len2 = arguments.length, objects = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      objects[_key2 - 1] = arguments[_key2];
     }
 
-    const updated = this.setIn(keys, valueToMerge.merge(...objects));
+    if (!isCrio(valueToMerge)) {
+      return this.setIn(keys, _merge.apply(undefined, [{}].concat(objects)));
+    }
+
+    var updated = this.setIn(keys, valueToMerge.merge.apply(valueToMerge, objects));
 
     return new this.constructor(updated);
-  }
+  };
 
   /**
    * @function mutate
@@ -462,14 +498,15 @@ export class Crio {
    * @param {*} [thisArg=this] argument to use for "this" in the call
    * @returns {*} crioed value resulting from the call
    */
-  mutate(fn, thisArg = this) {
-    const result = fn.call(thisArg, this.thaw(), this);
 
-    return getCrioValue(
-      result,
-      getCorrectConstructor(result, CrioArray, CrioObject)
-    );
-  }
+
+  Crio.prototype.mutate = function mutate(fn) {
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    var result = fn.call(thisArg, this.thaw(), this);
+
+    return getCrioValue(result, getCorrectConstructor(result, CrioArray, CrioObject));
+  };
 
   /**
    * @function pluck
@@ -480,17 +517,17 @@ export class Crio {
    * @param {string} key key to find value of in collection object
    * @returns {Crio} new crio instance
    */
-  pluck(key) {
-    let plucked;
 
-    return this.reduce((pluckedValues, value) => {
-      plucked = !!(value && hasOwnProperty.call(value, key))
-        ? value[key]
-        : undefined;
 
-      return [...pluckedValues, plucked];
+  Crio.prototype.pluck = function pluck(key) {
+    var plucked = void 0;
+
+    return this.reduce(function (pluckedValues, value) {
+      plucked = !!(value && hasOwnProperty.call(value, key)) ? value[key] : undefined;
+
+      return [].concat(pluckedValues, [plucked]);
     }, []);
-  }
+  };
 
   /**
      * @function pluckIn
@@ -501,7 +538,9 @@ export class Crio {
      * @param {Array<number|string>} keys keys to find value of in collection object
      * @returns {Crio} new crio instance
      */
-  pluckIn(keys) {
+
+
+  Crio.prototype.pluckIn = function pluckIn(keys) {
     if (!keys || !keys.length) {
       return new CrioArray([]);
     }
@@ -510,14 +549,16 @@ export class Crio {
       return this.pluck(keys[0]);
     }
 
-    const {currentValue, lastIndex} = getKeysMetadata(keys, this);
+    var _getKeysMetadata3 = getKeysMetadata(keys, this),
+        currentValue = _getKeysMetadata3.currentValue,
+        lastIndex = _getKeysMetadata3.lastIndex;
 
     if (!isCrio(currentValue)) {
       return this;
     }
 
     return currentValue.pluck(keys[lastIndex]);
-  }
+  };
 
   /**
    * @function reduce
@@ -530,14 +571,15 @@ export class Crio {
    * @param {*} [thisArg=this] argument to use for "this" in the call of fn
    * @returns {*} the reduced value
    */
-  reduce(fn, initialValue, thisArg = this) {
-    const reducedValue = reduce.call(thisArg, this, fn, initialValue);
 
-    return getCrioValue(
-      reducedValue,
-      getCorrectConstructor(reducedValue, CrioArray, CrioObject)
-    );
-  }
+
+  Crio.prototype.reduce = function reduce(fn, initialValue) {
+    var thisArg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this;
+
+    var reducedValue = _reduce.call(thisArg, this, fn, initialValue);
+
+    return getCrioValue(reducedValue, getCorrectConstructor(reducedValue, CrioArray, CrioObject));
+  };
 
   /**
    * @function reduceRight
@@ -550,14 +592,15 @@ export class Crio {
    * @param {*} [thisArg=this] argument to use for "this" in the call of fn
    * @returns {*} the reduced value
    */
-  reduceRight(fn, initialValue, thisArg = this) {
-    const reducedValue = reduceRight.call(thisArg, this, fn, initialValue);
 
-    return getCrioValue(
-      reducedValue,
-      getCorrectConstructor(reducedValue, CrioArray, CrioObject)
-    );
-  }
+
+  Crio.prototype.reduceRight = function reduceRight(fn, initialValue) {
+    var thisArg = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this;
+
+    var reducedValue = _reduceRight.call(thisArg, this, fn, initialValue);
+
+    return getCrioValue(reducedValue, getCorrectConstructor(reducedValue, CrioArray, CrioObject));
+  };
 
   /**
    * @function set
@@ -569,14 +612,15 @@ export class Crio {
    * @param {*} value value to assign
    * @returns {Crio} new crio instance
    */
-  set(key, value) {
-    const updated = {
-      ...this,
-      [key]: value
-    };
+
+
+  Crio.prototype.set = function set(key, value) {
+    var _extends2;
+
+    var updated = _extends({}, this, (_extends2 = {}, _extends2[key] = value, _extends2));
 
     return new this.constructor(updated);
-  }
+  };
 
   /**
    * @function setIn
@@ -588,15 +632,17 @@ export class Crio {
    * @param {*} value value to assign
    * @returns {Crio} new crio instance
    */
-  setIn(keys, value) {
+
+
+  Crio.prototype.setIn = function setIn(keys, value) {
     if (!keys || !keys.length) {
       return this;
     }
 
-    const updatedObject = set(keys, value, this);
+    var updatedObject = set(keys, value, this);
 
     return new this.constructor(updatedObject);
-  }
+  };
 
   /**
    * @function some
@@ -608,9 +654,13 @@ export class Crio {
    * @param {*} [thisArg=this] argument to use as "this" in the iteration
    * @returns {boolean} are there any matches
    */
-  some(fn, thisArg = this) {
-    return some(this, fn, thisArg);
-  }
+
+
+  Crio.prototype.some = function some(fn) {
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    return _some(this, fn, thisArg);
+  };
 
   /**
    * @function thaw
@@ -620,13 +670,15 @@ export class Crio {
    *
    * @returns {Array<*>|Object} plain JS version of crio
    */
-  thaw() {
-    const returnValue = this.isArray() ? [] : {};
 
-    forEach(this, assignToObject(returnValue, getStandardValue));
+
+  Crio.prototype.thaw = function thaw() {
+    var returnValue = this.isArray() ? [] : {};
+
+    _forEach(this, assignToObject(returnValue, getStandardValue));
 
     return returnValue;
-  }
+  };
 
   /**
    * @function toArray
@@ -636,9 +688,11 @@ export class Crio {
    *
    * @returns {CrioArray} new crio array instance
    */
-  toArray() {
+
+
+  Crio.prototype.toArray = function toArray() {
     return this.isArray() ? this : new CrioArray(this.values());
-  }
+  };
 
   /**
    * @function toLocaleString
@@ -648,9 +702,11 @@ export class Crio {
    *
    * @returns {string} stringified crio
    */
-  toLocaleString() {
+
+
+  Crio.prototype.toLocaleString = function toLocaleString() {
     return this.toString();
-  }
+  };
 
   /**
    * @function toObject
@@ -660,23 +716,21 @@ export class Crio {
    *
    * @returns {CrioObject} new crio object instance
    */
-  toObject() {
+
+
+  Crio.prototype.toObject = function toObject() {
     if (this.isObject()) {
       return this;
     }
 
-    const updated = reduce(
-      this,
-      (object, value, key) => {
-        object[key] = value;
+    var updated = _reduce(this, function (object, value, key) {
+      object[key] = value;
 
-        return object;
-      },
-      {}
-    );
+      return object;
+    }, {});
 
     return new CrioObject(updated);
-  }
+  };
 
   /**
    * @function toLocaleString
@@ -686,9 +740,11 @@ export class Crio {
    *
    * @returns {string} stringified crio
    */
-  toString() {
+
+
+  Crio.prototype.toString = function toString() {
     return stringify(this);
-  }
+  };
 
   /**
    * @function valueOf
@@ -698,9 +754,11 @@ export class Crio {
    *
    * @returns {Crio} the same crio instance
    */
-  valueOf() {
+
+
+  Crio.prototype.valueOf = function valueOf() {
     return this;
-  }
+  };
 
   /**
    * @function values
@@ -710,15 +768,33 @@ export class Crio {
    *
    * @returns {Array<*>} values in the crio
    */
-  values() {
-    return values(this);
-  }
-}
 
-Object.defineProperties(Crio.prototype, {
-  [Symbol.iterator]: ITERATOR_PROPERTY_DESCRIPTOR,
-  [Symbol.unscopables]: UNSCOPABLES_PROPERTY_DESCRIPTOR
-});
+
+  Crio.prototype.values = function values() {
+    return _values(this);
+  };
+
+  _createClass(Crio, [{
+    key: CRIO_SYMBOL,
+    get: function get() {
+      return true;
+    }
+  }, {
+    key: 'hashCode',
+    get: function get() {
+      return hashIt(this);
+    }
+  }], [{
+    key: '@@species',
+    get: function get() {
+      return this;
+    }
+  }]);
+
+  return Crio;
+}();
+
+Object.defineProperties(Crio.prototype, (_Object$definePropert = {}, _Object$definePropert[Symbol.iterator] = ITERATOR_PROPERTY_DESCRIPTOR, _Object$definePropert[Symbol.unscopables] = UNSCOPABLES_PROPERTY_DESCRIPTOR, _Object$definePropert));
 
 /**
  * @class CrioArray
@@ -726,9 +802,13 @@ Object.defineProperties(Crio.prototype, {
  *
  * @memberof module:Crio
  */
-export class CrioArray extends Crio {
-  get length() {
-    return keys(this).length;
+export var CrioArray = function (_Crio) {
+  _inherits(CrioArray, _Crio);
+
+  function CrioArray() {
+    _classCallCheck(this, CrioArray);
+
+    return _possibleConstructorReturn(this, _Crio.apply(this, arguments));
   }
 
   /**
@@ -740,11 +820,11 @@ export class CrioArray extends Crio {
    * @param {...Array<*>} items items to append to the crio
    * @returns {CrioArray} new crio array instance
    */
-  concat(items) {
-    const concatted = [...this.thaw(), ...items];
+  CrioArray.prototype.concat = function concat(items) {
+    var concatted = [].concat(this.thaw(), items);
 
     return new CrioArray(concatted);
-  }
+  };
 
   /**
    * @function copyWithin
@@ -757,17 +837,22 @@ export class CrioArray extends Crio {
    * @param {number} [end=this.length] index to stop copying to
    * @returns {CrioArray} new crio array instance
    */
-  copyWithin(target, start = 0, end = this.length) {
-    const copiedArray = this.thaw();
-    const length = this.length >>> 0;
 
-    let to = getRelativeValue(target >> 0, length),
-      from = getRelativeValue(start >> 0, length);
 
-    const final = getRelativeValue(end >> 0, length);
+  CrioArray.prototype.copyWithin = function copyWithin(target) {
+    var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var end = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.length;
 
-    let count = Math.min(final - from, length - to),
-      direction = 1;
+    var copiedArray = this.thaw();
+    var length = this.length >>> 0;
+
+    var to = getRelativeValue(target >> 0, length),
+        from = getRelativeValue(start >> 0, length);
+
+    var final = getRelativeValue(end >> 0, length);
+
+    var count = Math.min(final - from, length - to),
+        direction = 1;
 
     if (from < to && to < from + count) {
       direction = -1;
@@ -788,7 +873,7 @@ export class CrioArray extends Crio {
     }
 
     return new CrioArray(copiedArray);
-  }
+  };
 
   /**
    * @function difference
@@ -799,33 +884,35 @@ export class CrioArray extends Crio {
    * @param {Array<Array>} arrays arrays to get the difference of
    * @returns {CrioArray} array of items matching diffference criteria
    */
-  difference(...arrays) {
+
+
+  CrioArray.prototype.difference = function difference() {
+    for (var _len3 = arguments.length, arrays = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      arrays[_key3] = arguments[_key3];
+    }
+
     if (!arrays.length) {
       return this;
     }
 
-    let indexOfValue;
+    var indexOfValue = void 0;
 
-    const difference = reduce(
-      arrays,
-      (differenceArray, array) => {
-        if (isArray(array) || isCrioArray(array)) {
-          forEach(array, (value) => {
-            indexOfValue = differenceArray.indexOf(value);
+    var difference = _reduce(arrays, function (differenceArray, array) {
+      if (isArray(array) || isCrioArray(array)) {
+        _forEach(array, function (value) {
+          indexOfValue = differenceArray.indexOf(value);
 
-            if (!!~indexOfValue) {
-              differenceArray.splice(indexOfValue, 1);
-            }
-          });
-        }
+          if (!!~indexOfValue) {
+            differenceArray.splice(indexOfValue, 1);
+          }
+        });
+      }
 
-        return differenceArray;
-      },
-      this.thaw()
-    );
+      return differenceArray;
+    }, this.thaw());
 
     return new CrioArray(difference);
-  }
+  };
 
   /**
    * @function fill
@@ -838,11 +925,16 @@ export class CrioArray extends Crio {
    * @param {number} [end=this.length] the ending index to fill
    * @returns {CrioArray} new crio array instance
    */
-  fill(value, start = 0, end = this.length) {
-    const filled = fill(this.thaw(), value, start, end);
+
+
+  CrioArray.prototype.fill = function fill(value) {
+    var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var end = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.length;
+
+    var filled = _fill(this.thaw(), value, start, end);
 
     return new CrioArray(filled, this);
-  }
+  };
 
   /**
    * @function findIndex
@@ -854,13 +946,19 @@ export class CrioArray extends Crio {
    * @param {*} [thisArg=this] argument to use as "this" in fn call
    * @returns {number} index of match, or -1
    */
-  findIndex(fn, thisArg = this) {
-    const index = findKey(this, (value, key) => {
-      return fn.call(thisArg, value, +key, this);
+
+
+  CrioArray.prototype.findIndex = function findIndex(fn) {
+    var _this4 = this;
+
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    var index = _findKey(this, function (value, key) {
+      return fn.call(thisArg, value, +key, _this4);
     });
 
     return isUndefined(index) ? -1 : +index;
-  }
+  };
 
   /**
    * @function findLastIndex
@@ -872,13 +970,19 @@ export class CrioArray extends Crio {
    * @param {*} [thisArg=this] argument to use as "this" in fn call
    * @returns {number} index of match, or -1
    */
-  findLastIndex(fn, thisArg = this) {
-    const index = findLastKey(this, (value, key) => {
-      return fn.call(thisArg, value, +key, this);
+
+
+  CrioArray.prototype.findLastIndex = function findLastIndex(fn) {
+    var _this5 = this;
+
+    var thisArg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this;
+
+    var index = _findLastKey(this, function (value, key) {
+      return fn.call(thisArg, value, +key, _this5);
     });
 
     return isUndefined(index) ? -1 : +index;
-  }
+  };
 
   /**
    * @function first
@@ -889,9 +993,13 @@ export class CrioArray extends Crio {
    * @param {number} [size=1] size of elements to take from beginning of array
    * @returns {CrioArray}
    */
-  first(size = 1) {
+
+
+  CrioArray.prototype.first = function first() {
+    var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
     return this.slice(0, size);
-  }
+  };
 
   /**
    * @function indexOf
@@ -902,11 +1010,13 @@ export class CrioArray extends Crio {
    * @param {*} value value to find in crio
    * @returns {number} index of match, or -1
    */
-  indexOf(value) {
-    return this.findIndex((thisValue) => {
+
+
+  CrioArray.prototype.indexOf = function indexOf(value) {
+    return this.findIndex(function (thisValue) {
       return thisValue === value;
     });
-  }
+  };
 
   /**
    * @function intersection
@@ -917,43 +1027,45 @@ export class CrioArray extends Crio {
    * @param {Array<Array>} arrays
    * @returns {CrioArray}
    */
-  intersection(...arrays) {
+
+
+  CrioArray.prototype.intersection = function intersection() {
+    for (var _len4 = arguments.length, arrays = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      arrays[_key4] = arguments[_key4];
+    }
+
     if (!arrays.length) {
       return this;
     }
 
-    const allArrays = [this, ...arrays];
-    const allArraysLength = allArrays.length;
+    var allArrays = [this].concat(arrays);
+    var allArraysLength = allArrays.length;
 
-    let indices = [],
-      indexOfValue;
+    var indices = [],
+        indexOfValue = void 0;
 
-    const reducedArrays = reduce(
-      allArrays,
-      (values, array) => {
-        if (isArray(array) || isCrioArray(array)) {
-          forEach(array, (value) => {
-            indexOfValue = values.indexOf(value);
+    var reducedArrays = _reduce(allArrays, function (values, array) {
+      if (isArray(array) || isCrioArray(array)) {
+        _forEach(array, function (value) {
+          indexOfValue = values.indexOf(value);
 
-            if (!!~indexOfValue) {
-              indices[indexOfValue]++;
-            } else {
-              indices[values.length] = 1;
-              values.push(value);
-            }
-          });
-        }
+          if (!!~indexOfValue) {
+            indices[indexOfValue]++;
+          } else {
+            indices[values.length] = 1;
+            values.push(value);
+          }
+        });
+      }
 
-        return values;
-      },
-      []
-    );
-    const filteredArrays = filter(reducedArrays, (value, index) => {
+      return values;
+    }, []);
+    var filteredArrays = _filter(reducedArrays, function (value, index) {
       return indices[index] === allArraysLength;
     });
 
     return new CrioArray(filteredArrays);
-  }
+  };
 
   /**
    * @function join
@@ -964,9 +1076,13 @@ export class CrioArray extends Crio {
    * @param {string} [separator=','] character(s) to place between strings in combination
    * @returns {string} parameters joined by separator in string
    */
-  join(separator = ',') {
+
+
+  CrioArray.prototype.join = function join() {
+    var separator = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ',';
+
     return this.thaw().join(separator);
-  }
+  };
 
   /**
    * @function last
@@ -977,9 +1093,13 @@ export class CrioArray extends Crio {
    * @param {number} [size=1] size of elements to take from end of array
    * @returns {CrioArray}
    */
-  last(size = 1) {
+
+
+  CrioArray.prototype.last = function last() {
+    var size = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
     return this.slice(this.length - size);
-  }
+  };
 
   /**
    * @function lastIndexOf
@@ -990,11 +1110,13 @@ export class CrioArray extends Crio {
    * @param {*} value value to find in crio
    * @returns {number} index of match, or -1
    */
-  lastIndexOf(value) {
-    return this.findLastIndex((thisValue) => {
+
+
+  CrioArray.prototype.lastIndexOf = function lastIndexOf(value) {
+    return this.findLastIndex(function (thisValue) {
       return thisValue === value;
     });
-  }
+  };
 
   /**
    * @function pop
@@ -1004,9 +1126,11 @@ export class CrioArray extends Crio {
    *
    * @returns {CrioArray} new crio array instance
    */
-  pop() {
+
+
+  CrioArray.prototype.pop = function pop() {
     return this.slice(0, this.length - 1);
-  }
+  };
 
   /**
    * @function reverse
@@ -1016,13 +1140,15 @@ export class CrioArray extends Crio {
    *
    * @returns {CrioArray} new crio array instance
    */
-  reverse() {
-    let reversed = this.thaw();
+
+
+  CrioArray.prototype.reverse = function reverse() {
+    var reversed = this.thaw();
 
     reversed.reverse();
 
     return new CrioArray(reversed);
-  }
+  };
 
   /**
    * @function shift
@@ -1032,9 +1158,11 @@ export class CrioArray extends Crio {
    *
    * @returns {CrioArray} new crio array instance
    */
-  shift() {
+
+
+  CrioArray.prototype.shift = function shift() {
     return this.slice(1);
-  }
+  };
 
   /**
    * @function slice
@@ -1046,11 +1174,16 @@ export class CrioArray extends Crio {
    * @param {number} [end=this.length] size of array from first index
    * @returns {CrioArray} new crio array instance
    */
-  slice(start = 0, end = this.length) {
-    const sliced = slice(this, start, end);
+
+
+  CrioArray.prototype.slice = function slice() {
+    var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var end = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.length;
+
+    var sliced = _slice(this, start, end);
 
     return new CrioArray(sliced);
-  }
+  };
 
   /**
    * @function sort
@@ -1061,13 +1194,15 @@ export class CrioArray extends Crio {
    * @param {function} fn the function to sort based on
    * @returns {CrioArray} new crio array instance
    */
-  sort(fn) {
-    let sorted = this.thaw();
+
+
+  CrioArray.prototype.sort = function sort(fn) {
+    var sorted = this.thaw();
 
     sorted.sort(fn);
 
     return new CrioArray(sorted);
-  }
+  };
 
   /**
    * @function splice
@@ -1080,13 +1215,22 @@ export class CrioArray extends Crio {
    * @param {...Array<*>} items items to insert after delete is complete
    * @returns {CrioArray} new crio array instance
    */
-  splice(start = 0, deleteCount = 1, ...items) {
-    let spliced = this.thaw();
 
-    spliced.splice(start, deleteCount, ...items);
+
+  CrioArray.prototype.splice = function splice() {
+    var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var deleteCount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+    var spliced = this.thaw();
+
+    for (var _len5 = arguments.length, items = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+      items[_key5 - 2] = arguments[_key5];
+    }
+
+    spliced.splice.apply(spliced, [start, deleteCount].concat(items));
 
     return new CrioArray(spliced);
-  }
+  };
 
   /**
    * @function unique
@@ -1096,19 +1240,19 @@ export class CrioArray extends Crio {
    *
    * @returns {CrioArray} new crio instance
    */
-  unique() {
-    let hashArray = [],
-      newArray = [],
-      hasHashCode = false,
-      hashCode,
-      storeValue;
 
-    return this.filter((value) => {
+
+  CrioArray.prototype.unique = function unique() {
+    var hashArray = [],
+        newArray = [],
+        hasHashCode = false,
+        hashCode = void 0,
+        storeValue = void 0;
+
+    return this.filter(function (value) {
       hashCode = !!value ? value.hashCode : undefined;
       hasHashCode = !isUndefined(hashCode);
-      storeValue =
-        !~newArray.indexOf(value) &&
-        (!hasHashCode || !~hashArray.indexOf(hashCode));
+      storeValue = !~newArray.indexOf(value) && (!hasHashCode || !~hashArray.indexOf(hashCode));
 
       if (storeValue) {
         newArray.push(value);
@@ -1120,7 +1264,7 @@ export class CrioArray extends Crio {
 
       return storeValue;
     });
-  }
+  };
 
   /**
    * @function unshift
@@ -1131,9 +1275,15 @@ export class CrioArray extends Crio {
    * @param {...Array<*>} items items to prepend to the array
    * @returns {CrioArray} new crio array instance
    */
-  unshift(...items) {
-    return items.length ? new CrioArray([...items, ...this.thaw()]) : this;
-  }
+
+
+  CrioArray.prototype.unshift = function unshift() {
+    for (var _len6 = arguments.length, items = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+      items[_key6] = arguments[_key6];
+    }
+
+    return items.length ? new CrioArray([].concat(items, this.thaw())) : this;
+  };
 
   /**
    * @function xor
@@ -1144,51 +1294,60 @@ export class CrioArray extends Crio {
    * @param {Array<Array>} arrays arrays to find symmetric values in
    * @returns {CrioArray} new crio array instance
    */
-  xor(...arrays) {
+
+
+  CrioArray.prototype.xor = function xor() {
+    for (var _len7 = arguments.length, arrays = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      arrays[_key7] = arguments[_key7];
+    }
+
     if (!arrays.length) {
       return this;
     }
 
-    const allArrays = [this, ...arrays];
+    var allArrays = [this].concat(arrays);
 
-    let indicesToRemove = [],
-      indexOfValue;
+    var indicesToRemove = [],
+        indexOfValue = void 0;
 
-    const reducedValues = reduce(
-      allArrays,
-      (values, array) => {
-        if (isArray(array) || isCrioArray(array)) {
-          forEach(array, (value) => {
-            indexOfValue = values.indexOf(value);
+    var reducedValues = _reduce(allArrays, function (values, array) {
+      if (isArray(array) || isCrioArray(array)) {
+        _forEach(array, function (value) {
+          indexOfValue = values.indexOf(value);
 
-            if (!!~indexOfValue) {
-              indicesToRemove.push(indexOfValue);
-            } else {
-              values.push(value);
-            }
-          });
-        }
+          if (!!~indexOfValue) {
+            indicesToRemove.push(indexOfValue);
+          } else {
+            values.push(value);
+          }
+        });
+      }
 
-        return values;
-      },
-      []
-    );
-    const xorValues = filter(reducedValues, (value, index) => {
+      return values;
+    }, []);
+    var xorValues = _filter(reducedValues, function (value, index) {
       return !~indicesToRemove.indexOf(index);
     });
 
     return new CrioArray(xorValues);
-  }
-}
+  };
 
-Object.defineProperties(CrioArray.prototype, {
-  [CRIO_TYPE]: {
-    configurable: false,
-    enumerable: false,
-    value: CRIO_ARRAY_TYPE,
-    writable: false
-  }
-});
+  _createClass(CrioArray, [{
+    key: 'length',
+    get: function get() {
+      return _keys(this).length;
+    }
+  }]);
+
+  return CrioArray;
+}(Crio);
+
+Object.defineProperties(CrioArray.prototype, (_Object$definePropert2 = {}, _Object$definePropert2[CRIO_TYPE] = {
+  configurable: false,
+  enumerable: false,
+  value: CRIO_ARRAY_TYPE,
+  writable: false
+}, _Object$definePropert2));
 
 /**
  * @class CrioObject
@@ -1196,9 +1355,13 @@ Object.defineProperties(CrioArray.prototype, {
  *
  * @memberof module:Crio
  */
-export class CrioObject extends Crio {
-  get size() {
-    return keys(this).length;
+export var CrioObject = function (_Crio2) {
+  _inherits(CrioObject, _Crio2);
+
+  function CrioObject() {
+    _classCallCheck(this, CrioObject);
+
+    return _possibleConstructorReturn(this, _Crio2.apply(this, arguments));
   }
 
   /**
@@ -1210,9 +1373,9 @@ export class CrioObject extends Crio {
    * @param {function} fn function to match
    * @returns {string|undefined} key matching fn
    */
-  findKey(fn) {
-    return findKey(this, fn);
-  }
+  CrioObject.prototype.findKey = function findKey(fn) {
+    return _findKey(this, fn);
+  };
 
   /**
    * @function findLastKey
@@ -1223,18 +1386,27 @@ export class CrioObject extends Crio {
    * @param {function} fn function to match
    * @returns {string|undefined} key matching fn
    */
-  findLastKey(fn) {
-    return findLastKey(this, fn);
-  }
-}
 
-Object.defineProperties(CrioObject.prototype, {
-  [CRIO_TYPE]: {
-    configurable: false,
-    enumerable: false,
-    value: CRIO_OBJECT_TYPE,
-    writable: false
-  }
-});
+
+  CrioObject.prototype.findLastKey = function findLastKey(fn) {
+    return _findLastKey(this, fn);
+  };
+
+  _createClass(CrioObject, [{
+    key: 'size',
+    get: function get() {
+      return _keys(this).length;
+    }
+  }]);
+
+  return CrioObject;
+}(Crio);
+
+Object.defineProperties(CrioObject.prototype, (_Object$definePropert3 = {}, _Object$definePropert3[CRIO_TYPE] = {
+  configurable: false,
+  enumerable: false,
+  value: CRIO_OBJECT_TYPE,
+  writable: false
+}, _Object$definePropert3));
 
 assignToObject = createAssignToObject(CrioArray, CrioObject);

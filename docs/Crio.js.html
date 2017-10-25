@@ -96,16 +96,13 @@ import isUndefined from 'lodash/isUndefined';
 import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import get from 'lodash/fp/get';
-import keys from 'lodash/keys';
 import map from 'lodash/map';
 import merge from 'lodash/merge';
 import reduce from 'lodash/reduce';
 import reduceRight from 'lodash/reduceRight';
-import reverse from 'lodash/fp/reverse';
 import set from 'lodash/fp/set';
 import slice from 'lodash/slice';
 import some from 'lodash/some';
-import sortBy from 'lodash/fp/sortBy';
 import toPairs from 'lodash/toPairs';
 import values from 'lodash/values';
 
@@ -128,9 +125,11 @@ import {
   getKeysMetadata,
   getRelativeValue,
   getStandardValue,
+  hasOwnProperty,
   isCrio,
   isCrioArray,
   isEqual,
+  keys,
   stringify
 } from './utils';
 
@@ -243,11 +242,7 @@ export class Crio {
       return this.delete(keys[0]);
     }
 
-    const {
-      currentValue,
-      lastIndex,
-      parentKeys
-    } = getKeysMetadata(keys, this);
+    const {currentValue, lastIndex, parentKeys} = getKeysMetadata(keys, this);
 
     if (!isCrio(currentValue)) {
       return this;
@@ -308,15 +303,19 @@ export class Crio {
    * @returns {Crio} new crio instance
    */
   filter(fn, thisArg = this) {
-    const updated = this.isArray() ?
-      filter(this, fn, thisArg) :
-      reduce(this, (updatedValue, value, key) => {
-        if (fn.call(thisArg, value, key, this)) {
-          updatedValue[key] = value;
-        }
+    const updated = this.isArray()
+      ? filter(this, fn, thisArg)
+      : reduce(
+          this,
+          (updatedValue, value, key) => {
+            if (fn.call(thisArg, value, key, this)) {
+              updatedValue[key] = value;
+            }
 
-        return updatedValue;
-      }, {});
+            return updatedValue;
+          },
+          {}
+        );
 
     return new this.constructor(updated);
   }
@@ -391,7 +390,7 @@ export class Crio {
    * @returns {boolean} does the crio have the key
    */
   has(key) {
-    return this.hasOwnProperty(key);
+    return hasOwnProperty.call(this, key);
   }
 
   /**
@@ -412,10 +411,7 @@ export class Crio {
       return this.has(keys[0]);
     }
 
-    const {
-      currentValue,
-      lastIndex
-    } = getKeysMetadata(keys, this);
+    const {currentValue, lastIndex} = getKeysMetadata(keys, this);
 
     return isCrio(currentValue) &amp;&amp; currentValue.has(keys[lastIndex]);
   }
@@ -447,7 +443,7 @@ export class Crio {
     return this[CRIO_TYPE] === CRIO_ARRAY_TYPE;
   }
 
-    /**
+  /**
      * @function isObject
      *
      * @description
@@ -482,13 +478,17 @@ export class Crio {
    * @returns {Crio} new crio instance
    */
   map(fn, thisArg = this) {
-    const updated = this.isArray() ?
-      map(this, fn, thisArg) :
-      reduce(this, (updatedValue, value, key) => {
-        updatedValue[key] = fn.call(thisArg, value, key, this);
+    const updated = this.isArray()
+      ? map(this, fn, thisArg)
+      : reduce(
+          this,
+          (updatedValue, value, key) => {
+            updatedValue[key] = fn.call(thisArg, value, key, this);
 
-        return updatedValue;
-      }, {});
+            return updatedValue;
+          },
+          {}
+        );
 
     return new this.constructor(updated);
   }
@@ -551,7 +551,10 @@ export class Crio {
   mutate(fn, thisArg = this) {
     const result = fn.call(thisArg, this.thaw(), this);
 
-    return getCrioValue(result, getCorrectConstructor(result, CrioArray, CrioObject));
+    return getCrioValue(
+      result,
+      getCorrectConstructor(result, CrioArray, CrioObject)
+    );
   }
 
   /**
@@ -567,16 +570,15 @@ export class Crio {
     let plucked;
 
     return this.reduce((pluckedValues, value) => {
-      plucked = !!(value &amp;&amp; value.hasOwnProperty(key)) ? value[key] : undefined;
+      plucked = !!(value &amp;&amp; hasOwnProperty.call(value, key))
+        ? value[key]
+        : undefined;
 
-      return [
-        ...pluckedValues,
-        plucked
-      ];
+      return [...pluckedValues, plucked];
     }, []);
   }
 
-    /**
+  /**
      * @function pluckIn
      *
      * @description
@@ -594,10 +596,7 @@ export class Crio {
       return this.pluck(keys[0]);
     }
 
-    const {
-      currentValue,
-      lastIndex
-    } = getKeysMetadata(keys, this);
+    const {currentValue, lastIndex} = getKeysMetadata(keys, this);
 
     if (!isCrio(currentValue)) {
       return this;
@@ -618,9 +617,12 @@ export class Crio {
    * @returns {*} the reduced value
    */
   reduce(fn, initialValue, thisArg = this) {
-    const reducedValue = reduce(this, fn, initialValue, thisArg);
+    const reducedValue = reduce.call(thisArg, this, fn, initialValue);
 
-    return getCrioValue(reducedValue, getCorrectConstructor(reducedValue, CrioArray, CrioObject));
+    return getCrioValue(
+      reducedValue,
+      getCorrectConstructor(reducedValue, CrioArray, CrioObject)
+    );
   }
 
   /**
@@ -635,9 +637,12 @@ export class Crio {
    * @returns {*} the reduced value
    */
   reduceRight(fn, initialValue, thisArg = this) {
-    const reducedValue = reduceRight(this, fn, initialValue, thisArg);
+    const reducedValue = reduceRight.call(thisArg, this, fn, initialValue);
 
-    return getCrioValue(reducedValue, getCorrectConstructor(reducedValue, CrioArray, CrioObject));
+    return getCrioValue(
+      reducedValue,
+      getCorrectConstructor(reducedValue, CrioArray, CrioObject)
+    );
   }
 
   /**
@@ -702,7 +707,7 @@ export class Crio {
    * @returns {Array&lt;*>|Object} plain JS version of crio
    */
   thaw() {
-    let returnValue = this.isArray() ? [] : {};
+    const returnValue = this.isArray() ? [] : {};
 
     forEach(this, assignToObject(returnValue, getStandardValue));
 
@@ -718,11 +723,7 @@ export class Crio {
    * @returns {CrioArray} new crio array instance
    */
   toArray() {
-    if (this.isArray()) {
-      return this;
-    }
-
-    return new CrioArray(this.values());
+    return this.isArray() ? this : new CrioArray(this.values());
   }
 
   /**
@@ -750,11 +751,15 @@ export class Crio {
       return this;
     }
 
-    const updated = reduce(this, (object, value, key) => {
-      object[key] = value;
+    const updated = reduce(
+      this,
+      (object, value, key) => {
+        object[key] = value;
 
-      return object;
-    }, {});
+        return object;
+      },
+      {}
+    );
 
     return new CrioObject(updated);
   }
@@ -809,7 +814,7 @@ Object.defineProperties(Crio.prototype, {
  */
 export class CrioArray extends Crio {
   get length() {
-    return Object.keys(this).length;
+    return keys(this).length;
   }
 
   /**
@@ -822,10 +827,9 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   concat(items) {
-    return new CrioArray([
-      ...this,
-      ...items
-    ]);
+    const concatted = [...this.thaw(), ...items];
+
+    return new CrioArray(concatted);
   }
 
   /**
@@ -840,18 +844,18 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   copyWithin(target, start = 0, end = this.length) {
-    const copiedArray = [...this];
+    const copiedArray = this.thaw();
     const length = this.length >>> 0;
 
     let to = getRelativeValue(target >> 0, length),
-        from = getRelativeValue(start >> 0, length);
+      from = getRelativeValue(start >> 0, length);
 
     const final = getRelativeValue(end >> 0, length);
 
     let count = Math.min(final - from, length - to),
-        direction = 1;
+      direction = 1;
 
-    if (from &lt; to &amp;&amp; to &lt; (from + count)) {
+    if (from &lt; to &amp;&amp; to &lt; from + count) {
       direction = -1;
       from += count - 1;
       to += count - 1;
@@ -888,19 +892,23 @@ export class CrioArray extends Crio {
 
     let indexOfValue;
 
-    const difference = reduce(arrays, (differenceArray, array) => {
-      if (isArray(array) || isCrioArray(array)) {
-        forEach(array, (value) => {
-          indexOfValue = differenceArray.indexOf(value);
+    const difference = reduce(
+      arrays,
+      (differenceArray, array) => {
+        if (isArray(array) || isCrioArray(array)) {
+          forEach(array, (value) => {
+            indexOfValue = differenceArray.indexOf(value);
 
-          if (!!~indexOfValue) {
-            differenceArray.splice(indexOfValue, 1);
-          }
-        });
-      }
+            if (!!~indexOfValue) {
+              differenceArray.splice(indexOfValue, 1);
+            }
+          });
+        }
 
-      return differenceArray;
-    }, [...this]);
+        return differenceArray;
+      },
+      this.thaw()
+    );
 
     return new CrioArray(difference);
   }
@@ -933,8 +941,8 @@ export class CrioArray extends Crio {
    * @returns {number} index of match, or -1
    */
   findIndex(fn, thisArg = this) {
-    const index = findKey(this, (value, index) => {
-      return fn.call(thisArg, value, +index, this);
+    const index = findKey(this, (value, key) => {
+      return fn.call(thisArg, value, +key, this);
     });
 
     return isUndefined(index) ? -1 : +index;
@@ -951,8 +959,8 @@ export class CrioArray extends Crio {
    * @returns {number} index of match, or -1
    */
   findLastIndex(fn, thisArg = this) {
-    const index = findLastKey(this, (value, index) => {
-      return fn.call(thisArg, value, +index, this);
+    const index = findLastKey(this, (value, key) => {
+      return fn.call(thisArg, value, +key, this);
     });
 
     return isUndefined(index) ? -1 : +index;
@@ -1000,31 +1008,32 @@ export class CrioArray extends Crio {
       return this;
     }
 
-    const allArrays = [
-      this,
-      ...arrays
-    ];
+    const allArrays = [this, ...arrays];
     const allArraysLength = allArrays.length;
 
     let indices = [],
-        indexOfValue;
+      indexOfValue;
 
-    const reducedArrays = reduce(allArrays, (values, array) => {
-      if (isArray(array) || isCrioArray(array)) {
-        forEach(array, (value) => {
-          indexOfValue = values.indexOf(value);
+    const reducedArrays = reduce(
+      allArrays,
+      (values, array) => {
+        if (isArray(array) || isCrioArray(array)) {
+          forEach(array, (value) => {
+            indexOfValue = values.indexOf(value);
 
-          if (!!~indexOfValue) {
-            indices[indexOfValue]++;
-          } else {
-            indices[values.length] = 1;
-            values.push(value);
-          }
-        });
-      }
+            if (!!~indexOfValue) {
+              indices[indexOfValue]++;
+            } else {
+              indices[values.length] = 1;
+              values.push(value);
+            }
+          });
+        }
 
-      return values;
-    }, []);
+        return values;
+      },
+      []
+    );
     const filteredArrays = filter(reducedArrays, (value, index) => {
       return indices[index] === allArraysLength;
     });
@@ -1042,7 +1051,7 @@ export class CrioArray extends Crio {
    * @returns {string} parameters joined by separator in string
    */
   join(separator = ',') {
-    return [...this].join(separator);
+    return this.thaw().join(separator);
   }
 
   /**
@@ -1094,7 +1103,9 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   reverse() {
-    const reversed = reverse(this);
+    let reversed = this.thaw();
+
+    reversed.reverse();
 
     return new CrioArray(reversed);
   }
@@ -1137,7 +1148,9 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   sort(fn) {
-    const sorted = sortBy(fn, this);
+    let sorted = this.thaw();
+
+    sorted.sort(fn);
 
     return new CrioArray(sorted);
   }
@@ -1154,7 +1167,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   splice(start = 0, deleteCount = 1, ...items) {
-    let spliced = [...this];
+    let spliced = this.thaw();
 
     spliced.splice(start, deleteCount, ...items);
 
@@ -1171,14 +1184,17 @@ export class CrioArray extends Crio {
    */
   unique() {
     let hashArray = [],
-        newArray = [],
-        hasHashCode = false,
-        hashCode, storeValue;
+      newArray = [],
+      hasHashCode = false,
+      hashCode,
+      storeValue;
 
     return this.filter((value) => {
       hashCode = !!value ? value.hashCode : undefined;
       hasHashCode = !isUndefined(hashCode);
-      storeValue = !~newArray.indexOf(value) &amp;&amp; (!hasHashCode || !~hashArray.indexOf(hashCode));
+      storeValue =
+        !~newArray.indexOf(value) &amp;&amp;
+        (!hasHashCode || !~hashArray.indexOf(hashCode));
 
       if (storeValue) {
         newArray.push(value);
@@ -1202,14 +1218,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   unshift(...items) {
-    if (!items.length) {
-      return this;
-    }
-
-    return new CrioArray([
-      ...items,
-      ...this
-    ]);
+    return items.length ? new CrioArray([...items, ...this.thaw()]) : this;
   }
 
   /**
@@ -1226,29 +1235,30 @@ export class CrioArray extends Crio {
       return this;
     }
 
-    const allArrays = [
-      this,
-      ...arrays
-    ];
+    const allArrays = [this, ...arrays];
 
     let indicesToRemove = [],
-        indexOfValue;
+      indexOfValue;
 
-    const reducedValues = reduce(allArrays, (values, array) => {
-      if (isArray(array) || isCrioArray(array)) {
-        forEach(array, (value) => {
-          indexOfValue = values.indexOf(value);
+    const reducedValues = reduce(
+      allArrays,
+      (values, array) => {
+        if (isArray(array) || isCrioArray(array)) {
+          forEach(array, (value) => {
+            indexOfValue = values.indexOf(value);
 
-          if (!!~indexOfValue) {
-            indicesToRemove.push(indexOfValue);
-          } else {
-            values.push(value);
-          }
-        });
-      }
+            if (!!~indexOfValue) {
+              indicesToRemove.push(indexOfValue);
+            } else {
+              values.push(value);
+            }
+          });
+        }
 
-      return values;
-    }, []);
+        return values;
+      },
+      []
+    );
     const xorValues = filter(reducedValues, (value, index) => {
       return !~indicesToRemove.indexOf(index);
     });
@@ -1274,7 +1284,7 @@ Object.defineProperties(CrioArray.prototype, {
  */
 export class CrioObject extends Crio {
   get size() {
-    return Object.keys(this).length;
+    return keys(this).length;
   }
 
   /**
@@ -1353,7 +1363,7 @@ assignToObject = createAssignToObject(CrioArray, CrioObject);
 
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

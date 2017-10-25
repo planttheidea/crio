@@ -6,12 +6,7 @@ import isPlainObject from 'lodash/isPlainObject';
 import stringifier from 'stringifier';
 
 // constants
-import {
-  CRIO_SYMBOL,
-  IS_PRODUCTION,
-  REACT_ELEMENT_TYPE,
-  STRINGIFIER_OPTIONS
-} from './constants';
+import { CRIO_SYMBOL, IS_PRODUCTION, REACT_ELEMENT_TYPE, STRINGIFIER_OPTIONS } from './constants';
 
 /**
  * @private
@@ -25,11 +20,11 @@ import {
  *
  * @returns {T} frozen object
  */
-export const freeze = ((isProduction) => {
+export var freeze = function (isProduction) {
   return isProduction ? identity : deepFreeze;
-})(IS_PRODUCTION);
+}(IS_PRODUCTION);
 
-export const hasOwnProperty = Object.prototype.hasOwnProperty;
+export var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * @private
@@ -43,7 +38,7 @@ export const hasOwnProperty = Object.prototype.hasOwnProperty;
  *
  * @returns {boolean} is the object a complex object
  */
-export const isComplexObject = (object) => {
+export var isComplexObject = function isComplexObject(object) {
   return isArray(object) || isPlainObject(object);
 };
 
@@ -59,7 +54,7 @@ export const isComplexObject = (object) => {
  *
  * @returns {boolean} is the object a crio
  */
-export const isCrio = (object) => {
+export var isCrio = function isCrio(object) {
   return !!(object && object[CRIO_SYMBOL]);
 };
 
@@ -74,7 +69,7 @@ export const isCrio = (object) => {
  * @param {*} object object to test
  * @returns {boolean} is the object a crio array
  */
-export const isCrioArray = (object) => {
+export var isCrioArray = function isCrioArray(object) {
   return isCrio && object.isArray();
 };
 
@@ -91,7 +86,7 @@ export const isCrioArray = (object) => {
  *
  * @returns {boolean} are the objects equal
  */
-export const isEqual = (crio, object) => {
+export var isEqual = function isEqual(crio, object) {
   return isCrio(object) && crio.hashCode === object.hashCode;
 };
 
@@ -106,7 +101,7 @@ export const isEqual = (crio, object) => {
  * @param {*} object object to test
  * @returns {boolean} is object a react element
  */
-export const isReactElement = (object) => {
+export var isReactElement = function isReactElement(object) {
   return !!object && object.$$typeof === REACT_ELEMENT_TYPE;
 };
 
@@ -123,7 +118,7 @@ export const isReactElement = (object) => {
  * @param {CrioObject} CrioObject constructor for CrioObject class
  * @returns {CrioArray|CrioObject} constructor correct for object
  */
-export const getCorrectConstructor = (object, CrioArray, CrioObject) => {
+export var getCorrectConstructor = function getCorrectConstructor(object, CrioArray, CrioObject) {
   return isArray(object) ? CrioArray : CrioObject;
 };
 
@@ -140,7 +135,7 @@ export const getCorrectConstructor = (object, CrioArray, CrioObject) => {
  *
  * @returns {*} object with clean value
  */
-export const getCrioValue = (object, Constructor) => {
+export var getCrioValue = function getCrioValue(object, Constructor) {
   if (isCrio(object) || isReactElement(object)) {
     return object;
   }
@@ -165,15 +160,15 @@ export const getCrioValue = (object, Constructor) => {
  *
  * @returns {{currentValue: *, lastIndex: number}} parent key metadata
  */
-export const getKeysMetadata = (keys, instance) => {
-  const lastIndex = keys.length - 1;
-  const parentKeys = keys.slice(0, lastIndex);
-  const currentValue = instance.getIn(parentKeys);
+export var getKeysMetadata = function getKeysMetadata(keys, instance) {
+  var lastIndex = keys.length - 1;
+  var parentKeys = keys.slice(0, lastIndex);
+  var currentValue = instance.getIn(parentKeys);
 
   return {
-    currentValue,
-    lastIndex,
-    parentKeys
+    currentValue: currentValue,
+    lastIndex: lastIndex,
+    parentKeys: parentKeys
   };
 };
 
@@ -189,7 +184,7 @@ export const getKeysMetadata = (keys, instance) => {
  * @param {number} length the length of the crio
  * @returns {number} the relative number value
  */
-export const getRelativeValue = (value, length) => {
+export var getRelativeValue = function getRelativeValue(value, length) {
   return value < 0 ? Math.max(length + value, 0) : Math.min(value, length);
 };
 
@@ -205,7 +200,7 @@ export const getRelativeValue = (value, length) => {
  *
  * @returns {*} standard version of object
  */
-export const getStandardValue = (object) => {
+export var getStandardValue = function getStandardValue(object) {
   return isCrio(object) ? object.thaw() : object;
 };
 
@@ -222,21 +217,18 @@ export const getStandardValue = (object) => {
  *
  * @returns {function((Array<*>|Object), function): function(*, string): void} assignment function
  */
-export const createAssignToObject = (CrioArray, CrioObject) => {
-  return (object, getValue) => {
-    return (value, key) => {
-      object[key] = getValue(
-        value,
-        getCorrectConstructor(value, CrioArray, CrioObject)
-      );
+export var createAssignToObject = function createAssignToObject(CrioArray, CrioObject) {
+  return function (object, getValue) {
+    return function (value, key) {
+      object[key] = getValue(value, getCorrectConstructor(value, CrioArray, CrioObject));
     };
   };
 };
 
-export const keys = (object) => {
-  let ownKeys = [];
+export var keys = function keys(object) {
+  var ownKeys = [];
 
-  for (let key in object) {
+  for (var key in object) {
     if (hasOwnProperty.call(object, key)) {
       ownKeys.push(key);
     }
@@ -257,4 +249,4 @@ export const keys = (object) => {
  *
  * @returns {string} stringified version of object
  */
-export const stringify = stringifier(STRINGIFIER_OPTIONS);
+export var stringify = stringifier(STRINGIFIER_OPTIONS);
