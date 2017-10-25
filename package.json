@@ -82,7 +82,7 @@
     "docs": "rimraf docs && jsdoc -c ./jsdoc.config.json && git add --all",
     "dist": "npm run clean:dist && npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
-    "prepublish": "if in-publish; npm run prepublish:compile; fi",
+    "prepublish": "if in-publish; then npm run prepublish:compile; fi",
     "prepublish:compile":
       "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
     "start": "npm run dev",
