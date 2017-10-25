@@ -3,19 +3,11 @@
   "ava": {
     "babel": {
       "babelrc": true,
-      "presets": [
-        "react"
-      ]
+      "presets": ["react"]
     },
     "failFast": true,
-    "files": [
-      "test/utils/*.js",
-      "test/*.js"
-    ],
-    "require": [
-      "babel-register",
-      "babel-polyfill"
-    ],
+    "files": ["test/utils/*.js", "test/*.js"],
+    "require": ["babel-register", "babel-polyfill"],
     "verbose": true
   },
   "bugs": {
@@ -64,10 +56,7 @@
     "webpack-dev-server": "2.9.3"
   },
   "homepage": "https://github.com/planttheidea/crio#readme",
-  "keywords": [
-    "immutable",
-    "crio"
-  ],
+  "keywords": ["immutable", "crio"],
   "license": "MIT",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -77,20 +66,25 @@
     "url": "git+https://github.com/planttheidea/crio.git"
   },
   "scripts": {
-    "benchmark": "npm run transpile:lib && NODE_ENV=production node ./benchmarks/index.js",
+    "benchmark":
+      "npm run transpile:lib && NODE_ENV=production node ./benchmarks/index.js",
     "benchmark:watch": "onchange -i 'src/**/*.js' -- npm run benchmark",
     "build": "NODE_ENV=development webpack --progress --colors",
-    "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
+    "build:minified":
+      "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
     "clean:dist": "rimraf dist",
     "clean:es": "rimraf es",
     "clean:lib": "rimraf lib",
-    "dev": "NODE_ENV=development webpack-dev-server --profile --progress --colors --config=webpack.config.dev.js",
-    "dev:production": "NODE_ENV=production webpack-dev-server --progress --progress --colors --config=webpack.config.dev.js",
+    "dev":
+      "NODE_ENV=development webpack-dev-server --profile --progress --colors --config=webpack.config.dev.js",
+    "dev:production":
+      "NODE_ENV=production webpack-dev-server --progress --progress --colors --config=webpack.config.dev.js",
     "docs": "rimraf docs && jsdoc -c ./jsdoc.config.json && git add --all",
     "dist": "npm run clean:dist && npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
-    "prepublish": "if in-publish' ?' npm run prepublish:compile; fi",
-    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
+    "prepublish": "if in-publish; npm run prepublish:compile; fi",
+    "prepublish:compile":
+      "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
     "start": "npm run dev",
     "test": "BABEL_ENV=test ava",
     "test:coverage": "nyc npm test",
