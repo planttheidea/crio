@@ -3,23 +3,9 @@ const webpack = require('webpack');
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 
 module.exports = {
-  cache: true,
+  devtool: '#source-map',
 
-  debug: true,
-
-  devtool: 'source-map',
-
-  entry: [
-    path.resolve(__dirname, 'src', 'index.js')
-  ],
-
-  eslint: {
-    configFile: '.eslintrc',
-    emitError: true,
-    failOnError: true,
-    failOnWarning: false,
-    formatter: require('eslint-friendly-formatter')
-  },
+  entry: [path.resolve(__dirname, 'src', 'index.js')],
 
   externals: {
     'hash-it': {
@@ -28,7 +14,7 @@ module.exports = {
       commonjs2: 'hash-it',
       root: 'hashIt'
     },
-    'stringifier': {
+    stringifier: {
       amd: 'stringifier',
       commonjs: 'stringifier',
       commonjs2: 'stringifier',
@@ -37,23 +23,26 @@ module.exports = {
   },
 
   module: {
-    preLoaders: [
+    rules: [
       {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
+        enforce: 'pre',
+        include: [path.resolve(__dirname, 'src')],
         loader: 'eslint-loader',
+        options: {
+          configFile: '.eslintrc',
+          emitError: false,
+          failOnError: true,
+          failOnWarning: false,
+          formatter: require('eslint-friendly-formatter')
+        },
         test: /\.js$/
-      }
-    ],
-
-    loaders: [
+      },
       {
         include: [
           path.resolve(__dirname, 'src'),
           path.resolve(__dirname, 'DEV_ONLY')
         ],
-        loader: 'babel',
+        loader: 'babel-loader',
         test: /\.js$/
       }
     ]
@@ -68,9 +57,7 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
+    new webpack.EnvironmentPlugin(['NODE_ENV']),
     new LodashModuleReplacementPlugin({
       collections: true,
       cloning: true,
@@ -78,18 +65,5 @@ module.exports = {
       paths: true,
       unicode: true
     })
-  ],
-
-  resolve: {
-    extensions: [
-      '',
-      '.js'
-    ],
-
-    fallback: [
-      path.join(__dirname, 'src')
-    ],
-
-    root: __dirname
-  }
+  ]
 };

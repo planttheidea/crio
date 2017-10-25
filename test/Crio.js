@@ -2,14 +2,8 @@
 import test from 'ava';
 
 // src
-import {
-  Crio,
-  CrioArray,
-  CrioObject
-} from '../src/Crio';
-import {
-  UNSCOPABLES_PROPERTY_DESCRIPTOR
-} from '../src/constants';
+import {Crio, CrioArray, CrioObject} from '../src/Crio';
+import {UNSCOPABLES_PROPERTY_DESCRIPTOR} from '../src/constants';
 
 test('if constructing a CrioArray produces a frozen array that has the same values passed', (t) => {
   const array = ['foo', 'bar', 'baz'];
@@ -371,7 +365,10 @@ test('if keys returns an array of the keys in the crio', (t) => {
 
 test('if map will map the result of the function passed to the key', (t) => {
   const mapFn = (value) => {
-    return value.split('').reverse().join('');
+    return value
+      .split('')
+      .reverse()
+      .join('');
   };
 
   const array = new CrioArray(['foo', 'bar', 'baz']);
@@ -425,7 +422,11 @@ test('if mergeIn will merge objects with the crio at the nested path', (t) => {
   const array = new CrioArray(['foo', 'bar', {baz: {foo: 'bar'}}]);
   const mergedArray = array.mergeIn([2, 'baz'], {some: 'thing'});
 
-  t.deepEqual(mergedArray.thaw(), ['foo', 'bar', {baz: {foo: 'bar', some: 'thing'}}]);
+  t.deepEqual(mergedArray.thaw(), [
+    'foo',
+    'bar',
+    {baz: {foo: 'bar', some: 'thing'}}
+  ]);
 
   t.is(array.mergeIn(), array);
   t.is(array.mergeIn([]), array);
@@ -464,11 +465,7 @@ test('if mutate will let you worth with the object directly and then re-crio the
 });
 
 test('if pluck will return the set of values matching in the collection', (t) => {
-  const array = new CrioArray([
-    {foo: 'bar'},
-    {bar: 'baz'},
-    {foo: 'foo'}
-  ]);
+  const array = new CrioArray([{foo: 'bar'}, {bar: 'baz'}, {foo: 'foo'}]);
   const pluckedArray = array.pluck('foo');
 
   t.is(pluckedArray.length, array.length);
@@ -487,15 +484,8 @@ test('if pluck will return the set of values matching in the collection', (t) =>
 
 test('if pluckIn will return the set of values matching in the nested collection', (t) => {
   const array = new CrioArray([
-    [
-      {foo: 'foo'},
-      {bar: 'baz'},
-      {foo: 'bar'}
-    ], [
-      {foo: 'bar'},
-      {bar: 'baz'},
-      {foo: 'foo'}
-    ]
+    [{foo: 'foo'}, {bar: 'baz'}, {foo: 'bar'}],
+    [{foo: 'bar'}, {bar: 'baz'}, {foo: 'foo'}]
   ]);
   const pluckedInArray = array.pluckIn([1, 'foo']);
 
@@ -960,15 +950,34 @@ test('if sort will return a new crio that is sorted', (t) => {
 test('if splice will apply correctly based on the arguments passed', (t) => {
   const array = new CrioArray(['foo', 'bar', 'baz', 'blah']);
 
-  t.deepEqual(array.splice(2, 0, 'drum').thaw(), ['foo', 'bar', 'drum', 'baz', 'blah']);
+  t.deepEqual(array.splice(2, 0, 'drum').thaw(), [
+    'foo',
+    'bar',
+    'drum',
+    'baz',
+    'blah'
+  ]);
   t.deepEqual(array.splice(2, 1).thaw(), ['foo', 'bar', 'blah']);
-  t.deepEqual(array.splice(2, 1, 'drum').thaw(), ['foo', 'bar', 'drum', 'blah']);
+  t.deepEqual(array.splice(2, 1, 'drum').thaw(), [
+    'foo',
+    'bar',
+    'drum',
+    'blah'
+  ]);
   t.deepEqual(array.splice(0, 2, 'drum').thaw(), ['drum', 'baz', 'blah']);
   t.deepEqual(array.splice(array.length - 3, 2).thaw(), ['foo', 'blah']);
 });
 
 test('if unique returns a new CrioArray with only unique values', (t) => {
-  const array = new CrioArray(['foo', 'foo', 'bar', 'foo', 'bar', {foo: 'bar'}, {foo: 'bar'}]);
+  const array = new CrioArray([
+    'foo',
+    'foo',
+    'bar',
+    'foo',
+    'bar',
+    {foo: 'bar'},
+    {foo: 'bar'}
+  ]);
 
   t.deepEqual(array.unique().thaw(), ['foo', 'bar', {foo: 'bar'}]);
 });

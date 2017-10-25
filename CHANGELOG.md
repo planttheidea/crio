@@ -1,5 +1,9 @@
 # crio changelog
 
+#### 4.1.0
+* Add `es` transpilation in addition to standard `lib`, preserving ES2015 modules for [`pkg.module`](https://github.com/rollup/rollup/wiki/pkg.module)
+* Fix issue related to spread operator used for shallow clones in node environment
+
 #### 4.0.0
 * Complete rewrite, leveraging lodash wherever possible
 * Massive speed improvement (over 70% in certain cases)
