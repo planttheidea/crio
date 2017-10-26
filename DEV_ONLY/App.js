@@ -4,19 +4,13 @@ import {render} from 'react-dom';
 
 import crio from '../src';
 
-// import '../benchmarks';
+import '../benchmarks';
 
 const array = crio([
   {key: 0, value: 'foo'},
   {key: 1, value: 'bar'},
   {key: 2, value: 'baz'}
 ]);
-
-console.log(array);
-console.log(array.setIn([0, 'key'], 'value'));
-console.log(array.concat(['foo']));
-
-console.log(array.thaw());
 
 const App = () => {
   return (

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>crio Module: Crio</title>
+	<title>crio Global</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="module-Crio.html">Crio</a></li><li><a href="module-crio_.html">crio</a></li>
+					<li><a href="module-crio.html">crio</a></li><li><a href="module-Crio_.html">Crio</a></li>
 				</ul>
 			</li>
 			
@@ -48,6 +48,13 @@
 				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="tutorial-API.html">API</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#keys">keys</a></li>
 				</ul>
 			</li>
 			
@@ -79,10 +86,15 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Module: Crio</h1>
+	<h1 class="page-title">Global</h1>
 <section>
 
 <header>
+    
+        <h2>
+        
+        </h2>
+        
     
 </header>
 
@@ -123,16 +135,6 @@
 
 
 	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="Crio.js.html">Crio.js</a>,
-				 <a href="Crio.js.html#sunlight-1-line-117">line 117</a>
-			</li>
-		</ul>
-	</dd>
-	
 
 	
 
@@ -150,19 +152,6 @@
 
     
 
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="module-Crio.Crio.html">Crio</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-Crio.CrioArray.html">CrioArray</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-Crio.CrioObject.html">CrioObject</a></dt>
-            <dd></dd>
-        </dl>
     
 
     
@@ -178,7 +167,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="~concat"><span class="type-signature">&lt;inner> </span>concat(items)</h4>
+    <h4 class="name" id="keys"><span class="type-signature"></span>keys(object)</h4>
     
     
 </dt>
@@ -186,181 +175,7 @@
 
     
     <div class="description">
-        <p>append the items passed to the crio</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>items</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;*></span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>items to append to the crio</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="Crio.js.html">Crio.js</a>,
-				 <a href="Crio.js.html#sunlight-1-line-932">line 932</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>new crio array instance</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">CrioArray</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~constructor"><span class="type-signature">&lt;inner> </span>constructor(object)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>add the items to the crio, and return a frozen version</p>
+        <p>get the keys for the given object</p>
     </div>
     
 
@@ -412,7 +227,7 @@
 
             
 
-            <td class="description last"><p>object passed for crioing</p></td>
+            <td class="description last"><p>the object to get the keys for</p></td>
         </tr>
 
     
@@ -456,8 +271,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="Crio.js.html">Crio.js</a>,
-				 <a href="Crio.js.html#sunlight-1-line-131">line 131</a>
+				<a href="utils.js.html">utils.js</a>,
+				 <a href="utils.js.html#sunlight-1-line-251">line 251</a>
 			</li>
 		</ul>
 	</dd>
@@ -486,7 +301,7 @@
     
             
 <div class="param-desc">
-    <p>crioed object</p>
+    <p>the array of keys</p>
 </div>
 
 
@@ -497,172 +312,7 @@
     </dt>
     <dd>
         
-<span class="param-type"><a href="Crio_.html">Crio</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~findKey"><span class="type-signature">&lt;inner> </span>findKey(fn)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>find a specific key based on a matching function</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>fn</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>function to match</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="Crio.js.html">Crio.js</a>,
-				 <a href="Crio.js.html#sunlight-1-line-1509">line 1509</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>key matching fn</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-|
-
-<span class="param-type">undefined</span>
+<span class="param-type">Array.&lt;string></span>
 
 
 

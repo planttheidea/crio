@@ -127,15 +127,9 @@ export class Crio {
    * @returns {Crio} new crio instance with item removed
    */
   delete(key) {
-    let updated = {...this};
+    const {[`${key}`]: deletedIgnored, ...updated} = this;
 
-    delete updated[key];
-
-    if (this.isArray()) {
-      updated = map(updated);
-    }
-
-    return new this.constructor(updated);
+    return new this.constructor(this.isArray() ? values(updated) : updated);
   }
 
   /**
@@ -162,9 +156,7 @@ export class Crio {
       return this;
     }
 
-    const updated = currentValue.delete(keys[lastIndex]);
-
-    return this.setIn(parentKeys, updated);
+    return this.setIn(parentKeys, currentValue.delete(keys[lastIndex]));
   }
 
   /**
@@ -287,11 +279,7 @@ export class Crio {
    * @returns {*} item found at nested path
    */
   getIn(keys) {
-    if (!keys || !keys.length) {
-      return this;
-    }
-
-    return get(keys, this);
+    return keys && keys.length ? get(keys, this) : this;
   }
 
   /**
@@ -421,9 +409,7 @@ export class Crio {
       return this;
     }
 
-    const merged = merge({}, this.thaw(), ...objects);
-
-    return new this.constructor(merged);
+    return new this.constructor(merge({}, this.thaw(), ...objects));
   }
 
   /**
@@ -447,9 +433,9 @@ export class Crio {
       return this.setIn(keys, merge({}, ...objects));
     }
 
-    const updated = this.setIn(keys, valueToMerge.merge(...objects));
-
-    return new this.constructor(updated);
+    return new this.constructor(
+      this.setIn(keys, valueToMerge.merge(...objects))
+    );
   }
 
   /**
@@ -481,14 +467,12 @@ export class Crio {
    * @returns {Crio} new crio instance
    */
   pluck(key) {
-    let plucked;
-
     return this.reduce((pluckedValues, value) => {
-      plucked = !!(value && hasOwnProperty.call(value, key))
-        ? value[key]
-        : undefined;
+      pluckedValues.push(
+        value && hasOwnProperty.call(value, key) ? value[key] : undefined
+      );
 
-      return [...pluckedValues, plucked];
+      return pluckedValues;
     }, []);
   }
 
@@ -512,11 +496,7 @@ export class Crio {
 
     const {currentValue, lastIndex} = getKeysMetadata(keys, this);
 
-    if (!isCrio(currentValue)) {
-      return this;
-    }
-
-    return currentValue.pluck(keys[lastIndex]);
+    return isCrio(currentValue) ? currentValue.pluck(keys[lastIndex]) : this;
   }
 
   /**
@@ -570,12 +550,10 @@ export class Crio {
    * @returns {Crio} new crio instance
    */
   set(key, value) {
-    const updated = {
+    return new this.constructor({
       ...this,
       [key]: value
-    };
-
-    return new this.constructor(updated);
+    });
   }
 
   /**
@@ -589,13 +567,9 @@ export class Crio {
    * @returns {Crio} new crio instance
    */
   setIn(keys, value) {
-    if (!keys || !keys.length) {
-      return this;
-    }
-
-    const updatedObject = set(keys, value, this);
-
-    return new this.constructor(updatedObject);
+    return keys && keys.length
+      ? new this.constructor(set(keys, value, this))
+      : this;
   }
 
   /**
@@ -637,7 +611,7 @@ export class Crio {
    * @returns {CrioArray} new crio array instance
    */
   toArray() {
-    return this.isArray() ? this : new CrioArray(this.values());
+    return this.isArray() ? this : new CrioArray(values(this));
   }
 
   /**
@@ -661,21 +635,19 @@ export class Crio {
    * @returns {CrioObject} new crio object instance
    */
   toObject() {
-    if (this.isObject()) {
-      return this;
-    }
+    return this.isObject()
+      ? this
+      : new CrioObject(
+          reduce(
+            this,
+            (object, value, key) => {
+              object[key] = value;
 
-    const updated = reduce(
-      this,
-      (object, value, key) => {
-        object[key] = value;
-
-        return object;
-      },
-      {}
-    );
-
-    return new CrioObject(updated);
+              return object;
+            },
+            {}
+          )
+        );
   }
 
   /**
@@ -741,7 +713,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   concat(items) {
-    const concatted = [...this.thaw(), ...items];
+    const concatted = [...values(this), ...items];
 
     return new CrioArray(concatted);
   }
@@ -758,7 +730,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   copyWithin(target, start = 0, end = this.length) {
-    const copiedArray = this.thaw();
+    const copiedArray = values(this);
     const length = this.length >>> 0;
 
     let to = getRelativeValue(target >> 0, length),
@@ -821,7 +793,7 @@ export class CrioArray extends Crio {
 
         return differenceArray;
       },
-      this.thaw()
+      this.isArray ? values(this) : {...this}
     );
 
     return new CrioArray(difference);
@@ -839,7 +811,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   fill(value, start = 0, end = this.length) {
-    const filled = fill(this.thaw(), value, start, end);
+    const filled = fill(values(this), value, start, end);
 
     return new CrioArray(filled, this);
   }
@@ -1017,7 +989,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   reverse() {
-    let reversed = this.thaw();
+    let reversed = values(this);
 
     reversed.reverse();
 
@@ -1062,7 +1034,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   sort(fn) {
-    let sorted = this.thaw();
+    let sorted = values(this);
 
     sorted.sort(fn);
 
@@ -1081,7 +1053,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   splice(start = 0, deleteCount = 1, ...items) {
-    let spliced = this.thaw();
+    let spliced = values(this);
 
     spliced.splice(start, deleteCount, ...items);
 
@@ -1132,7 +1104,7 @@ export class CrioArray extends Crio {
    * @returns {CrioArray} new crio array instance
    */
   unshift(...items) {
-    return items.length ? new CrioArray([...items, ...this.thaw()]) : this;
+    return items.length ? new CrioArray([...items, ...values(this)]) : this;
   }
 
   /**

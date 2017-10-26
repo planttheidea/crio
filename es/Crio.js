@@ -8,6 +8,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // external dependencies
@@ -114,15 +116,10 @@ export var Crio = function () {
 
 
   Crio.prototype.delete = function _delete(key) {
-    var updated = _extends({}, this);
+    var deletedIgnored = this['' + key],
+        updated = _objectWithoutProperties(this, ['' + key]);
 
-    delete updated[key];
-
-    if (this.isArray()) {
-      updated = _map(updated);
-    }
-
-    return new this.constructor(updated);
+    return new this.constructor(this.isArray() ? _values(updated) : updated);
   };
 
   /**
@@ -154,9 +151,7 @@ export var Crio = function () {
       return this;
     }
 
-    var updated = currentValue.delete(keys[lastIndex]);
-
-    return this.setIn(parentKeys, updated);
+    return this.setIn(parentKeys, currentValue.delete(keys[lastIndex]));
   };
 
   /**
@@ -297,11 +292,7 @@ export var Crio = function () {
 
 
   Crio.prototype.getIn = function getIn(keys) {
-    if (!keys || !keys.length) {
-      return this;
-    }
-
-    return get(keys, this);
+    return keys && keys.length ? get(keys, this) : this;
   };
 
   /**
@@ -451,9 +442,7 @@ export var Crio = function () {
       return this;
     }
 
-    var merged = _merge.apply(undefined, [{}, this.thaw()].concat(objects));
-
-    return new this.constructor(merged);
+    return new this.constructor(_merge.apply(undefined, [{}, this.thaw()].concat(objects)));
   };
 
   /**
@@ -483,9 +472,7 @@ export var Crio = function () {
       return this.setIn(keys, _merge.apply(undefined, [{}].concat(objects)));
     }
 
-    var updated = this.setIn(keys, valueToMerge.merge.apply(valueToMerge, objects));
-
-    return new this.constructor(updated);
+    return new this.constructor(this.setIn(keys, valueToMerge.merge.apply(valueToMerge, objects)));
   };
 
   /**
@@ -520,12 +507,10 @@ export var Crio = function () {
 
 
   Crio.prototype.pluck = function pluck(key) {
-    var plucked = void 0;
-
     return this.reduce(function (pluckedValues, value) {
-      plucked = !!(value && hasOwnProperty.call(value, key)) ? value[key] : undefined;
+      pluckedValues.push(value && hasOwnProperty.call(value, key) ? value[key] : undefined);
 
-      return [].concat(pluckedValues, [plucked]);
+      return pluckedValues;
     }, []);
   };
 
@@ -553,11 +538,7 @@ export var Crio = function () {
         currentValue = _getKeysMetadata3.currentValue,
         lastIndex = _getKeysMetadata3.lastIndex;
 
-    if (!isCrio(currentValue)) {
-      return this;
-    }
-
-    return currentValue.pluck(keys[lastIndex]);
+    return isCrio(currentValue) ? currentValue.pluck(keys[lastIndex]) : this;
   };
 
   /**
@@ -617,9 +598,7 @@ export var Crio = function () {
   Crio.prototype.set = function set(key, value) {
     var _extends2;
 
-    var updated = _extends({}, this, (_extends2 = {}, _extends2[key] = value, _extends2));
-
-    return new this.constructor(updated);
+    return new this.constructor(_extends({}, this, (_extends2 = {}, _extends2[key] = value, _extends2)));
   };
 
   /**
@@ -635,13 +614,7 @@ export var Crio = function () {
 
 
   Crio.prototype.setIn = function setIn(keys, value) {
-    if (!keys || !keys.length) {
-      return this;
-    }
-
-    var updatedObject = set(keys, value, this);
-
-    return new this.constructor(updatedObject);
+    return keys && keys.length ? new this.constructor(set(keys, value, this)) : this;
   };
 
   /**
@@ -691,7 +664,7 @@ export var Crio = function () {
 
 
   Crio.prototype.toArray = function toArray() {
-    return this.isArray() ? this : new CrioArray(this.values());
+    return this.isArray() ? this : new CrioArray(_values(this));
   };
 
   /**
@@ -719,17 +692,11 @@ export var Crio = function () {
 
 
   Crio.prototype.toObject = function toObject() {
-    if (this.isObject()) {
-      return this;
-    }
-
-    var updated = _reduce(this, function (object, value, key) {
+    return this.isObject() ? this : new CrioObject(_reduce(this, function (object, value, key) {
       object[key] = value;
 
       return object;
-    }, {});
-
-    return new CrioObject(updated);
+    }, {}));
   };
 
   /**
@@ -821,7 +788,7 @@ export var CrioArray = function (_Crio) {
    * @returns {CrioArray} new crio array instance
    */
   CrioArray.prototype.concat = function concat(items) {
-    var concatted = [].concat(this.thaw(), items);
+    var concatted = [].concat(_values(this), items);
 
     return new CrioArray(concatted);
   };
@@ -843,7 +810,7 @@ export var CrioArray = function (_Crio) {
     var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var end = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.length;
 
-    var copiedArray = this.thaw();
+    var copiedArray = _values(this);
     var length = this.length >>> 0;
 
     var to = getRelativeValue(target >> 0, length),
@@ -909,7 +876,7 @@ export var CrioArray = function (_Crio) {
       }
 
       return differenceArray;
-    }, this.thaw());
+    }, this.isArray ? _values(this) : _extends({}, this));
 
     return new CrioArray(difference);
   };
@@ -931,7 +898,7 @@ export var CrioArray = function (_Crio) {
     var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var end = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : this.length;
 
-    var filled = _fill(this.thaw(), value, start, end);
+    var filled = _fill(_values(this), value, start, end);
 
     return new CrioArray(filled, this);
   };
@@ -1143,7 +1110,7 @@ export var CrioArray = function (_Crio) {
 
 
   CrioArray.prototype.reverse = function reverse() {
-    var reversed = this.thaw();
+    var reversed = _values(this);
 
     reversed.reverse();
 
@@ -1197,7 +1164,7 @@ export var CrioArray = function (_Crio) {
 
 
   CrioArray.prototype.sort = function sort(fn) {
-    var sorted = this.thaw();
+    var sorted = _values(this);
 
     sorted.sort(fn);
 
@@ -1221,7 +1188,7 @@ export var CrioArray = function (_Crio) {
     var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     var deleteCount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-    var spliced = this.thaw();
+    var spliced = _values(this);
 
     for (var _len5 = arguments.length, items = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
       items[_key5 - 2] = arguments[_key5];
@@ -1282,7 +1249,7 @@ export var CrioArray = function (_Crio) {
       items[_key6] = arguments[_key6];
     }
 
-    return items.length ? new CrioArray([].concat(items, this.thaw())) : this;
+    return items.length ? new CrioArray([].concat(items, _values(this))) : this;
   };
 
   /**
