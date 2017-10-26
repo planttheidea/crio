@@ -33,7 +33,7 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="module-Crio.html">Crio</a></li><li><a href="module-crio_.html">crio</a></li>
+					<li><a href="module-crio.html">crio</a></li><li><a href="module-Crio_.html">Crio</a></li>
 				</ul>
 			</li>
 			
@@ -48,6 +48,13 @@
 				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="tutorial-API.html">API</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#keys">keys</a></li>
 				</ul>
 			</li>
 			
@@ -186,7 +193,7 @@ console.log(fooBar); // ['foo', 'bar']</code></pre><p>The <a href="tutorials/API
 <li>IE9</li>
 </ul>
 <h4 id="performance">Performance</h4>
-<p>As of <code>4.0.0</code>, performance has substantially improved, and in many scenarios <code>crio</code> is more performant than <code>seamless-immutable</code> (in the case of <code>setIn</code>, by over <strong>3x</strong>). When it comes to <code>get</code> operations (either directly or nested), <code>crio</code> is identical to native in performance. I don't want to post benchmarks because those vary wildly from machine to machine, but feel free to test them out yourself!</p>
+<p>As of <code>4.0.0</code>, performance has substantially improved, and in many scenarios <code>crio</code> is more performant than <code>seamless-immutable</code> (in the case of <code>setIn</code>, by over <strong>5x</strong>). When it comes to <code>get</code> operations (either directly or nested), <code>crio</code> is identical to native in performance. See <a href="results.csv">the benchmark results</a> if you want to see performance in node, or spin up the app locally if you want to see the performance in the browser.</p>
 <h4 id="gotchas">Gotchas</h4>
 <p><strong>Recursive objects are not allowed</strong></p>
 <p>Immutable objects with recursive values are basically impossible, and trying them will cause a stack overflow, so be mindful of that!</p>

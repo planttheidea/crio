@@ -137,7 +137,7 @@ crio has been tested on the following browsers:
 
 #### Performance
 
-As of `4.0.0`, performance has substantially improved, and in many scenarios `crio` is more performant than `seamless-immutable` (in the case of `setIn`, by over **3x**). When it comes to `get` operations (either directly or nested), `crio` is identical to native in performance. I don't want to post benchmarks because those vary wildly from machine to machine, but feel free to test them out yourself!
+As of `4.0.0`, performance has substantially improved, and in many scenarios `crio` is more performant than `seamless-immutable` (in the case of `setIn`, by over **5x**). When it comes to `get` operations (either directly or nested), `crio` is identical to native in performance. See [the benchmark results](results.csv) if you want to see performance in node, or spin up the app locally if you want to see the performance in the browser.
 
 #### Gotchas
 

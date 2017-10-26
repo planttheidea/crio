@@ -225,6 +225,15 @@ export var createAssignToObject = function createAssignToObject(CrioArray, CrioO
   };
 };
 
+/**
+ * @function keys
+ *
+ * @description
+ * get the keys for the given object
+ *
+ * @param {Object} object the object to get the keys for
+ * @returns {Array<string>} the array of keys
+ */
 export var keys = function keys(object) {
   var ownKeys = [];
 
