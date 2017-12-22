@@ -369,13 +369,13 @@ export var Crio = function () {
   };
 
   /**
-     * @function isObject
-     *
-     * @description
-     * is the crio an object
-     *
-     * @returns {boolean} is the crio an object
-     */
+   * @function isObject
+   *
+   * @description
+   * is the crio an object
+   *
+   * @returns {boolean} is the crio an object
+   */
 
 
   Crio.prototype.isObject = function isObject() {
@@ -515,14 +515,14 @@ export var Crio = function () {
   };
 
   /**
-     * @function pluckIn
-     *
-     * @description
-     * get the values in each object in the collection at the nested path
-     *
-     * @param {Array<number|string>} keys keys to find value of in collection object
-     * @returns {Crio} new crio instance
-     */
+   * @function pluckIn
+   *
+   * @description
+   * get the values in each object in the collection at the nested path
+   *
+   * @param {Array<number|string>} keys keys to find value of in collection object
+   * @returns {Crio} new crio instance
+   */
 
 
   Crio.prototype.pluckIn = function pluckIn(keys) {
@@ -1100,6 +1100,25 @@ export var CrioArray = function (_Crio) {
   };
 
   /**
+   * @function push
+   *
+   * @description
+   * push one to many items to the current crio
+   *
+   * @param {...Array<*>} items the items to add to the array
+   * @returns {CrioArray} the new crio array instance
+   */
+
+
+  CrioArray.prototype.push = function push() {
+    for (var _len5 = arguments.length, items = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+      items[_key5] = arguments[_key5];
+    }
+
+    return this.concat(items);
+  };
+
+  /**
    * @function reverse
    *
    * @description
@@ -1190,8 +1209,8 @@ export var CrioArray = function (_Crio) {
 
     var spliced = _values(this);
 
-    for (var _len5 = arguments.length, items = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
-      items[_key5 - 2] = arguments[_key5];
+    for (var _len6 = arguments.length, items = Array(_len6 > 2 ? _len6 - 2 : 0), _key6 = 2; _key6 < _len6; _key6++) {
+      items[_key6 - 2] = arguments[_key6];
     }
 
     spliced.splice.apply(spliced, [start, deleteCount].concat(items));
@@ -1245,8 +1264,8 @@ export var CrioArray = function (_Crio) {
 
 
   CrioArray.prototype.unshift = function unshift() {
-    for (var _len6 = arguments.length, items = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-      items[_key6] = arguments[_key6];
+    for (var _len7 = arguments.length, items = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+      items[_key7] = arguments[_key7];
     }
 
     return items.length ? new CrioArray([].concat(items, _values(this))) : this;
@@ -1264,8 +1283,8 @@ export var CrioArray = function (_Crio) {
 
 
   CrioArray.prototype.xor = function xor() {
-    for (var _len7 = arguments.length, arrays = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-      arrays[_key7] = arguments[_key7];
+    for (var _len8 = arguments.length, arrays = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+      arrays[_key8] = arguments[_key8];
     }
 
     if (!arrays.length) {
