@@ -98,5 +98,5 @@
     "transpile:lib": "npm run clean:lib && babel src --out-dir lib",
     "transpile:es": "npm run clean:es && BABEL_ENV=es babel src --out-dir es"
   },
-  "version": "4.1.1"
+  "version": "4.1.2"
 }
