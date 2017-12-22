@@ -346,13 +346,13 @@ export class Crio {
   }
 
   /**
-     * @function isObject
-     *
-     * @description
-     * is the crio an object
-     *
-     * @returns {boolean} is the crio an object
-     */
+   * @function isObject
+   *
+   * @description
+   * is the crio an object
+   *
+   * @returns {boolean} is the crio an object
+   */
   isObject() {
     return this[CRIO_TYPE] === CRIO_OBJECT_TYPE;
   }
@@ -477,14 +477,14 @@ export class Crio {
   }
 
   /**
-     * @function pluckIn
-     *
-     * @description
-     * get the values in each object in the collection at the nested path
-     *
-     * @param {Array<number|string>} keys keys to find value of in collection object
-     * @returns {Crio} new crio instance
-     */
+   * @function pluckIn
+   *
+   * @description
+   * get the values in each object in the collection at the nested path
+   *
+   * @param {Array<number|string>} keys keys to find value of in collection object
+   * @returns {Crio} new crio instance
+   */
   pluckIn(keys) {
     if (!keys || !keys.length) {
       return new CrioArray([]);
@@ -978,6 +978,19 @@ export class CrioArray extends Crio {
    */
   pop() {
     return this.slice(0, this.length - 1);
+  }
+
+  /**
+   * @function push
+   *
+   * @description
+   * push one to many items to the current crio
+   *
+   * @param {...Array<*>} items the items to add to the array
+   * @returns {CrioArray} the new crio array instance
+   */
+  push(...items) {
+    return this.concat(items);
   }
 
   /**

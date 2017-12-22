@@ -918,6 +918,13 @@ test('if pop returns a new CrioArray with the last item removed', (t) => {
   t.deepEqual(poppedArray.thaw(), ['foo', 'bar']);
 });
 
+test('if push returns a new CrioArray with the items added', (t) => {
+  const array = new CrioArray(['foo']);
+  const pushedArray = array.push('bar', 'baz');
+
+  t.deepEqual(pushedArray.thaw(), ['foo', 'bar', 'baz']);
+});
+
 test('if reverse will reverse the order of the CrioArray', (t) => {
   const array = new CrioArray([1, 2, 3]);
 

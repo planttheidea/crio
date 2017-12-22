@@ -4,7 +4,7 @@ import {render} from 'react-dom';
 
 import crio from '../src';
 
-import '../benchmarks';
+// import '../benchmarks';
 
 const array = crio([
   {key: 0, value: 'foo'},
