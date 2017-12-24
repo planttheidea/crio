@@ -1,9 +1,12 @@
-// classes
-import CrioArray from './CrioArray';
-import CrioObject from './CrioObject';
+// external dependencies
+import isArray from 'lodash/isArray';
+import isPlainObject from 'lodash/isPlainObject';
 
-// is
-import {isArray, isCrio, isObject} from './is';
+// Crio
+import {CrioArray, CrioObject} from './Crio';
+
+// utils
+import {isCrio} from './utils';
 
 /**
  * @module crio
@@ -20,19 +23,21 @@ import {isArray, isCrio, isObject} from './is';
  * @returns {CrioArray|CrioObject} object that has been crioed
  */
 const crio = (object = {}) => {
-  if (isCrio(object)) {
-    return object;
-  }
-
   if (isArray(object)) {
     return new CrioArray(object);
   }
 
-  if (isObject(object)) {
+  if (isPlainObject(object)) {
     return new CrioObject(object);
   }
 
-  throw new TypeError('Object passed must be either an array or a plain object.');
+  if (isCrio(object)) {
+    return object;
+  }
+
+  throw new TypeError(
+    'Object passed must be either an array or a plain object.'
+  );
 };
 
 /**
@@ -90,7 +95,7 @@ crio.isObject = (object) => {
  * @returns {CrioObject} crio object
  */
 crio.object = (object = {}) => {
-  if (!isObject(object)) {
+  if (!isPlainObject(object)) {
     throw new TypeError('Object passed must be a plain object.');
   }
 

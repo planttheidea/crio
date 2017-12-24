@@ -1,14 +1,20 @@
 const seamlessImmutableJs = require('seamless-immutable');
 const ImmutableJs = require('immutable');
 const moriJs = require('mori');
-const crio = require('../lib');
+const crio = require('../lib').default;
 
 /**
  * Data
  */
 
 const value = Math.random();
-const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
+const array = [
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  Math.random()
+];
 
 /**
  * Object

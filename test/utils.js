@@ -1,229 +1,610 @@
 // test
 import test from 'ava';
-import _ from 'lodash';
-import React from 'react';
+import sinon from 'sinon';
 
 // src
-import {
-  CrioArray,
-  CrioObject
-} from '../src/Crio';
-import * as utils from '../src/utils';
+import * as utils from 'src/utils';
+import * as is from 'src/is';
+import CrioArray from 'src/CrioArray';
+import CrioObject from 'src/CrioObject';
 
-test('if createAssignToObject creates a function that will assign the value returned from it to the instance', (t) => {
-  const assignToObject = utils.createAssignToObject(CrioArray, CrioObject);
+test('if createIterator will create an iterator method', (t) => {
+  const key = 'foo';
+  const value = 'bar';
 
-  t.true(_.isFunction(assignToObject));
-
-  const object = {};
-
-  const assignmentFunction = assignToObject(object, (value) => {
-    return value;
-  });
-
-  t.true(_.isFunction(assignmentFunction));
-
-  assignmentFunction('bar', 'foo');
-
-  t.is(object.foo, 'bar');
-});
-
-test('if freeze will deeply freeze the object passed', (t) => {
   const object = {
-    foo: {
-      bar: 'baz'
+    [key]: value,
+    keys() {
+      return [key];
     }
   };
 
-  const frozen = utils.freeze(object);
+  const iterator = utils.createIterator();
 
-  t.true(Object.isFrozen(frozen));
-  t.true(Object.isFrozen(frozen.foo));
-});
+  object.iterator = iterator;
 
-test('if getCorrectConstructor will return CrioArray if an array is passed, else CrioObject', (t) => {
-  const array = utils.getCorrectConstructor([], CrioArray, CrioObject);
-  const object = utils.getCorrectConstructor({}, CrioArray, CrioObject);
+  const iterable = object.iterator();
 
-  t.is(array, CrioArray);
-  t.is(object, CrioObject);
-});
+  t.deepEqual(iterable.next(), {
+    done: false,
+    value
+  });
 
-test('if getCrioValue returns a crioed version of objects and arrays, but doesnt touch other value types', (t) => {
-  const bool = true;
-  const number = 123;
-  const string = 'foo';
-  const date = new Date();
-  const regexp = /foo/;
-  const array = [];
-  const object = {};
-  const crioArray = new CrioArray([]);
-  const crioObject = new CrioObject({});
-
-  t.is(utils.getCrioValue(bool, CrioArray), bool);
-  t.is(utils.getCrioValue(number, CrioArray), number);
-  t.is(utils.getCrioValue(string, CrioArray), string);
-  t.is(utils.getCrioValue(date, CrioArray), date);
-  t.is(utils.getCrioValue(regexp, CrioArray), regexp);
-  t.is(utils.getCrioValue(crioArray, CrioArray), crioArray);
-  t.is(utils.getCrioValue(crioObject, CrioArray), crioObject);
-
-  const crioedArray = utils.getCrioValue(array, CrioArray);
-  const crioedObject = utils.getCrioValue(object, CrioObject);
-
-  t.not(crioedArray, array);
-  t.true(utils.isCrio(crioedArray));
-  t.true(crioedArray.isArray());
-  t.not(crioedObject, object);
-  t.true(utils.isCrio(crioedObject));
-  t.true(crioedObject.isObject());
-});
-
-test('if getKeysMetadata returns an object of relevant metadata related to the keys parent value structure', (t) => {
-  const instance = new CrioObject({foo: {bar: 'baz'}});
-  const keys = ['foo', 'bar'];
-
-  const result = utils.getKeysMetadata(keys, instance);
-
-  t.deepEqual(result, {
-    currentValue: instance.foo,
-    lastIndex: 1,
-    parentKeys: ['foo']
+  t.deepEqual(iterable.next(), {
+    done: true
   });
 });
 
-test('if getRelativeValue returns a number between the 0 and the length, which is equal to the value if it falls in that ' +
-  'range, and the difference of the length and the number when it is less than 0', (t) => {
-  const length = 10;
-  const inValue = 5;
+test('if every will return true when every result matches', (t) => {
+  const key = 'foo';
+  const value = 'bar';
 
-  const inResult = utils.getRelativeValue(inValue, length);
+  const otherKey = 'bar';
+  const otherValue = value;
 
-  t.is(inResult, inValue);
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
 
-  const overValue = 15;
-
-  const overResult = utils.getRelativeValue(overValue, length);
-
-  t.is(overResult, length);
-
-  const underValue = -5;
-
-  const underResult = utils.getRelativeValue(underValue, length);
-
-  t.is(underResult, length + underValue);
+  t.true(utils.every(object, fn));
 });
 
-test('if getStandardValue returns a plain JS version of the crio passed', (t) => {
-  const object = new CrioObject({
-    foo: ['bar']
-  });
-  const standardObject = utils.getStandardValue(object);
+test('if every will return false when not every result matches', (t) => {
+  const key = 'foo';
+  const value = 'bar';
 
-  t.deepEqual(standardObject, {foo: ['bar']});
+  const otherKey = 'bar';
+  const otherValue = 'baz';
 
-  const array = new CrioArray([
-    {foo: 'bar'}
-  ]);
-  const standardArray = utils.getStandardValue(array);
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
 
-  t.deepEqual(standardArray, [{foo: 'bar'}]);
+  t.false(utils.every(object, fn));
 });
 
-test('if isComplexObject returns true if object passed is an object or array, false otherwise', (t) => {
-  const bool = true;
-  const number = 123;
-  const string = 'foo';
-  const date = new Date();
-  const regexp = /foo/;
-  const array = [];
+test('if every will return true when no keys exist', (t) => {
+  const object = {
+    keys() {
+      return [];
+    }
+  };
+  const fn = (item) => {
+    return item === 'never run';
+  };
+
+  t.true(utils.every(object, fn));
+});
+
+test('if getKeysReducedForFind will return all the keys when no from is specified', (t) => {
+  const allKeys = ['foo', 'bar', 'baz'];
+  const fromKey = undefined;
+
+  const result = utils.getKeysReducedForFind(allKeys, fromKey);
+
+  t.is(result, allKeys);
+});
+
+test('if getKeysReducedForFind will return the sliced keys when a number is specified as the from', (t) => {
+  const allKeys = ['foo', 'bar', 'baz'];
+  const fromKey = 1;
+
+  const result = utils.getKeysReducedForFind(allKeys, fromKey);
+
+  t.deepEqual(result, allKeys.slice(1));
+});
+
+test('if getKeysReducedForFind will return the reduced keys when a string is specified as the from', (t) => {
+  const allKeys = ['foo', 'bar', 'baz'];
+  const fromKey = allKeys[1];
+
+  const result = utils.getKeysReducedForFind(allKeys, fromKey);
+
+  t.deepEqual(result, allKeys.slice(1));
+});
+
+test('if getKeysReducedForFind will return the complete set of keys when something else is specified as the from', (t) => {
+  const allKeys = ['foo', 'bar', 'baz'];
+  const fromKey = null;
+
+  const result = utils.getKeysReducedForFind(allKeys, fromKey);
+
+  t.is(result, allKeys);
+});
+
+test('if find will find the value that exists in the object at key', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
+  const fromKey = undefined;
+  const isKey = false;
+  const isFromEnd = false;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, value);
+});
+
+test('if find will return undefined if a match could not be found in the object at key', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === 'quz';
+  };
+  const fromKey = undefined;
+  const isKey = false;
+  const isFromEnd = false;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, undefined);
+});
+
+test('if find will find the key that exists in the object at key', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
+  const fromKey = undefined;
+  const isKey = true;
+  const isFromEnd = false;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, key);
+});
+
+test('if find will return undefined when the key could not be found in the object at key', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    isArray() {
+      return false;
+    },
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === 'quz';
+  };
+  const fromKey = undefined;
+  const isKey = true;
+  const isFromEnd = false;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, undefined);
+});
+
+test('if find will return undefined when the key could not be found in the array at key', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    isArray() {
+      return true;
+    },
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === 'quz';
+  };
+  const fromKey = undefined;
+  const isKey = true;
+  const isFromEnd = false;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, -1);
+});
+
+test('if find will find the value that exists in the object at key starting from the end', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
+  const fromKey = undefined;
+  const isKey = false;
+  const isFromEnd = true;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, otherValue);
+});
+
+test('if find will find the key that exists in the object at key starting from the end', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = value;
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
+  const fromKey = undefined;
+  const isKey = true;
+  const isFromEnd = true;
+
+  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+
+  t.is(result, otherKey);
+});
+
+test('if getCrioedObject will return the object if it is already a crio', (t) => {
   const object = {};
-  const reactElement = <div/>;
 
-  t.false(utils.isComplexObject(bool));
-  t.false(utils.isComplexObject(number));
-  t.false(utils.isComplexObject(string));
-  t.false(utils.isComplexObject(date));
-  t.false(utils.isComplexObject(regexp));
+  const isCrioStub = sinon.stub(is, 'isCrio').returns(true);
+  const isReactStub = sinon.stub(is, 'isReactElement').returns(true);
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
 
-  t.true(utils.isComplexObject(reactElement));
-  t.true(utils.isComplexObject(array));
-  t.true(utils.isComplexObject(object));
+  const result = utils.getCrioedObject(object);
+
+  t.is(result, object);
+
+  t.true(isCrioStub.calledOnce);
+  t.true(isCrioStub.calledWith(object));
+
+  isCrioStub.restore();
+
+  t.true(isReactStub.notCalled);
+
+  isReactStub.restore();
+
+  t.true(isArraySpy.notCalled);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.notCalled);
+
+  isObjectSpy.restore();
 });
 
-test('if isCrio returns true for crios but false otherwise', (t) => {
-  const bool = true;
-  const number = 123;
-  const string = 'foo';
-  const date = new Date();
-  const regexp = /foo/;
-  const array = [];
+test('if getCrioedObject will return the object if it is a react element', (t) => {
   const object = {};
-  const crioArray = new CrioArray([]);
-  const crioObject = new CrioObject({});
-  const reactElement = <div/>;
 
-  t.false(utils.isCrio(bool));
-  t.false(utils.isCrio(number));
-  t.false(utils.isCrio(string));
-  t.false(utils.isCrio(date));
-  t.false(utils.isCrio(regexp));
-  t.false(utils.isCrio(array));
-  t.false(utils.isCrio(object));
-  t.false(utils.isCrio(reactElement));
+  const isCrioStub = sinon.stub(is, 'isCrio').returns(false);
+  const isReactStub = sinon.stub(is, 'isReactElement').returns(true);
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
 
-  t.true(utils.isCrio(crioArray));
-  t.true(utils.isCrio(crioObject));
+  const result = utils.getCrioedObject(object);
+
+  t.is(result, object);
+
+  t.true(isCrioStub.calledOnce);
+  t.true(isCrioStub.calledWith(object));
+
+  isCrioStub.restore();
+
+  t.true(isReactStub.calledOnce);
+  t.true(isReactStub.calledWith(object));
+
+  isReactStub.restore();
+
+  t.true(isArraySpy.notCalled);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.notCalled);
+
+  isObjectSpy.restore();
 });
 
-test('if isEqual checks that second object is a crio and that their hashCodes are equal', (t) => {
-  const object = new CrioObject({foo: 'bar'});
-  const objectMatch = new CrioObject({foo: 'bar'});
-  const objectNotCrio = {foo: 'bar'};
-  const objectNotMatch = new CrioObject({foo: 'baz'});
+test('if getCrioedObject will return the CrioArray if it is an array', (t) => {
+  const object = ['foo'];
 
-  t.true(utils.isEqual(object, objectMatch));
-  t.false(utils.isEqual(object, objectNotCrio));
-  t.false(utils.isEqual(object, objectNotMatch));
+  const isCrioSpy = sinon.stub(is, 'isCrio');
+  const isReactSpy = sinon.stub(is, 'isReactElement');
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
 
-  const array = new CrioArray(['foo']);
-  const arrayMatch = new CrioArray(['foo']);
-  const arrayNotCrio = ['foo'];
-  const arrayNotMatch = new CrioArray(['bar']);
+  const result = utils.getCrioedObject(object);
 
-  t.true(utils.isEqual(array, arrayMatch));
-  t.false(utils.isEqual(array, arrayNotCrio));
-  t.false(utils.isEqual(array, arrayNotMatch));
+  t.deepEqual(result, new CrioArray(object));
+
+  t.true(isCrioSpy.called);
+  t.deepEqual(isCrioSpy.args[0], [object]);
+
+  isCrioSpy.restore();
+
+  t.true(isReactSpy.called);
+  t.deepEqual(isReactSpy.args[0], [object]);
+
+  isReactSpy.restore();
+
+  t.true(isArraySpy.called);
+  t.deepEqual(isArraySpy.args[0], [object]);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.called);
+  t.deepEqual(isObjectSpy.args[0], object);
+
+  isObjectSpy.restore();
 });
 
-test('if isReactElement returns true for react elements but false otherwise', (t) => {
-  const bool = true;
-  const number = 123;
-  const string = 'foo';
-  const date = new Date();
-  const regexp = /foo/;
-  const array = [];
-  const object = {};
-  const crioArray = new CrioArray([]);
-  const crioObject = new CrioObject({});
-  const reactElement = <div/>;
+test('if getCrioedObject will return the CrioObject if it is an object', (t) => {
+  const object = {foo: 'bar'};
 
-  t.false(utils.isReactElement(bool));
-  t.false(utils.isReactElement(number));
-  t.false(utils.isReactElement(string));
-  t.false(utils.isReactElement(date));
-  t.false(utils.isReactElement(regexp));
-  t.false(utils.isReactElement(array));
-  t.false(utils.isReactElement(object));
-  t.false(utils.isReactElement(crioArray));
-  t.false(utils.isReactElement(crioObject));
+  const isCrioSpy = sinon.stub(is, 'isCrio');
+  const isReactSpy = sinon.stub(is, 'isReactElement');
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
 
-  t.true(utils.isReactElement(reactElement));
+  const result = utils.getCrioedObject(object);
+
+  t.deepEqual(result, new CrioObject(object));
+
+  t.true(isCrioSpy.called);
+  t.deepEqual(isCrioSpy.args[0], [object]);
+
+  isCrioSpy.restore();
+
+  t.true(isReactSpy.called);
+  t.deepEqual(isReactSpy.args[0], [object]);
+
+  isReactSpy.restore();
+
+  t.true(isArraySpy.called);
+  t.deepEqual(isArraySpy.args[0], [object]);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.called);
+  t.deepEqual(isObjectSpy.args[0], [object]);
+
+  isObjectSpy.restore();
 });
 
-test('if stringify returns a stringified version of the object passed to it', (t) => {
-  const object = new CrioObject({foo: 'bar'});
-  const objectToString = utils.stringify(object);
+test('if getCrioedObject will return the object if no matches', (t) => {
+  const object = /foo/;
 
-  t.is(objectToString, 'CrioObject{foo:"bar"}');
+  const isCrioSpy = sinon.stub(is, 'isCrio');
+  const isReactSpy = sinon.stub(is, 'isReactElement');
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
+
+  const result = utils.getCrioedObject(object);
+
+  t.is(result, object);
+
+  t.true(isCrioSpy.called);
+  t.deepEqual(isCrioSpy.args[0], [object]);
+
+  isCrioSpy.restore();
+
+  t.true(isReactSpy.called);
+  t.deepEqual(isReactSpy.args[0], [object]);
+
+  isReactSpy.restore();
+
+  t.true(isArraySpy.called);
+  t.deepEqual(isArraySpy.args[0], [object]);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.called);
+  t.deepEqual(isObjectSpy.args[0], [object]);
+
+  isObjectSpy.restore();
+});
+
+test('if getEntries will map the keys and values as pairs', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = 'baz';
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return new CrioArray([key, otherKey]);
+    }
+  };
+
+  const result = utils.getEntries(object);
+
+  t.true(result instanceof CrioArray);
+  t.deepEqual(result.thaw(), [[key, value], [otherKey, otherValue]]);
+});
+
+test('if getRelativeValue will return the max of the length + value and 0 if less than 0', (t) => {
+  const value = -1;
+  const length = 2;
+
+  const result = utils.getRelativeValue(value, length);
+
+  t.is(result, length + value);
+});
+
+test('if getRelativeValue will return the min of the value and length if greater than 0', (t) => {
+  const value = 4;
+  const length = 2;
+
+  const result = utils.getRelativeValue(value, length);
+
+  t.is(result, length);
+});
+
+test('if getValues will map the values', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = 'baz';
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return new CrioArray([key, otherKey]);
+    }
+  };
+
+  const result = utils.getValues(object);
+
+  t.true(result instanceof CrioArray);
+  t.deepEqual(result.thaw(), [value, otherValue]);
+});
+
+test('if some will return true when any result matches', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = 'baz';
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === value;
+  };
+
+  t.true(utils.some(object, fn));
+});
+
+test('if some will return false when no result matches', (t) => {
+  const key = 'foo';
+  const value = 'bar';
+
+  const otherKey = 'bar';
+  const otherValue = 'baz';
+
+  const object = {
+    [key]: value,
+    [otherKey]: otherValue,
+    keys() {
+      return [key, otherKey];
+    }
+  };
+  const fn = (item) => {
+    return item === 'quz';
+  };
+
+  t.false(utils.some(object, fn));
+});
+
+test('if some will return false when no keys exist', (t) => {
+  const object = {
+    keys() {
+      return [];
+    }
+  };
+  const fn = (item) => {
+    return item === 'never run';
+  };
+
+  t.false(utils.some(object, fn));
+});
+
+test('if thaw will return the deeply-uncrioed version of all the objects', (t) => {
+  const rawObject = [
+    {
+      some: [
+        {
+          deep: 'nesting'
+        }
+      ]
+    }
+  ];
+
+  const crio = new CrioArray(rawObject);
+
+  const result = utils.thaw(crio);
+
+  t.not(result instanceof CrioArray);
+  t.not(result, rawObject);
+  t.deepEqual(result, rawObject);
 });
