@@ -1,11 +1,22 @@
 {
   "babel": {
     "plugins": [
-      "syntax-flow",
-      "transform-flow-strip-types",
-      "add-module-exports"
+      [
+        "transform-builtin-extend",
+        {
+          "globals": ["Array", "Date"]
+        }
+      ]
     ],
-    "presets": ["env", "stage-2"]
+    "presets": [
+      [
+        "env",
+        {
+          "loose": true
+        }
+      ],
+      "stage-2"
+    ]
   },
   "configHelpUrl": "http://usejsdoc.org/about-configuring-jsdoc.html",
   "markdown": {

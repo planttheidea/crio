@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>crio Classes</title>
+	<title>crio Source: constants.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,7 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="module-crio.html">crio</a></li><li><a href="module-Crio_.html">Crio</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown">
-				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
-				<ul class="dropdown-menu inline">
-					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+					<li><a href="module-crio.html">crio</a></li>
 				</ul>
 			</li>
 			
@@ -54,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#keys">keys</a></li>
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getKeysReducedForFind">getKeysReducedForFind</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
 				</ul>
 			</li>
 			
@@ -81,106 +74,131 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Classes</h1>
+		<h1 class="page-title">Source: constants.js</h1>
+    
 <section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// utils
+import {every, find, some} from './utils';
 
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
+/**
+ * @constant {Object} ARRAY_UNSCOPABLES
+ */
+export const ARRAY_UNSCOPABLES = {
+  copyWithin: true,
+  entries: true,
+  fill: true,
+  find: true,
+  findIndex: true,
+  findLastIndex: true,
+  includes: true,
+  keys: true,
+  values: true
+};
 
+/**
+ * @constant {Object} ARRAY_FALLBACK_PROTOTYPE_METHODS
+ */
+export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
+  /**
+   * @function every
+   *
+   * @description
+   * does every instance in the array match
+   *
+   * @param {function} fn the function to test for matching
+   * @returns {boolean} does every instance match
+   */
+  every(fn) {
+    return every(this, fn);
+  },
 
-<article>
-    <div class="container-overview">
-    
-        
+  /**
+   * @function find
+   *
+   * @description
+   * find an item in the array if it exists
+   *
+   * @param {function} fn function to test for finding the item
+   * @param {number} [fromIndex] key to start from when performing the find
+   * @returns {*} found item or undefined
+   */
+  find(fn, fromIndex) {
+    return find(this, fn, fromIndex);
+  },
 
-        
-<dl class="details">
-    
+  /**
+   * @function findIndex
+   *
+   * @description
+   * find the index of an item in the array if it exists
+   *
+   * @param {function} fn function to test for finding the item
+   * @param {number} [fromIndex] key to start from when performing the find
+   * @returns {number} index of match, or -1
+   */
+  findIndex(fn, fromIndex) {
+    return find(this, fn, fromIndex, true);
+  },
 
-	
+  /**
+   * @function includes
+   *
+   * @description
+   * does the array have the item passed
+   *
+   * @param {*} item item to test for existence
+   * @returns {boolean} does the item exist in the array
+   */
+  includes(item) {
+    return !!~this.indexOf(item);
+  },
 
-	
+  /**
+   * @function some
+   *
+   * @description
+   * does any item in the array match the result from fn
+   *
+   * @param {function} fn the function to test for matching
+   * @returns {boolean} does any item match
+   */
+  some(fn) {
+    return some(this, fn);
+  }
+};
 
-	
+/**
+ * @constant {Object} ARRAY_UNSCOPABLES
+ */
+export const OBJECT_UNSCOPABLES = {
+  entries: true,
+  fill: true,
+  find: true,
+  findKey: true,
+  findLastKey: true,
+  includes: true,
+  keys: true,
+  values: true
+};
 
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="module-Crio.Crio.html">Crio</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-Crio.CrioArray.html">CrioArray</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-Crio.CrioObject.html">CrioObject</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+/**
+ * @constant {Symbol|number}
+ */
+export const REACT_ELEMENT_TYPE =
+  typeof Symbol === 'function' &amp;&amp; Symbol.for
+    ? Symbol.for('react.element')
+    : 0xeac7;
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -190,10 +208,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

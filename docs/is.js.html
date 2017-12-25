@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>crio Class: CrioArray</title>
+	<title>crio Source: is.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,7 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="module-crio.html">crio</a></li><li><a href="module-Crio_.html">Crio</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown">
-				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
-				<ul class="dropdown-menu inline">
-					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+					<li><a href="module-crio.html">crio</a></li>
 				</ul>
 			</li>
 			
@@ -54,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#keys">keys</a></li>
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getKeysReducedForFind">getKeysReducedForFind</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
 				</ul>
 			</li>
 			
@@ -81,137 +74,142 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: CrioArray</h1>
+		<h1 class="page-title">Source: is.js</h1>
+    
 <section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// classes
+import CrioArray from './CrioArray';
+import CrioObject from './CrioObject';
 
-<header>
-    
-        <h2>
-            <span class="ancestors"><a href="module-Crio_.html">Crio</a>.</span>
-        
-        CrioArray
-        </h2>
-        
-            <div class="class-description"><p>extension of Crio class specific to arrays</p></div>
-        
-    
-</header>
+// constants
+import {REACT_ELEMENT_TYPE} from './constants';
 
+/**
+ * @function isArray
+ *
+ * @description
+ * is the object passed an array
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object an array
+ */
+export const isArray = Array.isArray;
 
-<article>
-    <div class="container-overview">
-    
-        
-<hr>
-<dt>
-    <h4 class="name" id="CrioArray"><span class="type-signature"></span>new CrioArray()</h4>
-    
-    
-</dt>
-<dd>
+/**
+ * @function isCrio
+ *
+ * @description
+ * is the object passed a CrioArray or CrioObject
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a Crio*
+ */
+export const isCrio = (object) => {
+  return object instanceof CrioArray || object instanceof CrioObject;
+};
 
-    
+/**
+ * @function isEqual
+ *
+ * @description
+ * are the crio objects equal
+ *
+ * @param {CrioArray|CrioObject} crio crio object to test against
+ * @param {*} object object to test equality with crio object for
+ * @returns {boolean} are the objects equal
+ */
+export const isEqual = (crio, object) => {
+  return isCrio(object) &amp;&amp; crio.hashCode === object.hashCode;
+};
 
-    
+/**
+ * @function isFunction
+ *
+ * @description
+ * is the object passed a function
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a function
+ */
+export const isFunction = (object) => {
+  return typeof object === 'function';
+};
 
-    
+/**
+ * @function isNumber
+ *
+ * @description
+ * is the object passed a number
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a number
+ */
+export const isNumber = (object) => {
+  return typeof object === 'number';
+};
 
-    
-    
+/**
+ * @function isReactElement
+ *
+ * @description
+ * is the object passed a react element
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a react element
+ */
+export const isReactElement = (object) => {
+  return !!object &amp;&amp; object.$$typeof === REACT_ELEMENT_TYPE;
+};
 
-    
-<dl class="details">
-    
+/**
+ * @function isObject
+ *
+ * @description
+ * is the object passed a plain object
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a  plain object
+ */
+export const isObject = (object) => {
+  return !!object &amp;&amp; object.constructor === Object &amp;&amp; !isReactElement(object);
+};
 
-	
+/**
+ * @function isString
+ *
+ * @description
+ * is the object passed a string
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a string
+ */
+export const isString = (object) => {
+  return typeof object === 'string';
+};
 
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="Crio.js.html">Crio.js</a>,
-				 <a href="Crio.js.html#sunlight-1-line-879">line 879</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+/**
+ * @function isUndefined
+ *
+ * @description
+ * is the object passed undefined
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object undefined
+ */
+export const isUndefined = (object) => {
+  return object === void 0;
+};
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -221,10 +219,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>
