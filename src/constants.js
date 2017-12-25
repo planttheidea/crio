@@ -1,8 +1,5 @@
-// classes
-import CrioArray from './CrioArray';
-
 // utils
-import {every, find, getRelativeValue, some} from './utils';
+import {every, find, some} from './utils';
 
 /**
  * @constant {Object} ARRAY_UNSCOPABLES
@@ -24,50 +21,6 @@ export const ARRAY_UNSCOPABLES = {
  */
 export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
   /**
-   * @function copyWithin
-   *
-   * @description
-   * move values around within the array
-   *
-   * @param {number} targetIndex target to copy
-   * @param {number} [startIndex=0] index to start copying to
-   * @param {number} [endIndex=this.length] index to stop copying to
-   * @returns {CrioArray} array with target copied in appropriate spots
-   */
-  copyWithin(targetIndex, startIndex = 0, endIndex = this.length) {
-    const clone = [...this];
-    const length = this.length >>> 0;
-
-    let to = getRelativeValue(targetIndex >> 0, length),
-        from = getRelativeValue(startIndex >> 0, length);
-
-    const final = getRelativeValue(endIndex >> 0, length);
-
-    let count = Math.min(final - from, length - to),
-        direction = 1;
-
-    if (from < to && to < from + count) {
-      direction = -1;
-      from += count - 1;
-      to += count - 1;
-    }
-
-    while (count > 0) {
-      if (from in clone) {
-        clone[to] = clone[from];
-      } else {
-        delete clone[to];
-      }
-
-      from += direction;
-      to += direction;
-      count--;
-    }
-
-    return new CrioArray(clone);
-  },
-
-  /**
    * @function every
    *
    * @description
@@ -78,26 +31,6 @@ export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
    */
   every(fn) {
     return every(this, fn);
-  },
-
-  /**
-   * @function fill
-   *
-   * @description
-   * fill the array at certain indices with the value passed
-   *
-   * @param {*} value the value to fill the indices with
-   * @param {number} [startIndex=0] the starting index to fill
-   * @param {number} [endIndex=this.length] the ending index to fill
-   * @returns {CrioArray} array with values filled appropriately
-   */
-  fill(value, startIndex = 0, endIndex = this.length) {
-    const from = startIndex < 0 ? this.length + startIndex : startIndex;
-    const to = endIndex < 0 ? this.length + endIndex : endIndex;
-
-    return this.map((item, index) => {
-      return index >= from && index < to ? value : item;
-    });
   },
 
   /**
@@ -172,4 +105,7 @@ export const OBJECT_UNSCOPABLES = {
 /**
  * @constant {Symbol|number}
  */
-export const REACT_ELEMENT_TYPE = typeof Symbol === 'function' && Symbol.for ? Symbol.for('react.element') : 0xeac7;
+export const REACT_ELEMENT_TYPE =
+  typeof Symbol === 'function' && Symbol.for
+    ? Symbol.for('react.element')
+    : 0xeac7;

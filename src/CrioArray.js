@@ -1,6 +1,7 @@
 // external dependencies
 import stringify from 'json-stringify-safe';
 import hashIt from 'hash-it';
+import {parse} from 'pathington';
 import {get, has, merge, remove, set} from 'unchanged';
 
 // classes
@@ -10,7 +11,7 @@ import CrioObject from './CrioObject';
 import {ARRAY_FALLBACK_PROTOTYPE_METHODS, ARRAY_UNSCOPABLES} from './constants';
 
 // is
-import {isArray, isCrio, isEqual, isFunction, isUndefined} from './is';
+import {isArray, isEqual, isUndefined} from './is';
 
 // utils
 import {
@@ -18,6 +19,7 @@ import {
   find,
   getCrioedObject,
   getEntries,
+  getRelativeValue,
   getValues,
   thaw
 } from './utils';
@@ -50,7 +52,7 @@ class CrioArray extends Array {
   /**
    * @function clear
    * @memberof CrioArray
-   *
+   *folder
    * @description
    * get a new empty array
    *
@@ -76,6 +78,50 @@ class CrioArray extends Array {
   }
 
   /**
+   * @function copyWithin
+   *
+   * @description
+   * move values around within the array
+   *
+   * @param {number} targetIndex target to copy
+   * @param {number} [startIndex=0] index to start copying to
+   * @param {number} [endIndex=this.length] index to stop copying to
+   * @returns {CrioArray} array with target copied in appropriate spots
+   */
+  copyWithin(targetIndex, startIndex = 0, endIndex = this.length) {
+    const clone = [...this];
+    const length = this.length >>> 0;
+
+    let to = getRelativeValue(targetIndex >> 0, length),
+      from = getRelativeValue(startIndex >> 0, length);
+
+    const final = getRelativeValue(endIndex >> 0, length);
+
+    let count = Math.min(final - from, length - to),
+      direction = 1;
+
+    if (from < to && to < from + count) {
+      direction = -1;
+      from += count - 1;
+      to += count - 1;
+    }
+
+    while (count > 0) {
+      if (from in clone) {
+        clone[to] = clone[from];
+      } else {
+        delete clone[to];
+      }
+
+      from += direction;
+      to += direction;
+      count--;
+    }
+
+    return new this.constructor(clone);
+  }
+
+  /**
    * @function delete
    * @memberof CrioArray
    *
@@ -86,7 +132,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} the array with the key deleted
    */
   delete(key) {
-    return remove(key, this);
+    return new CrioArray(remove(key, this));
   }
 
   /**
@@ -113,7 +159,7 @@ class CrioArray extends Array {
             indexOfItem = differenceArray.indexOf(item);
 
             if (~indexOfItem) {
-              differenceArray.splice(indexOfItem, 1);
+              differenceArray = differenceArray.splice(indexOfItem, 1);
             }
           });
         }
@@ -148,6 +194,26 @@ class CrioArray extends Array {
    */
   equals(object) {
     return isEqual(this, object);
+  }
+
+  /**
+   * @function fill
+   *
+   * @description
+   * fill the array at certain indices with the value passed
+   *
+   * @param {*} value the value to fill the indices with
+   * @param {number} [startIndex=0] the starting index to fill
+   * @param {number} [endIndex=this.length] the ending index to fill
+   * @returns {CrioArray} array with values filled appropriately
+   */
+  fill(value, startIndex = 0, endIndex = this.length) {
+    const from = startIndex < 0 ? this.length + startIndex : startIndex;
+    const to = endIndex < 0 ? this.length + endIndex : endIndex;
+
+    return this.map((item, index) => {
+      return index >= from && index < to ? value : item;
+    });
   }
 
   /**
@@ -192,6 +258,22 @@ class CrioArray extends Array {
    */
   first(size = 1) {
     return this.slice(0, size);
+  }
+
+  /**
+   * @function forEach
+   * @memberof CrioArray
+   *
+   * @description
+   * iterate over the array executing fn
+   *
+   * @param {function} fn the function to execute
+   * @returns {CrioArray} the original array
+   */
+  forEach(fn) {
+    Array.prototype.forEach.call(this, fn);
+
+    return this;
   }
 
   /**
@@ -334,6 +416,22 @@ class CrioArray extends Array {
   }
 
   /**
+   * @function map
+   * @memberof CrioArray
+   *
+   * @description
+   * map over the array returning the mapped items
+   *
+   * @param {function} fn the function to map
+   * @returns {CrioArray} the mapped array
+   */
+  map(fn) {
+    return Array.prototype.map.call(this, (item, index) => {
+      return getCrioedObject(fn(item, index, this));
+    });
+  }
+
+  /**
    * @function merge
    * @memberof CrioArray
    *
@@ -342,14 +440,12 @@ class CrioArray extends Array {
    *
    * @param {Array<number|string>|number|null} key the key to merge into
    * @param {...Array<CrioArray>} objects objects to merge with the crio
-   * @returns {CrioArray} new crio instance
+   * @returns {CrioArray} merged array
    */
   merge(key, ...objects) {
-    return new CrioArray(
-      objects.reduce((mergedObject, object) => {
-        return merge(key, object, mergedObject);
-      }, [])
-    );
+    return objects.reduce((mergedObject, object) => {
+      return merge(key, getCrioedObject(object), mergedObject);
+    }, this);
   }
 
   /**
@@ -377,14 +473,15 @@ class CrioArray extends Array {
    * @returns {CrioArray} array of plucked values
    */
   pluck(key) {
-    return new CrioArray(
-      this.reduce((pluckedItems, item) => {
-        if (isCrio(item) && has(key, item)) {
-          pluckedItems.push(get(key, item));
-        }
+    const parsedKey = parse(key);
 
-        return pluckedItems;
-      }, [])
+    const arrayToPluck = get(parsedKey.slice(0, parsedKey.length - 1), this);
+    const finalKey = parsedKey.slice(-1);
+
+    return new CrioArray(
+      arrayToPluck.map((item) => {
+        return get(finalKey, item);
+      })
     );
   }
 
@@ -412,7 +509,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} array with the values added
    */
   push(...items) {
-    return this.concat(items);
+    return items.length ? this.concat(items) : this;
   }
 
   /**
@@ -425,9 +522,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} array with the items reversed in order
    */
   reverse() {
-    const clone = [...this];
-
-    return clone.reverse();
+    return new CrioArray([...this].reverse());
   }
 
   /**
@@ -442,7 +537,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} array with value set at key
    */
   set(key, value) {
-    return set(key, value, this);
+    return set(key, getCrioedObject(value), this);
   }
 
   /**
@@ -689,7 +784,7 @@ class CrioArray extends Array {
 }
 
 Object.keys(ARRAY_FALLBACK_PROTOTYPE_METHODS).forEach((key) => {
-  if (!isFunction(Array.prototype[key])) {
+  if (typeof Array.prototype[key] !== 'function') {
     CrioArray.prototype[key] = function(...args) {
       return ARRAY_FALLBACK_PROTOTYPE_METHODS[key](this, ...args);
     };

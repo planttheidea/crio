@@ -124,11 +124,8 @@ export const getKeysReducedForFind = (allKeys, fromKey) => {
  * @returns {*} found item or undefined
  */
 export const find = (object, fn, fromKey, isKey, isFromEnd) => {
-  const objectKeys = getKeysReducedForFind(object.keys(), fromKey);
-
-  if (isFromEnd) {
-    objectKeys.reverse();
-  }
+  const reducedKeys = getKeysReducedForFind(object.keys(), fromKey);
+  const objectKeys = isFromEnd ? reducedKeys.reverse() : reducedKeys;
 
   let key;
 
@@ -253,11 +250,9 @@ export const thaw = (object) => {
   }
 
   return object.isArray()
-    ? [
-        ...object.map((item) => {
-          return thaw(item);
-        })
-      ]
+    ? [...object].map((item) => {
+        return thaw(item);
+      })
     : Object.keys(object).reduce((reducedObject, key) => {
         reducedObject[key] = thaw(object[key]);
 

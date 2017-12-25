@@ -70,19 +70,6 @@ export const isNumber = (object) => {
 };
 
 /**
- * @function isObject
- *
- * @description
- * is the object passed a plain object
- *
- * @param {*} object the object to test
- * @returns {boolean} is the object a  plain object
- */
-export const isObject = (object) => {
-  return !!object && object.constructor === Object;
-};
-
-/**
  * @function isReactElement
  *
  * @description
@@ -93,6 +80,19 @@ export const isObject = (object) => {
  */
 export const isReactElement = (object) => {
   return !!object && object.$$typeof === REACT_ELEMENT_TYPE;
+};
+
+/**
+ * @function isObject
+ *
+ * @description
+ * is the object passed a plain object
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is the object a  plain object
+ */
+export const isObject = (object) => {
+  return !!object && object.constructor === Object && !isReactElement(object);
 };
 
 /**

@@ -3,11 +3,19 @@
   "ava": {
     "babel": {
       "babelrc": true,
-      "presets": ["react"]
+      "presets": [
+        "react"
+      ]
     },
     "failFast": true,
-    "files": ["test/utils/*.js", "test/*.js"],
-    "require": ["babel-register", "babel-polyfill"],
+    "files": [
+      "test/utils/*.js",
+      "test/*.js"
+    ],
+    "require": [
+      "babel-register",
+      "babel-polyfill"
+    ],
     "verbose": true
   },
   "bugs": {
@@ -16,14 +24,15 @@
   "dependencies": {
     "hash-it": "~2.1.2",
     "json-stringify-safe": "~5.0.1",
-    "unchanged": "~1.0.2"
+    "pathington": "~1.1.5",
+    "unchanged": "~1.0.4"
   },
   "description": "Immutable objects and arrays in a natural way",
   "devDependencies": {
     "ava": "~0.24.0",
     "babel-cli": "6.26.0",
     "babel-core": "~6.26.0",
-    "babel-eslint": "8.0.3",
+    "babel-eslint": "8.1.1",
     "babel-loader": "7.1.2",
     "babel-plugin-transform-builtin-extend": "~1.1.2",
     "babel-polyfill": "6.26.0",
@@ -31,7 +40,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-2": "6.24.1",
     "babel-register": "6.26.0",
-    "eslint": "~4.13.1",
+    "eslint": "~4.14.0",
     "eslint-friendly-formatter": "3.0.0",
     "eslint-loader": "1.9.0",
     "html-webpack-plugin": "~2.30.1",
@@ -53,7 +62,10 @@
     "webpack-dev-server": "2.9.7"
   },
   "homepage": "https://github.com/planttheidea/crio#readme",
-  "keywords": ["immutable", "crio"],
+  "keywords": [
+    "immutable",
+    "crio"
+  ],
   "license": "MIT",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -63,29 +75,24 @@
     "url": "git+https://github.com/planttheidea/crio.git"
   },
   "scripts": {
-    "benchmark":
-      "npm run transpile:lib && NODE_ENV=production node ./benchmarks/index.js",
+    "benchmark": "npm run transpile:lib && NODE_ENV=production node ./benchmarks/index.js",
     "build": "NODE_ENV=development webpack --progress --colors",
-    "build:minified":
-      "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
+    "build:minified": "NODE_ENV=production webpack --progress --colors --config=webpack.config.minified.js",
     "clean:dist": "rimraf dist",
     "clean:es": "rimraf es",
     "clean:lib": "rimraf lib",
-    "dev":
-      "NODE_ENV=development webpack-dev-server --profile --progress --colors --config=webpack.config.dev.js",
+    "dev": "NODE_ENV=development webpack-dev-server --profile --progress --colors --config=webpack.config.dev.js",
     "docs": "rimraf docs && jsdoc -c ./jsdoc.config.json && git add --all",
     "dist": "npm run clean:dist && npm run build && npm run build:minified",
     "lint": "NODE_ENV=test eslint src",
     "prepublish": "if in-publish; then npm run prepublish:compile; fi",
-    "prepublish:compile":
-      "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
+    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run dist && npm run docs",
     "start": "npm run dev",
     "test": "NODE_PATH=. NODE_ENV=test ava",
     "test:coverage": "nyc npm test",
     "test:watch": "npm run test -- --watch",
     "transpile:es": "npm run clean:es && BABEL_ENV=es babel src --out-dir es",
-    "transpile:lib":
-      "npm run clean:lib && BABEL_ENV=lib babel src --out-dir lib"
+    "transpile:lib": "npm run clean:lib && BABEL_ENV=lib babel src --out-dir lib"
   },
   "version": "4.1.2"
 }
