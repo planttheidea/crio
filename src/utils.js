@@ -154,12 +154,12 @@ export const find = (object, fn, fromKey, isKey, isFromEnd) => {
  * @returns {*} either the crioed object, or the object itself
  */
 export const getCrioedObject = (object) => {
-  if (isCrio(object) || isReactElement(object)) {
+  if (!object || typeof object !== 'object') {
     return object;
   }
 
   if (isArray(object)) {
-    return new CrioArray(object);
+    return object instanceof CrioArray ? object : new CrioArray(object);
   }
 
   return isObject(object) ? new CrioObject(object) : object;

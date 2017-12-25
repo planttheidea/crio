@@ -1,5 +1,6 @@
 // test
 import test from 'ava';
+import React from 'react';
 import sinon from 'sinon';
 
 // src
@@ -314,11 +315,9 @@ test('if find will find the key that exists in the object at key starting from t
   t.is(result, otherKey);
 });
 
-test('if getCrioedObject will return the object if it is already a crio', (t) => {
-  const object = {};
+test('if getCrioedObject will return the object if it is a CrioArray', (t) => {
+  const object = new CrioArray([]);
 
-  const isCrioStub = sinon.stub(is, 'isCrio').returns(true);
-  const isReactStub = sinon.stub(is, 'isReactElement').returns(true);
   const isArraySpy = sinon.spy(is, 'isArray');
   const isObjectSpy = sinon.spy(is, 'isObject');
 
@@ -326,16 +325,8 @@ test('if getCrioedObject will return the object if it is already a crio', (t) =>
 
   t.is(result, object);
 
-  t.true(isCrioStub.calledOnce);
-  t.true(isCrioStub.calledWith(object));
-
-  isCrioStub.restore();
-
-  t.true(isReactStub.notCalled);
-
-  isReactStub.restore();
-
-  t.true(isArraySpy.notCalled);
+  t.true(isArraySpy.calledOnce);
+  t.true(isArraySpy.calledWith(object));
 
   isArraySpy.restore();
 
@@ -344,11 +335,9 @@ test('if getCrioedObject will return the object if it is already a crio', (t) =>
   isObjectSpy.restore();
 });
 
-test('if getCrioedObject will return the object if it is a react element', (t) => {
-  const object = {};
+test('if getCrioedObject will return the object if it is a CrioObject', (t) => {
+  const object = new CrioObject({});
 
-  const isCrioStub = sinon.stub(is, 'isCrio').returns(false);
-  const isReactStub = sinon.stub(is, 'isReactElement').returns(true);
   const isArraySpy = sinon.spy(is, 'isArray');
   const isObjectSpy = sinon.spy(is, 'isObject');
 
@@ -356,21 +345,34 @@ test('if getCrioedObject will return the object if it is a react element', (t) =
 
   t.is(result, object);
 
-  t.true(isCrioStub.calledOnce);
-  t.true(isCrioStub.calledWith(object));
-
-  isCrioStub.restore();
-
-  t.true(isReactStub.calledOnce);
-  t.true(isReactStub.calledWith(object));
-
-  isReactStub.restore();
-
-  t.true(isArraySpy.notCalled);
+  t.true(isArraySpy.calledOnce);
+  t.true(isArraySpy.calledWith(object));
 
   isArraySpy.restore();
 
-  t.true(isObjectSpy.notCalled);
+  t.true(isObjectSpy.calledOnce);
+  t.true(isObjectSpy.calledWith(object));
+
+  isObjectSpy.restore();
+});
+
+test('if getCrioedObject will return the object if it is a react element', (t) => {
+  const object = <div />;
+
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
+
+  const result = utils.getCrioedObject(object);
+
+  t.is(result, object);
+
+  t.true(isArraySpy.calledOnce);
+  t.true(isArraySpy.calledWith(object));
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.calledOnce);
+  t.true(isObjectSpy.calledWith(object));
 
   isObjectSpy.restore();
 });
@@ -378,8 +380,6 @@ test('if getCrioedObject will return the object if it is a react element', (t) =
 test('if getCrioedObject will return the CrioArray if it is an array', (t) => {
   const object = ['foo'];
 
-  const isCrioSpy = sinon.stub(is, 'isCrio');
-  const isReactSpy = sinon.stub(is, 'isReactElement');
   const isArraySpy = sinon.spy(is, 'isArray');
   const isObjectSpy = sinon.spy(is, 'isObject');
 
@@ -387,23 +387,12 @@ test('if getCrioedObject will return the CrioArray if it is an array', (t) => {
 
   t.deepEqual(result, new CrioArray(object));
 
-  t.true(isCrioSpy.called);
-  t.deepEqual(isCrioSpy.args[0], [object]);
-
-  isCrioSpy.restore();
-
-  t.true(isReactSpy.called);
-  t.deepEqual(isReactSpy.args[0], [object]);
-
-  isReactSpy.restore();
-
   t.true(isArraySpy.called);
   t.deepEqual(isArraySpy.args[0], [object]);
 
   isArraySpy.restore();
 
-  t.true(isObjectSpy.called);
-  t.deepEqual(isObjectSpy.args[0], object);
+  t.true(isObjectSpy.notCalled);
 
   isObjectSpy.restore();
 });
@@ -411,24 +400,12 @@ test('if getCrioedObject will return the CrioArray if it is an array', (t) => {
 test('if getCrioedObject will return the CrioObject if it is an object', (t) => {
   const object = {foo: 'bar'};
 
-  const isCrioSpy = sinon.stub(is, 'isCrio');
-  const isReactSpy = sinon.stub(is, 'isReactElement');
   const isArraySpy = sinon.spy(is, 'isArray');
   const isObjectSpy = sinon.spy(is, 'isObject');
 
   const result = utils.getCrioedObject(object);
 
   t.deepEqual(result, new CrioObject(object));
-
-  t.true(isCrioSpy.called);
-  t.deepEqual(isCrioSpy.args[0], [object]);
-
-  isCrioSpy.restore();
-
-  t.true(isReactSpy.called);
-  t.deepEqual(isReactSpy.args[0], [object]);
-
-  isReactSpy.restore();
 
   t.true(isArraySpy.called);
   t.deepEqual(isArraySpy.args[0], [object]);
@@ -444,24 +421,12 @@ test('if getCrioedObject will return the CrioObject if it is an object', (t) => 
 test('if getCrioedObject will return the object if no matches', (t) => {
   const object = /foo/;
 
-  const isCrioSpy = sinon.stub(is, 'isCrio');
-  const isReactSpy = sinon.stub(is, 'isReactElement');
   const isArraySpy = sinon.spy(is, 'isArray');
   const isObjectSpy = sinon.spy(is, 'isObject');
 
   const result = utils.getCrioedObject(object);
 
   t.is(result, object);
-
-  t.true(isCrioSpy.called);
-  t.deepEqual(isCrioSpy.args[0], [object]);
-
-  isCrioSpy.restore();
-
-  t.true(isReactSpy.called);
-  t.deepEqual(isReactSpy.args[0], [object]);
-
-  isReactSpy.restore();
 
   t.true(isArraySpy.called);
   t.deepEqual(isArraySpy.args[0], [object]);

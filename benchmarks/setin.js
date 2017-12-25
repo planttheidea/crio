@@ -123,11 +123,7 @@ exports.arraySetInCrio = (cycles) => {
   const arr = crio([array]);
   const maxIndex = arr[0].length - 1;
 
-  let index;
-
   for (let i = 0; i < cycles; i++) {
-    index = ~~(Math.random() * maxIndex);
-
-    arr.set([0, index], Math.random());
+    arr.set([0, ~~(Math.random() * maxIndex)], Math.random());
   }
 };

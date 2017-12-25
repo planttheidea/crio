@@ -3,15 +3,29 @@ import test from 'ava';
 import sinon from 'sinon';
 
 // src
-import * as crioArray from 'src/CrioArray';
+import CrioArray from 'src/CrioArray';
 import CrioObject from 'src/CrioObject';
-
-const CrioArray = crioArray.default;
 
 const isNewArray = (t, existing, result) => {
   t.true(result instanceof CrioArray);
   t.not(result, existing);
 };
+
+test('if the constructor will handle a CrioArray passed', (t) => {
+  const existing = new CrioArray(['foo', 'bar']);
+
+  const result = new CrioArray(existing);
+
+  t.is(result, existing);
+});
+
+test('if the constructor will handle a CrioObject passed', (t) => {
+  const existing = new CrioObject({foo: 'bar', bar: 'baz'});
+
+  const result = new CrioArray(existing);
+
+  t.deepEqual(result, existing.toArray());
+});
 
 test('if clear will return an empty crio array', (t) => {
   const existing = new CrioArray(['foo', 'bar']);
@@ -374,7 +388,7 @@ test('if mutate will allow mutation of a thawed version of the array and return 
   const object = {
     fn(thawed, original) {
       t.deepEqual(thawed, ['foo', 'bar']);
-      t.deepEqual(original, new CrioArray(['foo', 'bar']));
+      t.is(original, existing);
 
       thawed.sort();
 
@@ -445,6 +459,28 @@ test('if push will return the original array if no items are passed', (t) => {
   const result = existing.push();
 
   t.is(result, existing);
+});
+
+test('if reduce will reduce the values and return the crioed version of the object', (t) => {
+  const existing = new CrioArray([1, 2, 3]);
+
+  const result = existing.reduce((sum, amount) => {
+    return sum.concat([amount]);
+  }, []);
+
+  isNewArray(t, existing, result);
+  t.deepEqual(result, new CrioArray([1, 2, 3]));
+});
+
+test('if reduceRight will reduce the values and return the crioed version of the object', (t) => {
+  const existing = new CrioArray([1, 2, 3]);
+
+  const result = existing.reduceRight((sum, amount) => {
+    return sum.concat([amount]);
+  }, []);
+
+  isNewArray(t, existing, result);
+  t.deepEqual(result, new CrioArray([3, 2, 1]));
 });
 
 test('if reverse will reverse the order of items in the array', (t) => {
@@ -639,4 +675,8 @@ test('if xor produces a new array with the values that exist in only one array',
 
   isNewArray(t, existing, result);
   t.deepEqual(result, new CrioArray([1]));
+});
+
+test('if Symbol.species will return the CrioArray constructor', (t) => {
+  t.is(CrioArray[Symbol.species], CrioArray);
 });

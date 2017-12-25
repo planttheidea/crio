@@ -11,7 +11,7 @@ import CrioObject from './CrioObject';
 import {ARRAY_FALLBACK_PROTOTYPE_METHODS, ARRAY_UNSCOPABLES} from './constants';
 
 // is
-import {isArray, isEqual, isUndefined} from './is';
+import {isArray, isCrio, isEqual, isUndefined} from './is';
 
 // utils
 import {
@@ -34,6 +34,10 @@ class CrioArray extends Array {
       applyPrototype();
 
       hasAppliedPrototype = true;
+    }
+
+    if (isCrio(array)) {
+      return array.toArray();
     }
 
     return isArray(array)
@@ -132,7 +136,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} the array with the key deleted
    */
   delete(key) {
-    return new CrioArray(remove(key, this));
+    return remove(key, this);
   }
 
   /**
@@ -152,21 +156,19 @@ class CrioArray extends Array {
 
     let indexOfItem;
 
-    return new CrioArray(
-      arrays.reduce((differenceArray, array) => {
-        if (isArray(array)) {
-          array.forEach((item) => {
-            indexOfItem = differenceArray.indexOf(item);
+    return arrays.reduce((differenceArray, array) => {
+      if (isArray(array)) {
+        array.forEach((item) => {
+          indexOfItem = differenceArray.indexOf(item);
 
-            if (~indexOfItem) {
-              differenceArray = differenceArray.splice(indexOfItem, 1);
-            }
-          });
-        }
+          if (~indexOfItem) {
+            differenceArray = differenceArray.splice(indexOfItem, 1);
+          }
+        });
+      }
 
-        return differenceArray;
-      }, this.values())
-    );
+      return differenceArray;
+    }, this);
   }
 
   /**
@@ -210,9 +212,10 @@ class CrioArray extends Array {
   fill(value, startIndex = 0, endIndex = this.length) {
     const from = startIndex < 0 ? this.length + startIndex : startIndex;
     const to = endIndex < 0 ? this.length + endIndex : endIndex;
+    const crioedValue = getCrioedObject(value);
 
     return this.map((item, index) => {
-      return index >= from && index < to ? value : item;
+      return index >= from && index < to ? crioedValue : item;
     });
   }
 
@@ -478,11 +481,9 @@ class CrioArray extends Array {
     const arrayToPluck = get(parsedKey.slice(0, parsedKey.length - 1), this);
     const finalKey = parsedKey.slice(-1);
 
-    return new CrioArray(
-      arrayToPluck.map((item) => {
-        return get(finalKey, item);
-      })
-    );
+    return arrayToPluck.map((item) => {
+      return get(finalKey, item);
+    });
   }
 
   /**
@@ -510,6 +511,53 @@ class CrioArray extends Array {
    */
   push(...items) {
     return items.length ? this.concat(items) : this;
+  }
+
+  /**
+   * @function reduce
+   * @memberof CrioObject
+   *
+   * @description
+   * reduce the crio down to a single value, starting with initial value
+   *
+   * @param {function} fn the function to iterate with
+   * @param {*} initialValue the initial value of the reduction
+   * @returns {*} the reduced value
+   */
+  reduce(fn, initialValue) {
+    return getCrioedObject(
+      Array.prototype.reduce.call(
+        this,
+        (value, item, index) => {
+          return fn(value, item, index, this);
+        },
+        initialValue
+      )
+    );
+  }
+
+  /**
+   * @function reduceRight
+   * @memberof CrioObject
+   *
+   * @description
+   * reduce the crio down to a single value, starting with initial value, starting from the end of the array
+   * and iterating to the start
+   *
+   * @param {function} fn the function to iterate with
+   * @param {*} initialValue the initial value of the reduction
+   * @returns {*} the reduced value
+   */
+  reduceRight(fn, initialValue) {
+    return getCrioedObject(
+      Array.prototype.reduceRight.call(
+        this,
+        (value, item, index) => {
+          return fn(value, item, index, this);
+        },
+        initialValue
+      )
+    );
   }
 
   /**
@@ -637,18 +685,16 @@ class CrioArray extends Array {
    * @memberof CrioArray
    *
    * @description
-   * convert the crio to an object if it isnt already
+   * convert the crio to an object if it isn't already
    *
    * @returns {CrioObject} new object from the array
    */
   toObject() {
-    return new CrioObject(
-      this.reduce((object, item, index) => {
-        object[index] = item;
+    return this.reduce((object, item, index) => {
+      object[index] = item;
 
-        return object;
-      }, {})
-    );
+      return object;
+    }, new CrioObject({}));
   }
 
   /**
@@ -767,31 +813,29 @@ class CrioArray extends Array {
           if (~indexOfItem) {
             indicesToRemove.push(indexOfItem);
           } else {
-            items.push(item);
+            items = items.push(item);
           }
         });
       }
 
       return items;
-    }, []);
+    }, new CrioArray([]));
 
-    return new CrioArray(
-      reducedItems.filter((itemIgnored, index) => {
-        return !~indicesToRemove.indexOf(index);
-      })
-    );
+    return reducedItems.filter((itemIgnored, index) => {
+      return !~indicesToRemove.indexOf(index);
+    });
   }
 }
 
-Object.keys(ARRAY_FALLBACK_PROTOTYPE_METHODS).forEach((key) => {
-  if (typeof Array.prototype[key] !== 'function') {
-    CrioArray.prototype[key] = function(...args) {
-      return ARRAY_FALLBACK_PROTOTYPE_METHODS[key](this, ...args);
-    };
-  }
-});
-
 export function applyPrototype() {
+  Object.keys(ARRAY_FALLBACK_PROTOTYPE_METHODS).forEach((key) => {
+    if (typeof Array.prototype[key] !== 'function') {
+      CrioArray.prototype[key] = function(...args) {
+        return ARRAY_FALLBACK_PROTOTYPE_METHODS[key](this, ...args);
+      };
+    }
+  });
+
   if (typeof Symbol === 'function') {
     if (Symbol.species) {
       Object.defineProperty(CrioArray, Symbol.species, {

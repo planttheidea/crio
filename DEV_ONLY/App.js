@@ -1,8 +1,14 @@
+(() => {
+  window.Symbol = undefined;
+})();
+
 import _ from 'lodash';
 import React from 'react';
 import {render} from 'react-dom';
 
 import crio from '../src';
+
+console.log(typeof Symbol);
 
 // import '../benchmarks';
 
@@ -10,6 +16,14 @@ document.body.style.backgroundColor = '#1d1d1d';
 document.body.style.color = '#d5d5d5';
 document.body.style.margin = 0;
 document.body.style.padding = 0;
+
+const existing = crio(['foo', 'bar']);
+
+console.log(existing);
+
+const result = existing.delete(0);
+
+console.log(existing, result);
 
 // console.group('object');
 //

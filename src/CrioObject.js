@@ -1,5 +1,6 @@
 // external dependencies
 import stringify from 'json-stringify-safe';
+import {parse} from 'pathington';
 import hashIt from 'hash-it';
 import {get, has, merge, remove, set} from 'unchanged';
 
@@ -10,7 +11,7 @@ import CrioArray from './CrioArray';
 import {OBJECT_UNSCOPABLES} from './constants';
 
 // is
-import {isCrio, isEqual} from './is';
+import {isCrio, isEqual, isObject} from './is';
 
 // utils
 import {
@@ -27,13 +28,17 @@ import {
 let hasAppliedPrototype;
 
 class CrioObject {
-  constructor(object = {}) {
-    const objectKeys = Object.keys(object);
+  constructor(object) {
+    const objectKeys = isObject(object) ? Object.keys(object) : [];
 
     if (!hasAppliedPrototype) {
       applyPrototype();
 
       hasAppliedPrototype = true;
+    }
+
+    if (isCrio(object)) {
+      return object.toObject();
     }
 
     return objectKeys.reduce((crioObject, key) => {
@@ -360,13 +365,11 @@ class CrioObject {
    * @returns {Crio} the mapped object
    */
   map(fn) {
-    return new CrioObject(
-      Object.keys(this).reduce((object, key) => {
-        object[key] = fn(this[key], key, this);
+    return Object.keys(this).reduce((object, key) => {
+      object[key] = getCrioedObject(fn(this[key], key, this));
 
-        return object;
-      }, {})
-    );
+      return object;
+    }, new CrioObject({}));
   }
 
   /**
@@ -381,11 +384,9 @@ class CrioObject {
    * @returns {CrioObject} new crio instance
    */
   merge(key, ...objects) {
-    return new CrioObject(
-      objects.reduce((mergedObject, object) => {
-        return merge(key, object, mergedObject);
-      }, {})
-    );
+    return objects.reduce((mergedObject, object) => {
+      return merge(key, getCrioedObject(object), mergedObject);
+    }, this);
   }
 
   /**
@@ -413,15 +414,16 @@ class CrioObject {
    * @returns {CrioArray} array of plucked values
    */
   pluck(key) {
-    return new CrioArray(
-      this.reduce((pluckedItems, item) => {
-        if (isCrio(item) && has(key, item)) {
-          pluckedItems.push(get(key, item));
-        }
+    const parsedKey = parse(key);
 
-        return pluckedItems;
-      }, [])
-    );
+    const objectToPluck = get(parsedKey.slice(0, parsedKey.length - 1), this);
+    const finalKey = parsedKey.slice(-1);
+
+    return objectToPluck
+      .map((item) => {
+        return get(finalKey, item);
+      })
+      .values();
   }
 
   /**
@@ -477,7 +479,7 @@ class CrioObject {
    * @returns {CrioObject} object with value set at key
    */
   set(key, value) {
-    return set(key, value, this);
+    return set(key, getCrioedObject(value), this);
   }
 
   /**
@@ -539,7 +541,7 @@ class CrioObject {
    * @returns {CrioArray} the object converted to an array of its values
    */
   toArray() {
-    return new CrioArray(this.values());
+    return this.values();
   }
 
   /**
