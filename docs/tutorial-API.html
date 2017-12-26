@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getKeysReducedForFind">getKeysReducedForFind</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
 				</ul>
 			</li>
 			
@@ -89,268 +89,810 @@
     <h1 id="crio-api">crio API</h1>
 <h2 id="instantiation">Instantiation</h2>
 <ul>
-<li>crio <code>{any}</code>, returns <em>CrioArray|CrioObject</em><ul>
+<li><code>crio(object: any): (CrioArray|CrioObject)</code><ul>
 <li>Standard method, will <code>crio</code> the object passed if an array or object, else it will return the object itself</li>
 </ul>
 </li>
-<li>crio.array <code>{Array&lt;any&gt;}</code>, returns <em>CrioArray</em><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const emptyObject = crio(); // {}
+const populatedObject = crio({foo: 'bar'}); // {foo: 'bar'}
+const populatedArray = crio(['foo', 'bar']); // ['foo', 'bar']</code></pre><ul>
+<li><code>crio.array(object: Array&lt;any&gt;): CrioArray</code><ul>
 <li>Shortcut method for <code>crio</code>ing array-specific values</li>
 </ul>
 </li>
-<li>crio.object <code>{Object}</code>, returns <em>CrioObject</em><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const empty = crio.array(); // []
+const populated = crio.array(['foo']); // ['foo']</code></pre><ul>
+<li><code>crio.object(object: Object): CrioObject</code><ul>
 <li>Shortcut method for <code>crio</code>ing object-specific values</li>
 </ul>
 </li>
-<li>crio.isCrio <code>{any}</code>, returns <em>boolean</em><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const empty = crio.object(); // {}
+const populated = crio.object({foo: 'bar'}); // {foo: 'bar'}</code></pre><ul>
+<li><code>crio.isCrio(object: any): boolean</code><ul>
 <li>Determine if the object passed is a <code>Crio</code></li>
 </ul>
 </li>
-<li>crio.isArray <code>{any}</code>, returns <em>boolean</em><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const normal = {foo: 'bar'};
+const crioed = crio({foo: 'bar'});
+
+console.log(crio.isCrio(normal)); // false
+console.log(crio.isCrio(crioed)); // true</code></pre><ul>
+<li><code>crio.isArray(object: any): boolean</code><ul>
 <li>Determine if the object passed is a <code>CrioArray</code></li>
 </ul>
 </li>
-<li>crio.isObject <code>{any}</code>, returns <em>boolean</em><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const normal = ['foo'];
+const croiedArray = crio(['foo']);
+const crioedObject = crio({foo: 'bar'});
+
+console.log(crio.isObject(normal)); // false
+console.log(crio.isObject(croiedArray)); // true
+console.log(crio.isObject(crioedObject)); // false</code></pre><ul>
+<li><code>crio.isObject(object: any): boolean</code><ul>
 <li>Determine if the object passed is a <code>CrioObject</code></li>
 </ul>
 </li>
 </ul>
-<p>Methods with the same name as the native method will be a link to MDN, as they are meant to be as similar to the native method as possible. Where any specific differences from the default behavior exist, they will be called out, however one broad difference is that all methods that are not getters which return primitive values are chainable.</p>
-<h4 id="shared-methods">Shared Methods</h4>
-<p>The following methods are specific to <code>Crio</code> types, and are available on either <code>CrioArray</code> or <code>CrioObject</code></p>
-<ul>
-<li>clear, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>returns an empty <code>Crio</code></li>
-</ul>
-</li>
-<li>compact, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>returns a new <code>Crio</code> with all falsy values filtered out</li>
-</ul>
-</li>
-<li>delete <code>{number}</code> <em>key</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Deletes the key provided from the crio object</li>
-</ul>
-</li>
-<li>deleteIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Deletes the final key based on the array of keys nested inside of the crio object</li>
-</ul>
-</li>
-<li>equals <code>{CrioArray|CrioObject}</code> <em>crioArrayToCompare</em>, returns <code>{boolean}</code><ul>
-<li>Determines whether array is deeply equal in value to another by comparing hashCodes</li>
-</ul>
-</li>
-<li>get <code>{number}</code> <em>key</em>, returns <code>{any}</code><ul>
-<li>Retrieve value at key</li>
-</ul>
-</li>
-<li>getIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{any}</code><ul>
-<li>Retrieve value in deeply nested object based on array of keys</li>
-</ul>
-</li>
-<li>has <code>{string}</code> <em>key</em>, returns <code>{boolean}</code><ul>
-<li>Alias for <code>hasOwnProperty</code></li>
-</ul>
-</li>
-<li>hasIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{boolean}</code><ul>
-<li>Does the <code>Crio</code> have the combination of <em>keys</em> assigned deeply</li>
-</ul>
-</li>
-<li>merge <code>{Object[, Object2, ..., ObjectN]}</code> <em>objects</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Shallow merge any number of items into existing crio</li>
-</ul>
-</li>
-<li>mergeIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, <code>{Object[, Object2, ..., ObjectN]}</code> <em>objects</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Shallow merge any number of items into value existing in deeply nested object based on array of keys</li>
-</ul>
-</li>
-<li>mutate <code>{function(mutableCrio, originalCrio): any}</code> <em>callback</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Whatever you return in the callback is what is returned, or if you return nothing it returns the original <code>Crio</code></li>
-</ul>
-</li>
-<li>pluck <code>{number|string}</code> <em>key</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Iterates over <code>Crio</code> and returns an array of values where the <em>key</em> exists as a property on the collection item</li>
-</ul>
-</li>
-<li>pluckIn <code>{Array&lt;number|string}</code> <em>keys</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Iterates over <code>Crio</code> and returns an array of values where the <em>keys</em> map to a deeply-nested property on the collection item</li>
-</ul>
-</li>
-<li>set <code>{number}</code> <em>key</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Sets value at key</li>
-</ul>
-</li>
-<li>setIn <code>{Array&lt;number|string&gt;}</code> <em>keys</em>, returns <code>{CrioArray|CrioObject}</code><ul>
-<li>Sets value in deeply nested object based on array of keys</li>
-</ul>
-</li>
-<li>toArray, returns <code>{CrioArray}</code><ul>
-<li>Converts <code>CrioObject</code> to a <code>CrioArray</code> of the object's values</li>
-</ul>
-</li>
-<li>toObject, returns <code>{CrioObject}</code><ul>
-<li>Converts <code>CrioArray</code> into a <code>CrioObject</code> of index: value pairs</li>
-</ul>
-</li>
-<li>thaw, returns <code>{Array&lt;any&gt;}</code><ul>
-<li>Recursively thaws array deeply and returns standard object version of itself</li>
-</ul>
-</li>
-</ul>
+<pre class="prettyprint source lang-javascript"><code>const normal = {foo: 'bar'};
+const croiedArray = crio(['foo']);
+const crioedObject = crio({foo: 'bar'});
+
+console.log(crio.isObject(normal)); // false
+console.log(crio.isObject(croiedArray)); // false
+console.log(crio.isObject(crioedObject)); // true</code></pre><p>Methods with the same name as the native method will be a link to MDN, as they are meant to be as similar to the native method as possible, with the exception of accepting <code>thisArg</code>. Where any specific differences from the default behavior exist, the <code>crio</code>-specific behavior is mentioned.</p>
 <h2 id="arrays">Arrays</h2>
-<h4 id="default-methods">Default Methods</h4>
 <ul>
+<li><code>clear(): CrioArray</code><ul>
+<li>returns an empty <code>CrioArray</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-JavaScript"><code>const populated = crio(['foo']);
+
+console.log(populated.clear()); // []</code></pre><ul>
+<li><code>compact(): CrioArray</code><ul>
+<li>returns a new <code>CrioArray</code> with all falsy values filtered out</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', false, 0, '', {}, [], null, undefined]);
+
+console.log(array.compact()); // ['foo', {}, []]</code></pre><ul>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat">concat</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">copyWithin</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries">entries</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every">every</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill">fill</a><ul>
-<li>Returns new crio with items from <em>start</em> to <em>end</em> filled with <em>value</em></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo']);
+
+console.log(array.concat(['bar'])); // ['foo', 'bar']</code></pre><ul>
+<li><code>delete(key: (Array&lt;number|string&gt;|number)): CrioArray</code><ul>
+<li>Deletes the key provided from the <code>CrioArray</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
 </ul>
 </li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">filter</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find">find</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex">findIndex</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">forEach</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">includes</a><ul>
-<li>Does a deep value equality comparison (rather than strict equality), so you can do things like <code>crioArray.includes({foo: 'bar'})</code></li>
 </ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">indexOf</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">join</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/keys">keys</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">lastIndexOf</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">map</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">pop</a><ul>
-<li>Returns new crio with first item removed</li>
-</ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">push</a><ul>
-<li>Returns new crio with new item added</li>
-</ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce">reduce</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight">reduceRight</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">reverse</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift">shift</a><ul>
-<li>Returns new crio with last item removed</li>
-</ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">slice</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some">some</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort</a><ul>
-<li>Returns new crio sorted by either callback or default</li>
-</ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">splice</a><ul>
-<li>Returns new crio with items added/removed based on splicing parameters</li>
-</ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toLocaleString">toLocaleString</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">unshift</a><ul>
-<li>Returns new crio with new items added to beginning</li>
-</ul>
-</li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values">values</a></li>
-</ul>
-<h4 id="added-crio-methods">Added crio Methods</h4>
-<ul>
-<li>difference <code>{Array&lt;*&gt;}</code> <em>array[, array2, ..., arrayN]</em>, returns <code>{CrioArray}</code><ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', {bar: 'baz', baz: 'quz'}]);
+
+console.log(array.delete(1)); // ['foo']
+console.log(array.delete('[1].bar')); // ['foo', {baz: 'quz'}]</code></pre><ul>
+<li><code>difference(array1: Array&lt;any&gt;[, array2: Array&lt;any&gt;[, ...arrayN: Array&lt;any&gt;]]): CrioArray</code><ul>
 <li>Returns a new array of the values that only exist in either the <code>CrioArray</code> or in one of the arrays passed</li>
 </ul>
 </li>
-<li>findLastIndex <code>{function}</code> <em>fn</em>, returns <code>{number}</code><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', true, 1]);
+
+console.log(array.difference(['foo'], [true])); // [1]</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/copyWithin">copyWithin</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.copyWithin(2, 0)); // ['foo', 'bar', 'foo']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/entries">entries</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.entries()); // [[0, 'foo'], [1, 'bar']]</code></pre><ul>
+<li><code>equals(object: any): boolean</code><ul>
+<li>Determines whether <code>object</code> is deeply equal to the <code>CrioArray</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo']);
+const matchingArray = crio(['foo']);
+
+console.log(array === matchingArray); // false
+console.log(array.equals(matchingArray)); // true
+console.log(array.equals(crio(['bar']))); // false</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every">every</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.every(value => value.length === 3)); // true
+console.log(array.every(value => value === 'bar')); // false</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill">fill</a><ul>
+<li>Returns new <code>CrioArray</code> with items from <code>start</code> to <code>end</code> filled with <code>value</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.fill('same')); // ['same', 'same', 'same']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter">filter</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.filter(value => value[0] === 'b')); // ['bar', 'baz']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find">find</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.find(value => value[0] === 'b')); // 'bar'</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex">findIndex</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.find(value => value[0] === 'b')); // 1</code></pre><ul>
+<li><code>findLast(fn: function(value: any, index: number, object: CrioArray)): any</code><ul>
+<li>Find the value that matches the result of <code>fn</code> starting at the last <code>index</code> in the object</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.find(value => value[0] === 'b')); // 'baz'</code></pre><ul>
+<li><code>findLastIndex(fn: function): number</code><ul>
 <li>Same as <code>findIndex</code> but starting from end and working to start</li>
 </ul>
 </li>
-<li>first <code>{number}</code> <em>num</em>, returns <code>{CrioArray}</code><ul>
-<li>Returns a new array of the first <em>num</em> number of items in the array</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.find(value => value[0] === 'b')); // 2</code></pre><ul>
+<li><code>first(size: number = 1): CrioArray</code><ul>
+<li>Returns a new array of the first <code>size</code> number of items in the array</li>
 </ul>
 </li>
-<li>intersection <code>{Array&lt;*&gt;}</code> <em>array[, array2, ..., arrayN]</em>, returns <code>{CrioArray}</code><ul>
-<li>Returns a new array of the values that exist in all of the arrays passed</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.first()); // ['foo']
+console.log(array.first(2)); // ['foo', 'bar']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">forEach</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+let count = 0;
+
+console.log(array.forEach(() => count++)); // ['foo', 'bar']
+console.log(count); // 2</code></pre><ul>
+<li><code>get(key: (Array&lt;number|string&gt;|number)): any</code><ul>
+<li>Retrieve value at <code>key</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
 </ul>
 </li>
-<li>last <code>{number}</code> <em>num</em>, returns <code>{CrioArray}</code><ul>
-<li>Returns a new array of the last <em>num</em> number of items in the array</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', {bar: 'baz'}]);
+
+console.log(array.get(1)); // {bar: 'baz'}
+console.log(array.get('[1].bar')); // 'baz'</code></pre><ul>
+<li><code>has(key: (Array&lt;number|string&gt;|number)): boolean</code><ul>
+<li>Does <code>key</code> exist in object</li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
 </ul>
 </li>
-<li>unique, returns <code>{CrioArray}</code><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', {bar: 'baz'}]);
+
+console.log(array.has(1)); // true
+console.log(array.has(6)); // false
+console.log(array.has('[1].bar')); // true
+console.log(array.has('[1].quz')); // false</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes">includes</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.includes('foo')); // true
+console.log(array.includes('baz')); // false</code></pre><ul>
+<li><code>intersection(array1: Array&lt;any&gt;[, array2: Array&lt;any&gt;[, ...arrayN: Array&lt;any&gt;]]): CrioArray</code><ul>
+<li>Returns a new <code>CrioArray</code> of the values that exist in all of the arrays</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 1, true]);
+
+console.log(array.intersection(['foo', 1], [1])); // 1</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf">indexOf</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz', 'bar']);
+
+console.log(array.indexOf('bar')); // 1</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join">join</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.join()); // 'foo,bar'
+console.log(array.join('|')); // 'foo|bar'</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/keys">keys</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.keys()); // [0, 1]</code></pre><ul>
+<li><code>last(size: number = 1): CrioArray</code><ul>
+<li>Returns a new <code>CrioArray</code> of the last <em>num</em> number of items in the array</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.last()); // ['baz']
+console.log(array.last(2)); // ['bar', 'baz']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf">lastIndexOf</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz', 'bar']);
+
+console.log(array.indexOf('bar')); // 3</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map">map</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(
+  array.map(value =>
+    value
+      .slice('')
+      .reverse()
+      .join('')
+  )
+); // ['oof', 'rab']</code></pre><ul>
+<li><code>merge(array1: Array&lt;any&gt;[, array2: Array&lt;any&gt;[, ...arrayN: Array&lt;any&gt;]]): CrioArray</code><ul>
+<li>Merge any number of objects into existing crio</li>
+<li>Supports shallow or deep key values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', {bar: 'baz'}]);
+
+console.log(array.merge(null, ['quz'])); // ['foo', {bar: 'baz'}, 'quz']
+console.log(array.merge('[0].bar', {baz: 'quz'})); // ['foo', {bar: {baz: 'quz'}}]</code></pre><ul>
+<li><code>mutate(fn: function(array: Array&lt;any&gt;, crio: CrioArray)): any</code><ul>
+<li>Whatever you return in the callback is what is returned (as a <code>CrioArray</code> or <code>CrioObject</code> if applicable)</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio([{foo: 'bar'}]);
+
+const result = array.mutate(thawed => {
+  thawed[0].foo = 'baz';
+  thawed.push('bar');
+
+  return thawed;
+});
+
+console.log(result); // [{foo: 'baz'}, 'bar']</code></pre><ul>
+<li><code>pluck(key: (Array&lt;number|string&gt;|number)): CrioArray</code><ul>
+<li>Iterates over the <code>CrioArray</code> and returns a new <code>CrioArray</code> of values where the <code>key</code> exists as a property on the collection item</li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio([{foo: 'bar'}, {bar: 'baz'}, {foo: 'quz'}]);
+
+console.log(array.pluck('foo')); // ['bar', undefined, 'quz']
+
+const deepArray = crio([
+  [{foo: 'foo'}, {bar: 'baz'}, {foo: 'bar'}],
+  [{foo: 'bar'}, {bar: 'baz'}, null, {foo: 'foo'}]
+]);
+
+console.log(array.pluck('[1].foo')); // ['bar', undefined, undefined, 'foo']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop">pop</a><ul>
+<li>Returns new <code>CrioArray</code> with first item removed</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.pop()); // ['foo']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push">push</a><ul>
+<li>Returns new <code>CrioArray</code> with new item(s) added</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo']);
+
+console.log(array.push('bar', 'baz')); // ['foo', 'bar', 'baz']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce">reduce</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio([1, 2, 3]);
+
+const result = array.reduce(
+  ({order, sum}, value) => {
+    return {order: [...order, value], sum: sum + value};
+  },
+  {order: [], sum: 0}
+);
+
+console.log(result); // {order: [1, 2, 3], sum: 6}</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduceRight">reduceRight</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio([1, 2, 3]);
+
+const result = array.reduceRight(
+  ({order, sum}, value) => {
+    return {order: [...order, value], sum: sum + value};
+  },
+  {order: [], sum: 0}
+);
+
+console.log(result); // {order: [3, 2, 1], sum: 6}</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reverse">reverse</a><ul>
+<li>The original array's order is maintained (not mutated)</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.reverse()); // ['baz', 'bar', 'foo']</code></pre><ul>
+<li><code>set(key: (Array&lt;number|string&gt;|number), value: any): CrioArray</code><ul>
+<li>Sets value at <code>key</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', {bar: 'baz'}]);
+
+console.log(array.set(1, 'quz')); // ['foo', 'quz']
+console.log(array.set('[1].bar', 'quz')); // ['foo', {bar: 'quz'}]</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift">shift</a><ul>
+<li>Returns new <code>CrioArray</code> with first item removed</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.shift()); // ['bar', 'baz']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice">slice</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.slice(1)); // ['bar']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some">some</a></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.some(value => value === 'bar')); // true
+console.log(array.some(value => value === 'quz')); // false</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">sort</a><ul>
+<li>Returns new <code>CrioArray</code> sorted by either callback or default</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.sort()); // ['bar', 'baz', 'foo']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice">splice</a><ul>
+<li>Returns new <code>CrioArray</code> with item(s) added/removed based on splicing parameters</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'baz']);
+
+console.log(array.splice(1, 1)); // ['foo', 'baz']</code></pre><ul>
+<li><code>thaw(): Array&lt;any&gt;</code><ul>
+<li>Recursively thaws <code>CrioArray</code> deeply and returns standard array version of itself</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.thaw()); // ['foo', 'bar']
+console.log(array.constructor === Array); // false
+console.log(array.thaw().constructor === Array); // true</code></pre><ul>
+<li><code>toObject(): CrioObject</code><ul>
+<li>Converts <code>CrioArray</code> into a <code>CrioObject</code> of <code>{index: value}</code> pairs</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.toObject()); // {0: 'foo', 1: 'bar'}</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toLocaleString">toLocaleString</a><ul>
+<li>Returns stringified version of <code>CrioArray</code></li>
+<li>Optionally accepts <code>serializer</code> and <code>indent</code> arguments, which are identical to those arguments for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.toLocaleString()); // [&quot;foo&quot;,&quot;bar&quot;]
+console.log(arrat.toLocaleString(null, 2));
+/*
+[
+  &quot;foo&quot;,
+  &quot;bar&quot;
+]
+*/</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString">toString</a><ul>
+<li>Returns stringified version of <code>CrioArray</code></li>
+<li>Optionally accepts <code>serializer</code> and <code>indent</code> arguments, which are identical to those arguments for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.toString()); // [&quot;foo&quot;,&quot;bar&quot;]
+console.log(arrat.toString(null, 2));
+/*
+[
+  &quot;foo&quot;,
+  &quot;bar&quot;
+]
+*/</code></pre><ul>
+<li><code>unique(): CrioArray</code><ul>
 <li>Returns a new <code>CrioArray</code> of values filtered down to only existing in the array once</li>
 </ul>
 </li>
-<li>xor <code>{Array&lt;*&gt;}</code> <em>array[, array2, ..., arrayN]</em>, returns <code>{CrioArray}</code><ul>
-<li>Returns a new array of the values that are the <a href="https://en.wikipedia.org/wiki/Symmetric_difference">symmetric difference</a> of the <code>CrioArray</code> and the arrays passed</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar', 'foo', 'foo', 'bar']);
+
+console.log(array.unique()); // ['foo', 'bar']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/unshift">unshift</a><ul>
+<li>Returns new <code>CrioArray</code> with new item(s) added to beginning</li>
 </ul>
 </li>
 </ul>
-<h2 id="objects">Objects</h2>
-<h4 id="default-methods">Default Methods</h4>
-<ul>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty">hasOwnProperty</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isPrototypeOf">isPrototypeOf</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable">propertyIsEnumerable</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString">toLocaleString</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString</a></li>
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf">valueOf</a></li>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.unshift('baz', 'quz')); // ['baz', 'quz', 'foo', 'bar']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/values">values</a></li>
 </ul>
-<h4 id="added-crio-methods">Added crio Methods</h4>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 'bar']);
+
+console.log(array.values()); // ['foo', 'bar']</code></pre><ul>
+<li><code>xor(array1: Array&lt;any&gt;[, array2: Array&lt;any&gt;[, ...arrayN: Array&lt;any&gt;]]): CrioArray</code><ul>
+<li>Returns a new <code>CrioArray</code> of the values that are the <a href="https://en.wikipedia.org/wiki/Symmetric_difference">symmetric difference</a> of the <code>CrioArray</code> and the arrays passed</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const array = crio(['foo', 1, true]);
+
+console.log(array.xor(['foo'], [true])); // [1]</code></pre><h2 id="objects">Objects</h2>
 <ul>
-<li>entries, returns <code>{Array&lt;[string, any]&gt;}</code><ul>
+<li><code>clear(): CrioObject</code><ul>
+<li>returns an empty <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar'});
+
+console.log(object.clear());</code></pre><ul>
+<li><code>compact(): CrioObject</code><ul>
+<li>returns a new <code>CrioObject</code> with all falsy values filtered out</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({
+  string: 'foo',
+  bool: false,
+  num: 0,
+  object: {},
+  array: [],
+  nul: null,
+  undef: undefined
+});
+
+console.log(object.compact()); // {string: 'foo', object: {}, array: []}</code></pre><ul>
+<li><code>delete(key: (Array&lt;number|string&gt;|string)): CrioObject</code><ul>
+<li>Deletes the key provided from the <code>CrioObject</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(object.delete('bar')); // {foo; 'bar'}
+console.log(object.delete('bar[0]')); // {foo: 'bar', bar: ['quz']}</code></pre><ul>
+<li><code>entries(): CrioArray</code><ul>
 <li>Gets an array of the <code>[key, value]</code> pairs in the <code>CrioObject</code></li>
 </ul>
 </li>
-<li>every <code>{function(value, key, CrioObject): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
-<li>Performs same function as <code>every</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.entries()); // [['foo', 'bar'], ['bar', 'baz']]</code></pre><ul>
+<li><code>every(fn: function(value: any, key: string, object: CrioObject)): boolean</code><ul>
+<li>Performs same function as <code>every</code> in <code>CrioArray</code>, but on the <code>CrioObject</code></li>
 </ul>
 </li>
-<li>forEach <code>{function}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{CrioObject}</code><ul>
-<li>Iterates over object executing <em>fn</em></li>
-<li>Iteration order is not guaranteed</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.every(value => value.length === 3)); // true
+console.log(object.every(value => value === 'bar')); // false</code></pre><ul>
+<li><code>forEach(fn: function(value: any, key: string, object: CrioObject)): CrioObject</code><ul>
+<li>Iterates over object executing <code>fn</code> and returns the original <code>CrioObject</code></li>
+<li>Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)</li>
 </ul>
 </li>
-<li>filter <code>{function}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{CrioObject}</code><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+let count = 0;
+
+console.log(object.forEach(() => count++)); // {foo: 'bar', bar: 'baz'}
+console.log(count); // 2</code></pre><ul>
+<li><code>filter(fn: function(value: any, key: string, object: CrioObject)): CrioObject</code><ul>
 <li>Iterates over object and filters out any returned values that are falsy</li>
-<li>Iteration order is not guaranteed</li>
+<li>Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)</li>
 </ul>
 </li>
-<li>findKey <code>{function}</code> <em>fn</em>, returns <code>{number}</code><ul>
-<li>Same as <code>findIndex</code> for <code>CrioArray</code> but finding the key instead of the index</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz', baz: 'quz'});
+
+console.log(object.filter(value => value[0] === 'b')); // {foo: 'bar', bar: 'baz'}</code></pre><ul>
+<li><code>find(fn: function(value: any, key: string, object: CrioObject)): any</code><ul>
+<li>Same as <code>find</code> for <code>CrioArray</code> but on the <code>CrioObject</code></li>
 </ul>
 </li>
-<li>findLastKey <code>{function}</code> <em>fn</em>, returns <code>{number}</code><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.find(value => value !== 'baz')); // 'bar'</code></pre><ul>
+<li><code>findKey(fn: function(value: any, key: string, object: CrioObject)): string</code><ul>
+<li>Same as <code>findIndex</code> for <code>CrioArray</code> but finding the appropriate <code>key</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.findKey(value => value !== 'baz')); // 'foo'</code></pre><ul>
+<li><code>findLast(fn: function(value: any, key: string, object: CrioObject)): any</code><ul>
+<li>Find the value that matches the result of <code>fn</code> starting at the last key in the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.findLast(value => value !== 'baz')); // 'quz'</code></pre><ul>
+<li><code>findLastKey(fn: function(value: any, key: string, object: CrioObject)): string</code><ul>
 <li>Same as <code>findKey</code> but starting from end and working to start</li>
 </ul>
 </li>
-<li>includes <code>{any}</code> <em>value</em>, returns <code>{boolean}</code><ul>
-<li>Determine if the <code>CrioObject</code> has a value that deeply matches <code>value</code> in equality</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.findLastKey(value => value !== 'baz')); // 'baz'</code></pre><ul>
+<li><code>get(key: (Array&lt;number|string&gt;|string)): any</code><ul>
+<li>Retrieve value at <code>key</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
 </ul>
 </li>
-<li>keys, returns <code>{Array&lt;string&gt;}</code><ul>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(crio.get('bar')); // ['baz', 'quz']
+console.log(crio.get('bar[0]')); // 'baz'</code></pre><ul>
+<li><code>has(key: (Array&lt;number|string&gt;|string)): boolean</code><ul>
+<li>Does <code>key</code> exist in object</li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(crio.has('bar')); // true
+console.log(crio.has('baz')); // false
+console.log(crio.has('bar[0]')); // true
+console.log(crio.has('bar[6]')); // false</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty">hasOwnProperty</a><ul>
+<li>Only supports shallow values</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(crio.hasOwnProperty('bar')); // true
+console.log(crio.hasOwnProperty('baz')); // false</code></pre><ul>
+<li><code>includes(item: any): boolean</code><ul>
+<li>Determine if the <code>CrioObject</code> has a value that matches <code>value</code> in strict equality</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.includes('baz')); // true
+console.log(object.includes('quz')); // false</code></pre><ul>
+<li><code>keyOf(item: any): string</code><ul>
+<li>Get the key for the <code>item</code> passed starting with the first key in the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz', baz: 'bar'});
+
+console.log(object.keyOf('bar')); // foo</code></pre><ul>
+<li><code>keys(): CrioArray</code><ul>
 <li>Returns an array of the keys in the <code>CrioObject</code></li>
 </ul>
 </li>
-<li>map <code>{function}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{CrioObject}</code><ul>
-<li>Iterates over object and maps returned value to the respective key</li>
-<li>Iteration order is not guaranteed</li>
 </ul>
-</li>
-<li>reduce <code>{function(accumulatedObject, value, key): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
-<li>Performs same function as <code>reduce</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
-</ul>
-</li>
-<li>reduceRight <code>{function(accumulatedObject, value, key): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
-<li>Performs same function as <code>reduceRight</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
-</ul>
-</li>
-<li>some <code>{function(value, key, CrioObject): any}</code> <em>fn</em>, <code>{any}</code> <em>thisArg</em>, returns <code>{any}</code><ul>
-<li>Performs same function as <code>some</code> in the <code>Array</code> prototype, but on the <code>CrioObject</code></li>
-</ul>
-</li>
-<li>values, returns <code>{Array&lt;any&gt;}</code><ul>
-<li>Returns an array of the values in the <code>CrioObject</code></li>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.keys()); // ['foo', 'bar']</code></pre><ul>
+<li><code>lastKeyOf(item: any): string</code><ul>
+<li>Get the key for the <code>item</code> passed starting with the last key in the <code>CrioObject</code></li>
 </ul>
 </li>
 </ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz', baz: 'bar'});
+
+console.log(object.keyOf('bar')); // baz</code></pre><ul>
+<li><code>map(fn: function(value: any, key: string, object: CrioObject)): CrioObject</code><ul>
+<li>Iterates over object and maps returned value to the respective <code>key</code></li>
+<li>Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz', baz: 'quz'});
+
+console.log(
+  object.map(value =>
+    value
+      .split('')
+      .reverse()
+      .join('')
+  )
+); // {foo: 'rab', bar: 'zab', baz: 'zuq'}</code></pre><ul>
+<li><code>merge(object1: Object[, object2: Object[, ...objectN: Object]]): CrioObject</code><ul>
+<li>Merge any number of objects into existing <code>CrioObject</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(object.merge(null, {baz: 'quz'})); // {foo: 'bar', bar: ['baz', 'quz'], baz: 'quz'}
+console.log(object.merge('bar[0]', ['blah'])); // {foo: 'bar', bar: ['baz', 'quz', 'blah']};</code></pre><ul>
+<li><code>mutate(fn: function(object: Object, crio: CrioObject)): any</code><ul>
+<li>Whatever you return in the callback is what is returned (as a <code>CrioArray</code> or <code>CrioObject</code> if applicable)</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: ['bar', 'baz']});
+
+const result = object.mutate(thawed => {
+  thawed.foo.push('quz');
+  thawed.bar = 'baz';
+
+  return thawed;
+});
+
+console.log(result); // {foo: ['bar', 'baz', 'quz'], bar: 'baz'}</code></pre><ul>
+<li><code>pluck(key: (Array&lt;number|string&gt;|string)): CrioArray</code><ul>
+<li>Iterates over the <code>CrioObject</code> and returns a <code>CrioArray</code> of values where the <code>key</code> exists as a property on the collection item</li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+<li>Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({
+  first: {foo: 'bar'},
+  second: {bar: 'baz'},
+  third: null,
+  fourth: {foo: 'foo'}
+});
+
+console.log(object.pluck('foo')); // ['bar', undefined, undefined, 'foo']
+
+const otherObject = crio({
+  first: [{foo: 'foo'}, {bar: 'baz'}, {foo: 'bar'}],
+  second: [{foo: 'bar'}, {bar: 'baz'}, null, {foo: 'foo'}]
+});
+
+console.log(otherObject.pluck('second.foo')); // ['bar', undefined, undefined, 'foo']</code></pre><ul>
+<li><code>reduce(fn: function(accumulator: any, value: any, key: string, object:CrioObject)): any</code><ul>
+<li>Performs same function as <code>reduce</code> in <code>CrioArray</code>, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({one: 1, two; 2, three: 3});
+
+const result = object.reduce(({order, sum}, value) => {
+  return {order: [...order, value], sum: sum + value};
+}, {order: [], sum; 0});
+
+console.log(result); // {order: [1, 2, 3], sum: 6}</code></pre><ul>
+<li><code>reduceRight(fn: function(accumulator: any, value: any, key: string, object:CrioObject)): any</code><ul>
+<li>Performs same function as <code>reduceRight</code> in <code>CrioArray</code>, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({one: 1, two; 2, three: 3});
+
+const result = object.reduceRight(({order, sum}, value) => {
+  return {order: [...order, value], sum: sum + value};
+}, {order: [], sum; 0});
+
+console.log(result); // {order: [3, 2, 1], sum: 6}</code></pre><ul>
+<li><code>set(key: (Array&lt;number|string&gt;|string), value: any): CrioObject</code><ul>
+<li>Sets value at <code>key</code></li>
+<li>Supports shallow or deep values via <a href="https://github.com/planttheidea/pathington">array or dot-bracket syntax</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(object.set('bar', 'baz')); // {foo: 'bar', bar: 'baz'}
+console.log(object.set('bar[0]', {baz: 'blah'})); // {foo: 'bar', bar: [{baz: 'blah'}, 'quz']}</code></pre><ul>
+<li><code>some(fn: function(value: any, key: string, object: CrioObject)): boolean</code><ul>
+<li>Performs same function as <code>some</code> in <code>CrioArray</code>, but on the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.some(value => value === 'baz')); // true
+console.log(object.some(value => value === 'quz')); // false</code></pre><ul>
+<li><code>toArray(): CrioArray</code><ul>
+<li>Converts <code>CrioObject</code> to a <code>CrioArray</code> of the object's values</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.toArray()); // ['bar', 'baz']</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString">toLocaleString</a><ul>
+<li>Returns stringified version of <code>CrioObject</code></li>
+<li>Optionally accepts <code>serializer</code> and <code>indent</code> arguments, which are identical to those arguments for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.toLocaleString()); // {&quot;foo&quot;:&quot;bar&quot;,&quot;bar&quot;:&quot;baz&quot;}
+console.log(object.toLocaleString(null, 2));
+/*
+{
+  &quot;foo&quot;: &quot;bar&quot;,
+  &quot;bar&quot;: &quot;baz&quot;
+}
+*/</code></pre><ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString">toString</a><ul>
+<li>Returns stringified version of <code>CrioObject</code></li>
+<li>Optionally accepts <code>serializer</code> and <code>indent</code> arguments, which are identical to those arguments for <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify">JSON.stringify</a></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.toString()); // {&quot;foo&quot;:&quot;bar&quot;,&quot;bar&quot;:&quot;baz&quot;}
+console.log(object.toString(null, 2));
+/*
+{
+  &quot;foo&quot;: &quot;bar&quot;,
+  &quot;bar&quot;: &quot;baz&quot;
+}
+*/</code></pre><ul>
+<li><code>thaw(): Object</code><ul>
+<li>Recursively thaws <code>CrioObject</code> deeply and returns standard object version of itself</li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.thaw()); // {foo: 'bar', bar: 'baz'}
+console.log(object.constructor === Object); // false
+console.log(object.thaw().constructor === Object); // true</code></pre><ul>
+<li><code>values(): CrioObject</code><ul>
+<li>Returns a <code>CrioArray</code> of the values in the <code>CrioObject</code></li>
+</ul>
+</li>
+</ul>
+<pre class="prettyprint source lang-javascript"><code>const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.values()); // ['bar', 'baz']</code></pre>
 </article>
 
 </section>

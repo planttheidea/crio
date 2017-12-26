@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getKeysReducedForFind">getKeysReducedForFind</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
 				</ul>
 			</li>
 			
@@ -105,30 +105,36 @@
         <article><h1 id="crio">crio</h1>
 <p>Immutable JS objects with a natural API</p>
 <p><img src="https://img.shields.io/badge/build-passing-brightgreen.svg"/>
-<img src="https://img.shields.io/badge/coverage-96.54%25-brightgreen.svg"/>
+<img src="https://img.shields.io/badge/coverage-98.55%25-brightgreen.svg"/>
 <img src="https://img.shields.io/badge/license-MIT-blue.svg"/></p>
-<h4 id="jump-to-the-api">Jump to the API</h4>
+<h2 id="jump-to-the-api">Jump to the API</h2>
 <p><a href="https://github.com/planttheidea/crio/blob/master/tutorials/API.md">API Documentation</a></p>
-<h4 id="upgrade-notice">Upgrade notice</h4>
-<p>If upgrading from <code>3.x.x</code> versions, please check the <a href="CHANGELOG.md">changelog</a> for breaking changes.</p>
-<h4 id="import-into-your-project">Import into your project</h4>
+<h2 id="upgrade-notice">Upgrade notice</h2>
+<p>If upgrading from <code>4.x.x</code> and earlier versions, please check the <a href="CHANGELOG.md">changelog</a> for breaking changes.</p>
+<h2 id="import">Import</h2>
 <pre class="prettyprint source lang-javascript"><code>// ES2015
 import crio from 'crio';
 
 // CommonJS
-const crio = require('crio');
+const crio = require('crio').default;
 
 // UMD
-const crio = window.crio;</code></pre><h4 id="usage">Usage</h4>
+const crio = window.crio;</code></pre><h2 id="usage">Usage</h2>
 <pre class="prettyprint source lang-javascript"><code>// you can assign with crio() directly
 const crioArray = crio(['foo']);
+const updatedCrioArray = crioArray.push('bar');
+
 const crioObject = crio({foo: 'bar'});
+const updatedCrioObject = crioObject.set('bar', 'baz');
 
 // or use the convenience methods
 const otherCrioArray = crio.array(['bar']);
-const otherCrioObject = crio.object({bar: 'baz'});</code></pre><h4 id="what-is-immutable-">What is immutable?</h4>
+const updatedOtherCrioArray = otherCrioArray.push('bar');
+
+const otherCrioObject = crio.object({bar: 'baz'});
+const updatedOtherCrioObject = otherCrioObject.set('bar', 'baz');</code></pre><h2 id="what-is-immutable-">What is immutable?</h2>
 <p>When something is described as immutable, it means that it cannot change after it has been created. In JavaScript terms, this means that any attempted change to an object results in a brand new object being created, without changing the original object.</p>
-<h4 id="why-do-we-need-this-in-javascript-">Why do we need this in JavaScript?</h4>
+<h2 id="why-is-this-helpful-">Why is this helpful?</h2>
 <p>The concept of immutability already exists in a lot of places in JavaScript, for example:</p>
 <pre class="prettyprint source lang-javascript"><code>const two = 2;
 const three = 3;
@@ -143,8 +149,8 @@ const fooBar = foo.push('bar');</code></pre><p>The expectation is that you have 
 const fooBar = foo.push('bar');
 
 console.log(foo); // ['foo', 'bar']
-console.log(fooBar); // 1</code></pre><p>Basically, you have mutated <em>foo</em> so that it is no longer empty, and what the <em>.push()</em> method returns is actually the index of the item you just added. This double-standard of expectations creates a lot confusion from a development perspective, but also makes keeping track of the state of your application very difficult because there is no traceability of what transactions have occurred to create that state at any given point.</p>
-<h4 id="enter-crio">Enter crio</h4>
+console.log(fooBar); // 1</code></pre><p>Basically, you have mutated <em>foo</em> so that it is no longer empty, and what the <em>.push()</em> method returns is actually the index of the item you just added. This double-standard of expectations creates a lot confusion from a development perspective, but also makes keeping track of the state of your application very difficult because there is no traceability of what transactions have occurred to create that state at any given point. This can create a lot of difficult-to-diagnose bugs and potential future regression points.</p>
+<h2 id="enter-crio">Enter crio</h2>
 <p>crio attempts to solve the problem by closing the &quot;immutable loop&quot; on collection items, meaning it applies immutability to objects that are normally mutable by nature by replacing mutating methods with immutable counterparts. As a point of reference:</p>
 <p><em>Naturally immutable objects</em></p>
 <ul>
@@ -159,38 +165,30 @@ console.log(fooBar); // 1</code></pre><p>Basically, you have mutated <em>foo</em
 <li>Dates (not covered by crio)</li>
 <li>Objects</li>
 </ul>
-<p>To create a new crio object, its pretty straightforward:</p>
-<pre class="prettyprint source lang-javascript"><code>const crioArray = crio([]);
-const crioObject = crio({}); // or just crio()</code></pre><p>These are examples with empty objects, but you can pass in populated objects as well, or if you pass in nothing it will default to an object. What crio does is clone and freeze the object via <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze">Object.freeze</a>, and stores as a custom <code>CrioArray</code> or <code>CrioObject</code> with a prototypical methods that will return a new immutable version of the object with each update. Example:</p>
-<pre class="prettyprint source lang-javascript"><code>const foo = crio(['foo']);
-const fooBar = foo.push('bar');
-
-console.log(foo); // ['foo']
-console.log(fooBar); // ['foo', 'bar']</code></pre><p>The <a href="tutorials/API.md">API</a> is the same as you already know working with those objects, and includes polyfills for all ES6 and some ES7 functions, as well as a few helpful crio-specific functions. The only difference is that any setting happens via .set() rather than direct index / property setting. You can work with the objects as you normally would with other libraries (lodash, for example). There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable.</p>
-<h4 id="why-not-just-use-x-immutable-library-">Why not just use X immutable library?</h4>
-<p>There are a bunch of ones out there, but the two that people usually gravitate towards:</p>
+<p>The <a href="tutorials/API.md">API</a> is the same as you already know working with those objects, as well as several helpful <code>crio</code>-specific functions. You can work with the objects as you normally would with other libraries (<code>lodash</code>, for example) with the exception that any setting happens via <code>.set()</code> rather than direct index / property setting. There is also no change to the protoypes of native objects, so you can apply this on your existing code go-forward. Basically, you shouldn't even notice you aren't working with the native objects, save for the fact everything is immutable.</p>
+<h2 id="why-not-just-use-x-immutable-library-">Why not just use X immutable library?</h2>
+<p><a href="https://github.com/facebook/immutable-js"><code>immutable</code></a> is quite nice, and very highly regarded by the community, however it creates an opaque object that cannot be used with other external libraries (namely <code>lodash</code>) without converting back to vanilla JS. This lack of interoperability creates a lot of hoops to jump through at certain points of development, and also trains you to not necessarily think in JS, but in the library.</p>
+<p><a href="https://github.com/rtfeldman/seamless-immutable"><code>seamless-immutable</code></a> has some great ideas, but they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the &quot;right way&quot;. Also, it can be quite slow for certain operations.</p>
+<p>Bottom line, I support each of these projects because they are trying to instill immutability in JavaScript practices, but I took a different approach that I consider the best of both worlds. :)</p>
+<h2 id="browser-support">Browser support</h2>
 <ul>
-<li><a href="https://github.com/facebook/immutable-js">Immutable.js</a></li>
-<li><a href="https://github.com/rtfeldman/seamless-immutable">seamless-immutable</a></li>
+<li>Chrome (all versions)</li>
+<li>Firefox (all versions)</li>
+<li>Edge (all versions)</li>
+<li>Opera 15+</li>
+<li>IE 11+</li>
+<li>Safari 8+</li>
+<li>iOS 8+</li>
+<li>Android 4+</li>
 </ul>
-<p><code>immutable</code> is quite nice, and very highly regarded by the community, however it creates an opaque object that cannot be used with other external libraries (namely lodash) without converting back to vanilla JS. Additionally, the object itself is not truly immutable, just constructed in a way that makes it incredibly difficult to alter outside of the API. This decision was likely made for performance reasons, but can cause unintended consequences (you can totally assign <code>foo.bar = 'baz'</code> and no error is thrown).</p>
-<p><code>seamless-immutable</code> has some great ideas, and I thought that could be the best option because they try to retain the native operations while leveraging Object.freeze, much like crio does. That said, they do not try to replace mutable methods with immutable ones, they just throw errors when you attempt them and its up to you to figure out the &quot;right way&quot;. As such, it fell short of my expectations.</p>
-<p>Bottom line, I support each of these projects to the fullest because they are trying to instill immutability in JavaScript practices; I just took a different approach that I consider the best of both worlds. :)</p>
-<h4 id="browser-support">Browser support</h4>
-<p>The only requirement is that your browser has a proper ES5 environment, which you can mostly shim with something like <a href="https://github.com/es-shims/es5-shim">es5-shim</a>, however certain things like Object.defineProperty cannot be shimmed, so IE8 and below cannot be supported.</p>
-<p>crio has been tested on the following browsers:</p>
+<h2 id="node-support">Node support</h2>
 <ul>
-<li>Chrome</li>
-<li>Firefox</li>
-<li>Edge</li>
-<li>IE9</li>
+<li>4+</li>
 </ul>
-<h4 id="performance">Performance</h4>
-<p>As of <code>4.0.0</code>, performance has substantially improved, and in many scenarios <code>crio</code> is more performant than <code>seamless-immutable</code> (in the case of <code>setIn</code>, by over <strong>5x</strong>). When it comes to <code>get</code> operations (either directly or nested), <code>crio</code> is identical to native in performance. See <a href="results.csv">the benchmark results</a> if you want to see performance in node, or spin up the app locally if you want to see the performance in the browser.</p>
-<h4 id="gotchas">Gotchas</h4>
+<h2 id="gotchas">Gotchas</h2>
 <p><strong>Recursive objects are not allowed</strong></p>
 <p>Immutable objects with recursive values are basically impossible, and trying them will cause a stack overflow, so be mindful of that!</p>
-<h4 id="development">Development</h4>
+<h2 id="development">Development</h2>
 <p>Standard stuff, clone the repo and <code>npm install</code> dependencies. The npm scripts available:</p>
 <ul>
 <li><code>benchmark</code> =&gt; run benchmarks in node</li>
