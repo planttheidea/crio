@@ -500,6 +500,7 @@ console.log(array.toObject()); // {0: 'foo', 1: 'bar'}
 ```
 
 * [toLocaleString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toLocaleString)
+  * Returns stringified version of `CrioArray`
   * Optionally accepts `serializer` and `indent` arguments, which are identical to those arguments for [JSON.stringify](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
 
 ```javascript
@@ -516,6 +517,7 @@ console.log(arrat.toLocaleString(null, 2));
 ```
 
 * [toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toString)
+  * Returns stringified version of `CrioArray`
   * Optionally accepts `serializer` and `indent` arguments, which are identical to those arguments for [JSON.stringify](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
 
 ```javascript
@@ -570,72 +572,363 @@ console.log(array.xor(['foo'], [true])); // [1]
 
 * `clear(): CrioObject`
   * returns an empty `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar'});
+
+console.log(object.clear());
+```
+
 * `compact(): CrioObject`
   * returns a new `CrioObject` with all falsy values filtered out
+
+```javascript
+const object = crio({
+  string: 'foo',
+  bool: false,
+  num: 0,
+  object: {},
+  array: [],
+  nul: null,
+  undef: undefined
+});
+
+console.log(object.compact()); // {string: 'foo', object: {}, array: []}
+```
+
 * `delete(key: (Array<number|string>|string)): CrioObject`
   * Deletes the key provided from the `CrioObject`
   * Supports shallow or deep values via [array or dot-bracket syntax](https://github.com/planttheidea/pathington)
+
+```javascript
+const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(object.delete('bar')); // {foo; 'bar'}
+console.log(object.delete('bar[0]')); // {foo: 'bar', bar: ['quz']}
+```
+
 * `entries(): CrioArray`
   * Gets an array of the `[key, value]` pairs in the `CrioObject`
-* `every(fn: function): boolean`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.entries()); // [['foo', 'bar'], ['bar', 'baz']]
+```
+
+* `every(fn: function(value: any, key: string, object: CrioObject)): boolean`
   * Performs same function as `every` in `CrioArray`, but on the `CrioObject`
-* `forEach(fn: function): CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.every(value => value.length === 3)); // true
+console.log(object.every(value => value === 'bar')); // false
+```
+
+* `forEach(fn: function(value: any, key: string, object: CrioObject)): CrioObject`
   * Iterates over object executing `fn` and returns the original `CrioObject`
   * Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+let count = 0;
+
+console.log(object.forEach(() => count++)); // {foo: 'bar', bar: 'baz'}
+console.log(count); // 2
+```
+
 * `filter(fn: function(value: any, key: string, object: CrioObject)): CrioObject`
   * Iterates over object and filters out any returned values that are falsy
   * Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz', baz: 'quz'});
+
+console.log(object.filter(value => value[0] === 'b')); // {foo: 'bar', bar: 'baz'}
+```
+
 * `find(fn: function(value: any, key: string, object: CrioObject)): any`
   * Same as `find` for `CrioArray` but on the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.find(value => value !== 'baz')); // 'bar'
+```
+
 * `findKey(fn: function(value: any, key: string, object: CrioObject)): string`
   * Same as `findIndex` for `CrioArray` but finding the appropriate `key`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.findKey(value => value !== 'baz')); // 'foo'
+```
+
 * `findLast(fn: function(value: any, key: string, object: CrioObject)): any`
-  * Find the value that matches the result of `fn` starting at the last key in the object
+  * Find the value that matches the result of `fn` starting at the last key in the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.findLast(value => value !== 'baz')); // 'quz'
+```
+
 * `findLastKey(fn: function(value: any, key: string, object: CrioObject)): string`
   * Same as `findKey` but starting from end and working to start
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'}, (baz: 'quz'));
+
+console.log(object.findLastKey(value => value !== 'baz')); // 'baz'
+```
+
 * `get(key: (Array<number|string>|string)): any`
   * Retrieve value at `key`
   * Supports shallow or deep values via [array or dot-bracket syntax](https://github.com/planttheidea/pathington)
+
+```javascript
+const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(crio.get('bar')); // ['baz', 'quz']
+console.log(crio.get('bar[0]')); // 'baz'
+```
+
 * `has(key: (Array<number|string>|string)): boolean`
   * Does `key` exist in object
   * Supports shallow or deep values via [array or dot-bracket syntax](https://github.com/planttheidea/pathington)
+
+```javascript
+const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(crio.has('bar')); // true
+console.log(crio.has('baz')); // false
+console.log(crio.has('bar[0]')); // true
+console.log(crio.has('bar[6]')); // false
+```
+
 * [hasOwnProperty](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty)
+  * Only supports shallow values
+
+```javascript
+const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(crio.hasOwnProperty('bar')); // true
+console.log(crio.hasOwnProperty('baz')); // false
+```
+
 * `includes(item: any): boolean`
-  * Determine if the `CrioObject` has a value that deeply matches `value` in equality
-* [isPrototypeOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/isPrototypeOf)
+  * Determine if the `CrioObject` has a value that matches `value` in strict equality
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.includes('baz')); // true
+console.log(object.includes('quz')); // false
+```
+
 * `keyOf(item: any): string`
-  * Get the key for the `item` passed starting with the first key in the object
+  * Get the key for the `item` passed starting with the first key in the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz', baz: 'bar'});
+
+console.log(object.keyOf('bar')); // foo
+```
+
 * `keys(): CrioArray`
   * Returns an array of the keys in the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.keys()); // ['foo', 'bar']
+```
+
 * `lastKeyOf(item: any): string`
-  * Get the key for the `item` passed starting with the last key in the object
-* `map(fn: function(value: any, key: string, object: CrioObject)): CrioObject`=
+  * Get the key for the `item` passed starting with the last key in the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz', baz: 'bar'});
+
+console.log(object.keyOf('bar')); // baz
+```
+
+* `map(fn: function(value: any, key: string, object: CrioObject)): CrioObject`
   * Iterates over object and maps returned value to the respective `key`
   * Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz', baz: 'quz'});
+
+console.log(
+  object.map(value =>
+    value
+      .split('')
+      .reverse()
+      .join('')
+  )
+); // {foo: 'rab', bar: 'zab', baz: 'zuq'}
+```
+
 * `merge(object1: Object[, object2: Object[, ...objectN: Object]]): CrioObject`
   * Merge any number of objects into existing `CrioObject`
   * Supports shallow or deep values via [array or dot-bracket syntax](https://github.com/planttheidea/pathington)
+
+```javascript
+const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(object.merge(null, {baz: 'quz'})); // {foo: 'bar', bar: ['baz', 'quz'], baz: 'quz'}
+console.log(object.merge('bar[0]', ['blah'])); // {foo: 'bar', bar: ['baz', 'quz', 'blah']};
+```
+
 * `mutate(fn: function(object: Object, crio: CrioObject)): any`
   * Whatever you return in the callback is what is returned (as a `CrioArray` or `CrioObject` if applicable)
-* `pluck(key: (Array<number|string>|string)): CrioObject`
+
+```javascript
+const object = crio({foo: ['bar', 'baz']});
+
+const result = object.mutate(thawed => {
+  thawed.foo.push('quz');
+  thawed.bar = 'baz';
+
+  return thawed;
+});
+
+console.log(result); // {foo: ['bar', 'baz', 'quz'], bar: 'baz'}
+```
+
+* `pluck(key: (Array<number|string>|string)): CrioArray`
   * Iterates over the `CrioObject` and returns a `CrioArray` of values where the `key` exists as a property on the collection item
   * Supports shallow or deep values via [array or dot-bracket syntax](https://github.com/planttheidea/pathington)
-* [propertyIsEnumerable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable)
+  * Iteration order is not guaranteed (due to object key order not being guaranteed per the spec)
+
+```javascript
+const object = crio({
+  first: {foo: 'bar'},
+  second: {bar: 'baz'},
+  third: null,
+  fourth: {foo: 'foo'}
+});
+
+console.log(object.pluck('foo')); // ['bar', undefined, undefined, 'foo']
+
+const otherObject = crio({
+  first: [{foo: 'foo'}, {bar: 'baz'}, {foo: 'bar'}],
+  second: [{foo: 'bar'}, {bar: 'baz'}, null, {foo: 'foo'}]
+});
+
+console.log(otherObject.pluck('second.foo')); // ['bar', undefined, undefined, 'foo']
+```
+
 * `reduce(fn: function(accumulator: any, value: any, key: string, object:CrioObject)): any`
   * Performs same function as `reduce` in `CrioArray`, but on the `CrioObject`
+
+```javascript
+const object = crio({one: 1, two; 2, three: 3});
+
+const result = object.reduce(({order, sum}, value) => {
+  return {order: [...order, value], sum: sum + value};
+}, {order: [], sum; 0});
+
+console.log(result); // {order: [1, 2, 3], sum: 6}
+```
+
 * `reduceRight(fn: function(accumulator: any, value: any, key: string, object:CrioObject)): any`
   * Performs same function as `reduceRight` in `CrioArray`, but on the `CrioObject`
+
+```javascript
+const object = crio({one: 1, two; 2, three: 3});
+
+const result = object.reduceRight(({order, sum}, value) => {
+  return {order: [...order, value], sum: sum + value};
+}, {order: [], sum; 0});
+
+console.log(result); // {order: [3, 2, 1], sum: 6}
+```
+
 * `set(key: (Array<number|string>|string), value: any): CrioObject`
   * Sets value at `key`
   * Supports shallow or deep values via [array or dot-bracket syntax](https://github.com/planttheidea/pathington)
+
+```javascript
+const object = crio({foo: 'bar', bar: ['baz', 'quz']});
+
+console.log(object.set('bar', 'baz')); // {foo: 'bar', bar: 'baz'}
+console.log(object.set('bar[0]', {baz: 'blah'})); // {foo: 'bar', bar: [{baz: 'blah'}, 'quz']}
+```
+
 * `some(fn: function(value: any, key: string, object: CrioObject)): boolean`
   * Performs same function as `some` in `CrioArray`, but on the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.some(value => value === 'baz')); // true
+console.log(object.some(value => value === 'quz')); // false
+```
+
 * `toArray(): CrioArray`
   * Converts `CrioObject` to a `CrioArray` of the object's values
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.toArray()); // ['bar', 'baz']
+```
+
 * [toLocaleString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toLocaleString)
+  * Returns stringified version of `CrioObject`
+  * Optionally accepts `serializer` and `indent` arguments, which are identical to those arguments for [JSON.stringify](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.toLocaleString()); // {"foo":"bar","bar":"baz"}
+console.log(object.toLocaleString(null, 2));
+/*
+{
+  "foo": "bar",
+  "bar": "baz"
+}
+*/
+```
+
 * [toString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString)
+  * Returns stringified version of `CrioObject`
+  * Optionally accepts `serializer` and `indent` arguments, which are identical to those arguments for [JSON.stringify](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.toString()); // {"foo":"bar","bar":"baz"}
+console.log(object.toString(null, 2));
+/*
+{
+  "foo": "bar",
+  "bar": "baz"
+}
+*/
+```
+
 * `thaw(): Object`
   * Recursively thaws `CrioObject` deeply and returns standard object version of itself
-* [valueOf](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf)
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.thaw()); // {foo: 'bar', bar: 'baz'}
+console.log(object.constructor === Object); // false
+console.log(object.thaw().constructor === Object); // true
+```
+
 * `values(): CrioObject`
   * Returns a `CrioArray` of the values in the `CrioObject`
+
+```javascript
+const object = crio({foo: 'bar', bar: 'baz'});
+
+console.log(object.values()); // ['bar', 'baz']
+```
