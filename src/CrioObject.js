@@ -49,7 +49,7 @@ class CrioObject {
   }
 
   get hashCode() {
-    return hashIt(this);
+    return hashIt(this, true);
   }
 
   get size() {

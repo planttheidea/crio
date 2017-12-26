@@ -22,7 +22,7 @@
     "url": "https://github.com/planttheidea/crio/issues"
   },
   "dependencies": {
-    "hash-it": "~2.1.2",
+    "hash-it": "~3.0.0",
     "json-stringify-safe": "~5.0.1",
     "pathington": "~1.1.5",
     "unchanged": "~1.0.4"
@@ -32,7 +32,7 @@
     "ava": "~0.24.0",
     "babel-cli": "6.26.0",
     "babel-core": "~6.26.0",
-    "babel-eslint": "8.1.1",
+    "babel-eslint": "8.1.2",
     "babel-loader": "7.1.2",
     "babel-plugin-transform-builtin-extend": "~1.1.2",
     "babel-polyfill": "6.26.0",
