@@ -2,15 +2,17 @@
 
 ## 5.0.0
 
-* Replace use of `lodash/fp` with `unchanged`
-* Add `findLast` and
+* Replace use of `lodash/fp` with `unchanged` for both smaller size and faster speed
+* Subclass native `Array` instead of create array-like object class (leverages speed of `Array`)
 
 #### BREAKING CHANGES
 
 * Remove support for IE10- (does not support subclass of native `Array` class)
 * Remove all `*In` methods (`deleteIn`, `getIn`, `hasIn`, `mergeIn`, `pluckIn`, `setIn`), instead let their previously-singular counterparts handle both use cases
 * Add `findLast` method for both `CrioArray` and `CrioObject`
-* Add `keyOf` and `lastKeyOf` for `CrioObject`
+* Add `keyOf` and `lastKeyOf` for `CrioObject` (similar to `indexOf` and `lastIndexOf` for `Array`, but for `Object`)
+* `includes` now checks for strict equality instead of deep equality (aligning with spec for `Array`)
+* `find`, `findIndex`, and `findKey` no longer accept `fromIndex` / `fromKey` (aligning with spec for `Array`)
 * Iterable methods (`entries`, `keys`, `values`) now return `CrioArray` instead of plain JS `Array`
 
 ## 4.1.2
