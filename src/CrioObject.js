@@ -169,11 +169,10 @@ class CrioObject {
    * find an item in the crio if it exists
    *
    * @param {function} fn function to test for finding the item
-   * @param {string} [fromKey] key to start from when performing the find
    * @returns {*} found item or undefined
    */
-  find(fn, fromKey) {
-    return find(this, fn, fromKey);
+  find(fn) {
+    return find(this, fn);
   }
 
   /**
@@ -184,11 +183,10 @@ class CrioObject {
    * find the key of an item in the crio if it exists
    *
    * @param {function} fn function to test for finding the item
-   * @param {number} [fromKey] key to start from when performing the find
    * @returns {number} index of match, or -1
    */
-  findKey(fn, fromKey) {
-    return find(this, fn, fromKey, true);
+  findKey(fn) {
+    return find(this, fn, true);
   }
 
   /**
@@ -199,11 +197,10 @@ class CrioObject {
    * find an item in the crio if it exists, starting from the end and iteratng to the start
    *
    * @param {function} fn function to test for finding the item
-   * @param {number} [fromKey] key to start from when performing the find
    * @returns {*} found item or undefined
    */
-  findLast(fn, fromKey) {
-    return find(this, fn, fromKey, false, true);
+  findLast(fn) {
+    return find(this, fn, false, true);
   }
 
   /**
@@ -214,11 +211,10 @@ class CrioObject {
    * find the matching index based on truthy return from fn starting from end
    *
    * @param {function} fn function to use for test in iteration
-   * @param {number} [fromKey] key to start from when performing the find
    * @returns {number} index of match, or -1
    */
-  findLastKey(fn, fromKey) {
-    return find(this, fn, fromKey, true, true);
+  findLastKey(fn) {
+    return find(this, fn, true, true);
   }
 
   /**

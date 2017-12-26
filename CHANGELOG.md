@@ -1,5 +1,18 @@
 # crio changelog
 
+## 5.0.0
+
+* Replace use of `lodash/fp` with `unchanged`
+* Add `findLast` and
+
+#### BREAKING CHANGES
+
+* Remove support for IE10- (does not support subclass of native `Array` class)
+* Remove all `*In` methods (`deleteIn`, `getIn`, `hasIn`, `mergeIn`, `pluckIn`, `setIn`), instead let their previously-singular counterparts handle both use cases
+* Add `findLast` method for both `CrioArray` and `CrioObject`
+* Add `keyOf` and `lastKeyOf` for `CrioObject`
+* Iterable methods (`entries`, `keys`, `values`) now return `CrioArray` instead of plain JS `Array`
+
 ## 4.1.2
 
 * Include `push` method for `CrioArray` (somehow was missing in v4 rewrite)

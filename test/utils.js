@@ -91,42 +91,6 @@ test('if every will return true when no keys exist', (t) => {
   t.true(utils.every(object, fn));
 });
 
-test('if getKeysReducedForFind will return all the keys when no from is specified', (t) => {
-  const allKeys = ['foo', 'bar', 'baz'];
-  const fromKey = undefined;
-
-  const result = utils.getKeysReducedForFind(allKeys, fromKey);
-
-  t.is(result, allKeys);
-});
-
-test('if getKeysReducedForFind will return the sliced keys when a number is specified as the from', (t) => {
-  const allKeys = ['foo', 'bar', 'baz'];
-  const fromKey = 1;
-
-  const result = utils.getKeysReducedForFind(allKeys, fromKey);
-
-  t.deepEqual(result, allKeys.slice(1));
-});
-
-test('if getKeysReducedForFind will return the reduced keys when a string is specified as the from', (t) => {
-  const allKeys = ['foo', 'bar', 'baz'];
-  const fromKey = allKeys[1];
-
-  const result = utils.getKeysReducedForFind(allKeys, fromKey);
-
-  t.deepEqual(result, allKeys.slice(1));
-});
-
-test('if getKeysReducedForFind will return the complete set of keys when something else is specified as the from', (t) => {
-  const allKeys = ['foo', 'bar', 'baz'];
-  const fromKey = null;
-
-  const result = utils.getKeysReducedForFind(allKeys, fromKey);
-
-  t.is(result, allKeys);
-});
-
 test('if find will find the value that exists in the object at key', (t) => {
   const key = 'foo';
   const value = 'bar';
@@ -144,11 +108,10 @@ test('if find will find the value that exists in the object at key', (t) => {
   const fn = (item) => {
     return item === value;
   };
-  const fromKey = undefined;
   const isKey = false;
   const isFromEnd = false;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, value);
 });
@@ -170,11 +133,10 @@ test('if find will return undefined if a match could not be found in the object 
   const fn = (item) => {
     return item === 'quz';
   };
-  const fromKey = undefined;
   const isKey = false;
   const isFromEnd = false;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, undefined);
 });
@@ -196,11 +158,10 @@ test('if find will find the key that exists in the object at key', (t) => {
   const fn = (item) => {
     return item === value;
   };
-  const fromKey = undefined;
   const isKey = true;
   const isFromEnd = false;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, key);
 });
@@ -225,11 +186,10 @@ test('if find will return undefined when the key could not be found in the objec
   const fn = (item) => {
     return item === 'quz';
   };
-  const fromKey = undefined;
   const isKey = true;
   const isFromEnd = false;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, undefined);
 });
@@ -254,11 +214,10 @@ test('if find will return undefined when the key could not be found in the array
   const fn = (item) => {
     return item === 'quz';
   };
-  const fromKey = undefined;
   const isKey = true;
   const isFromEnd = false;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, -1);
 });
@@ -280,11 +239,10 @@ test('if find will find the value that exists in the object at key starting from
   const fn = (item) => {
     return item === value;
   };
-  const fromKey = undefined;
   const isKey = false;
   const isFromEnd = true;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, otherValue);
 });
@@ -306,13 +264,50 @@ test('if find will find the key that exists in the object at key starting from t
   const fn = (item) => {
     return item === value;
   };
-  const fromKey = undefined;
   const isKey = true;
   const isFromEnd = true;
 
-  const result = utils.find(object, fn, fromKey, isKey, isFromEnd);
+  const result = utils.find(object, fn, isKey, isFromEnd);
 
   t.is(result, otherKey);
+});
+
+test('if getCrioedObject will return the object if it is falsy', (t) => {
+  const object = null;
+
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
+
+  const result = utils.getCrioedObject(object);
+
+  t.is(result, object);
+
+  t.true(isArraySpy.notCalled);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.notCalled);
+
+  isObjectSpy.restore();
+});
+
+test('if getCrioedObject will return the object if it is not typeof object', (t) => {
+  const object = 'foo';
+
+  const isArraySpy = sinon.spy(is, 'isArray');
+  const isObjectSpy = sinon.spy(is, 'isObject');
+
+  const result = utils.getCrioedObject(object);
+
+  t.is(result, object);
+
+  t.true(isArraySpy.notCalled);
+
+  isArraySpy.restore();
+
+  t.true(isObjectSpy.notCalled);
+
+  isObjectSpy.restore();
 });
 
 test('if getCrioedObject will return the object if it is a CrioArray', (t) => {

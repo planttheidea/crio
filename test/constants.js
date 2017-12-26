@@ -31,14 +31,13 @@ test('if find will call the find in utils with the object it is assigned to', (t
   object.find = constants.ARRAY_FALLBACK_PROTOTYPE_METHODS.find;
 
   const fn = () => {};
-  const fromIndex = 2;
 
   const stub = sinon.stub(utils, 'find').returnsArg(0);
 
-  const result = object.find(fn, fromIndex);
+  const result = object.find(fn);
 
   t.true(stub.calledOnce);
-  t.true(stub.calledWith(object, fn, fromIndex));
+  t.true(stub.calledWith(object, fn));
 
   stub.restore();
 
@@ -51,14 +50,13 @@ test('if findIndex will call the findIndex in utils with the object it is assign
   object.findIndex = constants.ARRAY_FALLBACK_PROTOTYPE_METHODS.findIndex;
 
   const fn = () => {};
-  const fromIndex = 2;
 
   const stub = sinon.stub(utils, 'find').returnsArg(0);
 
-  const result = object.findIndex(fn, fromIndex);
+  const result = object.findIndex(fn);
 
   t.true(stub.calledOnce);
-  t.true(stub.calledWith(object, fn, fromIndex, true));
+  t.true(stub.calledWith(object, fn, true));
 
   stub.restore();
 

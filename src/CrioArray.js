@@ -227,11 +227,10 @@ class CrioArray extends Array {
    * find an item in the crio if it exists, starting from the end and iteratng to the start
    *
    * @param {function} fn function to test for finding the item
-   * @param {number} [fromIndex] key to start from when performing the find
    * @returns {*} found item or undefined
    */
-  findLast(fn, fromIndex) {
-    return find(this, fn, fromIndex, false, true);
+  findLast(fn) {
+    return find(this, fn, false, true);
   }
 
   /**
@@ -242,11 +241,10 @@ class CrioArray extends Array {
    * find the matching index based on truthy return from fn starting from end
    *
    * @param {function} fn function to use for test in iteration
-   * @param {number} [fromIndex] key to start from when performing the find
    * @returns {number} index of match, or -1
    */
-  findLastIndex(fn, fromIndex) {
-    return find(this, fn, fromIndex, true, true);
+  findLastIndex(fn) {
+    return find(this, fn, true, true);
   }
 
   /**

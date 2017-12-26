@@ -3,15 +3,7 @@ import CrioArray from './CrioArray';
 import CrioObject from './CrioObject';
 
 // is
-import {
-  isArray,
-  isCrio,
-  isNumber,
-  isObject,
-  isReactElement,
-  isString,
-  isUndefined
-} from './is';
+import {isArray, isCrio, isObject, isReactElement} from './is';
 
 /**
  * @function createIterator
@@ -75,42 +67,6 @@ export const every = (object, fn) => {
 };
 
 /**
- * @function getKeysReducedForFind
- *
- * @description
- * get the array of keys reduced for what is required for the find
- *
- * @param {Array<number|string>} allKeys the complete list of keys
- * @param {number|string} fromKey the key to start from
- * @returns {Array<number|keys>} the reduced set of keys
- */
-export const getKeysReducedForFind = (allKeys, fromKey) => {
-  if (isUndefined(fromKey)) {
-    return allKeys;
-  }
-
-  if (isNumber(fromKey)) {
-    return allKeys.slice(fromKey);
-  }
-
-  if (isString(fromKey)) {
-    let matchFound = false;
-
-    return allKeys.reduce((reducedKeys, key) => {
-      matchFound = matchFound || key === fromKey;
-
-      if (matchFound) {
-        reducedKeys.push(key);
-      }
-
-      return reducedKeys;
-    }, []);
-  }
-
-  return allKeys;
-};
-
-/**
  * @function find
  *
  * @description
@@ -118,14 +74,12 @@ export const getKeysReducedForFind = (allKeys, fromKey) => {
  *
  * @param {CrioArray|CrioObject} object the object to search
  * @param {function} fn function to test for finding the item
- * @param {number} [fromKey] key to start from when performing the find
  * @param {boolean} [isKey] is the search for a key
  * @param {boolean} [isFromEnd] is the search for a key
  * @returns {*} found item or undefined
  */
-export const find = (object, fn, fromKey, isKey, isFromEnd) => {
-  const reducedKeys = getKeysReducedForFind(object.keys(), fromKey);
-  const objectKeys = isFromEnd ? reducedKeys.reverse() : reducedKeys;
+export const find = (object, fn, isKey, isFromEnd) => {
+  const objectKeys = isFromEnd ? object.keys().reverse() : object.keys();
 
   let key;
 

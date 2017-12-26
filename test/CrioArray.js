@@ -173,9 +173,8 @@ test('if findLast will find the last item in the array that matches the function
   const fn = ({foo} = {}) => {
     return foo === 'bar';
   };
-  const fromIndex = undefined;
 
-  const result = existing.findLast(fn, fromIndex);
+  const result = existing.findLast(fn);
 
   t.is(result, existing[2]);
 });
@@ -186,9 +185,8 @@ test('if findLastIndex will find the last index in the array that matches the fu
   const fn = ({foo} = {}) => {
     return foo === 'bar';
   };
-  const fromIndex = undefined;
 
-  const result = existing.findLastIndex(fn, fromIndex);
+  const result = existing.findLastIndex(fn);
 
   t.is(result, 2);
 });

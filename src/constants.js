@@ -40,11 +40,10 @@ export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
    * find an item in the array if it exists
    *
    * @param {function} fn function to test for finding the item
-   * @param {number} [fromIndex] key to start from when performing the find
    * @returns {*} found item or undefined
    */
-  find(fn, fromIndex) {
-    return find(this, fn, fromIndex);
+  find(fn) {
+    return find(this, fn);
   },
 
   /**
@@ -54,11 +53,10 @@ export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
    * find the index of an item in the array if it exists
    *
    * @param {function} fn function to test for finding the item
-   * @param {number} [fromIndex] key to start from when performing the find
    * @returns {number} index of match, or -1
    */
-  findIndex(fn, fromIndex) {
-    return find(this, fn, fromIndex, true);
+  findIndex(fn) {
+    return find(this, fn, true);
   },
 
   /**
