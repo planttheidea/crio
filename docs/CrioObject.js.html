@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>crio Source: CrioObject.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cyborg.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">crio</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-crio.html">crio</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="tutorials.list.html" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="tutorial-API.html">API</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: CrioObject.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// external dependencies
+import stringify from 'json-stringify-safe';
+import {parse} from 'pathington';
+import hashIt from 'hash-it';
+import {get, has, merge, remove, set} from 'unchanged';
+
+// classes
+import CrioArray from './CrioArray';
+
+// constants
+import {OBJECT_UNSCOPABLES} from './constants';
+
+// is
+import {isCrio, isEqual, isObject} from './is';
+
+// utils
+import {
+  createIterator,
+  getCrioedObject,
+  getEntries,
+  getValues,
+  every,
+  find,
+  some,
+  thaw
+} from './utils';
+
+let hasAppliedPrototype;
+
+class CrioObject {
+  constructor(object) {
+    const objectKeys = isObject(object) ? Object.keys(object) : [];
+
+    if (!hasAppliedPrototype) {
+      applyPrototype();
+
+      hasAppliedPrototype = true;
+    }
+
+    if (isCrio(object)) {
+      return object.toObject();
+    }
+
+    return objectKeys.reduce((crioObject, key) => {
+      crioObject[key] = getCrioedObject(object[key]);
+
+      return crioObject;
+    }, this);
+  }
+
+  get hashCode() {
+    return hashIt(this, true);
+  }
+
+  get size() {
+    return Object.keys(this).length;
+  }
+
+  /**
+   * @function clear
+   * @memberof CrioObject
+   *
+   * @description
+   * get a new crio that is empty
+   *
+   * @returns {CrioObject} an empty object
+   */
+  clear() {
+    return new CrioObject();
+  }
+
+  /**
+   * @function compact
+   * @memberof CrioObject
+   *
+   * @description
+   * get a new object with values from the original array that are truthy
+   *
+   * @returns {CrioObject} the object with only truthy values
+   */
+  compact() {
+    return this.filter((item) => {
+      return !!item;
+    });
+  }
+
+  /**
+   * @function delete
+   * @memberof CrioObject
+   *
+   * @description
+   * delete the value in the object at key, either shallow or deep
+   *
+   * @param {Array&lt;number|string>|sring} key the key to delete
+   * @returns {CrioObject} the array with the key deleted
+   */
+  delete(key) {
+    return remove(key, this);
+  }
+
+  /**
+   * @function entries
+   * @memberof CrioObject
+   *
+   * @description
+   * get the pairs of [key, value] in the crio
+   *
+   * @returns {CrioArray} [key, value] pairs
+   */
+  entries() {
+    return getEntries(this);
+  }
+
+  /**
+   * @function equals
+   * @memberof CrioObject
+   *
+   * @description
+   * does the object passed equal the crio
+   *
+   * @param {*} object object to compare against the instance
+   * @returns {boolean} is the object equivalent in value
+   */
+  equals(object) {
+    return isEqual(this, object);
+  }
+
+  /**
+   * @function every
+   * @memberof CrioObject
+   *
+   * @description
+   * does every instance in the object match
+   *
+   * @param {function} fn the function to test for matching
+   * @returns {boolean} does every instance match
+   */
+  every(fn) {
+    return every(this, fn);
+  }
+
+  /**
+   * @function filter
+   * @memberof CrioObject
+   *
+   * @description
+   * filter the object based on the fn passed
+   *
+   * @param {function} fn function to test for if it should be included in the result set
+   * @returns {CrioObject} new crio instance
+   */
+  filter(fn) {
+    return new CrioObject(
+      Object.keys(this).reduce((object, key) => {
+        if (fn(this[key], key, object)) {
+          object[key] = this[key];
+        }
+
+        return object;
+      }, {})
+    );
+  }
+
+  /**
+   * @function find
+   * @memberof CrioObject
+   *
+   * @description
+   * find an item in the crio if it exists
+   *
+   * @param {function} fn function to test for finding the item
+   * @returns {*} found item or undefined
+   */
+  find(fn) {
+    return find(this, fn);
+  }
+
+  /**
+   * @function findKey
+   * @memberof CrioObject
+   *
+   * @description
+   * find the key of an item in the crio if it exists
+   *
+   * @param {function} fn function to test for finding the item
+   * @returns {number} index of match, or -1
+   */
+  findKey(fn) {
+    return find(this, fn, true);
+  }
+
+  /**
+   * @function findLast
+   * @memberof CrioObject
+   *
+   * @description
+   * find an item in the crio if it exists, starting from the end and iteratng to the start
+   *
+   * @param {function} fn function to test for finding the item
+   * @returns {*} found item or undefined
+   */
+  findLast(fn) {
+    return find(this, fn, false, true);
+  }
+
+  /**
+   * @function findLastKey
+   * @memberof CrioObject
+   *
+   * @description
+   * find the matching index based on truthy return from fn starting from end
+   *
+   * @param {function} fn function to use for test in iteration
+   * @returns {number} index of match, or -1
+   */
+  findLastKey(fn) {
+    return find(this, fn, true, true);
+  }
+
+  /**
+   * @function forEach
+   * @memberof CrioObject
+   *
+   * @description
+   * iterate over the object calling fn
+   *
+   * @param {function} fn function to call in iteration
+   * @returns {CrioObject} the original object
+   */
+  forEach(fn) {
+    Object.keys(this).forEach((key) => {
+      fn(this[key], key, this);
+    });
+
+    return this;
+  }
+
+  /**
+   * @function get
+   * @memberof CrioObject
+   *
+   * @description
+   * get the item at key passed, either shallow or deeply nested
+   *
+   * @param {Array&lt;number|string>|string} key key to retrieve
+   * @returns {*} item found at key
+   */
+  get(key) {
+    return get(key, this);
+  }
+
+  /**
+   * @function has
+   * @memberof CrioObject
+   *
+   * @description
+   * does the crio have the key passed, either shallow or deeply nested
+   *
+   * @param {Array&lt;number|string>|string} key key to test
+   * @returns {boolean} does the crio have the key
+   */
+  has(key) {
+    return has(key, this);
+  }
+
+  /**
+   * @function includes
+   * @memberof CrioObject
+   *
+   * @description
+   * does the object have the item passed
+   *
+   * @param {*} item item to test for existence
+   * @returns {boolean} does the item exist in the crio
+   */
+  includes(item) {
+    return this.some((value) => {
+      return value === item;
+    });
+  }
+
+  /**
+   * @function isArray
+   * @memberof CrioObject
+   *
+   * @description
+   * is the crio an array
+   *
+   * @returns {boolean} is the crio an array
+   */
+  isArray() {
+    return false;
+  }
+
+  /**
+   * @function isObject
+   * @memberof CrioObject
+   *
+   * @description
+   * is the crio an object
+   *
+   * @returns {boolean} is the crio an object
+   */
+  isObject() {
+    return true;
+  }
+
+  /**
+   * @function keyOf
+   * @memberof CrioObject
+   *
+   * @description
+   * get the key for the item passed
+   *
+   * @param {*} item the item to search for
+   * @returns {string} the key of match, or undefined
+   */
+  keyOf(item) {
+    return this.findKey((value) => {
+      return value === item;
+    });
+  }
+
+  /**
+   * @function keys
+   * @memberof CrioObject
+   *
+   * @description
+   * get the keys of the crio
+   *
+   * @returns {CrioArray&lt;string>} keys in the crio
+   */
+  keys() {
+    return new CrioArray(Object.keys(this));
+  }
+
+  /**
+   * @function lastKeyOf
+   * @memberof CrioObject
+   *
+   * @description
+   * get the key for the item passed, starting from the end of the array and iterating towards the start
+   *
+   * @param {*} item the item to search for
+   * @returns {string} the key of match, or undefined
+   */
+  lastKeyOf(item) {
+    return this.findLastKey((value) => {
+      return value === item;
+    });
+  }
+
+  /**
+   * @function map
+   * @memberof CrioObject
+   *
+   * @description
+   * iterate over the object mapping the result of fn to the key
+   *
+   * @param {function} fn function to call on iteration
+   * @returns {Crio} the mapped object
+   */
+  map(fn) {
+    return Object.keys(this).reduce((object, key) => {
+      object[key] = getCrioedObject(fn(this[key], key, this));
+
+      return object;
+    }, new CrioObject({}));
+  }
+
+  /**
+   * @function merge
+   * @memberof CrioObject
+   *
+   * @description
+   * merge objects with the original object
+   *
+   * @param {Array&lt;number|string>|number|null} key the key to merge into
+   * @param {...Array&lt;CrioObject>} objects objects to merge with the crio
+   * @returns {CrioObject} new crio instance
+   */
+  merge(key, ...objects) {
+    return objects.reduce((mergedObject, object) => {
+      return merge(key, getCrioedObject(object), mergedObject);
+    }, this);
+  }
+
+  /**
+   * @function mutate
+   * @memberof CrioObject
+   *
+   * @description
+   * work with the object in a mutated way and return the crioed result of that call
+   *
+   * @param {function} fn function to apply to crio
+   * @returns {*} crioed value resulting from the call
+   */
+  mutate(fn) {
+    return getCrioedObject(fn(this.thaw(), this));
+  }
+
+  /**
+   * @function pluck
+   * @memberof CrioObject
+   *
+   * @description
+   * get the values in each object in the collection at key, either shallow or deeply nested
+   *
+   * @param {string} key key to find value of in collection object
+   * @returns {CrioArray} array of plucked values
+   */
+  pluck(key) {
+    const parsedKey = parse(key);
+
+    const objectToPluck = get(parsedKey.slice(0, parsedKey.length - 1), this);
+    const finalKey = parsedKey.slice(-1);
+
+    return objectToPluck
+      .map((item) => {
+        return get(finalKey, item);
+      })
+      .values();
+  }
+
+  /**
+   * @function reduce
+   * @memberof CrioObject
+   *
+   * @description
+   * reduce the crio down to a single value, starting with initial value
+   *
+   * @param {function} fn the function to iterate with
+   * @param {*} initialValue the initial value of the reduction
+   * @returns {*} the reduced value
+   */
+  reduce(fn, initialValue) {
+    return getCrioedObject(
+      Object.keys(this).reduce((value, key) => {
+        return fn(value, this[key], key, this);
+      }, initialValue)
+    );
+  }
+
+  /**
+   * @function reduceRight
+   * @memberof CrioObject
+   *
+   * @description
+   * reduce the crio down to a single value, starting with initial value, starting from the end of the array
+   * and iterating to the start
+   *
+   * @param {function} fn the function to iterate with
+   * @param {*} initialValue the initial value of the reduction
+   * @returns {*} the reduced value
+   */
+  reduceRight(fn, initialValue) {
+    return getCrioedObject(
+      Object.keys(this)
+        .reverse()
+        .reduce((value, key) => {
+          return fn(value, this[key], key, this);
+        }, initialValue)
+    );
+  }
+
+  /**
+   * @function set
+   * @memberof CrioObject
+   *
+   * @description
+   * set the value at the key passed
+   *
+   * @param {Array&lt;number|string>|string} key key to assign value to
+   * @param {*} value value to assign
+   * @returns {CrioObject} object with value set at key
+   */
+  set(key, value) {
+    return set(key, getCrioedObject(value), this);
+  }
+
+  /**
+   * @function some
+   * @memberof CrioObject
+   *
+   * @description
+   * does any item in the object match the result from fn
+   *
+   * @param {function} fn the function to test for matching
+   * @returns {boolean} does any item match
+   */
+  some(fn) {
+    return some(this, fn);
+  }
+
+  /**
+   * @function sort
+   * @memberof CrioObject
+   *
+   * @description
+   * sort the collection by the fn passed
+   *
+   * @param {function} fn the function to sort based on
+   * @returns {CrioObject} object with the items sorted
+   */
+  sort(fn) {
+    return new CrioObject(
+      Object.keys(this)
+        .sort(fn)
+        .reduce((object, key) => {
+          object[key] = this[key];
+
+          return object;
+        }, {})
+    );
+  }
+
+  /**
+   * @function thaw
+   * @memberof CrioObject
+   *
+   * @description
+   * create a plain JS version of the object
+   *
+   * @returns {Object} plain JS version of the object
+   */
+  thaw() {
+    return thaw(this);
+  }
+
+  /**
+   * @function toArray
+   * @memberof CrioObject
+   *
+   * @description
+   * convert the object to an array
+   *
+   * @returns {CrioArray} the object converted to an array of its values
+   */
+  toArray() {
+    return this.values();
+  }
+
+  /**
+   * @function toLocaleString
+   * @memberof CrioObject
+   *
+   * @description
+   * convert the object to stringified form
+   *
+   * @param {function} [serializer] the serialization method to use
+   * @param {number} [indent] the number of spaces to indent the values
+   * @returns {string} stringified object
+   */
+  toLocaleString(serializer, indent) {
+    return this.toString(serializer, indent);
+  }
+
+  /**
+   * @function toObject
+   * @memberof CrioObject
+   *
+   * @description
+   * convert the object to an objectobject
+   *
+   * @returns {CrioObject} the object
+   */
+  toObject() {
+    return this;
+  }
+
+  /**
+   * @function toString
+   * @memberof CrioObject
+   *
+   * @description
+   * convert the object to stringified form
+   *
+   * @param {function} [serializer] the serialization method to use
+   * @param {number} [indent] the number of spaces to indent the values
+   * @returns {string} stringified object
+   */
+  toString(serializer, indent) {
+    return stringify(this, serializer, indent);
+  }
+
+  /**
+   * @function valueOf
+   * @memberof CrioObject
+   *
+   * @description
+   * get the object value
+   *
+   * @returns {CrioObject} the object
+   */
+  valueOf() {
+    return this;
+  }
+
+  /**
+   * @function values
+   * @memberof CrioObject
+   *
+   * @description
+   * get the values of the object as an array
+   *
+   * @returns {CrioObject} values in the object
+   */
+  values() {
+    return getValues(this);
+  }
+}
+
+export function applyPrototype() {
+  if (typeof Symbol === 'function') {
+    if (Symbol.species) {
+      Object.defineProperty(CrioObject, Symbol.species, {
+        configurable: false,
+        enumerable: false,
+        get() {
+          return CrioObject;
+        }
+      });
+    }
+
+    if (Symbol.iterator) {
+      Object.defineProperty(CrioObject.prototype, Symbol.iterator, {
+        configurable: false,
+        enumerable: false,
+        value: createIterator(),
+        writable: false
+      });
+    }
+
+    if (Symbol.unscopables) {
+      Object.defineProperty(CrioObject.prototype, Symbol.unscopables, {
+        configurable: false,
+        enumerable: false,
+        value: OBJECT_UNSCOPABLES,
+        writable: false
+      });
+    }
+  }
+}
+
+export default CrioObject;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

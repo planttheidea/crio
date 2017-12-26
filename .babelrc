@@ -1,18 +1,14 @@
 {
   "env": {
     "development": {
-      "plugins": ["add-module-exports"],
-      "presets": [
+      "plugins": [
         [
-          "env",
+          "transform-builtin-extend",
           {
-            "loose": true
+            "globals": ["Array", "Date"]
           }
-        ],
-        "stage-2"
-      ]
-    },
-    "es": {
+        ]
+      ],
       "presets": [
         [
           "env",
@@ -24,8 +20,35 @@
         "stage-2"
       ]
     },
-    "production": {
-      "plugins": ["add-module-exports"],
+    "es": {
+      "plugins": [
+        [
+          "transform-builtin-extend",
+          {
+            "globals": ["Array", "Date"]
+          }
+        ]
+      ],
+      "presets": [
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": false
+          }
+        ],
+        "stage-2"
+      ]
+    },
+    "lib": {
+      "plugins": [
+        [
+          "transform-builtin-extend",
+          {
+            "globals": ["Array", "Date"]
+          }
+        ]
+      ],
       "presets": [
         [
           "env",
@@ -36,7 +59,35 @@
         "stage-2"
       ]
     },
+    "production": {
+      "plugins": [
+        [
+          "transform-builtin-extend",
+          {
+            "globals": ["Array", "Date"]
+          }
+        ]
+      ],
+      "presets": [
+        [
+          "env",
+          {
+            "loose": true,
+            "modules": false
+          }
+        ],
+        "stage-2"
+      ]
+    },
     "test": {
+      "plugins": [
+        [
+          "transform-builtin-extend",
+          {
+            "globals": ["Array", "Date"]
+          }
+        ]
+      ],
       "presets": [
         [
           "env",

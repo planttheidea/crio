@@ -1,114 +1,109 @@
-/**
- * @private
- *
- * @constant {boolean}
- * @default
- */
-export const IS_PRODUCTION = !!(
-  process &&
-  process.env &&
-  process.env.NODE_ENV === 'production'
-);
+// utils
+import {every, find, some} from './utils';
 
 /**
- * @private
- *
- * @constant {Symbol}
+ * @constant {Object} ARRAY_UNSCOPABLES
  */
-export const CRIO_SYMBOL = Symbol('Crio');
-
-/**
- * @private
- *
- * @constant {{configurable: boolean, enumerable: boolean, value: function(): Object, writable: boolean}}
- */
-export const ITERATOR_PROPERTY_DESCRIPTOR = {
-  configurable: false,
-  enumerable: false,
-  value: function iterator() {
-    const keys = Object.getOwnPropertyNames(this);
-    const length = keys.length;
-
-    let index = -1,
-      value;
-
-    return {
-      next: () => {
-        if (++index < length) {
-          value = this[keys[index]];
-
-          return {
-            done: false,
-            value
-          };
-        } else {
-          return {
-            done: true
-          };
-        }
-      }
-    };
-  },
-  writable: true
+export const ARRAY_UNSCOPABLES = {
+  copyWithin: true,
+  entries: true,
+  fill: true,
+  find: true,
+  findIndex: true,
+  findLastIndex: true,
+  includes: true,
+  keys: true,
+  values: true
 };
 
 /**
- * @private
- *
- * @constant {{configurable: boolean, enumerable: boolean, value: Object, writable: boolean}}
+ * @constant {Object} ARRAY_FALLBACK_PROTOTYPE_METHODS
  */
-export const UNSCOPABLES_PROPERTY_DESCRIPTOR = {
-  configurable: true,
-  enumerable: false,
-  value: {
-    copyWithin: true,
-    entries: true,
-    fill: true,
-    find: true,
-    findIndex: true,
-    includes: true,
-    keys: true
+export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
+  /**
+   * @function every
+   *
+   * @description
+   * does every instance in the array match
+   *
+   * @param {function} fn the function to test for matching
+   * @returns {boolean} does every instance match
+   */
+  every(fn) {
+    return every(this, fn);
   },
-  writable: false
+
+  /**
+   * @function find
+   *
+   * @description
+   * find an item in the array if it exists
+   *
+   * @param {function} fn function to test for finding the item
+   * @returns {*} found item or undefined
+   */
+  find(fn) {
+    return find(this, fn);
+  },
+
+  /**
+   * @function findIndex
+   *
+   * @description
+   * find the index of an item in the array if it exists
+   *
+   * @param {function} fn function to test for finding the item
+   * @returns {number} index of match, or -1
+   */
+  findIndex(fn) {
+    return find(this, fn, true);
+  },
+
+  /**
+   * @function includes
+   *
+   * @description
+   * does the array have the item passed
+   *
+   * @param {*} item item to test for existence
+   * @returns {boolean} does the item exist in the array
+   */
+  includes(item) {
+    return !!~this.indexOf(item);
+  },
+
+  /**
+   * @function some
+   *
+   * @description
+   * does any item in the array match the result from fn
+   *
+   * @param {function} fn the function to test for matching
+   * @returns {boolean} does any item match
+   */
+  some(fn) {
+    return some(this, fn);
+  }
 };
 
 /**
- * @private
- *
- * @constant {Symbol}
+ * @constant {Object} ARRAY_UNSCOPABLES
  */
-export const CRIO_TYPE = Symbol('Crio type');
+export const OBJECT_UNSCOPABLES = {
+  entries: true,
+  fill: true,
+  find: true,
+  findKey: true,
+  findLastKey: true,
+  includes: true,
+  keys: true,
+  values: true
+};
 
 /**
- * @private
- *
- * @constant {string}
- * @default
- */
-export const CRIO_ARRAY_TYPE = 'CrioArray';
-
-/**
- * @private
- *
- * @constant {string}
- * @default
- */
-export const CRIO_OBJECT_TYPE = 'CrioObject';
-
-/**
- * @private
- *
  * @constant {Symbol|number}
  */
 export const REACT_ELEMENT_TYPE =
-  (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) ||
-  0xeac7;
-
-/**
-   * @private
-   *
-   * @constant {Object}
-   */
-export const STRINGIFIER_OPTIONS = {
-  maxDepth: 10
-};
+  typeof Symbol === 'function' && Symbol.for
+    ? Symbol.for('react.element')
+    : 0xeac7;

@@ -33,14 +33,7 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="module-crio.html">crio</a></li><li><a href="module-Crio_.html">Crio</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown">
-				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
-				<ul class="dropdown-menu inline">
-					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+					<li><a href="module-crio.html">crio</a></li>
 				</ul>
 			</li>
 			
@@ -54,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#keys">keys</a></li>
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
 				</ul>
 			</li>
 			
@@ -91,188 +84,143 @@
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import deepFreeze from 'deep-freeze-strict';
-import identity from 'lodash/identity';
-import isArray from 'lodash/isArray';
-import isPlainObject from 'lodash/isPlainObject';
-import stringifier from 'stringifier';
+            class="sunlight-highlight-javascript linenums">// classes
+import CrioArray from './CrioArray';
+import CrioObject from './CrioObject';
 
-// constants
-import {
-  CRIO_SYMBOL,
-  IS_PRODUCTION,
-  REACT_ELEMENT_TYPE,
-  STRINGIFIER_OPTIONS
-} from './constants';
+// is
+import {isArray, isCrio, isObject, isReactElement} from './is';
 
 /**
- * @private
- *
- * @function freeze
+ * @function createIterator
  *
  * @description
- * freeze the object if it is production
+ * create a new iterator method
  *
- * @param {CrioArray|CrioObject} crio object to freeze
- *
- * @returns {T} frozen object
+ * @returns {function} the iterator method
  */
-export const freeze = ((isProduction) => {
-  return isProduction ? identity : deepFreeze;
-})(IS_PRODUCTION);
+export const createIterator = () => {
+  return function iterator() {
+    const keys = this.keys();
+    const length = keys.length;
 
-export const hasOwnProperty = Object.prototype.hasOwnProperty;
+    let index = 0,
+      value;
 
-/**
- * @private
- *
- * @function isComplexObject
- *
- * @description
- * is the object an array or plain object
- *
- * @param  {*} object object to test
- *
- * @returns {boolean} is the object a complex object
- */
-export const isComplexObject = (object) => {
-  return isArray(object) || isPlainObject(object);
-};
+    return {
+      next: () => {
+        if (index &lt; length) {
+          value = this[keys[index++]];
 
-/**
- * @private
- *
- * @function isCrio
- *
- * @description
- * is the object a crio object or not
- *
- * @param {*} object object to test
- *
- * @returns {boolean} is the object a crio
- */
-export const isCrio = (object) => {
-  return !!(object &amp;&amp; object[CRIO_SYMBOL]);
-};
+          return {
+            done: false,
+            value
+          };
+        }
 
-/**
- * @private
- *
- * @function isCrioArray
- *
- * @description
- * is the object a crio array
- *
- * @param {*} object object to test
- * @returns {boolean} is the object a crio array
- */
-export const isCrioArray = (object) => {
-  return isCrio &amp;&amp; object.isArray();
-};
-
-/**
- * @private
- *
- * @function isEqual
- *
- * @description
- * are the crio objects equal
- *
- * @param {CrioArray|CrioObject} crio crio object to test against
- * @param {*} object object to test equality with crio object for
- *
- * @returns {boolean} are the objects equal
- */
-export const isEqual = (crio, object) => {
-  return isCrio(object) &amp;&amp; crio.hashCode === object.hashCode;
-};
-
-/**
- * @private
- *
- * @function isReactElement
- *
- * @description
- * is the object passed a react element
- *
- * @param {*} object object to test
- * @returns {boolean} is object a react element
- */
-export const isReactElement = (object) => {
-  return !!object &amp;&amp; object.$$typeof === REACT_ELEMENT_TYPE;
-};
-
-/**
- * @private
- *
- * @function getCorrectConstructor
- *
- * @description
- * get the constructor that is valid for the object type passed
- *
- * @param {*} object object to test
- * @param {CrioArray} CrioArray constructor for CrioArray class
- * @param {CrioObject} CrioObject constructor for CrioObject class
- * @returns {CrioArray|CrioObject} constructor correct for object
- */
-export const getCorrectConstructor = (object, CrioArray, CrioObject) => {
-  return isArray(object) ? CrioArray : CrioObject;
-};
-
-/**
- * @private
- *
- * @function getCrioValue
- *
- * @description
- * get the value based on its type
- *
- * @param {*} object object to get value of
- * @param {Function} Constructor function to call new of if object is complex
- *
- * @returns {*} object with clean value
- */
-export const getCrioValue = (object, Constructor) => {
-  if (isCrio(object) || isReactElement(object)) {
-    return object;
-  }
-
-  if (isComplexObject(object)) {
-    return new Constructor(object);
-  }
-
-  return object;
-};
-
-/**
- * @private
- *
- * @function getKeysMetadata
- *
- * @description
- * get the value at the parent key location
- *
- * @param {Array&lt;number|string>} keys keys to get value of
- * @param {CrioArray|CrioObject} instance crio instance
- *
- * @returns {{currentValue: *, lastIndex: number}} parent key metadata
- */
-export const getKeysMetadata = (keys, instance) => {
-  const lastIndex = keys.length - 1;
-  const parentKeys = keys.slice(0, lastIndex);
-  const currentValue = instance.getIn(parentKeys);
-
-  return {
-    currentValue,
-    lastIndex,
-    parentKeys
+        return {
+          done: true
+        };
+      }
+    };
   };
 };
 
 /**
- * @private
+ * @function every
  *
+ * @description
+ * does every result from calling fn match
+ *
+ * @param {CrioArray|CrioObject} object the object to test
+ * @param {function} fn the function to perform the test on each item with
+ * @returns {boolean} does every item match
+ */
+export const every = (object, fn) => {
+  const objectKeys = object.keys();
+
+  let key;
+
+  for (let index = 0; index &lt; objectKeys.length; index++) {
+    key = objectKeys[index];
+
+    if (!fn(object[key], key, object)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
+ * @function find
+ *
+ * @description
+ * find an item in the array if it exists
+ *
+ * @param {CrioArray|CrioObject} object the object to search
+ * @param {function} fn function to test for finding the item
+ * @param {boolean} [isKey] is the search for a key
+ * @param {boolean} [isFromEnd] is the search for a key
+ * @returns {*} found item or undefined
+ */
+export const find = (object, fn, isKey, isFromEnd) => {
+  const objectKeys = isFromEnd ? object.keys().reverse() : object.keys();
+
+  let key;
+
+  for (let index = 0; index &lt; objectKeys.length; index++) {
+    key = objectKeys[index];
+
+    if (fn(object[key], key, object)) {
+      return isKey ? key : object[key];
+    }
+  }
+
+  if (isKey) {
+    return object.isArray() ? -1 : undefined;
+  }
+
+  return undefined;
+};
+
+/**
+ * @function getCrioedObject
+ *
+ * @description
+ * get the object converted to a CrioArray or CrioObject, if applicable
+ *
+ * @param {*} object the object to potentially crio
+ * @returns {*} either the crioed object, or the object itself
+ */
+export const getCrioedObject = (object) => {
+  if (!object || typeof object !== 'object') {
+    return object;
+  }
+
+  if (isArray(object)) {
+    return object instanceof CrioArray ? object : new CrioArray(object);
+  }
+
+  return isObject(object) ? new CrioObject(object) : object;
+};
+
+/**
+ * @function getEntries
+ *
+ * @description
+ * get the [key, value] pairs of the object
+ *
+ * @param {CrioArray|CrioObject} object the object to get the entries of
+ * @returns {CrioArray} the entries of the object
+ */
+export const getEntries = (object) => {
+  return object.keys().map((key) => {
+    return [key, object[key]];
+  });
+};
+
+/**
  * @function getRelativeValue
  *
  * @description
@@ -287,79 +235,70 @@ export const getRelativeValue = (value, length) => {
 };
 
 /**
- * @private
- *
- * @function getStandardValue
+ * @function getValues
  *
  * @description
- * get the standard value (thawed if crio)
+ * get the values of the object
  *
- * @param {*} object object to get standard version of
- *
- * @returns {*} standard version of object
+ * @param {CrioArray|CrioObject} object the object to get the values of
+ * @returns {CrioArray} the values of the object
  */
-export const getStandardValue = (object) => {
-  return isCrio(object) ? object.thaw() : object;
+export const getValues = (object) => {
+  return object.keys().map((key) => {
+    return object[key];
+  });
 };
 
 /**
- * @private
- *
- * @function createAssignToObject
+ * @function some
  *
  * @description
- * create a function that will assign a value to an object
+ * does any result from calling fn match
  *
- * @param {Function} CrioArray constructor for crio arrays
- * @param {Function} CrioObject constructor for crio objects
- *
- * @returns {function((Array&lt;*>|Object), function): function(*, string): void} assignment function
+ * @param {CrioArray|CrioObject} object the object to test
+ * @param {function} fn the function to perform the test on each item with
+ * @returns {boolean} does any item match
  */
-export const createAssignToObject = (CrioArray, CrioObject) => {
-  return (object, getValue) => {
-    return (value, key) => {
-      object[key] = getValue(
-        value,
-        getCorrectConstructor(value, CrioArray, CrioObject)
-      );
-    };
-  };
-};
+export const some = (object, fn) => {
+  const objectKeys = object.keys();
 
-/**
- * @function keys
- *
- * @description
- * get the keys for the given object
- *
- * @param {Object} object the object to get the keys for
- * @returns {Array&lt;string>} the array of keys
- */
-export const keys = (object) => {
-  let ownKeys = [];
+  let key;
 
-  for (let key in object) {
-    if (hasOwnProperty.call(object, key)) {
-      ownKeys.push(key);
+  for (let index = 0; index &lt; objectKeys.length; index++) {
+    key = objectKeys[index];
+
+    if (fn(object[key], key, object)) {
+      return true;
     }
   }
 
-  return ownKeys;
+  return false;
 };
 
 /**
- * @private
- *
- * @function stringify
+ * @function thaw
  *
  * @description
- * convert object to string
+ * convert the CrioArray or CrioObject passed to a plain JS object
  *
- * @param {*} object object to stringify
- *
- * @returns {string} stringified version of object
+ * @param {CrioArray|CrioObject} object the object to convert
+ * @returns {Array|Object} the plain JS version of the object passed
  */
-export const stringify = stringifier(STRINGIFIER_OPTIONS);
+export const thaw = (object) => {
+  if (!isCrio(object)) {
+    return object;
+  }
+
+  return object.isArray()
+    ? [...object].map((item) => {
+        return thaw(item);
+      })
+    : Object.keys(object).reduce((reducedObject, key) => {
+        reducedObject[key] = thaw(object[key]);
+
+        return reducedObject;
+      }, {});
+};
 </pre>
     </article>
 </section>

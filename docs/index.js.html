@@ -33,14 +33,7 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="module-crio.html">crio</a></li><li><a href="module-Crio_.html">Crio</a></li>
-				</ul>
-			</li>
-			
-			<li class="dropdown">
-				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
-				<ul class="dropdown-menu inline">
-					<li><a href="module-Crio.Crio.html">Crio.Crio</a></li><li><a href="module-Crio.CrioArray.html">Crio.CrioArray</a></li><li><a href="module-Crio.CrioObject.html">Crio.CrioObject</a></li>
+					<li><a href="module-crio.html">crio</a></li>
 				</ul>
 			</li>
 			
@@ -54,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#keys">keys</a></li>
+					<li><a href="global.html#ARRAY_FALLBACK_PROTOTYPE_METHODS">ARRAY_FALLBACK_PROTOTYPE_METHODS</a></li><li><a href="global.html#ARRAY_UNSCOPABLES">ARRAY_UNSCOPABLES</a></li><li><a href="global.html#copyWithin">copyWithin</a></li><li><a href="global.html#createIterator">createIterator</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fill">fill</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#findIndex">findIndex</a></li><li><a href="global.html#getCrioedObject">getCrioedObject</a></li><li><a href="global.html#getEntries">getEntries</a></li><li><a href="global.html#getRelativeValue">getRelativeValue</a></li><li><a href="global.html#getValues">getValues</a></li><li><a href="global.html#includes">includes</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isCrio">isCrio</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isReactElement">isReactElement</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#REACT_ELEMENT_TYPE">REACT_ELEMENT_TYPE</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#thaw">thaw</a></li>
 				</ul>
 			</li>
 			
@@ -91,15 +84,12 @@
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">// external dependencies
-import isArray from 'lodash/isArray';
-import isPlainObject from 'lodash/isPlainObject';
+            class="sunlight-highlight-javascript linenums">// classes
+import CrioArray from './CrioArray';
+import CrioObject from './CrioObject';
 
-// Crio
-import {CrioArray, CrioObject} from './Crio';
-
-// utils
-import {isCrio} from './utils';
+// is
+import {isArray, isCrio, isObject} from './is';
 
 /**
  * @module crio
@@ -116,21 +106,19 @@ import {isCrio} from './utils';
  * @returns {CrioArray|CrioObject} object that has been crioed
  */
 const crio = (object = {}) => {
-  if (isArray(object)) {
-    return new CrioArray(object);
-  }
-
-  if (isPlainObject(object)) {
-    return new CrioObject(object);
-  }
-
   if (isCrio(object)) {
     return object;
   }
 
-  throw new TypeError(
-    'Object passed must be either an array or a plain object.'
-  );
+  if (isArray(object)) {
+    return new CrioArray(object);
+  }
+
+  if (isObject(object)) {
+    return new CrioObject(object);
+  }
+
+  throw new TypeError('Object passed must be either an array or a plain object.');
 };
 
 /**
@@ -188,7 +176,7 @@ crio.isObject = (object) => {
  * @returns {CrioObject} crio object
  */
 crio.object = (object = {}) => {
-  if (!isPlainObject(object)) {
+  if (!isObject(object)) {
     throw new TypeError('Object passed must be a plain object.');
   }
 

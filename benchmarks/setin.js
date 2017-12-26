@@ -2,14 +2,20 @@
 const seamlessImmutableJs = require('seamless-immutable');
 const ImmutableJs = require('immutable');
 const moriJs = require('mori');
-const crio = require('../lib');
+const crio = require('../lib').default;
 
 /**
  * Data
  */
 
 const value = Math.random();
-const array = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()];
+const array = [
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  Math.random(),
+  Math.random()
+];
 
 /**
  * Object
@@ -67,7 +73,6 @@ exports.objectSetInCrio = (cycles) => {
   }
 };
 
-
 /**
  * Array
  */
@@ -118,11 +123,7 @@ exports.arraySetInCrio = (cycles) => {
   const arr = crio([array]);
   const maxIndex = arr[0].length - 1;
 
-  let index;
-
   for (let i = 0; i < cycles; i++) {
-    index = ~~(Math.random() * maxIndex);
-
-    arr.set([0, index], Math.random());
+    arr.set([0, ~~(Math.random() * maxIndex)], Math.random());
   }
 };
