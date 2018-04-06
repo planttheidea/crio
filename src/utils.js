@@ -13,13 +13,13 @@ import {isArray, isCrio, isObject, isReactElement} from './is';
  *
  * @returns {function} the iterator method
  */
-export const createIterator = () => {
-  return function iterator() {
+export const createIterator = () =>
+  function iterator() {
     const keys = this.keys();
     const length = keys.length;
 
     let index = 0,
-      value;
+        value;
 
     return {
       next: () => {
@@ -38,7 +38,6 @@ export const createIterator = () => {
       }
     };
   };
-};
 
 /**
  * @function every
@@ -91,11 +90,7 @@ export const find = (object, fn, isKey, isFromEnd) => {
     }
   }
 
-  if (isKey) {
-    return object.isArray() ? -1 : undefined;
-  }
-
-  return undefined;
+  return isKey && object.isArray() ? -1 : undefined;
 };
 
 /**
@@ -107,17 +102,12 @@ export const find = (object, fn, isKey, isFromEnd) => {
  * @param {*} object the object to potentially crio
  * @returns {*} either the crioed object, or the object itself
  */
-export const getCrioedObject = (object) => {
-  if (!object || typeof object !== 'object') {
-    return object;
-  }
-
-  if (isArray(object)) {
-    return object instanceof CrioArray ? object : new CrioArray(object);
-  }
-
-  return isObject(object) ? new CrioObject(object) : object;
-};
+export const getCrioedObject = (object) =>
+  object && typeof object === 'object'
+    ? isArray(object)
+      ? object instanceof CrioArray ? object : new CrioArray(object)
+      : isObject(object) ? new CrioObject(object) : object
+    : object;
 
 /**
  * @function getEntries
@@ -128,11 +118,7 @@ export const getCrioedObject = (object) => {
  * @param {CrioArray|CrioObject} object the object to get the entries of
  * @returns {CrioArray} the entries of the object
  */
-export const getEntries = (object) => {
-  return object.keys().map((key) => {
-    return [key, object[key]];
-  });
-};
+export const getEntries = (object) => object.keys().map((key) => [key, object[key]]);
 
 /**
  * @function getRelativeValue
@@ -144,9 +130,7 @@ export const getEntries = (object) => {
  * @param {number} length the length of the crio
  * @returns {number} the relative number value
  */
-export const getRelativeValue = (value, length) => {
-  return value < 0 ? Math.max(length + value, 0) : Math.min(value, length);
-};
+export const getRelativeValue = (value, length) => (value < 0 ? Math.max(length + value, 0) : Math.min(value, length));
 
 /**
  * @function getValues
@@ -157,11 +141,7 @@ export const getRelativeValue = (value, length) => {
  * @param {CrioArray|CrioObject} object the object to get the values of
  * @returns {CrioArray} the values of the object
  */
-export const getValues = (object) => {
-  return object.keys().map((key) => {
-    return object[key];
-  });
-};
+export const getValues = (object) => object.keys().map((key) => object[key]);
 
 /**
  * @function some
@@ -198,18 +178,13 @@ export const some = (object, fn) => {
  * @param {CrioArray|CrioObject} object the object to convert
  * @returns {Array|Object} the plain JS version of the object passed
  */
-export const thaw = (object) => {
-  if (!isCrio(object)) {
-    return object;
-  }
-
-  return object.isArray()
-    ? [...object].map((item) => {
-        return thaw(item);
-      })
-    : Object.keys(object).reduce((reducedObject, key) => {
+export const thaw = (object) =>
+  isCrio(object)
+    ? object.isArray()
+      ? [...object].map((item) => thaw(item))
+      : Object.keys(object).reduce((reducedObject, key) => {
         reducedObject[key] = thaw(object[key]);
 
         return reducedObject;
-      }, {});
-};
+      }, {})
+    : object;

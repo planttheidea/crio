@@ -156,9 +156,7 @@ test('if fill will creat a new array with the filled values', (t) => {
 test('if filter will return a new filtered array', (t) => {
   const existing = new CrioArray(['foo', {bar: 'baz'}]);
 
-  const fn = ({bar}) => {
-    return bar === 'baz';
-  };
+  const fn = ({bar}) => bar === 'baz';
 
   const result = existing.filter(fn);
 
@@ -170,9 +168,7 @@ test('if filter will return a new filtered array', (t) => {
 test('if findLast will find the last item in the array that matches the function', (t) => {
   const existing = new CrioArray([{foo: 'bar'}, null, {foo: 'bar'}]);
 
-  const fn = ({foo} = {}) => {
-    return foo === 'bar';
-  };
+  const fn = ({foo} = {}) => foo === 'bar';
 
   const result = existing.findLast(fn);
 
@@ -182,9 +178,7 @@ test('if findLast will find the last item in the array that matches the function
 test('if findLastIndex will find the last index in the array that matches the function', (t) => {
   const existing = new CrioArray([{foo: 'bar'}, null, {foo: 'bar'}]);
 
-  const fn = ({foo} = {}) => {
-    return foo === 'bar';
-  };
+  const fn = ({foo} = {}) => foo === 'bar';
 
   const result = existing.findLastIndex(fn);
 
@@ -301,7 +295,7 @@ test('if isArray will return true', (t) => {
 });
 
 test('if isObject will return false', (t) => {
-  const existing = new CrioArray(['foo']);
+  const existing = new CrioArray(['fzoo']);
 
   t.false(existing.isObject());
 });
@@ -347,11 +341,9 @@ test('if last will get the last n items in the array when size is specified', (t
 test('if map will return a new deeply-crioed map of items', (t) => {
   const existing = new CrioArray(['foo', 'bar']);
 
-  const fn = (item) => {
-    return {
-      [item]: [item]
-    };
-  };
+  const fn = (item) => ({
+    [item]: [item]
+  });
 
   const result = existing.map(fn);
 
@@ -406,12 +398,7 @@ test('if mutate will allow mutation of a thawed version of the array and return 
 });
 
 test('if pluck will return the set of values matching in the collection shallowly', (t) => {
-  const existing = new CrioArray([
-    {foo: 'bar'},
-    {bar: 'baz'},
-    null,
-    {foo: 'foo'}
-  ]);
+  const existing = new CrioArray([{foo: 'bar'}, {bar: 'baz'}, null, {foo: 'foo'}]);
 
   const result = existing.pluck('foo');
 
@@ -462,9 +449,7 @@ test('if push will return the original array if no items are passed', (t) => {
 test('if reduce will reduce the values and return the crioed version of the object', (t) => {
   const existing = new CrioArray([1, 2, 3]);
 
-  const result = existing.reduce((sum, amount) => {
-    return sum.concat([amount]);
-  }, []);
+  const result = existing.reduce((sum, amount) => sum.concat([amount]), []);
 
   isNewArray(t, existing, result);
   t.deepEqual(result, new CrioArray([1, 2, 3]));
@@ -473,9 +458,7 @@ test('if reduce will reduce the values and return the crioed version of the obje
 test('if reduceRight will reduce the values and return the crioed version of the object', (t) => {
   const existing = new CrioArray([1, 2, 3]);
 
-  const result = existing.reduceRight((sum, amount) => {
-    return sum.concat([amount]);
-  }, []);
+  const result = existing.reduceRight((sum, amount) => sum.concat([amount]), []);
 
   isNewArray(t, existing, result);
   t.deepEqual(result, new CrioArray([3, 2, 1]));
@@ -564,9 +547,7 @@ test('if toLocaleString will serialize the array', (t) => {
 test('if toLocaleString will serialize the array with custom arguments', (t) => {
   const existing = new CrioArray([function foo() {}, 'bar']);
 
-  const serializer = (key, value) => {
-    return typeof value === 'function' ? value.toString() : value;
-  };
+  const serializer = (key, value) => (typeof value === 'function' ? value.toString() : value);
 
   const result = existing.toLocaleString(serializer, 2);
 
@@ -600,9 +581,7 @@ test('if toString will serialize the array', (t) => {
 test('if toString will serialize the array with custom arguments', (t) => {
   const existing = new CrioArray([function foo() {}, 'bar']);
 
-  const serializer = (key, value) => {
-    return typeof value === 'function' ? value.toString() : value;
-  };
+  const serializer = (key, value) => (typeof value === 'function' ? value.toString() : value);
 
   const result = existing.toString(serializer, 2);
 
@@ -616,15 +595,7 @@ test('if toString will serialize the array with custom arguments', (t) => {
 });
 
 test('if unique returns a new CrioArray with only unique values', (t) => {
-  const existing = new CrioArray([
-    'foo',
-    'foo',
-    'bar',
-    'foo',
-    'bar',
-    {foo: 'bar'},
-    {foo: 'bar'}
-  ]);
+  const existing = new CrioArray(['foo', 'foo', 'bar', 'foo', 'bar', {foo: 'bar'}, {foo: 'bar'}]);
 
   const result = existing.unique();
 

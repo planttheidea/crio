@@ -20,6 +20,8 @@ document.body.style.padding = 0;
 const existing = crio(['foo', 'bar']);
 
 console.log(existing);
+console.log(existing.indexOf('bar'));
+console.log(existing.includes('bar'));
 
 const result = existing.delete(0);
 
@@ -114,25 +116,17 @@ console.log(existing, result);
 //
 // console.groupEnd('array');
 
-const elementArray = crio([
-  {key: 0, value: 'foo'},
-  {key: 1, value: 'bar'},
-  {key: 2, value: 'baz'}
-]);
+const elementArray = crio([{key: 0, value: 'foo'}, {key: 1, value: 'bar'}, {key: 2, value: 'baz'}]);
 
-const App = () => {
-  return (
-    <div>
-      <h1>App</h1>
+const App = () => (
+  <div>
+    <h1>App</h1>
 
-      <h4>Things</h4>
+    <h4>Things</h4>
 
-      {elementArray.map(({key, value}) => {
-        return <div key={`item-${key}`}>Item: {value}</div>;
-      })}
-    </div>
-  );
-};
+    {elementArray.map(({key, value}) => <div key={`item-${key}`}>Item: {value}</div>)}
+  </div>
+);
 
 const div = document.createElement('div');
 

@@ -1,5 +1,9 @@
 # crio changelog
 
+## 5.0.1
+
+* Replacement of webpack with rollup for `dist` builds
+
 ## 5.0.0
 
 * Replace use of `lodash/fp` with `unchanged` for both smaller size and faster speed

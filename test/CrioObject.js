@@ -94,9 +94,7 @@ test('if equals checks for value equality of objects', (t) => {
 test('if every returns true when all values match', (t) => {
   const existing = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  const fn = (value) => {
-    return value.length === 3;
-  };
+  const fn = (value) => value.length === 3;
 
   t.true(existing.every(fn));
 });
@@ -104,9 +102,7 @@ test('if every returns true when all values match', (t) => {
 test('if every returns false when not all values match', (t) => {
   const existing = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  const fn = (value) => {
-    return value === 'bar';
-  };
+  const fn = (value) => value === 'bar';
 
   t.false(existing.every(fn));
 });
@@ -114,9 +110,7 @@ test('if every returns false when not all values match', (t) => {
 test('if every returns true when the object is empty', (t) => {
   const existing = new CrioObject({});
 
-  const fn = (value) => {
-    return value === 'never run';
-  };
+  const fn = (value) => value === 'never run';
 
   t.true(existing.every(fn));
 });
@@ -124,9 +118,7 @@ test('if every returns true when the object is empty', (t) => {
 test('if filter returns a new object filtered by the result of the fn', (t) => {
   const existing = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  const fn = (value) => {
-    return value === 'bar';
-  };
+  const fn = (value) => value === 'bar';
 
   const result = existing.filter(fn);
 
@@ -141,9 +133,7 @@ test('if find will find the item in the object and return it', (t) => {
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'baz';
-  };
+  const fn = (item) => item && item.bar === 'baz';
 
   const result = existing.find(fn);
 
@@ -157,9 +147,7 @@ test('if find will return undefined if it cannot find the item in the object', (
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'quz';
-  };
+  const fn = (item) => item && item.bar === 'quz';
 
   const result = existing.find(fn);
 
@@ -173,9 +161,7 @@ test('if findKey will find the key in the object and return it', (t) => {
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'baz';
-  };
+  const fn = (item) => item && item.bar === 'baz';
 
   const result = existing.findKey(fn);
 
@@ -189,9 +175,7 @@ test('if findKey will return undefined if it cannot find the key in the object',
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'quz';
-  };
+  const fn = (item) => item && item.bar === 'quz';
 
   const result = existing.findKey(fn);
 
@@ -205,9 +189,7 @@ test('if findLast will find the item in the object and return it', (t) => {
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'baz';
-  };
+  const fn = (item) => item && item.bar === 'baz';
 
   const result = existing.findLast(fn);
 
@@ -221,9 +203,7 @@ test('if findLast will return undefined if it cannot find the item in the object
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'quz';
-  };
+  const fn = (item) => item && item.bar === 'quz';
 
   const result = existing.findLast(fn);
 
@@ -237,9 +217,7 @@ test('if findLastKey will find the key in the object and return it', (t) => {
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'baz';
-  };
+  const fn = (item) => item && item.bar === 'baz';
 
   const result = existing.findLastKey(fn);
 
@@ -253,9 +231,7 @@ test('if findLastKey will return undefined if it cannot find the key in the obje
     baz: {bar: 'baz'}
   });
 
-  const fn = (item) => {
-    return item && item.bar === 'quz';
-  };
+  const fn = (item) => item && item.bar === 'quz';
 
   const result = existing.findLastKey(fn);
 
@@ -408,11 +384,9 @@ test('if lastKeyOf will return the key with the given value starting from the en
 test('if map will return a new object mapped with the values', (t) => {
   const existing = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  const result = existing.map((value) => {
-    return {
-      [value]: [value]
-    };
-  });
+  const result = existing.map((value) => ({
+    [value]: [value]
+  }));
 
   isNewObject(t, existing, result);
   t.deepEqual(
@@ -439,10 +413,7 @@ test('if merge will merge the objects deeply', (t) => {
   const result = existing.merge(['foo', 0, 'bar'], {baz: 'nope', quz: 'blah'});
 
   isNewObject(t, existing, result);
-  t.deepEqual(
-    result,
-    new CrioObject({foo: [{bar: {baz: 'nope', quz: 'blah'}}], bar: 'baz'})
-  );
+  t.deepEqual(result, new CrioObject({foo: [{bar: {baz: 'nope', quz: 'blah'}}], bar: 'baz'}));
 });
 
 test('if mutate will allow mutation of a thawed version of the array and return a crioed version of the result', (t) => {
@@ -453,11 +424,9 @@ test('if mutate will allow mutation of a thawed version of the array and return 
       t.deepEqual(thawed, {foo: [{bar: 'baz'}]});
       t.is(original, existing);
 
-      return thawed.foo.map(({bar}) => {
-        return {
-          [bar]: bar
-        };
-      });
+      return thawed.foo.map(({bar}) => ({
+        [bar]: bar
+      }));
     }
   };
 
@@ -501,11 +470,9 @@ test('if reduce will reduce the values and return the crioed version of the obje
   const existing = new CrioObject({foo: 1, bar: 2, baz: 3});
 
   const result = existing.reduce(
-    (sum, amount) => {
-      return {
-        total: sum.total.concat([amount])
-      };
-    },
+    (sum, amount) => ({
+      total: sum.total.concat([amount])
+    }),
     {total: []}
   );
 
@@ -517,11 +484,9 @@ test('if reduceRight will reduce the values and return the crioed version of the
   const existing = new CrioObject({foo: 1, bar: 2, baz: 3});
 
   const result = existing.reduceRight(
-    (sum, amount) => {
-      return {
-        total: sum.total.concat([amount])
-      };
-    },
+    (sum, amount) => ({
+      total: sum.total.concat([amount])
+    }),
     {total: []}
   );
 
@@ -550,9 +515,7 @@ test('if set will set the value at key deeply', (t) => {
 test('if some returns true when any values match', (t) => {
   const existing = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  const fn = (value) => {
-    return value === 'bar';
-  };
+  const fn = (value) => value === 'bar';
 
   t.true(existing.some(fn));
 });
@@ -560,9 +523,7 @@ test('if some returns true when any values match', (t) => {
 test('if some returns false when no values match', (t) => {
   const existing = new CrioObject({foo: 'bar', bar: 'baz'});
 
-  const fn = (value) => {
-    return value.length === 2;
-  };
+  const fn = (value) => value.length === 2;
 
   t.false(existing.some(fn));
 });
@@ -570,9 +531,7 @@ test('if some returns false when no values match', (t) => {
 test('if some returns false when the object is empty', (t) => {
   const existing = new CrioObject({});
 
-  const fn = (value) => {
-    return value === 'never run';
-  };
+  const fn = (value) => value === 'never run';
 
   t.false(existing.some(fn));
 });
@@ -606,9 +565,7 @@ test('if toLocaleString will serialize the array', (t) => {
 test('if toLocaleString will serialize the array with custom arguments', (t) => {
   const existing = new CrioObject({foo() {}, bar: 'baz'});
 
-  const serializer = (key, value) => {
-    return typeof value === 'function' ? value.toString() : value;
-  };
+  const serializer = (key, value) => (typeof value === 'function' ? value.toString() : value);
 
   const result = existing.toLocaleString(serializer, 2);
 
@@ -640,9 +597,7 @@ test('if toString will serialize the array', (t) => {
 test('if toString will serialize the array with custom arguments', (t) => {
   const existing = new CrioObject({foo() {}, bar: 'baz'});
 
-  const serializer = (key, value) => {
-    return typeof value === 'function' ? value.toString() : value;
-  };
+  const serializer = (key, value) => (typeof value === 'function' ? value.toString() : value);
 
   const result = existing.toString(serializer, 2);
 

@@ -25,9 +25,7 @@ export const isArray = Array.isArray;
  * @param {*} object the object to test
  * @returns {boolean} is the object a Crio*
  */
-export const isCrio = (object) => {
-  return object instanceof CrioArray || object instanceof CrioObject;
-};
+export const isCrio = (object) => object instanceof CrioArray || object instanceof CrioObject;
 
 /**
  * @function isEqual
@@ -39,9 +37,7 @@ export const isCrio = (object) => {
  * @param {*} object object to test equality with crio object for
  * @returns {boolean} are the objects equal
  */
-export const isEqual = (crio, object) => {
-  return isCrio(object) && crio.hashCode === object.hashCode;
-};
+export const isEqual = (crio, object) => isCrio(object) && crio.hashCode === object.hashCode;
 
 /**
  * @function isFunction
@@ -52,9 +48,7 @@ export const isEqual = (crio, object) => {
  * @param {*} object the object to test
  * @returns {boolean} is the object a function
  */
-export const isFunction = (object) => {
-  return typeof object === 'function';
-};
+export const isFunction = (object) => typeof object === 'function';
 
 /**
  * @function isNumber
@@ -65,9 +59,7 @@ export const isFunction = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is the object a number
  */
-export const isNumber = (object) => {
-  return typeof object === 'number';
-};
+export const isNumber = (object) => typeof object === 'number';
 
 /**
  * @function isReactElement
@@ -78,9 +70,7 @@ export const isNumber = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is the object a react element
  */
-export const isReactElement = (object) => {
-  return !!object && object.$$typeof === REACT_ELEMENT_TYPE;
-};
+export const isReactElement = (object) => !!object && object.$$typeof === REACT_ELEMENT_TYPE;
 
 /**
  * @function isObject
@@ -91,9 +81,7 @@ export const isReactElement = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is the object a  plain object
  */
-export const isObject = (object) => {
-  return !!object && object.constructor === Object && !isReactElement(object);
-};
+export const isObject = (object) => !!object && object.constructor === Object && !isReactElement(object);
 
 /**
  * @function isString
@@ -104,9 +92,7 @@ export const isObject = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is the object a string
  */
-export const isString = (object) => {
-  return typeof object === 'string';
-};
+export const isString = (object) => typeof object === 'string';
 
 /**
  * @function isUndefined
@@ -117,6 +103,4 @@ export const isString = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is the object undefined
  */
-export const isUndefined = (object) => {
-  return object === void 0;
-};
+export const isUndefined = (object) => object === void 0;
