@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const defaultConfig = require('./webpack.config');
 
 const PORT = 3000;
+const ROOT = path.resolve(__dirname, '..');
 
 module.exports = Object.assign({}, defaultConfig, {
   devServer: {
@@ -12,28 +13,29 @@ module.exports = Object.assign({}, defaultConfig, {
     inline: true,
     lazy: false,
     noInfo: false,
-    quiet: false,
     port: PORT,
+    quiet: false,
     stats: {
       colors: true,
       progress: true
     }
   },
 
-  entry: [path.resolve(__dirname, 'DEV_ONLY', 'App.js')],
+  entry: [path.resolve(ROOT, 'DEV_ONLY', 'App.js')],
 
   externals: undefined,
 
   module: Object.assign({}, defaultConfig.module, {
-    rules: defaultConfig.module.rules.map((rule) => {
-      return rule.loader === 'babel-loader'
-        ? Object.assign({}, rule, {
+    rules: defaultConfig.module.rules.map(
+      (rule) =>
+        rule.loader === 'babel-loader'
+          ? Object.assign({}, rule, {
             options: {
               presets: ['react']
             }
           })
-        : rule;
-    })
+          : rule
+    )
   }),
 
   node: {

@@ -50,9 +50,7 @@ test('if every will return true when every result matches', (t) => {
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
 
   t.true(utils.every(object, fn));
 });
@@ -71,9 +69,7 @@ test('if every will return false when not every result matches', (t) => {
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
 
   t.false(utils.every(object, fn));
 });
@@ -84,9 +80,7 @@ test('if every will return true when no keys exist', (t) => {
       return [];
     }
   };
-  const fn = (item) => {
-    return item === 'never run';
-  };
+  const fn = (item) => item === 'never run';
 
   t.true(utils.every(object, fn));
 });
@@ -105,9 +99,7 @@ test('if find will find the value that exists in the object at key', (t) => {
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
   const isKey = false;
   const isFromEnd = false;
 
@@ -130,9 +122,7 @@ test('if find will return undefined if a match could not be found in the object 
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === 'quz';
-  };
+  const fn = (item) => item === 'quz';
   const isKey = false;
   const isFromEnd = false;
 
@@ -155,9 +145,7 @@ test('if find will find the key that exists in the object at key', (t) => {
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
   const isKey = true;
   const isFromEnd = false;
 
@@ -183,9 +171,7 @@ test('if find will return undefined when the key could not be found in the objec
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === 'quz';
-  };
+  const fn = (item) => item === 'quz';
   const isKey = true;
   const isFromEnd = false;
 
@@ -211,9 +197,7 @@ test('if find will return undefined when the key could not be found in the array
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === 'quz';
-  };
+  const fn = (item) => item === 'quz';
   const isKey = true;
   const isFromEnd = false;
 
@@ -236,9 +220,7 @@ test('if find will find the value that exists in the object at key starting from
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
   const isKey = false;
   const isFromEnd = true;
 
@@ -261,9 +243,7 @@ test('if find will find the key that exists in the object at key starting from t
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
   const isKey = true;
   const isFromEnd = true;
 
@@ -508,9 +488,7 @@ test('if some will return true when any result matches', (t) => {
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === value;
-  };
+  const fn = (item) => item === value;
 
   t.true(utils.some(object, fn));
 });
@@ -529,9 +507,7 @@ test('if some will return false when no result matches', (t) => {
       return [key, otherKey];
     }
   };
-  const fn = (item) => {
-    return item === 'quz';
-  };
+  const fn = (item) => item === 'quz';
 
   t.false(utils.some(object, fn));
 });
@@ -542,9 +518,7 @@ test('if some will return false when no keys exist', (t) => {
       return [];
     }
   };
-  const fn = (item) => {
-    return item === 'never run';
-  };
+  const fn = (item) => item === 'never run';
 
   t.false(utils.some(object, fn));
 });

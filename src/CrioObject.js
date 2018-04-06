@@ -14,25 +14,14 @@ import {OBJECT_UNSCOPABLES} from './constants';
 import {isCrio, isEqual, isObject} from './is';
 
 // utils
-import {
-  createIterator,
-  getCrioedObject,
-  getEntries,
-  getValues,
-  every,
-  find,
-  some,
-  thaw
-} from './utils';
+import {createIterator, getCrioedObject, getEntries, getValues, every, find, some, thaw} from './utils';
 
 let hasAppliedPrototype;
 
 class CrioObject {
   constructor(object) {
-    const objectKeys = isObject(object) ? Object.keys(object) : [];
-
     if (!hasAppliedPrototype) {
-      applyPrototype();
+      applyPrototype(); // eslint-disable-line no-use-before-define
 
       hasAppliedPrototype = true;
     }
@@ -40,6 +29,8 @@ class CrioObject {
     if (isCrio(object)) {
       return object.toObject();
     }
+
+    const objectKeys = isObject(object) ? Object.keys(object) : [];
 
     return objectKeys.reduce((crioObject, key) => {
       crioObject[key] = getCrioedObject(object[key]);
@@ -79,9 +70,7 @@ class CrioObject {
    * @returns {CrioObject} the object with only truthy values
    */
   compact() {
-    return this.filter((item) => {
-      return !!item;
-    });
+    return this.filter((item) => !!item);
   }
 
   /**
@@ -228,9 +217,7 @@ class CrioObject {
    * @returns {CrioObject} the original object
    */
   forEach(fn) {
-    Object.keys(this).forEach((key) => {
-      fn(this[key], key, this);
-    });
+    Object.keys(this).forEach((key) => fn(this[key], key, this));
 
     return this;
   }
@@ -274,9 +261,7 @@ class CrioObject {
    * @returns {boolean} does the item exist in the crio
    */
   includes(item) {
-    return this.some((value) => {
-      return value === item;
-    });
+    return this.some((value) => value === item);
   }
 
   /**
@@ -316,9 +301,7 @@ class CrioObject {
    * @returns {string} the key of match, or undefined
    */
   keyOf(item) {
-    return this.findKey((value) => {
-      return value === item;
-    });
+    return this.findKey((value) => value === item);
   }
 
   /**
@@ -345,9 +328,7 @@ class CrioObject {
    * @returns {string} the key of match, or undefined
    */
   lastKeyOf(item) {
-    return this.findLastKey((value) => {
-      return value === item;
-    });
+    return this.findLastKey((value) => value === item);
   }
 
   /**
@@ -380,9 +361,7 @@ class CrioObject {
    * @returns {CrioObject} new crio instance
    */
   merge(key, ...objects) {
-    return objects.reduce((mergedObject, object) => {
-      return merge(key, getCrioedObject(object), mergedObject);
-    }, this);
+    return objects.reduce((mergedObject, object) => merge(key, getCrioedObject(object), mergedObject), this);
   }
 
   /**
@@ -411,15 +390,10 @@ class CrioObject {
    */
   pluck(key) {
     const parsedKey = parse(key);
-
     const objectToPluck = get(parsedKey.slice(0, parsedKey.length - 1), this);
     const finalKey = parsedKey.slice(-1);
 
-    return objectToPluck
-      .map((item) => {
-        return get(finalKey, item);
-      })
-      .values();
+    return objectToPluck.map((item) => get(finalKey, item)).values();
   }
 
   /**
@@ -434,11 +408,7 @@ class CrioObject {
    * @returns {*} the reduced value
    */
   reduce(fn, initialValue) {
-    return getCrioedObject(
-      Object.keys(this).reduce((value, key) => {
-        return fn(value, this[key], key, this);
-      }, initialValue)
-    );
+    return getCrioedObject(Object.keys(this).reduce((value, key) => fn(value, this[key], key, this), initialValue));
   }
 
   /**
@@ -455,11 +425,7 @@ class CrioObject {
    */
   reduceRight(fn, initialValue) {
     return getCrioedObject(
-      Object.keys(this)
-        .reverse()
-        .reduce((value, key) => {
-          return fn(value, this[key], key, this);
-        }, initialValue)
+      Object.keys(this).reduceRight((value, key) => fn(value, this[key], key, this), initialValue)
     );
   }
 

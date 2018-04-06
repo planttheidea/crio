@@ -61,9 +61,7 @@ crio.array = (array = []) => {
  * @param {*} object object to test
  * @returns {boolean} is the object a crio array
  */
-crio.isArray = (object) => {
-  return isCrio(object) && object.isArray();
-};
+crio.isArray = (object) => isCrio(object) && object.isArray();
 
 crio.isCrio = isCrio;
 
@@ -76,9 +74,7 @@ crio.isCrio = isCrio;
  * @param {*} object object to test
  * @returns {boolean} is the object a crio object
  */
-crio.isObject = (object) => {
-  return isCrio(object) && object.isObject();
-};
+crio.isObject = (object) => isCrio(object) && object.isObject();
 
 /**
  * @function crio.object

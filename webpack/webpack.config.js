@@ -1,11 +1,12 @@
 const path = require('path');
 const webpack = require('webpack');
-const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+
+const ROOT = path.resolve(__dirname, '..');
 
 module.exports = {
   devtool: '#source-map',
 
-  entry: [path.resolve(__dirname, 'src', 'index.js')],
+  entry: [path.resolve(ROOT, 'src', 'index.js')],
 
   externals: {
     'hash-it': {
@@ -22,11 +23,13 @@ module.exports = {
     }
   },
 
+  mode: 'development',
+
   module: {
     rules: [
       {
         enforce: 'pre',
-        include: [path.resolve(__dirname, 'src')],
+        include: [path.resolve(ROOT, 'src')],
         loader: 'eslint-loader',
         options: {
           configFile: '.eslintrc',
@@ -38,10 +41,7 @@ module.exports = {
         test: /\.js$/
       },
       {
-        include: [
-          path.resolve(__dirname, 'src'),
-          path.resolve(__dirname, 'DEV_ONLY')
-        ],
+        include: [path.resolve(ROOT, 'src'), path.resolve(ROOT, 'DEV_ONLY')],
         loader: 'babel-loader',
         test: /\.js$/
       }
@@ -52,18 +52,9 @@ module.exports = {
     filename: 'crio.js',
     library: 'crio',
     libraryTarget: 'umd',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(ROOT, 'dist'),
     umdNamedDefine: true
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin(['NODE_ENV']),
-    new LodashModuleReplacementPlugin({
-      collections: true,
-      cloning: true,
-      currying: true,
-      paths: true,
-      unicode: true
-    })
-  ]
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV'])]
 };

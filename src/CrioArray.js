@@ -14,15 +14,7 @@ import {ARRAY_FALLBACK_PROTOTYPE_METHODS, ARRAY_UNSCOPABLES} from './constants';
 import {isArray, isCrio, isEqual, isUndefined} from './is';
 
 // utils
-import {
-  createIterator,
-  find,
-  getCrioedObject,
-  getEntries,
-  getRelativeValue,
-  getValues,
-  thaw
-} from './utils';
+import {createIterator, find, getCrioedObject, getEntries, getRelativeValue, getValues, thaw} from './utils';
 
 let hasAppliedPrototype = false;
 
@@ -31,22 +23,20 @@ class CrioArray extends Array {
     super(isArray(array) ? array.length : array || 0);
 
     if (!hasAppliedPrototype) {
-      applyPrototype();
+      applyPrototype(); // eslint-disable-line no-use-before-define
 
       hasAppliedPrototype = true;
     }
 
-    if (isCrio(array)) {
-      return array.toArray();
-    }
-
-    return isArray(array)
-      ? array.reduce((crioArray, item, index) => {
+    return isCrio(array)
+      ? array.toArray()
+      : isArray(array)
+        ? array.reduce((crioArray, item, index) => {
           crioArray[index] = getCrioedObject(item);
 
           return crioArray;
         }, this)
-      : this;
+        : this;
   }
 
   get hashCode() {
@@ -76,9 +66,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} the array with only truthy values
    */
   compact() {
-    return this.filter((item) => {
-      return !!item;
-    });
+    return this.filter((item) => !!item);
   }
 
   /**
@@ -95,14 +83,12 @@ class CrioArray extends Array {
   copyWithin(targetIndex, startIndex = 0, endIndex = this.length) {
     const clone = [...this];
     const length = this.length >>> 0;
-
-    let to = getRelativeValue(targetIndex >> 0, length),
-      from = getRelativeValue(startIndex >> 0, length);
-
     const final = getRelativeValue(endIndex >> 0, length);
 
-    let count = Math.min(final - from, length - to),
-      direction = 1;
+    let to = getRelativeValue(targetIndex >> 0, length),
+        from = getRelativeValue(startIndex >> 0, length),
+        count = Math.min(final - from, length - to),
+        direction = 1;
 
     if (from < to && to < from + count) {
       direction = -1;
@@ -214,9 +200,7 @@ class CrioArray extends Array {
     const to = endIndex < 0 ? this.length + endIndex : endIndex;
     const crioedValue = getCrioedObject(value);
 
-    return this.map((item, index) => {
-      return index >= from && index < to ? crioedValue : item;
-    });
+    return this.map((item, index) => (index >= from && index < to ? crioedValue : item));
   }
 
   /**
@@ -321,7 +305,7 @@ class CrioArray extends Array {
     }
 
     let indices = [],
-      indexOfItem;
+        indexOfItem;
 
     const reducedArrays = [this, ...arrays].reduce((items, array) => {
       if (isArray(array)) {
@@ -342,11 +326,7 @@ class CrioArray extends Array {
 
     const newLength = arrays.length + 1;
 
-    return new CrioArray(
-      reducedArrays.filter((itemIgnored, index) => {
-        return indices[index] === newLength;
-      })
-    );
+    return new CrioArray(reducedArrays.filter((itemIgnored, index) => indices[index] === newLength));
   }
 
   /**
@@ -427,9 +407,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} the mapped array
    */
   map(fn) {
-    return Array.prototype.map.call(this, (item, index) => {
-      return getCrioedObject(fn(item, index, this));
-    });
+    return Array.prototype.map.call(this, (item, index) => getCrioedObject(fn(item, index, this)));
   }
 
   /**
@@ -444,9 +422,7 @@ class CrioArray extends Array {
    * @returns {CrioArray} merged array
    */
   merge(key, ...objects) {
-    return objects.reduce((mergedObject, object) => {
-      return merge(key, getCrioedObject(object), mergedObject);
-    }, this);
+    return objects.reduce((mergedObject, object) => merge(key, getCrioedObject(object), mergedObject), this);
   }
 
   /**
@@ -475,13 +451,10 @@ class CrioArray extends Array {
    */
   pluck(key) {
     const parsedKey = parse(key);
-
     const arrayToPluck = get(parsedKey.slice(0, parsedKey.length - 1), this);
     const finalKey = parsedKey.slice(-1);
 
-    return arrayToPluck.map((item) => {
-      return get(finalKey, item);
-    });
+    return arrayToPluck.map((item) => get(finalKey, item));
   }
 
   /**
@@ -524,13 +497,7 @@ class CrioArray extends Array {
    */
   reduce(fn, initialValue) {
     return getCrioedObject(
-      Array.prototype.reduce.call(
-        this,
-        (value, item, index) => {
-          return fn(value, item, index, this);
-        },
-        initialValue
-      )
+      Array.prototype.reduce.call(this, (value, item, index) => fn(value, item, index, this), initialValue)
     );
   }
 
@@ -548,13 +515,7 @@ class CrioArray extends Array {
    */
   reduceRight(fn, initialValue) {
     return getCrioedObject(
-      Array.prototype.reduceRight.call(
-        this,
-        (value, item, index) => {
-          return fn(value, item, index, this);
-        },
-        initialValue
-      )
+      Array.prototype.reduceRight.call(this, (value, item, index) => fn(value, item, index, this), initialValue)
     );
   }
 
@@ -721,17 +682,15 @@ class CrioArray extends Array {
    */
   unique() {
     let hashArray = [],
-      newArray = [],
-      hasHashCode = false,
-      hashCode,
-      storeValue;
+        newArray = [],
+        hasHashCode = false,
+        hashCode,
+        storeValue;
 
     return this.filter((item) => {
       hashCode = item ? item.hashCode : undefined;
       hasHashCode = !isUndefined(hashCode);
-      storeValue =
-        !~newArray.indexOf(item) &&
-        (!hasHashCode || !~hashArray.indexOf(hashCode));
+      storeValue = !~newArray.indexOf(item) && (!hasHashCode || !~hashArray.indexOf(hashCode));
 
       if (storeValue) {
         newArray.push(item);
@@ -801,7 +760,7 @@ class CrioArray extends Array {
     }
 
     let indicesToRemove = [],
-      indexOfItem;
+        indexOfItem;
 
     const reducedItems = [this, ...arrays].reduce((items, array) => {
       if (isArray(array)) {
@@ -819,9 +778,7 @@ class CrioArray extends Array {
       return items;
     }, new CrioArray([]));
 
-    return reducedItems.filter((itemIgnored, index) => {
-      return !~indicesToRemove.indexOf(index);
-    });
+    return reducedItems.filter((itemIgnored, index) => !~indicesToRemove.indexOf(index));
   }
 }
 
