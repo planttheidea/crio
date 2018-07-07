@@ -1,5 +1,9 @@
 # crio changelog
 
+## 5.0.2
+
+- Fix issue where setting arrays was clearning out the values that were not being set
+
 ## 5.0.1
 
 * Replacement of webpack with rollup for `dist` builds
