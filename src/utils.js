@@ -3,7 +3,12 @@ import CrioArray from './CrioArray';
 import CrioObject from './CrioObject';
 
 // is
-import {isArray, isCrio, isObject, isReactElement} from './is';
+import {
+  isArray,
+  isCrio,
+  isObject,
+  isReactElement
+} from './is';
 
 /**
  * @function createIterator
@@ -28,14 +33,14 @@ export const createIterator = () =>
 
           return {
             done: false,
-            value
+            value,
           };
         }
 
         return {
-          done: true
+          done: true,
         };
-      }
+      },
     };
   };
 
@@ -105,8 +110,12 @@ export const find = (object, fn, isKey, isFromEnd) => {
 export const getCrioedObject = (object) =>
   object && typeof object === 'object'
     ? isArray(object)
-      ? object instanceof CrioArray ? object : new CrioArray(object)
-      : isObject(object) ? new CrioObject(object) : object
+      ? object instanceof CrioArray
+        ? object
+        : new CrioArray(object)
+      : isObject(object)
+        ? new CrioObject(object)
+        : object
     : object;
 
 /**

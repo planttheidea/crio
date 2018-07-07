@@ -20,7 +20,10 @@ test('if the constructor will handle a CrioArray passed', (t) => {
 });
 
 test('if the constructor will handle a CrioObject passed', (t) => {
-  const existing = new CrioObject({foo: 'bar', bar: 'baz'});
+  const existing = new CrioObject({
+    bar: 'baz',
+    foo: 'bar',
+  });
 
   const result = new CrioArray(existing);
 
@@ -81,10 +84,10 @@ test('if delete will return a new crio array with the value deleted deeply', (t)
   const existing = new CrioArray([
     {
       deeply: {
-        nested: ['value', 'otherValue']
-      }
+        nested: ['value', 'otherValue'],
+      },
     },
-    'bar'
+    'bar',
   ]);
 
   const result = existing.delete([0, 'deeply', 'nested', 0]);
@@ -96,10 +99,10 @@ test('if delete will return a new crio array with the value deleted deeply', (t)
     new CrioArray([
       {
         deeply: {
-          nested: ['otherValue']
-        }
+          nested: ['otherValue'],
+        },
       },
-      'bar'
+      'bar',
     ])
   );
 });
@@ -342,7 +345,7 @@ test('if map will return a new deeply-crioed map of items', (t) => {
   const existing = new CrioArray(['foo', 'bar']);
 
   const fn = (item) => ({
-    [item]: [item]
+    [item]: [item],
   });
 
   const result = existing.map(fn);
@@ -369,7 +372,17 @@ test('if merge will merge the objects deeply', (t) => {
 
   isNewArray(t, existing, result);
 
-  t.deepEqual(result, new CrioArray([{foo: {bar: 'baz', baz: 'quz'}}]));
+  t.deepEqual(
+    result,
+    new CrioArray([
+      {
+        foo: {
+          bar: 'baz',
+          baz: 'quz',
+        },
+      },
+    ])
+  );
 });
 
 test('if mutate will allow mutation of a thawed version of the array and return a new crioed version of the result', (t) => {
@@ -383,7 +396,7 @@ test('if mutate will allow mutation of a thawed version of the array and return 
       thawed.sort();
 
       return thawed;
-    }
+    },
   };
 
   const spy = sinon.spy(object, 'fn');
@@ -409,7 +422,7 @@ test('if pluck will return the set of values matching in the collection shallowl
 test('if pluck will return the set of values matching in the collection deeply', (t) => {
   const existing = new CrioArray([
     [{foo: 'foo'}, {bar: 'baz'}, {foo: 'bar'}],
-    [{foo: 'bar'}, {bar: 'baz'}, null, {foo: 'foo'}]
+    [{foo: 'bar'}, {bar: 'baz'}, null, {foo: 'foo'}],
   ]);
 
   const result = existing.pluck([1, 'foo']);
@@ -549,7 +562,10 @@ test('if toLocaleString will serialize the array with custom arguments', (t) => 
 
   const serializer = (key, value) => (typeof value === 'function' ? value.toString() : value);
 
-  const result = existing.toLocaleString(serializer, 2);
+  const result = existing.toLocaleString(
+    serializer,
+    2
+  );
 
   t.is(
     result,
@@ -567,7 +583,13 @@ test('if toObject will convert the array to an object', (t) => {
 
   t.true(result instanceof CrioObject);
   t.not(result, existing);
-  t.deepEqual(result, new CrioObject({0: 'foo', 1: 'bar'}));
+  t.deepEqual(
+    result,
+    new CrioObject({
+      0: 'foo',
+      1: 'bar',
+    })
+  );
 });
 
 test('if toString will serialize the array', (t) => {
@@ -583,7 +605,10 @@ test('if toString will serialize the array with custom arguments', (t) => {
 
   const serializer = (key, value) => (typeof value === 'function' ? value.toString() : value);
 
-  const result = existing.toString(serializer, 2);
+  const result = existing.toString(
+    serializer,
+    2
+  );
 
   t.is(
     result,

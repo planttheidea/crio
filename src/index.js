@@ -3,7 +3,11 @@ import CrioArray from './CrioArray';
 import CrioObject from './CrioObject';
 
 // is
-import {isArray, isCrio, isObject} from './is';
+import {
+  isArray,
+  isCrio,
+  isObject
+} from './is';
 
 /**
  * @module crio

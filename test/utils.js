@@ -17,7 +17,7 @@ test('if createIterator will create an iterator method', (t) => {
     [key]: value,
     keys() {
       return [key];
-    }
+    },
   };
 
   const iterator = utils.createIterator();
@@ -28,11 +28,11 @@ test('if createIterator will create an iterator method', (t) => {
 
   t.deepEqual(iterable.next(), {
     done: false,
-    value
+    value,
   });
 
   t.deepEqual(iterable.next(), {
-    done: true
+    done: true,
   });
 });
 
@@ -45,10 +45,10 @@ test('if every will return true when every result matches', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
 
@@ -64,10 +64,10 @@ test('if every will return false when not every result matches', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
 
@@ -78,7 +78,7 @@ test('if every will return true when no keys exist', (t) => {
   const object = {
     keys() {
       return [];
-    }
+    },
   };
   const fn = (item) => item === 'never run';
 
@@ -94,10 +94,10 @@ test('if find will find the value that exists in the object at key', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
   const isKey = false;
@@ -117,10 +117,10 @@ test('if find will return undefined if a match could not be found in the object 
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === 'quz';
   const isKey = false;
@@ -140,10 +140,10 @@ test('if find will find the key that exists in the object at key', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
   const isKey = true;
@@ -162,14 +162,14 @@ test('if find will return undefined when the key could not be found in the objec
   const otherValue = value;
 
   const object = {
-    [key]: value,
-    [otherKey]: otherValue,
     isArray() {
       return false;
     },
+    [key]: value,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === 'quz';
   const isKey = true;
@@ -188,14 +188,14 @@ test('if find will return undefined when the key could not be found in the array
   const otherValue = value;
 
   const object = {
-    [key]: value,
-    [otherKey]: otherValue,
     isArray() {
       return true;
     },
+    [key]: value,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === 'quz';
   const isKey = true;
@@ -215,10 +215,10 @@ test('if find will find the value that exists in the object at key starting from
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
   const isKey = false;
@@ -238,10 +238,10 @@ test('if find will find the key that exists in the object at key starting from t
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
   const isKey = true;
@@ -423,10 +423,10 @@ test('if getEntries will map the keys and values as pairs', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return new CrioArray([key, otherKey]);
-    }
+    },
+    [otherKey]: otherValue,
   };
 
   const result = utils.getEntries(object);
@@ -462,10 +462,10 @@ test('if getValues will map the values', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return new CrioArray([key, otherKey]);
-    }
+    },
+    [otherKey]: otherValue,
   };
 
   const result = utils.getValues(object);
@@ -483,10 +483,10 @@ test('if some will return true when any result matches', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === value;
 
@@ -502,10 +502,10 @@ test('if some will return false when no result matches', (t) => {
 
   const object = {
     [key]: value,
-    [otherKey]: otherValue,
     keys() {
       return [key, otherKey];
-    }
+    },
+    [otherKey]: otherValue,
   };
   const fn = (item) => item === 'quz';
 
@@ -516,7 +516,7 @@ test('if some will return false when no keys exist', (t) => {
   const object = {
     keys() {
       return [];
-    }
+    },
   };
   const fn = (item) => item === 'never run';
 
@@ -528,10 +528,10 @@ test('if thaw will return the deeply-uncrioed version of all the objects', (t) =
     {
       some: [
         {
-          deep: 'nesting'
-        }
-      ]
-    }
+          deep: 'nesting',
+        },
+      ],
+    },
   ];
 
   const crio = new CrioArray(rawObject);
