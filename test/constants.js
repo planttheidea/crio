@@ -70,7 +70,7 @@ test('if includes called indexOf on the object and returns true or false on the 
       .onFirstCall()
       .returns(-1)
       .onSecondCall()
-      .returns(1)
+      .returns(1),
   };
 
   object.includes = constants.ARRAY_FALLBACK_PROTOTYPE_METHODS.includes;

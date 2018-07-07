@@ -2,19 +2,41 @@
 import stringify from 'json-stringify-safe';
 import hashIt from 'hash-it';
 import {parse} from 'pathington';
-import {get, has, merge, remove, set} from 'unchanged';
+import {
+  get,
+  has,
+  merge,
+  remove,
+  set
+} from 'unchanged';
 
 // classes
 import CrioObject from './CrioObject';
 
 // constants
-import {ARRAY_FALLBACK_PROTOTYPE_METHODS, ARRAY_UNSCOPABLES} from './constants';
+import {
+  ARRAY_FALLBACK_PROTOTYPE_METHODS,
+  ARRAY_UNSCOPABLES
+} from './constants';
 
 // is
-import {isArray, isCrio, isEqual, isUndefined} from './is';
+import {
+  isArray,
+  isCrio,
+  isEqual,
+  isUndefined
+} from './is';
 
 // utils
-import {createIterator, find, getCrioedObject, getEntries, getRelativeValue, getValues, thaw} from './utils';
+import {
+  createIterator,
+  find,
+  getCrioedObject,
+  getEntries,
+  getRelativeValue,
+  getValues,
+  thaw
+} from './utils';
 
 let hasAppliedPrototype = false;
 
@@ -636,7 +658,10 @@ class CrioArray extends Array {
    * @returns {string} stringified array
    */
   toLocaleString(serializer, indent) {
-    return this.toString(serializer, indent);
+    return this.toString(
+      serializer,
+      indent
+    );
   }
 
   /**
@@ -798,7 +823,7 @@ export function applyPrototype() {
         enumerable: false,
         get() {
           return CrioArray;
-        }
+        },
       });
     }
 
@@ -807,7 +832,7 @@ export function applyPrototype() {
         configurable: false,
         enumerable: false,
         value: createIterator(),
-        writable: false
+        writable: false,
       });
     }
 
@@ -816,7 +841,7 @@ export function applyPrototype() {
         configurable: false,
         enumerable: false,
         value: ARRAY_UNSCOPABLES,
-        writable: false
+        writable: false,
       });
     }
   }

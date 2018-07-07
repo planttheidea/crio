@@ -1,5 +1,9 @@
 // utils
-import {every, find, some} from './utils';
+import {
+  every,
+  find,
+  some
+} from './utils';
 
 /**
  * @constant {Object} ARRAY_UNSCOPABLES
@@ -13,7 +17,7 @@ export const ARRAY_UNSCOPABLES = {
   findLastIndex: true,
   includes: true,
   keys: true,
-  values: true
+  values: true,
 };
 
 /**
@@ -83,7 +87,7 @@ export const ARRAY_FALLBACK_PROTOTYPE_METHODS = {
    */
   some(fn) {
     return some(this, fn);
-  }
+  },
 };
 
 /**
@@ -97,7 +101,7 @@ export const OBJECT_UNSCOPABLES = {
   findLastKey: true,
   includes: true,
   keys: true,
-  values: true
+  values: true,
 };
 
 /**
